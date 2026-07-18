@@ -1,0 +1,151 @@
+<?php
+
+use App\Http\Controllers\AiDocumentController;
+use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\IpercController;
+use App\Http\Controllers\OrganizacionController;
+use App\Http\Controllers\IndicatorController;
+use App\Http\Controllers\SstDiagnosticController;
+use App\Http\Controllers\WorkPlanController;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
+
+Route::get('/', function () {
+    return Inertia::render('welcome');
+})->name('home');
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
+
+    /*
+    | Clientes (F2): primer módulo funcional — CRUD de empresas cliente (tenants).
+    | Ver -> clients.view | Crear/editar/eliminar -> clients.manage
+    */
+    Route::get('clientes', [ClienteController::class, 'index'])
+        ->middleware('permission:clients.view')->name('clientes.index');
+    Route::post('clientes', [ClienteController::class, 'store'])
+        ->middleware('permission:clients.manage')->name('clientes.store');
+    Route::put('clientes/{cliente}', [ClienteController::class, 'update'])
+        ->middleware('permission:clients.manage')->name('clientes.update');
+    Route::delete('clientes/{cliente}', [ClienteController::class, 'destroy'])
+        ->middleware('permission:clients.manage')->name('clientes.destroy');
+
+    /*
+    | Selector de cliente activo (solo consultores CMK).
+    | Fija/limpia active_tenant_id en sesión para segregar los módulos.
+    */
+    Route::post('clientes/{cliente}/seleccionar', [ClienteController::class, 'select'])
+        ->middleware('permission:clients.view')->name('clientes.select');
+    Route::post('clientes/seleccion/salir', [ClienteController::class, 'clearSelection'])
+        ->middleware('permission:clients.view')->name('clientes.clear');
+
+    /*
+    | Empleados (Tier 1): nómina base del SGI, segregada por cliente activo.
+    | Ver -> sst.view | Crear/editar/eliminar -> sst.manage
+    */
+    Route::get('empleados', [EmployeeController::class, 'index'])
+        ->middleware('permission:sst.view')->name('empleados.index');
+    Route::post('empleados', [EmployeeController::class, 'store'])
+        ->middleware('permission:sst.manage')->name('empleados.store');
+    Route::put('empleados/{empleado}', [EmployeeController::class, 'update'])
+        ->middleware('permission:sst.manage')->name('empleados.update');
+    Route::delete('empleados/{empleado}', [EmployeeController::class, 'destroy'])
+        ->middleware('permission:sst.manage')->name('empleados.destroy');
+
+    /*
+    | Información de la Organización (Tier 1): contexto SGI del cliente activo.
+    | Ver -> sst.view | Editar -> sst.manage
+    */
+    Route::get('organizacion', [OrganizacionController::class, 'show'])
+        ->middleware('permission:sst.view')->name('organizacion.show');
+    Route::put('organizacion', [OrganizacionController::class, 'update'])
+        ->middleware('permission:sst.manage')->name('organizacion.update');
+
+    /*
+    | Diagnóstico Estándares Mínimos SG-SST (Res. 0312) del cliente activo.
+    | Ver -> sst.view | Diligenciar -> sst.manage
+    */
+    Route::get('diagnostico', [SstDiagnosticController::class, 'show'])
+        ->middleware('permission:sst.view')->name('diagnostico.show');
+    Route::post('diagnostico', [SstDiagnosticController::class, 'save'])
+        ->middleware('permission:sst.manage')->name('diagnostico.save');
+
+    /*
+    | Matriz IPERC (GTC 45) del cliente activo.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::get('iperc', [IpercController::class, 'index'])
+        ->middleware('permission:sst.view')->name('iperc.index');
+    Route::post('iperc', [IpercController::class, 'store'])
+        ->middleware('permission:sst.manage')->name('iperc.store');
+    Route::put('iperc/{peligro}', [IpercController::class, 'update'])
+        ->middleware('permission:sst.manage')->name('iperc.update');
+    Route::delete('iperc/{peligro}', [IpercController::class, 'destroy'])
+        ->middleware('permission:sst.manage')->name('iperc.destroy');
+
+    /*
+    | Plan de Trabajo Anual del SGI (cronograma por cláusulas ISO) del cliente activo.
+    | Ver -> sst.view | Diligenciar -> sst.manage
+    */
+    Route::get('plan-trabajo', [WorkPlanController::class, 'show'])
+        ->middleware('permission:sst.view')->name('plan-trabajo.show');
+    Route::post('plan-trabajo', [WorkPlanController::class, 'save'])
+        ->middleware('permission:sst.manage')->name('plan-trabajo.save');
+
+    /*
+    | Dashboard de Indicadores del SGI (Res. 0312 / Dec. 1072) del cliente activo.
+    | Ver -> sst.view | Registrar/gestionar -> sst.manage
+    */
+    Route::get('indicadores', [IndicatorController::class, 'index'])
+        ->middleware('permission:sst.view')->name('indicadores.index');
+    Route::post('indicadores/lecturas', [IndicatorController::class, 'save'])
+        ->middleware('permission:sst.manage')->name('indicadores.save');
+    Route::post('indicadores', [IndicatorController::class, 'store'])
+        ->middleware('permission:sst.manage')->name('indicadores.store');
+    Route::delete('indicadores/{indicator}', [IndicatorController::class, 'destroy'])
+        ->middleware('permission:sst.manage')->name('indicadores.destroy');
+
+    /*
+    | Generación de documentos SGI con IA (Claude) para el cliente activo.
+    | Ver -> documents.view | Generar/editar -> documents.manage
+    */
+    Route::get('documentos-ia', [AiDocumentController::class, 'index'])
+        ->middleware('permission:documents.view')->name('documentos-ia.index');
+    Route::post('documentos-ia/generar', [AiDocumentController::class, 'generate'])
+        ->middleware('permission:documents.manage')->name('documentos-ia.generate');
+    Route::put('documentos-ia/{documento}', [AiDocumentController::class, 'update'])
+        ->middleware('permission:documents.manage')->name('documentos-ia.update');
+    Route::delete('documentos-ia/{documento}', [AiDocumentController::class, 'destroy'])
+        ->middleware('permission:documents.manage')->name('documentos-ia.destroy');
+    Route::get('documentos-ia/{documento}/export', [AiDocumentController::class, 'export'])
+        ->middleware('permission:documents.view')->name('documentos-ia.export');
+
+    /*
+    | Módulos de la plataforma (Fase 1: shells navegables protegidos por permiso).
+    | El contenido de cada módulo se desarrolla en las fases F2–F5.
+    */
+    $modules = [
+        ['usuarios', 'Usuarios', 'Gestión de usuarios y accesos.', 'users.view'],
+        ['sst', 'SST', 'Matriz de peligros, plan anual, indicadores y accidentes.', 'sst.view'],
+        ['hseq', 'HSEQ', 'Gestión ambiental, calidad y auditorías.', 'hseq.view'],
+        ['pesv', 'PESV', 'Gestión vial, conductores, vehículos y capacitaciones.', 'pesv.view'],
+        ['documentos', 'Documentos', 'Gestión documental, versionado y evidencias.', 'documents.view'],
+        ['inspecciones', 'Inspecciones', 'Inspecciones en campo (PWA): checklists, fotos GPS y firmas.', 'inspections.view'],
+        ['reportes', 'Reportes', 'Informes PDF auditables, indicadores y exportaciones.', 'reports.view'],
+        ['auditoria', 'Auditoría', 'Consulta y evidencia de información auditable del cliente.', 'audit.view'],
+        ['configuracion', 'Configuración', 'Parámetros de la plataforma e integraciones.', 'settings.manage'],
+    ];
+
+    foreach ($modules as [$slug, $title, $desc, $permission]) {
+        Route::get($slug, fn () => Inertia::render('module-placeholder', [
+            'title' => $title,
+            'description' => $desc,
+            'permission' => $permission,
+        ]))->middleware("permission:{$permission}")->name("modules.{$slug}");
+    }
+});
+
+require __DIR__.'/settings.php';
+require __DIR__.'/auth.php';
