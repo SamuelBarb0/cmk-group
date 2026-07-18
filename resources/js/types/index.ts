@@ -48,7 +48,7 @@ export interface SharedData {
     auth: Auth;
     tenant: Tenant | null;
     company: Company;
-    flash?: { success: string | null };
+    flash?: { success: string | null; error?: string | null };
     [key: string]: unknown;
 }
 

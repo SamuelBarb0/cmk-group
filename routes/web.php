@@ -8,6 +8,7 @@ use App\Http\Controllers\IpercController;
 use App\Http\Controllers\OrganizacionController;
 use App\Http\Controllers\IndicatorController;
 use App\Http\Controllers\SstDiagnosticController;
+use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\WorkPlanController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -40,6 +41,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('permission:clients.view')->name('clientes.select');
     Route::post('clientes/seleccion/salir', [ClienteController::class, 'clearSelection'])
         ->middleware('permission:clients.view')->name('clientes.clear');
+
+    /*
+    | Usuarios: gestión de usuarios de la plataforma (equipo CMK y usuarios cliente).
+    | Ver -> users.view | Crear/editar/eliminar -> users.manage
+    */
+    Route::get('usuarios', [UsuarioController::class, 'index'])
+        ->middleware('permission:users.view')->name('usuarios.index');
+    Route::post('usuarios', [UsuarioController::class, 'store'])
+        ->middleware('permission:users.manage')->name('usuarios.store');
+    Route::put('usuarios/{usuario}', [UsuarioController::class, 'update'])
+        ->middleware('permission:users.manage')->name('usuarios.update');
+    Route::delete('usuarios/{usuario}', [UsuarioController::class, 'destroy'])
+        ->middleware('permission:users.manage')->name('usuarios.destroy');
 
     /*
     | Empleados (Tier 1): nómina base del SGI, segregada por cliente activo.
@@ -127,7 +141,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     | El contenido de cada módulo se desarrolla en las fases F2–F5.
     */
     $modules = [
-        ['usuarios', 'Usuarios', 'Gestión de usuarios y accesos.', 'users.view'],
         ['sst', 'SST', 'Matriz de peligros, plan anual, indicadores y accidentes.', 'sst.view'],
         ['hseq', 'HSEQ', 'Gestión ambiental, calidad y auditorías.', 'hseq.view'],
         ['pesv', 'PESV', 'Gestión vial, conductores, vehículos y capacitaciones.', 'pesv.view'],

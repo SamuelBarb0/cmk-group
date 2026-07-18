@@ -61,6 +61,7 @@ class HandleInertiaRequests extends Middleware
             // Mensajes flash de una sola vez (confirmaciones de acciones).
             'flash' => [
                 'success' => $request->session()->get('success'),
+                'error' => $request->session()->get('error'),
             ],
         ]);
     }
