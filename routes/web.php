@@ -181,9 +181,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     | El contenido de cada módulo se desarrolla en las fases F2–F5.
     */
     $modules = [
-        ['sst', 'SST', 'Matriz de peligros, plan anual, indicadores y accidentes.', 'sst.view'],
-        ['hseq', 'HSEQ', 'Gestión ambiental, calidad y auditorías.', 'hseq.view'],
-        ['pesv', 'PESV', 'Gestión vial, conductores, vehículos y capacitaciones.', 'pesv.view'],
         ['reportes', 'Reportes', 'Informes PDF auditables, indicadores y exportaciones.', 'reports.view'],
         ['auditoria', 'Auditoría', 'Consulta y evidencia de información auditable del cliente.', 'audit.view'],
     ];

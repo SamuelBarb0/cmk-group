@@ -1,10 +1,10 @@
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { usePermissions } from '@/hooks/use-permissions';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
-import { Building2, HardHat, Leaf, ShieldCheck, Truck, UserCircle2, Users } from 'lucide-react';
+import { Head, usePage } from '@inertiajs/react';
+import { Building2, ShieldCheck, UserCircle2, Users } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Dashboard', href: '/dashboard' }];
 
@@ -24,12 +24,6 @@ interface DashboardProps {
     tenant?: { id: number; name: string; nit: string | null; city: string | null } | null;
 }
 
-const modules = [
-    { key: 'sst', title: 'SST', desc: 'Matriz de peligros, plan anual, indicadores y accidentes.', url: '/sst', icon: HardHat },
-    { key: 'hseq', title: 'HSEQ', desc: 'Gestión ambiental, calidad y auditorías.', url: '/hseq', icon: Leaf },
-    { key: 'pesv', title: 'PESV', desc: 'Gestión vial, conductores, vehículos y capacitaciones.', url: '/pesv', icon: Truck },
-];
-
 function StatCard({ label, value, icon: Icon }: { label: string; value: number; icon: React.ElementType }) {
     return (
         <Card>
@@ -46,36 +40,10 @@ function StatCard({ label, value, icon: Icon }: { label: string; value: number; 
     );
 }
 
-function ModuleGrid({ can }: { can: (p: string) => boolean }) {
-    const visible = modules.filter((m) => can(`${m.key}.view`));
-    if (visible.length === 0) return null;
-
-    return (
-        <div>
-            <h2 className="font-brand mb-3 text-sm font-semibold tracking-wide text-muted-foreground uppercase">Módulos</h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {visible.map((m) => (
-                    <Link key={m.key} href={m.url} prefetch className="group">
-                        <Card className="h-full transition-colors group-hover:border-primary/50">
-                            <CardHeader className="flex flex-row items-center gap-3 space-y-0">
-                                <div className="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-lg">
-                                    <m.icon className="size-5" />
-                                </div>
-                                <CardTitle className="font-brand text-lg">{m.title}</CardTitle>
-                            </CardHeader>
-                            <CardContent className="text-muted-foreground text-sm">{m.desc}</CardContent>
-                        </Card>
-                    </Link>
-                ))}
-            </div>
-        </div>
-    );
-}
-
 export default function Dashboard() {
     const { props } = usePage<SharedData & DashboardProps>();
     const { auth } = props;
-    const { can, roleLabel } = usePermissions();
+    const { roleLabel } = usePermissions();
     const isMaster = props.view === 'master';
 
     return (
@@ -115,9 +83,6 @@ export default function Dashboard() {
                         <StatCard label="Usuarios de la empresa" value={props.stats.users ?? 0} icon={Users} />
                     </div>
                 )}
-
-                {/* Módulos */}
-                <ModuleGrid can={can} />
 
                 {/* Clientes recientes (solo vista maestra) */}
                 {isMaster && props.clients && props.clients.length > 0 && (
