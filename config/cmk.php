@@ -91,4 +91,25 @@ return [
         'hseq' => ['label' => 'HSEQ', 'desc' => 'Gestión ambiental, calidad y auditorías.'],
         'pesv' => ['label' => 'PESV', 'desc' => 'Gestión vial, conductores, vehículos y capacitaciones.'],
     ],
+
+    /*
+    | Módulos CONTRATABLES por empresa cliente: lo que CMK vende por contrato.
+    | La clave coincide con la ruta/ítem del sidebar; tenants.modulos guarda
+    | las claves contratadas (null = todos). Organización y Empleados son base
+    | y siempre están habilitados (alimentan al resto).
+    */
+    'modulos_contratables' => [
+        'diagnostico'   => 'Diagnóstico SG-SST (Res. 0312)',
+        'iperc'         => 'Matriz IPERC (GTC 45)',
+        'plan-trabajo'  => 'Plan de Trabajo Anual',
+        'indicadores'   => 'Indicadores',
+        'documentos'    => 'Documentos de la empresa',
+        'documentos-ia' => 'Documentos IA',
+        'sst'           => 'SST',
+        'hseq'          => 'HSEQ',
+        'pesv'          => 'PESV',
+        'inspecciones'  => 'Inspecciones',
+        'reportes'      => 'Reportes',
+        'auditoria'     => 'Auditoría',
+    ],
 ];

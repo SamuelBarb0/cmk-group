@@ -27,6 +27,8 @@ class Tenant extends Model
         'address',
         'logo_path',
         'is_active',
+        // Módulos contratados por la empresa (null = todos).
+        'modulos',
         // Información de la Organización (contexto SGI)
         'actividad_economica',
         'codigo_ciiu',
@@ -39,6 +41,9 @@ class Tenant extends Model
         'representante_cc',
         'responsable_sgsst',
         'licencia_sgsst',
+        'licencia_sgsst_vence',
+        'curso_sst_horas',
+        'curso_sst_fecha',
     ];
 
     protected function casts(): array
@@ -46,7 +51,19 @@ class Tenant extends Model
         return [
             'is_active' => 'boolean',
             'num_trabajadores' => 'integer',
+            'modulos' => 'array',
+            'licencia_sgsst_vence' => 'date:Y-m-d',
+            'curso_sst_fecha' => 'date:Y-m-d',
         ];
+    }
+
+    /**
+     * ¿La empresa tiene habilitado (contratado) el módulo dado?
+     * modulos = null significa que tiene todos los módulos.
+     */
+    public function moduloHabilitado(string $modulo): bool
+    {
+        return $this->modulos === null || in_array($modulo, $this->modulos, true);
     }
 
     /**

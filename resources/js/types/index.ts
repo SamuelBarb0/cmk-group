@@ -40,6 +40,8 @@ export interface NavItem {
     isActive?: boolean;
     /** Permiso requerido para mostrar el ítem (opcional). */
     permission?: string;
+    /** Clave del módulo contratable; se oculta si la empresa activa no lo contrató. */
+    module?: string;
 }
 
 export interface SharedData {
@@ -47,6 +49,8 @@ export interface SharedData {
     quote: { message: string; author: string };
     auth: Auth;
     tenant: Tenant | null;
+    /** Módulos contratados por la empresa activa (null = todos / sin cliente activo). */
+    modulos_contratados: string[] | null;
     company: Company;
     flash?: { success: string | null; error?: string | null };
     [key: string]: unknown;

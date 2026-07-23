@@ -11,7 +11,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { usePermissions } from '@/hooks/use-permissions';
-import { type NavItem } from '@/types';
+import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import {
     Building2,
@@ -51,23 +51,23 @@ const navGroups: { label: string; items: NavItem[] }[] = [
         items: [
             { title: 'Organización', url: '/organizacion', icon: Building2, permission: 'sst.view' },
             { title: 'Empleados', url: '/empleados', icon: Contact, permission: 'sst.view' },
-            { title: 'Diagnóstico SG-SST', url: '/diagnostico', icon: Gauge, permission: 'sst.view' },
-            { title: 'Matriz IPERC', url: '/iperc', icon: TriangleAlert, permission: 'sst.view' },
-            { title: 'Plan de Trabajo', url: '/plan-trabajo', icon: CalendarRange, permission: 'sst.view' },
-            { title: 'Indicadores', url: '/indicadores', icon: FileBarChart, permission: 'sst.view' },
-            { title: 'SST', url: '/sst', icon: HardHat, permission: 'sst.view' },
-            { title: 'HSEQ', url: '/hseq', icon: Leaf, permission: 'hseq.view' },
-            { title: 'PESV', url: '/pesv', icon: Truck, permission: 'pesv.view' },
-            { title: 'Documentos', url: '/documentos', icon: FileText, permission: 'documents.view' },
-            { title: 'Documentos IA', url: '/documentos-ia', icon: Sparkles, permission: 'documents.view' },
+            { title: 'Diagnóstico SG-SST', url: '/diagnostico', icon: Gauge, permission: 'sst.view', module: 'diagnostico' },
+            { title: 'Matriz IPERC', url: '/iperc', icon: TriangleAlert, permission: 'sst.view', module: 'iperc' },
+            { title: 'Plan de Trabajo', url: '/plan-trabajo', icon: CalendarRange, permission: 'sst.view', module: 'plan-trabajo' },
+            { title: 'Indicadores', url: '/indicadores', icon: FileBarChart, permission: 'sst.view', module: 'indicadores' },
+            { title: 'SST', url: '/sst', icon: HardHat, permission: 'sst.view', module: 'sst' },
+            { title: 'HSEQ', url: '/hseq', icon: Leaf, permission: 'hseq.view', module: 'hseq' },
+            { title: 'PESV', url: '/pesv', icon: Truck, permission: 'pesv.view', module: 'pesv' },
+            { title: 'Documentos', url: '/documentos', icon: FileText, permission: 'documents.view', module: 'documentos' },
+            { title: 'Documentos IA', url: '/documentos-ia', icon: Sparkles, permission: 'documents.view', module: 'documentos-ia' },
         ],
     },
     {
         label: 'Campo y control',
         items: [
-            { title: 'Inspecciones', url: '/inspecciones', icon: ClipboardCheck, permission: 'inspections.view' },
-            { title: 'Reportes', url: '/reportes', icon: FileBarChart, permission: 'reports.view' },
-            { title: 'Auditoría', url: '/auditoria', icon: ShieldCheck, permission: 'audit.view' },
+            { title: 'Inspecciones', url: '/inspecciones', icon: ClipboardCheck, permission: 'inspections.view', module: 'inspecciones' },
+            { title: 'Reportes', url: '/reportes', icon: FileBarChart, permission: 'reports.view', module: 'reportes' },
+            { title: 'Auditoría', url: '/auditoria', icon: ShieldCheck, permission: 'audit.view', module: 'auditoria' },
         ],
     },
     {
@@ -78,7 +78,12 @@ const navGroups: { label: string; items: NavItem[] }[] = [
 
 export function AppSidebar() {
     const { can } = usePermissions();
-    const { url } = usePage();
+    const { url, props } = usePage<SharedData>();
+    // Módulos contratados por la empresa activa (null = todos / sin cliente activo).
+    const modulosContratados = props.modulos_contratados ?? null;
+
+    const moduloHabilitado = (item: NavItem) =>
+        !item.module || modulosContratados === null || modulosContratados.includes(item.module);
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -96,7 +101,7 @@ export function AppSidebar() {
 
             <SidebarContent>
                 {navGroups.map((group) => {
-                    const visible = group.items.filter((item) => !item.permission || can(item.permission));
+                    const visible = group.items.filter((item) => (!item.permission || can(item.permission)) && moduloHabilitado(item));
                     if (visible.length === 0) return null;
 
                     return (

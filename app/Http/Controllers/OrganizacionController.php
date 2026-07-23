@@ -39,7 +39,8 @@ class OrganizacionController extends Controller
                 'id', 'name', 'legal_name', 'nit', 'email', 'phone', 'city', 'address',
                 'actividad_economica', 'codigo_ciiu', 'sector', 'nivel_riesgo', 'arl',
                 'tamano_empresa', 'num_trabajadores', 'representante_legal', 'representante_cc',
-                'responsable_sgsst', 'licencia_sgsst',
+                'responsable_sgsst', 'licencia_sgsst', 'licencia_sgsst_vence',
+                'curso_sst_horas', 'curso_sst_fecha',
             ]),
             // Conteo real de empleados registrados (referencia vs. el declarado).
             'empleadosCount' => Employee::count(),
@@ -64,6 +65,9 @@ class OrganizacionController extends Controller
             'representante_cc' => ['nullable', 'string', 'max:30'],
             'responsable_sgsst' => ['nullable', 'string', 'max:255'],
             'licencia_sgsst' => ['nullable', 'string', 'max:255'],
+            'licencia_sgsst_vence' => ['nullable', 'date'],
+            'curso_sst_horas' => ['nullable', 'in:50,20'],
+            'curso_sst_fecha' => ['nullable', 'date'],
         ]);
 
         $this->context->get()?->update($data);

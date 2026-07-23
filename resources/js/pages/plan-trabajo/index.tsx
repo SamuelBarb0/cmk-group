@@ -6,7 +6,7 @@ import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Building2, CalendarRange, Save } from 'lucide-react';
+import { Building2, CalendarRange, CheckCircle2, PenLine, Save, Target } from 'lucide-react';
 import { Fragment, useMemo, useState } from 'react';
 
 interface Activity {
@@ -16,15 +16,37 @@ interface Activity {
     nombre: string;
     normas: string[];
     soporte: string | null;
+    /** ¿La actividad aplica (fue seleccionada) para este plan? */
+    aplica: boolean;
     programados: number[];
     ejecutados: number[];
     responsable: string;
     observaciones: string;
 }
 
+interface Firma {
+    nombre: string;
+    cc: string | null;
+    fecha: string;
+}
+
 interface Props {
     activities: Activity[];
-    plan: { id: number; anio: number; responsable: string | null; cumplimiento: number } | null;
+    plan: {
+        id: number;
+        anio: number;
+        responsable: string | null;
+        cumplimiento: number;
+        metas: string | null;
+        objetivos: string | null;
+        recursos: string | null;
+        firma_rep: Firma | null;
+        firma_resp: Firma | null;
+    } | null;
+    firmantes: {
+        representante: { nombre: string | null; cc: string | null };
+        responsable: { nombre: string | null; cc: string | null };
+    } | null;
     needsClient: boolean;
 }
 
@@ -45,7 +67,7 @@ function estadosIniciales(a: Activity): Record<number, 0 | 1 | 2> {
     return e;
 }
 
-export default function PlanTrabajoIndex({ activities, plan, needsClient }: Props) {
+export default function PlanTrabajoIndex({ activities, plan, firmantes, needsClient }: Props) {
     const { can } = usePermissions();
     const canManage = can('sst.manage');
     const page = usePage<SharedData>();
@@ -55,14 +77,27 @@ export default function PlanTrabajoIndex({ activities, plan, needsClient }: Prop
         Object.fromEntries(activities.map((a) => [a.id, { estados: estadosIniciales(a), responsable: a.responsable }])),
     );
     const [responsable, setResponsable] = useState(plan?.responsable ?? '');
+    const [metas, setMetas] = useState(plan?.metas ?? '');
+    const [objetivos, setObjetivos] = useState(plan?.objetivos ?? '');
+    const [recursos, setRecursos] = useState(plan?.recursos ?? '');
+    // Selección de actividades que aplican al plan de esta empresa.
+    const [aplican, setAplican] = useState<Record<number, boolean>>(() =>
+        Object.fromEntries(activities.map((a) => [a.id, a.aplica])),
+    );
     const [saving, setSaving] = useState(false);
+    // Datos de la firma en edición (prellenados desde Organización).
+    const [firmaRep, setFirmaRep] = useState({ nombre: firmantes?.representante.nombre ?? '', cc: firmantes?.representante.cc ?? '' });
+    const [firmaResp, setFirmaResp] = useState({ nombre: firmantes?.responsable.nombre ?? '', cc: firmantes?.responsable.cc ?? '' });
 
-    // Totales en vivo: programado = estado>=1 ; ejecutado = estado===2.
+    const seleccionadasCount = useMemo(() => activities.filter((a) => aplican[a.id]).length, [activities, aplican]);
+
+    // Totales en vivo (solo actividades que aplican): programado = estado>=1 ; ejecutado = estado===2.
     const { programados, ejecutados, porMes } = useMemo(() => {
         let p = 0;
         let e = 0;
         const pm = Array.from({ length: 13 }, () => ({ p: 0, e: 0 }));
         for (const a of activities) {
+            if (!aplican[a.id]) continue;
             const est = filas[a.id]?.estados ?? {};
             for (let m = 1; m <= 12; m++) {
                 if (est[m] >= 1) {
@@ -76,12 +111,12 @@ export default function PlanTrabajoIndex({ activities, plan, needsClient }: Prop
             }
         }
         return { programados: p, ejecutados: e, porMes: pm };
-    }, [activities, filas]);
+    }, [activities, filas, aplican]);
 
     const cumplimiento = programados > 0 ? (ejecutados / programados) * 100 : 0;
 
     function ciclar(id: number, mes: number) {
-        if (!canManage) return;
+        if (!canManage || !aplican[id]) return;
         setFilas((f) => {
             const est = { ...(f[id]?.estados ?? {}) };
             est[mes] = (((est[mes] ?? 0) + 1) % 3) as 0 | 1 | 2;
@@ -97,19 +132,41 @@ export default function PlanTrabajoIndex({ activities, plan, needsClient }: Prop
             route('plan-trabajo.save'),
             {
                 responsable,
-                items: activities.map((a) => {
-                    const est = filas[a.id]?.estados ?? {};
-                    const prog: number[] = [];
-                    const ejec: number[] = [];
-                    for (let m = 1; m <= 12; m++) {
-                        if (est[m] >= 1) prog.push(m);
-                        if (est[m] === 2) ejec.push(m);
-                    }
-                    return { activity_id: a.id, programados: prog, ejecutados: ejec, responsable: filas[a.id]?.responsable || null, observaciones: a.observaciones || null };
-                }),
+                metas,
+                objetivos,
+                recursos,
+                seleccionadas: activities.filter((a) => aplican[a.id]).map((a) => a.id),
+                items: activities
+                    .filter((a) => aplican[a.id])
+                    .map((a) => {
+                        const est = filas[a.id]?.estados ?? {};
+                        const prog: number[] = [];
+                        const ejec: number[] = [];
+                        for (let m = 1; m <= 12; m++) {
+                            if (est[m] >= 1) prog.push(m);
+                            if (est[m] === 2) ejec.push(m);
+                        }
+                        return { activity_id: a.id, programados: prog, ejecutados: ejec, responsable: filas[a.id]?.responsable || null, observaciones: a.observaciones || null };
+                    }),
             },
             { preserveScroll: true, onStart: () => setSaving(true), onFinish: () => setSaving(false) },
         );
+    }
+
+    function toggleAplica(id: number) {
+        if (!canManage) return;
+        setAplican((s) => ({ ...s, [id]: !s[id] }));
+    }
+
+    function firmar(rol: 'representante' | 'responsable') {
+        const firma = rol === 'representante' ? firmaRep : firmaResp;
+        router.post(route('plan-trabajo.firmar'), { rol, nombre: firma.nombre, cc: firma.cc || null }, { preserveScroll: true });
+    }
+
+    function quitarFirma(rol: 'representante' | 'responsable') {
+        if (confirm('¿Retirar esta firma del plan?')) {
+            router.post(route('plan-trabajo.quitar-firma'), { rol }, { preserveScroll: true });
+        }
     }
 
     if (needsClient) {
@@ -178,7 +235,9 @@ export default function PlanTrabajoIndex({ activities, plan, needsClient }: Prop
                                 <span className="font-semibold tabular-nums">{ejecutados}</span> ejecutadas /{' '}
                                 <span className="font-semibold tabular-nums">{programados}</span> programadas
                             </span>
-                            <span className="text-muted-foreground">{activities.length} actividades del SGI</span>
+                            <span className="text-muted-foreground">
+                                {seleccionadasCount} de {activities.length} actividades del SGI aplican
+                            </span>
                         </div>
                         {/* Mini-cronograma por mes: programado (base) vs ejecutado (relleno) */}
                         <div className="ml-auto flex items-end gap-1">
@@ -194,6 +253,50 @@ export default function PlanTrabajoIndex({ activities, plan, needsClient }: Prop
                                     </div>
                                 );
                             })}
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Metas, objetivos y recursos del plan */}
+                <Card>
+                    <CardContent className="space-y-4 p-5">
+                        <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+                            <Target className="size-4" /> Metas, objetivos y recursos
+                        </div>
+                        <div className="grid gap-4 lg:grid-cols-3">
+                            <label className="grid gap-1.5 text-sm">
+                                <span className="font-medium">Objetivos</span>
+                                <textarea
+                                    value={objetivos}
+                                    onChange={(e) => setObjetivos(e.target.value)}
+                                    disabled={!canManage}
+                                    rows={4}
+                                    placeholder="Objetivos del SGI para el año…"
+                                    className="border-input bg-background rounded-md border px-3 py-2 text-sm disabled:opacity-60"
+                                />
+                            </label>
+                            <label className="grid gap-1.5 text-sm">
+                                <span className="font-medium">Metas</span>
+                                <textarea
+                                    value={metas}
+                                    onChange={(e) => setMetas(e.target.value)}
+                                    disabled={!canManage}
+                                    rows={4}
+                                    placeholder="Metas medibles del plan…"
+                                    className="border-input bg-background rounded-md border px-3 py-2 text-sm disabled:opacity-60"
+                                />
+                            </label>
+                            <label className="grid gap-1.5 text-sm">
+                                <span className="font-medium">Recursos</span>
+                                <textarea
+                                    value={recursos}
+                                    onChange={(e) => setRecursos(e.target.value)}
+                                    disabled={!canManage}
+                                    rows={4}
+                                    placeholder="Recursos humanos, técnicos y financieros asignados…"
+                                    className="border-input bg-background rounded-md border px-3 py-2 text-sm disabled:opacity-60"
+                                />
+                            </label>
                         </div>
                     </CardContent>
                 </Card>
@@ -217,7 +320,7 @@ export default function PlanTrabajoIndex({ activities, plan, needsClient }: Prop
                         <span className="flex items-center gap-1.5">
                             <span className="inline-block size-3 rounded-sm bg-green-600" /> Ejecutado
                         </span>
-                        <span className="hidden sm:inline">Clic en cada mes para alternar.</span>
+                        <span className="hidden sm:inline">Clic en cada mes para alternar · desmarca «Aplica» si la actividad no va en este plan.</span>
                     </div>
                 </div>
 
@@ -227,6 +330,9 @@ export default function PlanTrabajoIndex({ activities, plan, needsClient }: Prop
                         <table className="w-full border-collapse text-sm">
                             <thead>
                                 <tr className="bg-muted/50 text-muted-foreground text-xs">
+                                    <th className="w-12 px-2 py-2 text-center font-semibold" title="¿La actividad aplica a este plan?">
+                                        Aplica
+                                    </th>
                                     <th className="px-3 py-2 text-left font-semibold">Actividad</th>
                                     <th className="px-2 py-2 text-left font-semibold">Responsable</th>
                                     {MESES.map((m, i) => (
@@ -246,12 +352,22 @@ export default function PlanTrabajoIndex({ activities, plan, needsClient }: Prop
                                         <Fragment key={a.id}>
                                             {nuevaFase && (
                                                 <tr className="bg-primary/5">
-                                                    <td colSpan={15} className="text-primary px-3 py-1.5 text-xs font-bold tracking-tight">
+                                                    <td colSpan={16} className="text-primary px-3 py-1.5 text-xs font-bold tracking-tight">
                                                         {a.fase}
                                                     </td>
                                                 </tr>
                                             )}
-                                            <tr className="border-t align-top">
+                                            <tr className={cn('border-t align-top', !aplican[a.id] && 'opacity-45')}>
+                                                <td className="px-2 py-2 text-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={aplican[a.id] ?? true}
+                                                        onChange={() => toggleAplica(a.id)}
+                                                        disabled={!canManage}
+                                                        className="accent-primary size-4 cursor-pointer disabled:cursor-not-allowed"
+                                                        title={aplican[a.id] ? 'La actividad aplica a este plan' : 'No aplica (excluida del cumplimiento)'}
+                                                    />
+                                                </td>
                                                 <td className="max-w-md px-3 py-2">
                                                     <div className="flex items-center gap-2">
                                                         <span className="text-primary font-mono text-xs font-semibold">{a.codigo}</span>
@@ -270,7 +386,7 @@ export default function PlanTrabajoIndex({ activities, plan, needsClient }: Prop
                                                     <input
                                                         value={filas[a.id]?.responsable ?? ''}
                                                         onChange={(e) => setResp(a.id, e.target.value)}
-                                                        disabled={!canManage}
+                                                        disabled={!canManage || !aplican[a.id]}
                                                         placeholder="—"
                                                         className="border-input bg-background w-28 rounded border px-2 py-1 text-xs disabled:opacity-60"
                                                     />
@@ -282,7 +398,7 @@ export default function PlanTrabajoIndex({ activities, plan, needsClient }: Prop
                                                         <td key={i} className="px-0.5 py-2 text-center">
                                                             <button
                                                                 type="button"
-                                                                disabled={!canManage}
+                                                                disabled={!canManage || !aplican[a.id]}
                                                                 onClick={() => ciclar(a.id, mes)}
                                                                 title={`${MESES_LARGOS[i]}: ${s === 2 ? 'Ejecutado' : s === 1 ? 'Programado' : 'Sin programar'}`}
                                                                 className={cn(
@@ -313,6 +429,67 @@ export default function PlanTrabajoIndex({ activities, plan, needsClient }: Prop
                         </Button>
                     </div>
                 )}
+
+                {/* Firmas del plan: representante legal + responsable del SG-SST */}
+                <Card>
+                    <CardContent className="space-y-4 p-5">
+                        <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+                            <PenLine className="size-4" /> Firmas del plan {plan?.anio}
+                        </div>
+                        <p className="text-muted-foreground text-xs">
+                            La firma registra nombre, cédula y fecha/hora como sello del sistema. Guarda el plan antes de firmar.
+                        </p>
+                        <div className="grid gap-4 md:grid-cols-2">
+                            {(
+                                [
+                                    { rol: 'representante' as const, titulo: 'Representante legal', firma: plan?.firma_rep, estado: firmaRep, setEstado: setFirmaRep },
+                                    { rol: 'responsable' as const, titulo: 'Responsable del SG-SST', firma: plan?.firma_resp, estado: firmaResp, setEstado: setFirmaResp },
+                                ]
+                            ).map(({ rol, titulo, firma, estado, setEstado }) => (
+                                <div key={rol} className="rounded-lg border p-4">
+                                    <div className="mb-3 text-sm font-semibold">{titulo}</div>
+                                    {firma ? (
+                                        <div className="space-y-1.5">
+                                            <div className="flex items-center gap-2 text-sm font-medium text-green-700 dark:text-green-400">
+                                                <CheckCircle2 className="size-4" /> Firmado
+                                            </div>
+                                            <div className="font-brand text-lg">{firma.nombre}</div>
+                                            <div className="text-muted-foreground text-xs">
+                                                {firma.cc ? `C.C. ${firma.cc} · ` : ''}
+                                                {firma.fecha}
+                                            </div>
+                                            {canManage && (
+                                                <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive mt-1 h-7 px-2 text-xs" onClick={() => quitarFirma(rol)}>
+                                                    Quitar firma
+                                                </Button>
+                                            )}
+                                        </div>
+                                    ) : canManage ? (
+                                        <div className="space-y-2">
+                                            <input
+                                                value={estado.nombre}
+                                                onChange={(e) => setEstado({ ...estado, nombre: e.target.value })}
+                                                placeholder="Nombre completo"
+                                                className="border-input bg-background w-full rounded-md border px-3 py-1.5 text-sm"
+                                            />
+                                            <input
+                                                value={estado.cc}
+                                                onChange={(e) => setEstado({ ...estado, cc: e.target.value })}
+                                                placeholder="Cédula (C.C.)"
+                                                className="border-input bg-background w-full rounded-md border px-3 py-1.5 text-sm"
+                                            />
+                                            <Button size="sm" className="gap-2" disabled={!estado.nombre.trim()} onClick={() => firmar(rol)}>
+                                                <PenLine className="size-4" /> Firmar
+                                            </Button>
+                                        </div>
+                                    ) : (
+                                        <div className="text-muted-foreground text-sm">Pendiente de firma.</div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         </AppLayout>
     );

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AiDocumentController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocumentoEmpresaController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\IpercController;
 use App\Http\Controllers\OrganizacionController;
@@ -82,59 +83,77 @@ Route::middleware(['auth', 'verified'])->group(function () {
     | Ver -> sst.view | Diligenciar -> sst.manage
     */
     Route::get('diagnostico', [SstDiagnosticController::class, 'show'])
-        ->middleware('permission:sst.view')->name('diagnostico.show');
+        ->middleware(['permission:sst.view', 'module:diagnostico'])->name('diagnostico.show');
     Route::post('diagnostico', [SstDiagnosticController::class, 'save'])
-        ->middleware('permission:sst.manage')->name('diagnostico.save');
+        ->middleware(['permission:sst.manage', 'module:diagnostico'])->name('diagnostico.save');
 
     /*
     | Matriz IPERC (GTC 45) del cliente activo.
     | Ver -> sst.view | Gestionar -> sst.manage
     */
     Route::get('iperc', [IpercController::class, 'index'])
-        ->middleware('permission:sst.view')->name('iperc.index');
+        ->middleware(['permission:sst.view', 'module:iperc'])->name('iperc.index');
     Route::post('iperc', [IpercController::class, 'store'])
-        ->middleware('permission:sst.manage')->name('iperc.store');
+        ->middleware(['permission:sst.manage', 'module:iperc'])->name('iperc.store');
     Route::put('iperc/{peligro}', [IpercController::class, 'update'])
-        ->middleware('permission:sst.manage')->name('iperc.update');
+        ->middleware(['permission:sst.manage', 'module:iperc'])->name('iperc.update');
     Route::delete('iperc/{peligro}', [IpercController::class, 'destroy'])
-        ->middleware('permission:sst.manage')->name('iperc.destroy');
+        ->middleware(['permission:sst.manage', 'module:iperc'])->name('iperc.destroy');
 
     /*
     | Plan de Trabajo Anual del SGI (cronograma por cláusulas ISO) del cliente activo.
     | Ver -> sst.view | Diligenciar -> sst.manage
     */
     Route::get('plan-trabajo', [WorkPlanController::class, 'show'])
-        ->middleware('permission:sst.view')->name('plan-trabajo.show');
+        ->middleware(['permission:sst.view', 'module:plan-trabajo'])->name('plan-trabajo.show');
     Route::post('plan-trabajo', [WorkPlanController::class, 'save'])
-        ->middleware('permission:sst.manage')->name('plan-trabajo.save');
+        ->middleware(['permission:sst.manage', 'module:plan-trabajo'])->name('plan-trabajo.save');
+    Route::post('plan-trabajo/firmar', [WorkPlanController::class, 'firmar'])
+        ->middleware(['permission:sst.manage', 'module:plan-trabajo'])->name('plan-trabajo.firmar');
+    Route::post('plan-trabajo/firma/quitar', [WorkPlanController::class, 'quitarFirma'])
+        ->middleware(['permission:sst.manage', 'module:plan-trabajo'])->name('plan-trabajo.quitar-firma');
 
     /*
     | Dashboard de Indicadores del SGI (Res. 0312 / Dec. 1072) del cliente activo.
     | Ver -> sst.view | Registrar/gestionar -> sst.manage
     */
     Route::get('indicadores', [IndicatorController::class, 'index'])
-        ->middleware('permission:sst.view')->name('indicadores.index');
+        ->middleware(['permission:sst.view', 'module:indicadores'])->name('indicadores.index');
     Route::post('indicadores/lecturas', [IndicatorController::class, 'save'])
-        ->middleware('permission:sst.manage')->name('indicadores.save');
+        ->middleware(['permission:sst.manage', 'module:indicadores'])->name('indicadores.save');
     Route::post('indicadores', [IndicatorController::class, 'store'])
-        ->middleware('permission:sst.manage')->name('indicadores.store');
+        ->middleware(['permission:sst.manage', 'module:indicadores'])->name('indicadores.store');
     Route::delete('indicadores/{indicator}', [IndicatorController::class, 'destroy'])
-        ->middleware('permission:sst.manage')->name('indicadores.destroy');
+        ->middleware(['permission:sst.manage', 'module:indicadores'])->name('indicadores.destroy');
+
+    /*
+    | Documentos de la empresa: repositorio documental por cliente — exports
+    | archivados de Documentos IA + archivos subidos (firmados, evidencias).
+    | Ver/descargar -> documents.view | Subir/eliminar -> documents.manage
+    */
+    Route::get('documentos', [DocumentoEmpresaController::class, 'index'])
+        ->middleware(['permission:documents.view', 'module:documentos'])->name('documentos.index');
+    Route::post('documentos', [DocumentoEmpresaController::class, 'store'])
+        ->middleware(['permission:documents.manage', 'module:documentos'])->name('documentos.store');
+    Route::get('documentos/{documento}/descargar', [DocumentoEmpresaController::class, 'download'])
+        ->middleware(['permission:documents.view', 'module:documentos'])->name('documentos.download');
+    Route::delete('documentos/{documento}', [DocumentoEmpresaController::class, 'destroy'])
+        ->middleware(['permission:documents.manage', 'module:documentos'])->name('documentos.destroy');
 
     /*
     | Generación de documentos SGI con IA (Claude) para el cliente activo.
     | Ver -> documents.view | Generar/editar -> documents.manage
     */
     Route::get('documentos-ia', [AiDocumentController::class, 'index'])
-        ->middleware('permission:documents.view')->name('documentos-ia.index');
+        ->middleware(['permission:documents.view', 'module:documentos-ia'])->name('documentos-ia.index');
     Route::post('documentos-ia/generar', [AiDocumentController::class, 'generate'])
-        ->middleware('permission:documents.manage')->name('documentos-ia.generate');
+        ->middleware(['permission:documents.manage', 'module:documentos-ia'])->name('documentos-ia.generate');
     Route::put('documentos-ia/{documento}', [AiDocumentController::class, 'update'])
-        ->middleware('permission:documents.manage')->name('documentos-ia.update');
+        ->middleware(['permission:documents.manage', 'module:documentos-ia'])->name('documentos-ia.update');
     Route::delete('documentos-ia/{documento}', [AiDocumentController::class, 'destroy'])
-        ->middleware('permission:documents.manage')->name('documentos-ia.destroy');
+        ->middleware(['permission:documents.manage', 'module:documentos-ia'])->name('documentos-ia.destroy');
     Route::get('documentos-ia/{documento}/export', [AiDocumentController::class, 'export'])
-        ->middleware('permission:documents.view')->name('documentos-ia.export');
+        ->middleware(['permission:documents.view', 'module:documentos-ia'])->name('documentos-ia.export');
 
     /*
     | Módulos de la plataforma (Fase 1: shells navegables protegidos por permiso).
@@ -144,11 +163,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ['sst', 'SST', 'Matriz de peligros, plan anual, indicadores y accidentes.', 'sst.view'],
         ['hseq', 'HSEQ', 'Gestión ambiental, calidad y auditorías.', 'hseq.view'],
         ['pesv', 'PESV', 'Gestión vial, conductores, vehículos y capacitaciones.', 'pesv.view'],
-        ['documentos', 'Documentos', 'Gestión documental, versionado y evidencias.', 'documents.view'],
         ['inspecciones', 'Inspecciones', 'Inspecciones en campo (PWA): checklists, fotos GPS y firmas.', 'inspections.view'],
         ['reportes', 'Reportes', 'Informes PDF auditables, indicadores y exportaciones.', 'reports.view'],
         ['auditoria', 'Auditoría', 'Consulta y evidencia de información auditable del cliente.', 'audit.view'],
-        ['configuracion', 'Configuración', 'Parámetros de la plataforma e integraciones.', 'settings.manage'],
     ];
 
     foreach ($modules as [$slug, $title, $desc, $permission]) {
@@ -156,8 +173,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'title' => $title,
             'description' => $desc,
             'permission' => $permission,
-        ]))->middleware("permission:{$permission}")->name("modules.{$slug}");
+        ]))->middleware(["permission:{$permission}", "module:{$slug}"])->name("modules.{$slug}");
     }
+
+    // Configuración: administración de la plataforma (no depende de contrato).
+    Route::get('configuracion', fn () => Inertia::render('module-placeholder', [
+        'title' => 'Configuración',
+        'description' => 'Parámetros de la plataforma e integraciones.',
+        'permission' => 'settings.manage',
+    ]))->middleware('permission:settings.manage')->name('modules.configuracion');
 });
 
 require __DIR__.'/settings.php';

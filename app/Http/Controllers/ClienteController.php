@@ -22,7 +22,7 @@ class ClienteController extends Controller
         $clients = Tenant::query()
             ->withCount('users')
             ->latest()
-            ->get(['id', 'name', 'legal_name', 'nit', 'email', 'phone', 'city', 'address', 'is_active']);
+            ->get(['id', 'name', 'legal_name', 'nit', 'email', 'phone', 'city', 'address', 'is_active', 'modulos']);
 
         return Inertia::render('clientes/index', [
             'clients' => $clients,
@@ -31,6 +31,8 @@ class ClienteController extends Controller
                 'active' => $clients->where('is_active', true)->count(),
                 'users' => $clients->sum('users_count'),
             ],
+            // Catálogo de módulos contratables (clave => etiqueta) para el diálogo.
+            'modulosCatalogo' => config('cmk.modulos_contratables'),
         ]);
     }
 
@@ -86,7 +88,7 @@ class ClienteController extends Controller
      */
     private function validated(Request $request, ?Tenant $cliente = null): array
     {
-        return $request->validate([
+        $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'legal_name' => ['nullable', 'string', 'max:255'],
             'nit' => [
@@ -98,6 +100,19 @@ class ClienteController extends Controller
             'city' => ['nullable', 'string', 'max:120'],
             'address' => ['nullable', 'string', 'max:255'],
             'is_active' => ['boolean'],
+            // Módulos contratados por la empresa (claves del catálogo).
+            'modulos' => ['nullable', 'array'],
+            'modulos.*' => [Rule::in(array_keys(config('cmk.modulos_contratables')))],
         ]);
+
+        // Si contrató todos los módulos, se guarda null (= todos, incluye futuros).
+        if (array_key_exists('modulos', $data)) {
+            $todos = array_keys(config('cmk.modulos_contratables'));
+            $data['modulos'] = ($data['modulos'] === null || count($data['modulos']) === count($todos))
+                ? null
+                : array_values($data['modulos']);
+        }
+
+        return $data;
     }
 }

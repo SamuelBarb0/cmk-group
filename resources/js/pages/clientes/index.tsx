@@ -31,11 +31,15 @@ interface Client {
     address: string | null;
     is_active: boolean;
     users_count: number;
+    /** Módulos contratados (null = todos). */
+    modulos: string[] | null;
 }
 
 interface Props {
     clients: Client[];
     stats: { total: number; active: number; users: number };
+    /** Catálogo de módulos contratables: clave => etiqueta. */
+    modulosCatalogo: Record<string, string>;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -70,7 +74,8 @@ function StatCard({ label, value, icon: Icon }: { label: string; value: number; 
     );
 }
 
-export default function ClientesIndex({ clients, stats }: Props) {
+export default function ClientesIndex({ clients, stats, modulosCatalogo }: Props) {
+    const todasLasClaves = Object.keys(modulosCatalogo);
     const { can } = usePermissions();
     const canManage = can('clients.manage');
     const page = usePage<SharedData>();
@@ -82,7 +87,10 @@ export default function ClientesIndex({ clients, stats }: Props) {
     const [editing, setEditing] = useState<Client | null>(null);
     const [notice, setNotice] = useState<string | null>(null);
 
-    const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({ ...emptyForm });
+    const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
+        ...emptyForm,
+        modulos: todasLasClaves as string[],
+    });
 
     // Muestra la confirmación flash del backend unos segundos.
     useEffect(() => {
@@ -97,7 +105,7 @@ export default function ClientesIndex({ clients, stats }: Props) {
         setEditing(null);
         clearErrors();
         reset();
-        setData({ ...emptyForm });
+        setData({ ...emptyForm, modulos: todasLasClaves });
         setOpen(true);
     }
 
@@ -113,8 +121,17 @@ export default function ClientesIndex({ clients, stats }: Props) {
             city: client.city ?? '',
             address: client.address ?? '',
             is_active: client.is_active,
+            // null en BD = todos los módulos contratados.
+            modulos: client.modulos ?? todasLasClaves,
         });
         setOpen(true);
+    }
+
+    function toggleModulo(clave: string) {
+        setData(
+            'modulos',
+            data.modulos.includes(clave) ? data.modulos.filter((m) => m !== clave) : [...data.modulos, clave],
+        );
     }
 
     const submit: FormEventHandler = (e) => {
@@ -329,6 +346,34 @@ export default function ClientesIndex({ clients, stats }: Props) {
                             <Label htmlFor="address">Dirección</Label>
                             <Input id="address" value={data.address} onChange={(e) => setData('address', e.target.value)} />
                             <InputError message={errors.address} />
+                        </div>
+
+                        {/* Módulos contratados por la empresa */}
+                        <div className="space-y-2 pt-1">
+                            <div className="flex items-center justify-between">
+                                <Label>Módulos contratados</Label>
+                                <button
+                                    type="button"
+                                    className="text-primary text-xs font-medium hover:underline"
+                                    onClick={() =>
+                                        setData('modulos', data.modulos.length === todasLasClaves.length ? [] : todasLasClaves)
+                                    }
+                                >
+                                    {data.modulos.length === todasLasClaves.length ? 'Quitar todos' : 'Seleccionar todos'}
+                                </button>
+                            </div>
+                            <div className="grid grid-cols-1 gap-1.5 rounded-lg border p-3 sm:grid-cols-2">
+                                {todasLasClaves.map((clave) => (
+                                    <label key={clave} className="flex cursor-pointer items-center gap-2 text-sm">
+                                        <Checkbox checked={data.modulos.includes(clave)} onCheckedChange={() => toggleModulo(clave)} />
+                                        <span>{modulosCatalogo[clave]}</span>
+                                    </label>
+                                ))}
+                            </div>
+                            <p className="text-muted-foreground text-xs">
+                                La plataforma solo mostrará a esta empresa los módulos contratados. Organización y Empleados siempre están incluidos.
+                            </p>
+                            <InputError message={errors.modulos} />
                         </div>
 
                         <label className="flex cursor-pointer items-center gap-3 pt-1">

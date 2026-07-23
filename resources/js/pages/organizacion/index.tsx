@@ -30,6 +30,9 @@ interface Organizacion {
     representante_cc: string | null;
     responsable_sgsst: string | null;
     licencia_sgsst: string | null;
+    licencia_sgsst_vence: string | null;
+    curso_sst_horas: string | null;
+    curso_sst_fecha: string | null;
 }
 
 interface Props {
@@ -61,6 +64,9 @@ export default function OrganizacionIndex({ organizacion, needsClient, empleados
         representante_cc: organizacion?.representante_cc ?? '',
         responsable_sgsst: organizacion?.responsable_sgsst ?? '',
         licencia_sgsst: organizacion?.licencia_sgsst ?? '',
+        licencia_sgsst_vence: organizacion?.licencia_sgsst_vence ?? '',
+        curso_sst_horas: organizacion?.curso_sst_horas ?? '',
+        curso_sst_fecha: organizacion?.curso_sst_fecha ?? '',
     });
 
     useEffect(() => {
@@ -106,6 +112,16 @@ export default function OrganizacionIndex({ organizacion, needsClient, empleados
 
     const declarado = data.num_trabajadores ? parseInt(data.num_trabajadores, 10) : null;
     const descuadre = declarado !== null && declarado !== empleadosCount;
+
+    // Alerta de licencia SST: vencida (rojo) o vence en ≤60 días (ámbar).
+    const licenciaAlerta = (() => {
+        if (!data.licencia_sgsst_vence) return null;
+        const vence = new Date(`${data.licencia_sgsst_vence}T00:00:00`);
+        const dias = Math.ceil((vence.getTime() - Date.now()) / 86_400_000);
+        if (dias < 0) return { vencida: true, mensaje: `La licencia SST del responsable está VENCIDA desde hace ${-dias} días.` };
+        if (dias <= 60) return { vencida: false, mensaje: `La licencia SST del responsable vence en ${dias} días.` };
+        return null;
+    })();
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -261,7 +277,55 @@ export default function OrganizacionIndex({ organizacion, needsClient, empleados
                                     <Input id="licencia_sgsst" value={data.licencia_sgsst} onChange={(e) => setData('licencia_sgsst', e.target.value)} disabled={!canManage} />
                                     <InputError message={errors.licencia_sgsst} />
                                 </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="licencia_sgsst_vence">Expiración de la licencia</Label>
+                                    <Input
+                                        id="licencia_sgsst_vence"
+                                        type="date"
+                                        value={data.licencia_sgsst_vence}
+                                        onChange={(e) => setData('licencia_sgsst_vence', e.target.value)}
+                                        disabled={!canManage}
+                                    />
+                                    <InputError message={errors.licencia_sgsst_vence} />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="curso_sst_horas">Curso SG-SST del responsable</Label>
+                                    <select
+                                        id="curso_sst_horas"
+                                        value={data.curso_sst_horas}
+                                        onChange={(e) => setData('curso_sst_horas', e.target.value)}
+                                        disabled={!canManage}
+                                        className="border-input bg-background h-9 rounded-md border px-3 text-sm disabled:opacity-60"
+                                    >
+                                        <option value="">—</option>
+                                        <option value="50">Curso de 50 horas</option>
+                                        <option value="20">Actualización de 20 horas</option>
+                                    </select>
+                                    <InputError message={errors.curso_sst_horas} />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="curso_sst_fecha">Fecha del curso</Label>
+                                    <Input
+                                        id="curso_sst_fecha"
+                                        type="date"
+                                        value={data.curso_sst_fecha}
+                                        onChange={(e) => setData('curso_sst_fecha', e.target.value)}
+                                        disabled={!canManage}
+                                    />
+                                    <InputError message={errors.curso_sst_fecha} />
+                                </div>
                             </div>
+                            {licenciaAlerta && (
+                                <div
+                                    className={
+                                        licenciaAlerta.vencida
+                                            ? 'flex items-center gap-2 rounded-lg border border-red-600/30 bg-red-600/10 px-3 py-2 text-xs text-red-700 dark:text-red-400'
+                                            : 'flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-400'
+                                    }
+                                >
+                                    <ShieldAlert className="size-4" /> {licenciaAlerta.mensaje}
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
 

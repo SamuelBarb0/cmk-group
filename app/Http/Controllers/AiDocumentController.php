@@ -156,13 +156,32 @@ class AiDocumentController extends Controller
         return back()->with('success', 'Documento eliminado.');
     }
 
-    /** Descarga el documento como .docx con membrete de CMK. */
+    /** Descarga el documento como .docx con membrete de CMK y lo deja archivado en el repositorio de la empresa. */
     public function export(GeneratedDocument $documento, DocxExporter $exporter): BinaryFileResponse
     {
         $path = $exporter->export($documento);
 
+        // El export QUEDA guardado para la empresa (repositorio documental):
+        // un archivo por documento, la última versión reemplaza a la anterior.
+        $slug = \Illuminate\Support\Str::slug($documento->titulo);
+        $archivo = "tenants/{$documento->tenant_id}/documentos/{$slug}.docx";
+        \Illuminate\Support\Facades\Storage::disk('local')->put($archivo, file_get_contents($path));
+
+        \App\Models\TenantDocument::updateOrCreate(
+            ['generated_document_id' => $documento->id],
+            [
+                'nombre' => "{$documento->titulo} (v{$documento->version})",
+                'categoria' => 'Documentos IA',
+                'origen' => 'export',
+                'path' => $archivo,
+                'size' => \Illuminate\Support\Facades\Storage::disk('local')->size($archivo),
+                'mime' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'subido_por' => request()->user()?->name,
+            ],
+        );
+
         return response()
-            ->download($path, \Illuminate\Support\Str::slug($documento->titulo).'.docx')
+            ->download($path, "{$slug}.docx")
             ->deleteFileAfterSend();
     }
 }

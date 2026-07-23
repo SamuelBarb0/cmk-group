@@ -18,6 +18,16 @@ class WorkPlan extends Model
         'anio',
         'responsable',
         'cumplimiento',
+        'metas',
+        'objetivos',
+        'recursos',
+        'actividades_seleccionadas',
+        'firma_rep_nombre',
+        'firma_rep_cc',
+        'firma_rep_at',
+        'firma_resp_nombre',
+        'firma_resp_cc',
+        'firma_resp_at',
     ];
 
     protected function casts(): array
@@ -25,7 +35,17 @@ class WorkPlan extends Model
         return [
             'anio' => 'integer',
             'cumplimiento' => 'decimal:2',
+            'actividades_seleccionadas' => 'array',
+            'firma_rep_at' => 'datetime',
+            'firma_resp_at' => 'datetime',
         ];
+    }
+
+    /** ¿La actividad del catálogo aplica a este plan? (null = todas aplican). */
+    public function actividadAplica(int $activityId): bool
+    {
+        return $this->actividades_seleccionadas === null
+            || in_array($activityId, $this->actividades_seleccionadas, true);
     }
 
     /** @return HasMany<WorkPlanItem, $this> */

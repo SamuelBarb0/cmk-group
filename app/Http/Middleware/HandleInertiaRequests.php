@@ -57,6 +57,10 @@ class HandleInertiaRequests extends Middleware
             'tenant' => $context->has()
                 ? ['id' => $context->get()?->id, 'name' => $context->get()?->name]
                 : null,
+            // Módulos contratados por la empresa activa (null = todos / sin cliente activo).
+            // Prop de nivel superior: los controladores pisan 'tenant' con su propia
+            // versión por página y se perdería si viajara dentro de 'tenant'.
+            'modulos_contratados' => $context->get()?->modulos,
             'company' => config('cmk.company'),
             // Mensajes flash de una sola vez (confirmaciones de acciones).
             'flash' => [
