@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
         $this->call(BaseDocumentsSeeder::class);         // contenido base (POL/MAN/INV)
         $this->call(ProcedimientosBaseSeeder::class);    // procedimientos base adicionales
         $this->call(FormFormatsSeeder::class);           // motor de formatos (inspecciones/actas)
+        $this->call(TrainingTopicsSeeder::class);        // biblioteca de capacitaciones
 
         // --- Personal de CMK GROUP (sin tenant, acceso multi-cliente) ---
         $admin = User::factory()->create([

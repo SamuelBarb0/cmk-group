@@ -94,6 +94,7 @@ return [
         'iperc'         => 'Matriz IPERC (GTC 45)',
         'plan-trabajo'  => 'Plan de Trabajo Anual',
         'indicadores'   => 'Indicadores',
+        'capacitaciones' => 'Capacitaciones',
         'documentos'    => 'Documentos de la empresa',
         'documentos-ia' => 'Documentos IA',
         'inspecciones'  => 'Formatos (inspecciones y actas)',

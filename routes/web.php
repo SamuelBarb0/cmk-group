@@ -9,6 +9,7 @@ use App\Http\Controllers\FormatoController;
 use App\Http\Controllers\IpercController;
 use App\Http\Controllers\OrganizacionController;
 use App\Http\Controllers\IndicatorController;
+use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\SstDiagnosticController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\WorkPlanController;
@@ -142,6 +143,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:documents.view', 'module:documentos'])->name('documentos.download');
     Route::delete('documentos/{documento}', [DocumentoEmpresaController::class, 'destroy'])
         ->middleware(['permission:documents.manage', 'module:documentos'])->name('documentos.destroy');
+
+    /*
+    | Capacitaciones del SGI del cliente activo: biblioteca de temas (material
+    | descargable) + capacitaciones con registro de asistencia exportable.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::get('capacitaciones', [TrainingController::class, 'index'])
+        ->middleware(['permission:sst.view', 'module:capacitaciones'])->name('capacitaciones.index');
+    Route::get('capacitaciones/tema/{tema}/material', [TrainingController::class, 'material'])
+        ->middleware(['permission:sst.view', 'module:capacitaciones'])->name('capacitaciones.material');
+    Route::get('capacitaciones/{capacitacion}', [TrainingController::class, 'show'])
+        ->middleware(['permission:sst.view', 'module:capacitaciones'])->name('capacitaciones.show');
+    Route::post('capacitaciones', [TrainingController::class, 'store'])
+        ->middleware(['permission:sst.manage', 'module:capacitaciones'])->name('capacitaciones.store');
+    Route::put('capacitaciones/{capacitacion}', [TrainingController::class, 'update'])
+        ->middleware(['permission:sst.manage', 'module:capacitaciones'])->name('capacitaciones.update');
+    Route::delete('capacitaciones/{capacitacion}', [TrainingController::class, 'destroy'])
+        ->middleware(['permission:sst.manage', 'module:capacitaciones'])->name('capacitaciones.destroy');
+    Route::get('capacitaciones/{capacitacion}/export', [TrainingController::class, 'export'])
+        ->middleware(['permission:sst.view', 'module:capacitaciones'])->name('capacitaciones.export');
 
     /*
     | Motor de formatos (Tier 4): inspecciones, actas y listas de chequeo del
