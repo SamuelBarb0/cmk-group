@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Indicator;
+use App\Models\IndicatorGoal;
 use App\Models\IndicatorReading;
 use App\Support\TenantContext;
 use Illuminate\Http\RedirectResponse;
@@ -44,7 +45,10 @@ class IndicatorController extends Controller
         $readings = IndicatorReading::where('anio', $anio)->get()
             ->groupBy('indicator_id');
 
-        $payload = $indicators->map(function (Indicator $ind) use ($readings) {
+        // Metas propias del cliente para los presets (el scope filtra por tenant).
+        $metasPropias = IndicatorGoal::pluck('meta', 'indicator_id');
+
+        $payload = $indicators->map(function (Indicator $ind) use ($readings, $metasPropias) {
             $meses = [];
             $suma = 0;
             $conteo = 0;
@@ -64,6 +68,12 @@ class IndicatorController extends Controller
 
             $promedio = $conteo > 0 ? round($suma / $conteo, 2) : null;
 
+            // Meta efectiva: la propia del cliente si existe; si no, la legal.
+            $metaLegal = (float) $ind->meta;
+            $metaPropia = $metasPropias->has($ind->id);
+            $meta = $metaPropia ? (float) $metasPropias->get($ind->id) : $metaLegal;
+            $cumple = $promedio === null ? null : ($ind->sentido === 'asc' ? $promedio >= $meta : $promedio <= $meta);
+
             return [
                 'id' => $ind->id,
                 'codigo' => $ind->codigo,
@@ -74,12 +84,14 @@ class IndicatorController extends Controller
                 'constante' => $ind->constante,
                 'unidad' => $ind->unidad,
                 'sentido' => $ind->sentido,
-                'meta' => (float) $ind->meta,
+                'meta' => $meta,
+                'meta_legal' => $metaLegal,
+                'meta_propia' => $metaPropia,
                 'es_legal' => $ind->es_legal,
                 'propio' => $ind->tenant_id !== null,
                 'meses' => $meses,
                 'promedio' => $promedio,
-                'cumple' => $ind->cumpleMeta($promedio),
+                'cumple' => $cumple,
             ];
         });
 
@@ -114,6 +126,39 @@ class IndicatorController extends Controller
         }
 
         return back()->with('success', 'Indicador actualizado.');
+    }
+
+    /** Fija (o restaura) la meta propia del cliente para un indicador preset. */
+    public function goal(Request $request): RedirectResponse
+    {
+        if (! $this->context->has()) {
+            return back()->withErrors(['tenant' => 'Selecciona un cliente antes de ajustar metas.']);
+        }
+
+        $data = $request->validate([
+            'indicator_id' => ['required', 'integer', 'exists:indicators,id'],
+            'meta' => ['nullable', 'numeric', 'min:0'],
+        ]);
+
+        $indicator = Indicator::findOrFail($data['indicator_id']);
+
+        if ($indicator->tenant_id !== null) {
+            // Indicador propio: su meta vive en el indicador, no hay override.
+            return back()->withErrors(['meta' => 'La meta de un indicador propio se edita en el propio indicador.']);
+        }
+
+        if ($data['meta'] === null) {
+            IndicatorGoal::where('indicator_id', $indicator->id)->delete(); // scoped al tenant activo
+
+            return back()->with('success', "Meta legal restaurada para «{$indicator->nombre}».");
+        }
+
+        IndicatorGoal::updateOrCreate(
+            ['indicator_id' => $indicator->id],
+            ['meta' => $data['meta']],
+        );
+
+        return back()->with('success', "Meta de «{$indicator->nombre}» ajustada para este cliente.");
     }
 
     /** Crea un indicador propio del cliente. */

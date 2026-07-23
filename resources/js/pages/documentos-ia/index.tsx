@@ -35,7 +35,7 @@ interface GenDoc {
     id: number;
     document_template_id: number | null;
     titulo: string;
-    estado: 'borrador' | 'en_revision' | 'aprobado';
+    estado: 'generando' | 'borrador' | 'en_revision' | 'aprobado' | 'error';
     version: number;
     generado_por: string | null;
     updated_at: string;
@@ -54,9 +54,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const ESTADO: Record<GenDoc['estado'], { label: string; cls: string }> = {
+    generando: { label: 'Generando…', cls: 'bg-blue-600 text-white' },
     borrador: { label: 'Borrador', cls: 'bg-slate-500 text-white' },
     en_revision: { label: 'En revisión', cls: 'bg-amber-500 text-white' },
     aprobado: { label: 'Aprobado', cls: 'bg-green-600 text-white' },
+    error: { label: 'Error', cls: 'bg-red-600 text-white' },
 };
 
 export default function DocumentosIaIndex({ templates, documents, needsClient }: Props) {
@@ -80,6 +82,15 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
         }
     }, [flash?.success]);
 
+    // Mientras la cola redacta algún documento, refresca la lista cada 5 s
+    // para que el estado pase solo de «Generando…» a «Borrador».
+    const generandoEnCola = documents.some((d) => d.estado === 'generando');
+    useEffect(() => {
+        if (!generandoEnCola) return;
+        const t = setInterval(() => router.reload({ only: ['documents'] }), 5000);
+        return () => clearInterval(t);
+    }, [generandoEnCola]);
+
     function generar(t: Template) {
         router.post(
             route('documentos-ia.generate'),
@@ -90,7 +101,9 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
 
     function openEdit(doc: GenDoc) {
         setEditing(doc);
-        setData({ titulo: doc.titulo, contenido: doc.contenido, estado: doc.estado });
+        // «generando»/«error» no son estados del flujo de revisión: al editar se retoma como borrador.
+        const estado = doc.estado === 'generando' || doc.estado === 'error' ? 'borrador' : doc.estado;
+        setData({ titulo: doc.titulo, contenido: doc.contenido, estado });
     }
 
     const submit: FormEventHandler = (e) => {
@@ -234,18 +247,25 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
                                                 <td className="px-5 py-3 text-center tabular-nums">v{d.version}</td>
                                                 <td className="text-muted-foreground px-5 py-3">{d.generado_por ?? '—'}</td>
                                                 <td className="px-5 py-3 text-center">
-                                                    <Badge className={cn(ESTADO[d.estado].cls)}>{ESTADO[d.estado].label}</Badge>
+                                                    <Badge className={cn(ESTADO[d.estado].cls, 'gap-1')}>
+                                                        {d.estado === 'generando' && <Loader2 className="size-3 animate-spin" />}
+                                                        {ESTADO[d.estado].label}
+                                                    </Badge>
                                                 </td>
                                                 <td className="px-5 py-3">
                                                     <div className="flex items-center justify-end gap-1">
-                                                        <Button variant="ghost" size="icon" asChild aria-label="Descargar Word">
-                                                            <a href={route('documentos-ia.export', d.id)}>
-                                                                <Download className="size-4" />
-                                                            </a>
-                                                        </Button>
-                                                        <Button variant="ghost" size="icon" onClick={() => openEdit(d)} aria-label="Ver / editar">
-                                                            <Pencil className="size-4" />
-                                                        </Button>
+                                                        {d.estado !== 'generando' && d.estado !== 'error' && (
+                                                            <Button variant="ghost" size="icon" asChild aria-label="Descargar Word">
+                                                                <a href={route('documentos-ia.export', d.id)}>
+                                                                    <Download className="size-4" />
+                                                                </a>
+                                                            </Button>
+                                                        )}
+                                                        {d.estado !== 'generando' && (
+                                                            <Button variant="ghost" size="icon" onClick={() => openEdit(d)} aria-label="Ver / editar">
+                                                                <Pencil className="size-4" />
+                                                            </Button>
+                                                        )}
                                                         {canManage && (
                                                             <Button
                                                                 variant="ghost"

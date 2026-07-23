@@ -121,6 +121,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.view', 'module:indicadores'])->name('indicadores.index');
     Route::post('indicadores/lecturas', [IndicatorController::class, 'save'])
         ->middleware(['permission:sst.manage', 'module:indicadores'])->name('indicadores.save');
+    Route::put('indicadores/meta', [IndicatorController::class, 'goal'])
+        ->middleware(['permission:sst.manage', 'module:indicadores'])->name('indicadores.meta');
     Route::post('indicadores', [IndicatorController::class, 'store'])
         ->middleware(['permission:sst.manage', 'module:indicadores'])->name('indicadores.store');
     Route::delete('indicadores/{indicator}', [IndicatorController::class, 'destroy'])

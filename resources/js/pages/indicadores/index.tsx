@@ -10,7 +10,7 @@ import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import { Building2, Plus, Save, Trash2 } from 'lucide-react';
+import { Building2, Pencil, Plus, Save, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 type Sentido = 'asc' | 'desc';
@@ -30,6 +30,8 @@ interface Indicator {
     unidad: string;
     sentido: Sentido;
     meta: number;
+    meta_legal: number;
+    meta_propia: boolean;
     es_legal: boolean;
     propio: boolean;
     meses: Record<number, MesData>;
@@ -69,6 +71,29 @@ export default function IndicadoresIndex({ indicators, anio, needsClient }: Prop
     const [entry, setEntry] = useState<Record<number, { numerador: string; denominador: string }>>({});
     const [savingEntry, setSavingEntry] = useState(false);
     const [newOpen, setNewOpen] = useState(false);
+    const [metaFor, setMetaFor] = useState<Indicator | null>(null);
+    const [metaVal, setMetaVal] = useState('');
+    const [savingMeta, setSavingMeta] = useState(false);
+
+    function openMeta(ind: Indicator) {
+        setMetaVal(String(ind.meta));
+        setMetaFor(ind);
+    }
+
+    /** Guarda la meta propia del cliente; con restaurar=true vuelve a la meta legal. */
+    function saveMeta(restaurar = false) {
+        if (!metaFor) return;
+        router.put(
+            route('indicadores.meta'),
+            { indicator_id: metaFor.id, meta: restaurar ? null : parseFloat(metaVal) || 0 },
+            {
+                preserveScroll: true,
+                onStart: () => setSavingMeta(true),
+                onFinish: () => setSavingMeta(false),
+                onSuccess: () => setMetaFor(null),
+            },
+        );
+    }
 
     function openEntry(ind: Indicator) {
         const e: Record<number, { numerador: string; denominador: string }> = {};
@@ -197,8 +222,16 @@ export default function IndicadoresIndex({ indicators, anio, needsClient }: Prop
                                             <span className={cn('size-3 rounded-full', semaforo)} />
                                             <span className="text-3xl font-bold tabular-nums">{fmt(ind.promedio, ind.unidad)}</span>
                                         </div>
-                                        <span className="text-muted-foreground text-xs">
+                                        <span className="text-muted-foreground flex items-center gap-1 text-xs">
                                             Meta {ind.sentido === 'asc' ? '≥' : '≤'} {fmt(ind.meta, ind.unidad)}
+                                            {ind.meta_propia && (
+                                                <span className="rounded bg-indigo-500/10 px-1 py-0.5 text-[9px] font-medium text-indigo-700 dark:text-indigo-400">propia</span>
+                                            )}
+                                            {!ind.propio && canManage && (
+                                                <button onClick={() => openMeta(ind)} className="hover:text-foreground" title="Ajustar meta para este cliente">
+                                                    <Pencil className="size-3" />
+                                                </button>
+                                            )}
                                         </span>
                                     </div>
 
@@ -283,6 +316,45 @@ export default function IndicadoresIndex({ indicators, anio, needsClient }: Prop
                                 </Button>
                                 <Button onClick={saveEntry} disabled={savingEntry} className="gap-2">
                                     <Save className="size-4" /> {savingEntry ? 'Guardando…' : 'Guardar'}
+                                </Button>
+                            </DialogFooter>
+                        </>
+                    )}
+                </DialogContent>
+            </Dialog>
+
+            {/* Diálogo de meta propia del cliente */}
+            <Dialog open={metaFor !== null} onOpenChange={(o) => !o && setMetaFor(null)}>
+                <DialogContent className="sm:max-w-sm">
+                    {metaFor && (
+                        <>
+                            <DialogHeader>
+                                <DialogTitle>Meta de {metaFor.codigo}</DialogTitle>
+                                <DialogDescription>
+                                    Ajusta la meta de «{metaFor.nombre}» SOLO para {tenant?.name ?? 'este cliente'}. La meta{' '}
+                                    {metaFor.es_legal ? 'legal' : 'por defecto'} es {metaFor.sentido === 'asc' ? '≥' : '≤'}{' '}
+                                    {fmt(metaFor.meta_legal, metaFor.unidad)}.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div>
+                                <Label htmlFor="meta-propia">Meta para este cliente</Label>
+                                <Input
+                                    id="meta-propia"
+                                    type="number"
+                                    min={0}
+                                    step="0.01"
+                                    value={metaVal}
+                                    onChange={(e) => setMetaVal(e.target.value)}
+                                />
+                            </div>
+                            <DialogFooter className="gap-2">
+                                {metaFor.meta_propia && (
+                                    <Button variant="outline" disabled={savingMeta} onClick={() => saveMeta(true)}>
+                                        Restaurar meta {metaFor.es_legal ? 'legal' : 'por defecto'}
+                                    </Button>
+                                )}
+                                <Button disabled={savingMeta} onClick={() => saveMeta()} className="gap-2">
+                                    <Save className="size-4" /> {savingMeta ? 'Guardando…' : 'Guardar'}
                                 </Button>
                             </DialogFooter>
                         </>

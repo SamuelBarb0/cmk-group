@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\GenerateAiDocumentJob;
 use App\Models\DocumentTemplate;
 use App\Models\GeneratedDocument;
-use App\Services\AiService;
 use App\Services\DocumentFiller;
 use App\Services\DocxExporter;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -14,7 +14,6 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
-use Throwable;
 
 /**
  * Generación de documentos SGI con IA (Claude) para el cliente activo.
@@ -28,7 +27,6 @@ class AiDocumentController extends Controller
 {
     public function __construct(
         private readonly TenantContext $context,
-        private readonly AiService $ai,
         private readonly DocumentFiller $filler,
     ) {}
 
@@ -76,41 +74,42 @@ class AiDocumentController extends Controller
             // DOCUMENTO MODELO real de CMK: se rellena de forma DETERMINISTA con
             // los datos del cliente (instantáneo, exacto, sin alterar el texto de
             // cumplimiento). No pasa por la IA.
-            $contenido = $this->filler->fill($template->contenido_base, $tenant);
-            $via = 'con los datos del cliente';
-        } else {
-            // Sin modelo base: la IA redacta desde cero a partir del prompt.
-            // Puede tardar; damos margen sobre el max_execution_time por defecto.
-            // (En producción esto debería moverse a una cola/Job.)
-            set_time_limit($this->ai->timeout() + 30);
+            GeneratedDocument::create([
+                'document_template_id' => $template->id,
+                'titulo' => $template->nombre,
+                'contenido' => $this->filler->fill($template->contenido_base, $tenant),
+                'estado' => 'borrador',
+                'version' => 1,
+                'generado_por' => $request->user()?->name,
+            ]);
 
-            $system = 'Eres un consultor senior experto en SST, PESV y HSEQ en Colombia. '
-                .'Redactas documentos formales del Sistema de Gestión conforme a la normativa colombiana '
-                .'(Decreto 1072, Resolución 0312, Resolución 1401, Resolución 40595, ISO 9001/14001/45001). '
-                .'Escribe en español formal, en formato Markdown con encabezados, listo para revisión. '
-                .'No inventes datos que no se te proporcionen: usa [PENDIENTE] cuando falte información.';
-
-            $prompt = $template->prompt."\n\n".$this->contextoCliente($tenant)
-                ."\n\nEntrega el documento completo en Markdown.";
-
-            try {
-                $contenido = $this->ai->complete($prompt, $system);
-            } catch (Throwable $e) {
-                return back()->withErrors(['ai' => 'No se pudo generar el documento: '.$e->getMessage()]);
-            }
-            $via = 'con IA';
+            return back()->with('success', "Documento «{$template->nombre}» generado con los datos del cliente.");
         }
 
-        GeneratedDocument::create([
+        // Sin modelo base: la IA redacta desde cero. Puede tardar minutos, así
+        // que se encola un Job: el documento nace en estado «generando» y el
+        // worker lo pasa a «borrador» cuando la IA termina.
+        $system = 'Eres un consultor senior experto en SST, PESV y HSEQ en Colombia. '
+            .'Redactas documentos formales del Sistema de Gestión conforme a la normativa colombiana '
+            .'(Decreto 1072, Resolución 0312, Resolución 1401, Resolución 40595, ISO 9001/14001/45001). '
+            .'Escribe en español formal, en formato Markdown con encabezados, listo para revisión. '
+            .'No inventes datos que no se te proporcionen: usa [PENDIENTE] cuando falte información.';
+
+        $prompt = $template->prompt."\n\n".$this->contextoCliente($tenant)
+            ."\n\nEntrega el documento completo en Markdown.";
+
+        $documento = GeneratedDocument::create([
             'document_template_id' => $template->id,
             'titulo' => $template->nombre,
-            'contenido' => $contenido,
-            'estado' => 'borrador',
+            'contenido' => 'La IA está redactando este documento…',
+            'estado' => 'generando',
             'version' => 1,
             'generado_por' => $request->user()?->name,
         ]);
 
-        return back()->with('success', "Documento «{$template->nombre}» generado {$via}.");
+        GenerateAiDocumentJob::dispatch($documento->id, $prompt, $system);
+
+        return back()->with('success', "«{$template->nombre}» se está redactando con IA; quedará como borrador en unos minutos.");
     }
 
     /** Bloque de contexto del cliente para los prompts de redacción con IA. */
@@ -159,6 +158,8 @@ class AiDocumentController extends Controller
     /** Descarga el documento como .docx con membrete de CMK y lo deja archivado en el repositorio de la empresa. */
     public function export(GeneratedDocument $documento, DocxExporter $exporter): BinaryFileResponse
     {
+        abort_if(in_array($documento->estado, ['generando', 'error'], true), 409, 'El documento aún no está listo para exportar.');
+
         $path = $exporter->export($documento);
 
         // El export QUEDA guardado para la empresa (repositorio documental):
