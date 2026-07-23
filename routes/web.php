@@ -5,6 +5,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentoEmpresaController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\FormatoController;
 use App\Http\Controllers\IpercController;
 use App\Http\Controllers\OrganizacionController;
 use App\Http\Controllers\IndicatorController;
@@ -143,6 +144,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:documents.manage', 'module:documentos'])->name('documentos.destroy');
 
     /*
+    | Motor de formatos (Tier 4): inspecciones, actas y listas de chequeo del
+    | cliente activo. Un solo módulo genérico para toda la cola larga de formatos.
+    | Ver -> inspections.view | Diligenciar -> inspections.perform
+    */
+    Route::get('formatos', [FormatoController::class, 'index'])
+        ->middleware(['permission:inspections.view', 'module:inspecciones'])->name('formatos.index');
+    Route::get('formatos/{formato}', [FormatoController::class, 'show'])
+        ->middleware(['permission:inspections.view', 'module:inspecciones'])->name('formatos.show');
+    Route::post('formatos', [FormatoController::class, 'store'])
+        ->middleware(['permission:inspections.perform', 'module:inspecciones'])->name('formatos.store');
+    Route::put('formatos/{formato}', [FormatoController::class, 'update'])
+        ->middleware(['permission:inspections.perform', 'module:inspecciones'])->name('formatos.update');
+    Route::delete('formatos/{formato}', [FormatoController::class, 'destroy'])
+        ->middleware(['permission:inspections.perform', 'module:inspecciones'])->name('formatos.destroy');
+    Route::get('formatos/{formato}/export', [FormatoController::class, 'export'])
+        ->middleware(['permission:inspections.view', 'module:inspecciones'])->name('formatos.export');
+
+    /*
     | Generación de documentos SGI con IA (Claude) para el cliente activo.
     | Ver -> documents.view | Generar/editar -> documents.manage
     */
@@ -165,7 +184,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ['sst', 'SST', 'Matriz de peligros, plan anual, indicadores y accidentes.', 'sst.view'],
         ['hseq', 'HSEQ', 'Gestión ambiental, calidad y auditorías.', 'hseq.view'],
         ['pesv', 'PESV', 'Gestión vial, conductores, vehículos y capacitaciones.', 'pesv.view'],
-        ['inspecciones', 'Inspecciones', 'Inspecciones en campo (PWA): checklists, fotos GPS y firmas.', 'inspections.view'],
         ['reportes', 'Reportes', 'Informes PDF auditables, indicadores y exportaciones.', 'reports.view'],
         ['auditoria', 'Auditoría', 'Consulta y evidencia de información auditable del cliente.', 'audit.view'],
     ];

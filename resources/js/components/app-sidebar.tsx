@@ -65,7 +65,7 @@ const navGroups: { label: string; items: NavItem[] }[] = [
     {
         label: 'Campo y control',
         items: [
-            { title: 'Inspecciones', url: '/inspecciones', icon: ClipboardCheck, permission: 'inspections.view', module: 'inspecciones' },
+            { title: 'Formatos', url: '/formatos', icon: ClipboardCheck, permission: 'inspections.view', module: 'inspecciones' },
             { title: 'Reportes', url: '/reportes', icon: FileBarChart, permission: 'reports.view', module: 'reportes' },
             { title: 'Auditoría', url: '/auditoria', icon: ShieldCheck, permission: 'audit.view', module: 'auditoria' },
         ],

@@ -108,7 +108,7 @@ return [
         'sst'           => 'SST',
         'hseq'          => 'HSEQ',
         'pesv'          => 'PESV',
-        'inspecciones'  => 'Inspecciones',
+        'inspecciones'  => 'Formatos (inspecciones y actas)',
         'reportes'      => 'Reportes',
         'auditoria'     => 'Auditoría',
     ],
