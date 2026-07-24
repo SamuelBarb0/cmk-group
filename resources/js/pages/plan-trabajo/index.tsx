@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { usePermissions } from '@/hooks/use-permissions';
@@ -6,7 +5,7 @@ import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Building2, CalendarRange, CheckCircle2, PenLine, Save, Target } from 'lucide-react';
+import { Building2, CheckCircle2, PenLine, Save, Target } from 'lucide-react';
 import { Fragment, useMemo, useState } from 'react';
 
 interface Activity {
@@ -81,9 +80,7 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
     const [objetivos, setObjetivos] = useState(plan?.objetivos ?? '');
     const [recursos, setRecursos] = useState(plan?.recursos ?? '');
     // Selección de actividades que aplican al plan de esta empresa.
-    const [aplican, setAplican] = useState<Record<number, boolean>>(() =>
-        Object.fromEntries(activities.map((a) => [a.id, a.aplica])),
-    );
+    const [aplican, setAplican] = useState<Record<number, boolean>>(() => Object.fromEntries(activities.map((a) => [a.id, a.aplica])));
     const [saving, setSaving] = useState(false);
     // Datos de la firma en edición (prellenados desde Organización).
     const [firmaRep, setFirmaRep] = useState({ nombre: firmantes?.representante.nombre ?? '', cc: firmantes?.representante.cc ?? '' });
@@ -146,7 +143,13 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                             if (est[m] >= 1) prog.push(m);
                             if (est[m] === 2) ejec.push(m);
                         }
-                        return { activity_id: a.id, programados: prog, ejecutados: ejec, responsable: filas[a.id]?.responsable || null, observaciones: a.observaciones || null };
+                        return {
+                            activity_id: a.id,
+                            programados: prog,
+                            ejecutados: ejec,
+                            responsable: filas[a.id]?.responsable || null,
+                            observaciones: a.observaciones || null,
+                        };
                     }),
             },
             { preserveScroll: true, onStart: () => setSaving(true), onFinish: () => setSaving(false) },
@@ -246,8 +249,14 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                                 return (
                                     <div key={i} className="flex flex-col items-center gap-1" title={`${MESES_LARGOS[i]}: ${m.e}/${m.p}`}>
                                         <div className="bg-muted relative flex h-12 w-4 items-end overflow-hidden rounded-sm">
-                                            <div className="w-full rounded-sm bg-blue-500/30" style={{ height: `${(m.p / (h + 0.0001)) * 100 || 0}%` }} />
-                                            <div className="absolute bottom-0 w-full rounded-sm bg-green-600" style={{ height: `${(m.e / h) * 100 || 0}%` }} />
+                                            <div
+                                                className="w-full rounded-sm bg-blue-500/30"
+                                                style={{ height: `${(m.p / (h + 0.0001)) * 100 || 0}%` }}
+                                            />
+                                            <div
+                                                className="absolute bottom-0 w-full rounded-sm bg-green-600"
+                                                style={{ height: `${(m.e / h) * 100 || 0}%` }}
+                                            />
                                         </div>
                                         <span className="text-muted-foreground text-[10px]">{MESES[i]}</span>
                                     </div>
@@ -260,7 +269,7 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                 {/* Metas, objetivos y recursos del plan */}
                 <Card>
                     <CardContent className="space-y-4 p-5">
-                        <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+                        <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wide uppercase">
                             <Target className="size-4" /> Metas, objetivos y recursos
                         </div>
                         <div className="grid gap-4 lg:grid-cols-3">
@@ -320,7 +329,9 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                         <span className="flex items-center gap-1.5">
                             <span className="inline-block size-3 rounded-sm bg-green-600" /> Ejecutado
                         </span>
-                        <span className="hidden sm:inline">Clic en cada mes para alternar · desmarca «Aplica» si la actividad no va en este plan.</span>
+                        <span className="hidden sm:inline">
+                            Clic en cada mes para alternar · desmarca «Aplica» si la actividad no va en este plan.
+                        </span>
                     </div>
                 </div>
 
@@ -365,7 +376,11 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                                                         onChange={() => toggleAplica(a.id)}
                                                         disabled={!canManage}
                                                         className="accent-primary size-4 cursor-pointer disabled:cursor-not-allowed"
-                                                        title={aplican[a.id] ? 'La actividad aplica a este plan' : 'No aplica (excluida del cumplimiento)'}
+                                                        title={
+                                                            aplican[a.id]
+                                                                ? 'La actividad aplica a este plan'
+                                                                : 'No aplica (excluida del cumplimiento)'
+                                                        }
                                                     />
                                                 </td>
                                                 <td className="max-w-md px-3 py-2">
@@ -375,11 +390,18 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                                                     </div>
                                                     <div className="mt-1 flex flex-wrap items-center gap-1">
                                                         {a.normas.map((n) => (
-                                                            <span key={n} className="bg-primary/10 text-primary rounded px-1 py-0.5 text-[10px] font-medium">
+                                                            <span
+                                                                key={n}
+                                                                className="bg-primary/10 text-primary rounded px-1 py-0.5 text-[10px] font-medium"
+                                                            >
                                                                 {n}
                                                             </span>
                                                         ))}
-                                                        {a.soporte && <span className="text-muted-foreground text-[11px]" title={a.soporte}>· soportes</span>}
+                                                        {a.soporte && (
+                                                            <span className="text-muted-foreground text-[11px]" title={a.soporte}>
+                                                                · soportes
+                                                            </span>
+                                                        )}
                                                     </div>
                                                 </td>
                                                 <td className="px-2 py-2">
@@ -433,19 +455,29 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                 {/* Firmas del plan: representante legal + responsable del SG-SST */}
                 <Card>
                     <CardContent className="space-y-4 p-5">
-                        <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+                        <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wide uppercase">
                             <PenLine className="size-4" /> Firmas del plan {plan?.anio}
                         </div>
                         <p className="text-muted-foreground text-xs">
                             La firma registra nombre, cédula y fecha/hora como sello del sistema. Guarda el plan antes de firmar.
                         </p>
                         <div className="grid gap-4 md:grid-cols-2">
-                            {(
-                                [
-                                    { rol: 'representante' as const, titulo: 'Representante legal', firma: plan?.firma_rep, estado: firmaRep, setEstado: setFirmaRep },
-                                    { rol: 'responsable' as const, titulo: 'Responsable del SG-SST', firma: plan?.firma_resp, estado: firmaResp, setEstado: setFirmaResp },
-                                ]
-                            ).map(({ rol, titulo, firma, estado, setEstado }) => (
+                            {[
+                                {
+                                    rol: 'representante' as const,
+                                    titulo: 'Representante legal',
+                                    firma: plan?.firma_rep,
+                                    estado: firmaRep,
+                                    setEstado: setFirmaRep,
+                                },
+                                {
+                                    rol: 'responsable' as const,
+                                    titulo: 'Responsable del SG-SST',
+                                    firma: plan?.firma_resp,
+                                    estado: firmaResp,
+                                    setEstado: setFirmaResp,
+                                },
+                            ].map(({ rol, titulo, firma, estado, setEstado }) => (
                                 <div key={rol} className="rounded-lg border p-4">
                                     <div className="mb-3 text-sm font-semibold">{titulo}</div>
                                     {firma ? (
@@ -459,7 +491,12 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                                                 {firma.fecha}
                                             </div>
                                             {canManage && (
-                                                <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive mt-1 h-7 px-2 text-xs" onClick={() => quitarFirma(rol)}>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="text-destructive hover:text-destructive mt-1 h-7 px-2 text-xs"
+                                                    onClick={() => quitarFirma(rol)}
+                                                >
                                                     Quitar firma
                                                 </Button>
                                             )}

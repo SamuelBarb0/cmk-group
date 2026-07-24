@@ -3,14 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
@@ -216,7 +209,13 @@ export default function EmpleadosIndex({ employees, stats, needsClient }: Props)
                     <div>
                         <h1 className="font-brand text-2xl font-bold tracking-tight">Empleados</h1>
                         <p className="text-muted-foreground text-sm">
-                            {tenant ? <>Nómina de <span className="font-medium">{tenant.name}</span>.</> : 'Nómina base del SGI.'}
+                            {tenant ? (
+                                <>
+                                    Nómina de <span className="font-medium">{tenant.name}</span>.
+                                </>
+                            ) : (
+                                'Nómina base del SGI.'
+                            )}
                         </p>
                     </div>
                     {canManage && (
@@ -285,9 +284,7 @@ export default function EmpleadosIndex({ employees, stats, needsClient }: Props)
                                             </td>
                                             <td className="text-muted-foreground px-5 py-3">{e.fecha_ingreso ?? '—'}</td>
                                             <td className="px-5 py-3 text-center">
-                                                <Badge variant={e.is_active ? 'default' : 'secondary'}>
-                                                    {e.is_active ? 'Activo' : 'Retirado'}
-                                                </Badge>
+                                                <Badge variant={e.is_active ? 'default' : 'secondary'}>{e.is_active ? 'Activo' : 'Retirado'}</Badge>
                                             </td>
                                             {canManage && (
                                                 <td className="px-5 py-3">
@@ -329,13 +326,19 @@ export default function EmpleadosIndex({ employees, stats, needsClient }: Props)
                     <form onSubmit={submit} className="space-y-5">
                         {/* Identificación */}
                         <div className="space-y-3">
-                            <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+                            <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wide uppercase">
                                 <IdCard className="size-4" /> Identificación
                             </div>
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <div className="grid gap-2">
                                     <Label htmlFor="nombres">Nombres *</Label>
-                                    <Input id="nombres" value={data.nombres} onChange={(ev) => setData('nombres', ev.target.value)} required autoFocus />
+                                    <Input
+                                        id="nombres"
+                                        value={data.nombres}
+                                        onChange={(ev) => setData('nombres', ev.target.value)}
+                                        required
+                                        autoFocus
+                                    />
                                     <InputError message={errors.nombres} />
                                 </div>
                                 <div className="grid gap-2">
@@ -363,24 +366,44 @@ export default function EmpleadosIndex({ employees, stats, needsClient }: Props)
                                 </div>
                                 <div className="grid gap-2 sm:col-span-2">
                                     <Label htmlFor="numero_documento">Número de documento *</Label>
-                                    <Input id="numero_documento" value={data.numero_documento} onChange={(ev) => setData('numero_documento', ev.target.value)} required />
+                                    <Input
+                                        id="numero_documento"
+                                        value={data.numero_documento}
+                                        onChange={(ev) => setData('numero_documento', ev.target.value)}
+                                        required
+                                    />
                                     <InputError message={errors.numero_documento} />
                                 </div>
                             </div>
                             <div className="grid gap-4 sm:grid-cols-3">
                                 <div className="grid gap-2">
                                     <Label htmlFor="fecha_nacimiento">Fecha nacimiento</Label>
-                                    <Input id="fecha_nacimiento" type="date" value={data.fecha_nacimiento} onChange={(ev) => setData('fecha_nacimiento', ev.target.value)} />
+                                    <Input
+                                        id="fecha_nacimiento"
+                                        type="date"
+                                        value={data.fecha_nacimiento}
+                                        onChange={(ev) => setData('fecha_nacimiento', ev.target.value)}
+                                    />
                                     <InputError message={errors.fecha_nacimiento} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="genero">Género</Label>
-                                    <Input id="genero" value={data.genero} onChange={(ev) => setData('genero', ev.target.value)} placeholder="Masculino / Femenino" />
+                                    <Input
+                                        id="genero"
+                                        value={data.genero}
+                                        onChange={(ev) => setData('genero', ev.target.value)}
+                                        placeholder="Masculino / Femenino"
+                                    />
                                     <InputError message={errors.genero} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="grupo_sanguineo">Grupo sanguíneo (RH)</Label>
-                                    <Input id="grupo_sanguineo" value={data.grupo_sanguineo} onChange={(ev) => setData('grupo_sanguineo', ev.target.value)} placeholder="O+" />
+                                    <Input
+                                        id="grupo_sanguineo"
+                                        value={data.grupo_sanguineo}
+                                        onChange={(ev) => setData('grupo_sanguineo', ev.target.value)}
+                                        placeholder="O+"
+                                    />
                                     <InputError message={errors.grupo_sanguineo} />
                                 </div>
                             </div>
@@ -388,7 +411,7 @@ export default function EmpleadosIndex({ employees, stats, needsClient }: Props)
 
                         {/* Contacto */}
                         <div className="space-y-3">
-                            <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+                            <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wide uppercase">
                                 <UserRound className="size-4" /> Contacto
                             </div>
                             <div className="grid gap-4 sm:grid-cols-2">
@@ -419,7 +442,7 @@ export default function EmpleadosIndex({ employees, stats, needsClient }: Props)
 
                         {/* Datos laborales */}
                         <div className="space-y-3">
-                            <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+                            <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wide uppercase">
                                 <Briefcase className="size-4" /> Datos laborales
                             </div>
                             <div className="grid gap-4 sm:grid-cols-3">
@@ -442,17 +465,34 @@ export default function EmpleadosIndex({ employees, stats, needsClient }: Props)
                             <div className="grid gap-4 sm:grid-cols-3">
                                 <div className="grid gap-2">
                                     <Label htmlFor="fecha_ingreso">Fecha ingreso</Label>
-                                    <Input id="fecha_ingreso" type="date" value={data.fecha_ingreso} onChange={(ev) => setData('fecha_ingreso', ev.target.value)} />
+                                    <Input
+                                        id="fecha_ingreso"
+                                        type="date"
+                                        value={data.fecha_ingreso}
+                                        onChange={(ev) => setData('fecha_ingreso', ev.target.value)}
+                                    />
                                     <InputError message={errors.fecha_ingreso} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="tipo_contrato">Tipo de contrato</Label>
-                                    <Input id="tipo_contrato" value={data.tipo_contrato} onChange={(ev) => setData('tipo_contrato', ev.target.value)} placeholder="Indefinido / Fijo / Obra" />
+                                    <Input
+                                        id="tipo_contrato"
+                                        value={data.tipo_contrato}
+                                        onChange={(ev) => setData('tipo_contrato', ev.target.value)}
+                                        placeholder="Indefinido / Fijo / Obra"
+                                    />
                                     <InputError message={errors.tipo_contrato} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="salario">Salario</Label>
-                                    <Input id="salario" type="number" min="0" step="1000" value={data.salario} onChange={(ev) => setData('salario', ev.target.value)} />
+                                    <Input
+                                        id="salario"
+                                        type="number"
+                                        min="0"
+                                        step="1000"
+                                        value={data.salario}
+                                        onChange={(ev) => setData('salario', ev.target.value)}
+                                    />
                                     <InputError message={errors.salario} />
                                 </div>
                             </div>
@@ -460,7 +500,7 @@ export default function EmpleadosIndex({ employees, stats, needsClient }: Props)
 
                         {/* Seguridad social */}
                         <div className="space-y-3">
-                            <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+                            <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wide uppercase">
                                 <Building2 className="size-4" /> Seguridad social
                             </div>
                             <div className="grid gap-4 sm:grid-cols-2">
@@ -483,7 +523,12 @@ export default function EmpleadosIndex({ employees, stats, needsClient }: Props)
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="nivel_riesgo">Nivel de riesgo (I–V)</Label>
-                                    <Input id="nivel_riesgo" value={data.nivel_riesgo} onChange={(ev) => setData('nivel_riesgo', ev.target.value)} placeholder="Ej: III" />
+                                    <Input
+                                        id="nivel_riesgo"
+                                        value={data.nivel_riesgo}
+                                        onChange={(ev) => setData('nivel_riesgo', ev.target.value)}
+                                        placeholder="Ej: III"
+                                    />
                                     <InputError message={errors.nivel_riesgo} />
                                 </div>
                             </div>

@@ -19,8 +19,8 @@ import {
     ClipboardCheck,
     Contact,
     FileBarChart,
-    Gauge,
     FileText,
+    Gauge,
     GraduationCap,
     LayoutGrid,
     Settings,
@@ -78,8 +78,7 @@ export function AppSidebar() {
     // Módulos contratados por la empresa activa (null = todos / sin cliente activo).
     const modulosContratados = props.modulos_contratados ?? null;
 
-    const moduloHabilitado = (item: NavItem) =>
-        !item.module || modulosContratados === null || modulosContratados.includes(item.module);
+    const moduloHabilitado = (item: NavItem) => !item.module || modulosContratados === null || modulosContratados.includes(item.module);
 
     return (
         <Sidebar collapsible="icon" variant="inset">

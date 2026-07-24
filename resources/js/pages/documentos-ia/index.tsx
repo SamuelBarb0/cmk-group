@@ -2,14 +2,7 @@ import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
@@ -152,8 +145,8 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
                 <div>
                     <h1 className="font-brand text-2xl font-bold tracking-tight">Generación de Documentos con IA</h1>
                     <p className="text-muted-foreground text-sm">
-                        Claude redacta documentos del SGI usando el contexto de{' '}
-                        <span className="font-medium">{tenant?.name ?? 'la empresa'}</span>. Revísalos y apruébalos.
+                        Claude redacta documentos del SGI usando el contexto de <span className="font-medium">{tenant?.name ?? 'la empresa'}</span>.
+                        Revísalos y apruébalos.
                     </p>
                 </div>
 
@@ -173,7 +166,7 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
                                     <div className="flex items-start justify-between gap-2">
                                         <div>
                                             <div className="text-primary font-mono text-xs font-semibold">{t.codigo}</div>
-                                            <div className="font-semibold leading-tight">{t.nombre}</div>
+                                            <div className="leading-tight font-semibold">{t.nombre}</div>
                                         </div>
                                         <Badge variant="outline">{t.tipo}</Badge>
                                     </div>
@@ -299,7 +292,13 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
                     <form onSubmit={submit} className="space-y-4">
                         <div className="grid gap-2">
                             <Label htmlFor="titulo">Título</Label>
-                            <Input id="titulo" value={data.titulo} onChange={(e) => setData('titulo', e.target.value)} disabled={!canManage} required />
+                            <Input
+                                id="titulo"
+                                value={data.titulo}
+                                onChange={(e) => setData('titulo', e.target.value)}
+                                disabled={!canManage}
+                                required
+                            />
                             <InputError message={errors.titulo} />
                         </div>
                         <div className="grid gap-2">

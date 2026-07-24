@@ -6,7 +6,7 @@ import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Building2, CheckCircle2, ClipboardCheck, Save } from 'lucide-react';
+import { Building2, Save } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 type Estado = 'cumple' | 'no_cumple' | 'no_aplica' | 'pendiente';
@@ -46,7 +46,7 @@ function clasificar(p: number): { label: string; cls: string } {
     return { label: 'Aceptable', cls: 'bg-green-600 text-white' };
 }
 
-export default function DiagnosticoIndex({ standards, diagnostico, needsClient }: Props) {
+export default function DiagnosticoIndex({ standards, needsClient }: Props) {
     const { can } = usePermissions();
     const canManage = can('sst.manage');
     const page = usePage<SharedData>();
@@ -64,6 +64,18 @@ export default function DiagnosticoIndex({ standards, diagnostico, needsClient }
     );
     const diligenciados = useMemo(() => standards.filter((s) => resp[s.id]?.estado !== 'pendiente').length, [standards, resp]);
     const clase = clasificar(puntaje);
+
+    // Subtotales por grupo (obtenido / posible) para mostrar avance.
+    const grupos = useMemo(() => {
+        const m = new Map<string, { posible: number; obtenido: number; peso: number }>();
+        for (const s of standards) {
+            const g = m.get(s.grupo) ?? { posible: 0, obtenido: 0, peso: s.peso_grupo };
+            g.posible += s.valor;
+            if (['cumple', 'no_aplica'].includes(resp[s.id]?.estado)) g.obtenido += s.valor;
+            m.set(s.grupo, g);
+        }
+        return m;
+    }, [standards, resp]);
 
     function setEstado(id: number, estado: Estado) {
         setResp((r) => ({ ...r, [id]: { ...r[id], estado } }));
@@ -107,18 +119,6 @@ export default function DiagnosticoIndex({ standards, diagnostico, needsClient }
         );
     }
 
-    // Subtotales por grupo (obtenido / posible) para mostrar avance.
-    const grupos = useMemo(() => {
-        const m = new Map<string, { posible: number; obtenido: number; peso: number }>();
-        for (const s of standards) {
-            const g = m.get(s.grupo) ?? { posible: 0, obtenido: 0, peso: s.peso_grupo };
-            g.posible += s.valor;
-            if (['cumple', 'no_aplica'].includes(resp[s.id]?.estado)) g.obtenido += s.valor;
-            m.set(s.grupo, g);
-        }
-        return m;
-    }, [standards, resp]);
-
     let lastCiclo = '';
     let lastGrupo = '';
 
@@ -131,7 +131,13 @@ export default function DiagnosticoIndex({ standards, diagnostico, needsClient }
                     <div>
                         <h1 className="font-brand text-2xl font-bold tracking-tight">Diagnóstico de Estándares Mínimos</h1>
                         <p className="text-muted-foreground text-sm">
-                            SG-SST (Resolución 0312 de 2019){tenant ? <> · <span className="font-medium">{tenant.name}</span></> : null}
+                            SG-SST (Resolución 0312 de 2019)
+                            {tenant ? (
+                                <>
+                                    {' '}
+                                    · <span className="font-medium">{tenant.name}</span>
+                                </>
+                            ) : null}
                         </p>
                     </div>
                     {canManage && (
@@ -150,12 +156,17 @@ export default function DiagnosticoIndex({ standards, diagnostico, needsClient }
                         </div>
                         <div className="flex flex-col gap-2">
                             <Badge className={cn('w-fit text-sm', clase.cls)}>{clase.label}</Badge>
-                            <span className="text-muted-foreground text-sm">{diligenciados} de {standards.length} estándares diligenciados</span>
+                            <span className="text-muted-foreground text-sm">
+                                {diligenciados} de {standards.length} estándares diligenciados
+                            </span>
                         </div>
                         <div className="ml-auto min-w-48 flex-1">
                             <div className="bg-muted h-3 w-full overflow-hidden rounded-full">
                                 <div
-                                    className={cn('h-full rounded-full transition-all', puntaje < 60 ? 'bg-red-600' : puntaje <= 85 ? 'bg-amber-500' : 'bg-green-600')}
+                                    className={cn(
+                                        'h-full rounded-full transition-all',
+                                        puntaje < 60 ? 'bg-red-600' : puntaje <= 85 ? 'bg-amber-500' : 'bg-green-600',
+                                    )}
                                     style={{ width: `${puntaje}%` }}
                                 />
                             </div>
@@ -208,7 +219,9 @@ export default function DiagnosticoIndex({ standards, diagnostico, needsClient }
                                                     value={resp[s.id]?.justificacion ?? ''}
                                                     onChange={(e) => setJust(s.id, e.target.value)}
                                                     disabled={!canManage}
-                                                    placeholder={estado === 'no_aplica' ? 'Justificación de no aplicabilidad…' : 'Observación / hallazgo…'}
+                                                    placeholder={
+                                                        estado === 'no_aplica' ? 'Justificación de no aplicabilidad…' : 'Observación / hallazgo…'
+                                                    }
                                                     rows={2}
                                                     className="border-input bg-background mt-2 w-full rounded-md border px-3 py-1.5 text-sm disabled:opacity-60"
                                                 />

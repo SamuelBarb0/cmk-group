@@ -2,14 +2,7 @@ import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
@@ -129,11 +122,19 @@ export default function DocumentosIndex({ documents, categorias, needsClient }: 
                     <div>
                         <h1 className="font-brand text-2xl font-bold tracking-tight">Documentos de la empresa</h1>
                         <p className="text-muted-foreground text-sm">
-                            Repositorio documental de <span className="font-medium">{tenant?.name}</span>: exports de Documentos IA y archivos subidos.
+                            Repositorio documental de <span className="font-medium">{tenant?.name}</span>: exports de Documentos IA y archivos
+                            subidos.
                         </p>
                     </div>
                     {canManage && (
-                        <Button onClick={() => { clearErrors(); reset(); setOpen(true); }} className="gap-2">
+                        <Button
+                            onClick={() => {
+                                clearErrors();
+                                reset();
+                                setOpen(true);
+                            }}
+                            className="gap-2"
+                        >
                             <Upload className="size-4" /> Subir documento
                         </Button>
                     )}
@@ -176,7 +177,8 @@ export default function DocumentosIndex({ documents, categorias, needsClient }: 
                             </div>
                             <p className="font-medium">Aún no hay documentos guardados para esta empresa</p>
                             <p className="text-muted-foreground max-w-md text-sm">
-                                Los .docx que exportes desde Documentos IA quedan archivados aquí automáticamente; también puedes subir archivos (versiones firmadas, evidencias).
+                                Los .docx que exportes desde Documentos IA quedan archivados aquí automáticamente; también puedes subir archivos
+                                (versiones firmadas, evidencias).
                             </p>
                         </CardContent>
                     ) : (

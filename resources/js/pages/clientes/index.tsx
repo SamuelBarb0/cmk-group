@@ -3,14 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
@@ -128,10 +121,7 @@ export default function ClientesIndex({ clients, stats, modulosCatalogo }: Props
     }
 
     function toggleModulo(clave: string) {
-        setData(
-            'modulos',
-            data.modulos.includes(clave) ? data.modulos.filter((m) => m !== clave) : [...data.modulos, clave],
-        );
+        setData('modulos', data.modulos.includes(clave) ? data.modulos.filter((m) => m !== clave) : [...data.modulos, clave]);
     }
 
     const submit: FormEventHandler = (e) => {
@@ -248,9 +238,7 @@ export default function ClientesIndex({ clients, stats, modulosCatalogo }: Props
                                             </td>
                                             <td className="px-5 py-3 text-center tabular-nums">{c.users_count}</td>
                                             <td className="px-5 py-3 text-center">
-                                                <Badge variant={c.is_active ? 'default' : 'secondary'}>
-                                                    {c.is_active ? 'Activo' : 'Inactivo'}
-                                                </Badge>
+                                                <Badge variant={c.is_active ? 'default' : 'secondary'}>{c.is_active ? 'Activo' : 'Inactivo'}</Badge>
                                             </td>
                                             {(canManage || isCmk) && (
                                                 <td className="px-5 py-3">
@@ -355,9 +343,7 @@ export default function ClientesIndex({ clients, stats, modulosCatalogo }: Props
                                 <button
                                     type="button"
                                     className="text-primary text-xs font-medium hover:underline"
-                                    onClick={() =>
-                                        setData('modulos', data.modulos.length === todasLasClaves.length ? [] : todasLasClaves)
-                                    }
+                                    onClick={() => setData('modulos', data.modulos.length === todasLasClaves.length ? [] : todasLasClaves)}
                                 >
                                     {data.modulos.length === todasLasClaves.length ? 'Quitar todos' : 'Seleccionar todos'}
                                 </button>

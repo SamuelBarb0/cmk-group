@@ -87,7 +87,7 @@ export default function Dashboard() {
                 {/* Clientes recientes (solo vista maestra) */}
                 {isMaster && props.clients && props.clients.length > 0 && (
                     <div>
-                        <h2 className="font-brand mb-3 text-sm font-semibold tracking-wide text-muted-foreground uppercase">Clientes recientes</h2>
+                        <h2 className="font-brand text-muted-foreground mb-3 text-sm font-semibold tracking-wide uppercase">Clientes recientes</h2>
                         <Card>
                             <div className="divide-border divide-y">
                                 {props.clients.map((c) => (

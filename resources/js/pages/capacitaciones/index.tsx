@@ -104,11 +104,10 @@ export default function CapacitacionesIndex({ topics, trainings, employees, need
     }, [flash?.success]);
 
     function programar(topicId: number | null) {
-        router.post(
-            route('capacitaciones.store'),
-            topicId ? { training_topic_id: topicId } : { titulo: 'Capacitación' },
-            { onStart: () => setCreating(topicId ?? 'libre'), onFinish: () => setCreating(null) },
-        );
+        router.post(route('capacitaciones.store'), topicId ? { training_topic_id: topicId } : { titulo: 'Capacitación' }, {
+            onStart: () => setCreating(topicId ?? 'libre'),
+            onFinish: () => setCreating(null),
+        });
     }
     function abrir(t: TrainingRow) {
         router.get(route('capacitaciones.show', t.id), {}, { preserveScroll: true });
@@ -180,12 +179,16 @@ export default function CapacitacionesIndex({ topics, trainings, employees, need
                                     <div className="flex items-start justify-between gap-2">
                                         <div>
                                             <div className="text-primary font-mono text-xs font-semibold">{t.codigo}</div>
-                                            <div className="font-semibold leading-tight">{t.titulo}</div>
+                                            <div className="leading-tight font-semibold">{t.titulo}</div>
                                         </div>
-                                        <span className={cn('rounded px-1.5 py-0.5 text-[10px] font-medium', CAT[t.categoria] ?? CAT.SST)}>{t.categoria}</span>
+                                        <span className={cn('rounded px-1.5 py-0.5 text-[10px] font-medium', CAT[t.categoria] ?? CAT.SST)}>
+                                            {t.categoria}
+                                        </span>
                                     </div>
                                     {t.descripcion && <p className="text-muted-foreground text-sm">{t.descripcion}</p>}
-                                    {t.duracion_sugerida && <p className="text-muted-foreground text-xs">Duración sugerida: {t.duracion_sugerida} min</p>}
+                                    {t.duracion_sugerida && (
+                                        <p className="text-muted-foreground text-xs">Duración sugerida: {t.duracion_sugerida} min</p>
+                                    )}
                                     <div className="mt-auto flex flex-wrap gap-2 pt-1">
                                         {t.tiene_archivo && (
                                             <Button variant="secondary" size="sm" asChild className="gap-1.5">
@@ -233,7 +236,11 @@ export default function CapacitacionesIndex({ topics, trainings, employees, need
                                             <tr key={t.id} className="hover:bg-muted/40 transition-colors">
                                                 <td className="px-5 py-3">
                                                     <div className="font-medium">{t.titulo}</div>
-                                                    <span className={cn('rounded px-1.5 py-0.5 text-[10px] font-medium', CAT[t.categoria] ?? CAT.SST)}>{t.categoria}</span>
+                                                    <span
+                                                        className={cn('rounded px-1.5 py-0.5 text-[10px] font-medium', CAT[t.categoria] ?? CAT.SST)}
+                                                    >
+                                                        {t.categoria}
+                                                    </span>
                                                 </td>
                                                 <td className="text-muted-foreground px-5 py-3">{t.fecha ?? '—'}</td>
                                                 <td className="text-muted-foreground px-5 py-3">{t.instructor ?? '—'}</td>
@@ -290,7 +297,7 @@ function TrainingEditor({ training, employees, canManage }: { training: OpenTrai
     const [duracion, setDuracion] = useState(training.duracion_minutos ? String(training.duracion_minutos) : '');
     const [lugar, setLugar] = useState(training.lugar ?? '');
     const [objetivo, setObjetivo] = useState(training.objetivo ?? '');
-    const [estado, setEstado] = useState<Estado>(training.estado);
+    const [estado] = useState<Estado>(training.estado);
     const [observaciones, setObservaciones] = useState(training.observaciones ?? '');
     const [attendees, setAttendees] = useState<Attendee[]>(training.attendees ?? []);
     const [picker, setPicker] = useState(false);
@@ -406,7 +413,14 @@ function TrainingEditor({ training, employees, canManage }: { training: OpenTrai
                             </h3>
                             {canManage && (
                                 <div className="flex gap-2">
-                                    <Button type="button" variant="outline" size="sm" className="gap-1.5" onClick={() => setPicker((v) => !v)} disabled={disponibles.length === 0}>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        className="gap-1.5"
+                                        onClick={() => setPicker((v) => !v)}
+                                        disabled={disponibles.length === 0}
+                                    >
                                         <Users className="size-3.5" /> Desde empleados
                                     </Button>
                                     <Button type="button" variant="outline" size="sm" className="gap-1.5" onClick={agregarManual}>
@@ -416,9 +430,7 @@ function TrainingEditor({ training, employees, canManage }: { training: OpenTrai
                             )}
                         </div>
 
-                        {picker && (
-                            <EmployeePicker employees={disponibles} onAdd={agregarEmpleados} onClose={() => setPicker(false)} />
-                        )}
+                        {picker && <EmployeePicker employees={disponibles} onAdd={agregarEmpleados} onClose={() => setPicker(false)} />}
 
                         {attendees.length === 0 ? (
                             <p className="text-muted-foreground rounded-md border border-dashed py-6 text-center text-sm">
@@ -426,7 +438,7 @@ function TrainingEditor({ training, employees, canManage }: { training: OpenTrai
                             </p>
                         ) : (
                             <div className="divide-border overflow-hidden rounded-md border">
-                                <div className="text-muted-foreground grid grid-cols-[1fr_7rem_1fr_4rem_2rem] gap-2 border-b bg-muted/40 px-2 py-1.5 text-[11px] font-semibold">
+                                <div className="text-muted-foreground bg-muted/40 grid grid-cols-[1fr_7rem_1fr_4rem_2rem] gap-2 border-b px-2 py-1.5 text-[11px] font-semibold">
                                     <span>Nombre</span>
                                     <span>Documento</span>
                                     <span>Cargo</span>
@@ -434,15 +446,45 @@ function TrainingEditor({ training, employees, canManage }: { training: OpenTrai
                                     <span></span>
                                 </div>
                                 {attendees.map((a, i) => (
-                                    <div key={i} className="grid grid-cols-[1fr_7rem_1fr_4rem_2rem] items-center gap-2 border-b px-2 py-1.5 last:border-b-0">
-                                        <Input value={a.nombres} onChange={(e) => setAtt(i, { nombres: e.target.value })} disabled={!canManage} className="h-8" placeholder="Nombre" />
-                                        <Input value={a.numero_documento ?? ''} onChange={(e) => setAtt(i, { numero_documento: e.target.value })} disabled={!canManage} className="h-8" />
-                                        <Input value={a.cargo ?? ''} onChange={(e) => setAtt(i, { cargo: e.target.value })} disabled={!canManage} className="h-8" />
+                                    <div
+                                        key={i}
+                                        className="grid grid-cols-[1fr_7rem_1fr_4rem_2rem] items-center gap-2 border-b px-2 py-1.5 last:border-b-0"
+                                    >
+                                        <Input
+                                            value={a.nombres}
+                                            onChange={(e) => setAtt(i, { nombres: e.target.value })}
+                                            disabled={!canManage}
+                                            className="h-8"
+                                            placeholder="Nombre"
+                                        />
+                                        <Input
+                                            value={a.numero_documento ?? ''}
+                                            onChange={(e) => setAtt(i, { numero_documento: e.target.value })}
+                                            disabled={!canManage}
+                                            className="h-8"
+                                        />
+                                        <Input
+                                            value={a.cargo ?? ''}
+                                            onChange={(e) => setAtt(i, { cargo: e.target.value })}
+                                            disabled={!canManage}
+                                            className="h-8"
+                                        />
                                         <div className="flex justify-center">
-                                            <input type="checkbox" checked={a.asistio} onChange={(e) => setAtt(i, { asistio: e.target.checked })} disabled={!canManage} className="size-4" />
+                                            <input
+                                                type="checkbox"
+                                                checked={a.asistio}
+                                                onChange={(e) => setAtt(i, { asistio: e.target.checked })}
+                                                disabled={!canManage}
+                                                className="size-4"
+                                            />
                                         </div>
                                         {canManage && (
-                                            <button type="button" onClick={() => quitar(i)} className="text-muted-foreground hover:text-destructive flex justify-center" aria-label="Quitar">
+                                            <button
+                                                type="button"
+                                                onClick={() => quitar(i)}
+                                                className="text-muted-foreground hover:text-destructive flex justify-center"
+                                                aria-label="Quitar"
+                                            >
                                                 <Trash2 className="size-4" />
                                             </button>
                                         )}
@@ -488,7 +530,8 @@ function EmployeePicker({ employees, onAdd, onClose }: { employees: EmployeeRow[
     function toggle(id: number) {
         setSel((s) => {
             const n = new Set(s);
-            n.has(id) ? n.delete(id) : n.add(id);
+            if (n.has(id)) n.delete(id);
+            else n.add(id);
             return n;
         });
     }

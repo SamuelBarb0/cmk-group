@@ -164,25 +164,42 @@ export default function OrganizacionIndex({ organizacion, needsClient, empleados
                     {/* Contexto SGI */}
                     <Card>
                         <CardContent className="space-y-5 p-5">
-                            <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+                            <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wide uppercase">
                                 <Building2 className="size-4" /> Contexto de la empresa
                             </div>
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <div className="grid gap-2">
                                     <Label htmlFor="actividad_economica">Actividad económica</Label>
-                                    <Input id="actividad_economica" value={data.actividad_economica} onChange={(e) => setData('actividad_economica', e.target.value)} disabled={!canManage} />
+                                    <Input
+                                        id="actividad_economica"
+                                        value={data.actividad_economica}
+                                        onChange={(e) => setData('actividad_economica', e.target.value)}
+                                        disabled={!canManage}
+                                    />
                                     <InputError message={errors.actividad_economica} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="codigo_ciiu">Código CIIU</Label>
-                                    <Input id="codigo_ciiu" value={data.codigo_ciiu} onChange={(e) => setData('codigo_ciiu', e.target.value)} placeholder="Ej: 4290" disabled={!canManage} />
+                                    <Input
+                                        id="codigo_ciiu"
+                                        value={data.codigo_ciiu}
+                                        onChange={(e) => setData('codigo_ciiu', e.target.value)}
+                                        placeholder="Ej: 4290"
+                                        disabled={!canManage}
+                                    />
                                     <InputError message={errors.codigo_ciiu} />
                                 </div>
                             </div>
                             <div className="grid gap-4 sm:grid-cols-3">
                                 <div className="grid gap-2">
                                     <Label htmlFor="sector">Sector</Label>
-                                    <Input id="sector" value={data.sector} onChange={(e) => setData('sector', e.target.value)} placeholder="Construcción, Servicios…" disabled={!canManage} />
+                                    <Input
+                                        id="sector"
+                                        value={data.sector}
+                                        onChange={(e) => setData('sector', e.target.value)}
+                                        placeholder="Construcción, Servicios…"
+                                        disabled={!canManage}
+                                    />
                                     <InputError message={errors.sector} />
                                 </div>
                                 <div className="grid gap-2">
@@ -204,13 +221,21 @@ export default function OrganizacionIndex({ organizacion, needsClient, empleados
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="num_trabajadores">N.° de trabajadores</Label>
-                                    <Input id="num_trabajadores" type="number" min="0" value={data.num_trabajadores} onChange={(e) => setData('num_trabajadores', e.target.value)} disabled={!canManage} />
+                                    <Input
+                                        id="num_trabajadores"
+                                        type="number"
+                                        min="0"
+                                        value={data.num_trabajadores}
+                                        onChange={(e) => setData('num_trabajadores', e.target.value)}
+                                        disabled={!canManage}
+                                    />
                                     <InputError message={errors.num_trabajadores} />
                                 </div>
                             </div>
                             {descuadre && (
                                 <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-400">
-                                    <ShieldAlert className="size-4" /> Declaras {declarado} trabajadores, pero hay {empleadosCount} registrados en el módulo Empleados.
+                                    <ShieldAlert className="size-4" /> Declaras {declarado} trabajadores, pero hay {empleadosCount} registrados en el
+                                    módulo Empleados.
                                 </div>
                             )}
                         </CardContent>
@@ -219,7 +244,7 @@ export default function OrganizacionIndex({ organizacion, needsClient, empleados
                     {/* Riesgo y ARL */}
                     <Card>
                         <CardContent className="space-y-5 p-5">
-                            <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+                            <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wide uppercase">
                                 <ShieldAlert className="size-4" /> Riesgo y afiliación
                             </div>
                             <div className="grid gap-4 sm:grid-cols-2">
@@ -243,7 +268,13 @@ export default function OrganizacionIndex({ organizacion, needsClient, empleados
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="arl">ARL</Label>
-                                    <Input id="arl" value={data.arl} onChange={(e) => setData('arl', e.target.value)} placeholder="Ej: Sura, Positiva…" disabled={!canManage} />
+                                    <Input
+                                        id="arl"
+                                        value={data.arl}
+                                        onChange={(e) => setData('arl', e.target.value)}
+                                        placeholder="Ej: Sura, Positiva…"
+                                        disabled={!canManage}
+                                    />
                                     <InputError message={errors.arl} />
                                 </div>
                             </div>
@@ -253,28 +284,49 @@ export default function OrganizacionIndex({ organizacion, needsClient, empleados
                     {/* Responsables */}
                     <Card>
                         <CardContent className="space-y-5 p-5">
-                            <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+                            <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wide uppercase">
                                 <Users className="size-4" /> Responsables
                             </div>
                             <div className="grid gap-4 sm:grid-cols-3">
                                 <div className="grid gap-2">
                                     <Label htmlFor="representante_legal">Representante legal</Label>
-                                    <Input id="representante_legal" value={data.representante_legal} onChange={(e) => setData('representante_legal', e.target.value)} disabled={!canManage} />
+                                    <Input
+                                        id="representante_legal"
+                                        value={data.representante_legal}
+                                        onChange={(e) => setData('representante_legal', e.target.value)}
+                                        disabled={!canManage}
+                                    />
                                     <InputError message={errors.representante_legal} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="representante_cc">Cédula representante</Label>
-                                    <Input id="representante_cc" value={data.representante_cc} onChange={(e) => setData('representante_cc', e.target.value)} placeholder="C.C. N.°" disabled={!canManage} />
+                                    <Input
+                                        id="representante_cc"
+                                        value={data.representante_cc}
+                                        onChange={(e) => setData('representante_cc', e.target.value)}
+                                        placeholder="C.C. N.°"
+                                        disabled={!canManage}
+                                    />
                                     <InputError message={errors.representante_cc} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="responsable_sgsst">Responsable SG-SST</Label>
-                                    <Input id="responsable_sgsst" value={data.responsable_sgsst} onChange={(e) => setData('responsable_sgsst', e.target.value)} disabled={!canManage} />
+                                    <Input
+                                        id="responsable_sgsst"
+                                        value={data.responsable_sgsst}
+                                        onChange={(e) => setData('responsable_sgsst', e.target.value)}
+                                        disabled={!canManage}
+                                    />
                                     <InputError message={errors.responsable_sgsst} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="licencia_sgsst">Licencia SST (N.°)</Label>
-                                    <Input id="licencia_sgsst" value={data.licencia_sgsst} onChange={(e) => setData('licencia_sgsst', e.target.value)} disabled={!canManage} />
+                                    <Input
+                                        id="licencia_sgsst"
+                                        value={data.licencia_sgsst}
+                                        onChange={(e) => setData('licencia_sgsst', e.target.value)}
+                                        disabled={!canManage}
+                                    />
                                     <InputError message={errors.licencia_sgsst} />
                                 </div>
                                 <div className="grid gap-2">

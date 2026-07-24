@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Building2, CheckCircle2, ClipboardCheck, Download, FileText, Plus, Save, Trash2 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type Tipo = 'text' | 'textarea' | 'date' | 'number' | 'select' | 'checklist' | 'firma';
 type Estado = 'borrador' | 'completado';
@@ -113,12 +113,6 @@ export default function FormatosIndex({ formats, records, needsClient, open }: P
         }
     }, [flash?.success]);
 
-    const porGrupo = useMemo(() => {
-        const g: Record<string, Format[]> = {};
-        formats.forEach((f) => (g[f.grupo] ??= []).push(f));
-        return g;
-    }, [formats]);
-
     function crear(f: Format) {
         router.post(route('formatos.store'), { form_format_id: f.id }, { onStart: () => setCreating(f.id), onFinish: () => setCreating(null) });
     }
@@ -187,7 +181,7 @@ export default function FormatosIndex({ formats, records, needsClient, open }: P
                                         <div className="flex items-start justify-between gap-2">
                                             <div>
                                                 <div className="text-primary font-mono text-xs font-semibold">{f.codigo}</div>
-                                                <div className="font-semibold leading-tight">{f.nombre}</div>
+                                                <div className="leading-tight font-semibold">{f.nombre}</div>
                                             </div>
                                             <span className={cn('rounded px-1.5 py-0.5 text-[10px] font-medium', g.cls)}>{g.label}</span>
                                         </div>
@@ -234,7 +228,9 @@ export default function FormatosIndex({ formats, records, needsClient, open }: P
                                                         <div className="font-medium">{r.titulo}</div>
                                                         <div className="flex items-center gap-2">
                                                             <span className="text-muted-foreground font-mono text-xs">{r.codigo}</span>
-                                                            <span className={cn('rounded px-1.5 py-0.5 text-[10px] font-medium', g.cls)}>{g.label}</span>
+                                                            <span className={cn('rounded px-1.5 py-0.5 text-[10px] font-medium', g.cls)}>
+                                                                {g.label}
+                                                            </span>
                                                         </div>
                                                     </td>
                                                     <td className="text-muted-foreground px-5 py-3">{r.fecha ?? '—'}</td>
@@ -249,7 +245,12 @@ export default function FormatosIndex({ formats, records, needsClient, open }: P
                                                                     <Download className="size-4" />
                                                                 </a>
                                                             </Button>
-                                                            <Button variant="ghost" size="icon" onClick={() => abrir(r)} aria-label="Ver / diligenciar">
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                onClick={() => abrir(r)}
+                                                                aria-label="Ver / diligenciar"
+                                                            >
                                                                 <FileText className="size-4" />
                                                             </Button>
                                                             {canPerform && (
@@ -287,7 +288,7 @@ function RecordEditor({ record, canPerform }: { record: OpenRecord; canPerform: 
     const [titulo, setTitulo] = useState(record.titulo);
     const [fecha, setFecha] = useState(record.fecha ?? '');
     const [responsable, setResponsable] = useState(record.responsable ?? '');
-    const [estado, setEstado] = useState<Estado>(record.estado);
+    const [estado] = useState<Estado>(record.estado);
     const [data, setData] = useState<Record<string, unknown>>(() => initData(record));
     const [saving, setSaving] = useState(false);
 
@@ -392,17 +393,7 @@ function initData(record: OpenRecord): Record<string, unknown> {
     return d;
 }
 
-function CampoRenderer({
-    campo,
-    value,
-    disabled,
-    onChange,
-}: {
-    campo: Campo;
-    value: unknown;
-    disabled: boolean;
-    onChange: (v: unknown) => void;
-}) {
+function CampoRenderer({ campo, value, disabled, onChange }: { campo: Campo; value: unknown; disabled: boolean; onChange: (v: unknown) => void }) {
     if (campo.tipo === 'checklist') {
         const filas = (value as { item: string; estado: string; obs: string }[]) ?? [];
         return (
@@ -464,12 +455,7 @@ function CampoRenderer({
                         disabled={disabled}
                         placeholder="Nombre"
                     />
-                    <Input
-                        value={firma.cc}
-                        onChange={(e) => onChange({ ...firma, cc: e.target.value })}
-                        disabled={disabled}
-                        placeholder="C.C."
-                    />
+                    <Input value={firma.cc} onChange={(e) => onChange({ ...firma, cc: e.target.value })} disabled={disabled} placeholder="C.C." />
                 </div>
             </div>
         );

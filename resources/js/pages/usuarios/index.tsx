@@ -3,14 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
@@ -30,8 +23,15 @@ interface UserRow {
     tenant_id: number | null;
     tenant: string | null;
 }
-interface RoleOption { value: string; label: string; scope: 'cmk' | 'client' }
-interface TenantOption { id: number; name: string }
+interface RoleOption {
+    value: string;
+    label: string;
+    scope: 'cmk' | 'client';
+}
+interface TenantOption {
+    id: number;
+    name: string;
+}
 
 interface Props {
     users: UserRow[];
@@ -219,9 +219,7 @@ export default function UsuariosIndex({ users, roles, tenants, stats }: Props) {
                                                 {u.tenant ?? <span className="text-xs italic">Equipo CMK</span>}
                                             </td>
                                             <td className="px-5 py-3 text-center">
-                                                <Badge variant={u.is_active ? 'default' : 'secondary'}>
-                                                    {u.is_active ? 'Activo' : 'Inactivo'}
-                                                </Badge>
+                                                <Badge variant={u.is_active ? 'default' : 'secondary'}>{u.is_active ? 'Activo' : 'Inactivo'}</Badge>
                                             </td>
                                             {canManage && (
                                                 <td className="px-5 py-3">

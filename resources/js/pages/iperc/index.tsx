@@ -3,14 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
@@ -57,9 +50,24 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const CLASIFICACIONES = ['Biológico', 'Físico', 'Químico', 'Biomecánico', 'Psicosocial', 'Condiciones de seguridad', 'Fenómenos naturales'];
-const ND = [{ v: 10, l: 'Muy Alto (10)' }, { v: 6, l: 'Alto (6)' }, { v: 2, l: 'Medio (2)' }, { v: 0, l: 'Bajo (0)' }];
-const NE = [{ v: 4, l: 'Continua (4)' }, { v: 3, l: 'Frecuente (3)' }, { v: 2, l: 'Ocasional (2)' }, { v: 1, l: 'Esporádica (1)' }];
-const NC = [{ v: 100, l: 'Mortal/Catastrófico (100)' }, { v: 60, l: 'Muy grave (60)' }, { v: 25, l: 'Grave (25)' }, { v: 10, l: 'Leve (10)' }];
+const ND = [
+    { v: 10, l: 'Muy Alto (10)' },
+    { v: 6, l: 'Alto (6)' },
+    { v: 2, l: 'Medio (2)' },
+    { v: 0, l: 'Bajo (0)' },
+];
+const NE = [
+    { v: 4, l: 'Continua (4)' },
+    { v: 3, l: 'Frecuente (3)' },
+    { v: 2, l: 'Ocasional (2)' },
+    { v: 1, l: 'Esporádica (1)' },
+];
+const NC = [
+    { v: 100, l: 'Mortal/Catastrófico (100)' },
+    { v: 60, l: 'Muy grave (60)' },
+    { v: 25, l: 'Grave (25)' },
+    { v: 10, l: 'Leve (10)' },
+];
 
 function nivel(nr: number): string {
     if (nr >= 600) return 'I';
@@ -100,7 +108,12 @@ function StatCard({ label, value, icon: Icon, danger }: { label: string; value: 
     return (
         <Card>
             <CardContent className="flex items-center gap-4 p-5">
-                <div className={cn('flex size-11 items-center justify-center rounded-lg', danger ? 'bg-red-600/10 text-red-600' : 'bg-primary/10 text-primary')}>
+                <div
+                    className={cn(
+                        'flex size-11 items-center justify-center rounded-lg',
+                        danger ? 'bg-red-600/10 text-red-600' : 'bg-primary/10 text-primary',
+                    )}
+                >
                     <Icon className="size-5" />
                 </div>
                 <div>
@@ -149,10 +162,22 @@ export default function IpercIndex({ rows, stats, needsClient }: Props) {
         setEditing(r);
         clearErrors();
         setData({
-            proceso: r.proceso, zona: r.zona ?? '', actividad: r.actividad, tarea: r.tarea ?? '', rutinaria: r.rutinaria,
-            clasificacion: r.clasificacion, peligro: r.peligro, efectos: r.efectos ?? '',
-            control_fuente: r.control_fuente ?? '', control_medio: r.control_medio ?? '', control_individuo: r.control_individuo ?? '',
-            nd: r.nd, ne: r.ne, nc: r.nc, medidas: r.medidas ?? '', expuestos: r.expuestos ?? '',
+            proceso: r.proceso,
+            zona: r.zona ?? '',
+            actividad: r.actividad,
+            tarea: r.tarea ?? '',
+            rutinaria: r.rutinaria,
+            clasificacion: r.clasificacion,
+            peligro: r.peligro,
+            efectos: r.efectos ?? '',
+            control_fuente: r.control_fuente ?? '',
+            control_medio: r.control_medio ?? '',
+            control_individuo: r.control_individuo ?? '',
+            nd: r.nd,
+            ne: r.ne,
+            nc: r.nc,
+            medidas: r.medidas ?? '',
+            expuestos: r.expuestos ?? '',
         });
         setOpen(true);
     }
@@ -209,7 +234,12 @@ export default function IpercIndex({ rows, stats, needsClient }: Props) {
                         <h1 className="font-brand text-2xl font-bold tracking-tight">Matriz IPERC</h1>
                         <p className="text-muted-foreground text-sm">
                             Identificación de peligros y valoración de riesgos (GTC 45)
-                            {tenant ? <> · <span className="font-medium">{tenant.name}</span></> : null}
+                            {tenant ? (
+                                <>
+                                    {' '}
+                                    · <span className="font-medium">{tenant.name}</span>
+                                </>
+                            ) : null}
                         </p>
                     </div>
                     {canManage && (
@@ -263,11 +293,17 @@ export default function IpercIndex({ rows, stats, needsClient }: Props) {
                                                 <div className="text-muted-foreground text-xs">{r.actividad}</div>
                                             </td>
                                             <td className="px-4 py-3">
-                                                <Badge variant="outline" className="mb-1">{r.clasificacion}</Badge>
+                                                <Badge variant="outline" className="mb-1">
+                                                    {r.clasificacion}
+                                                </Badge>
                                                 <div className="text-xs">{r.peligro}</div>
                                             </td>
-                                            <td className="px-4 py-3 text-center tabular-nums">{r.nd}·{r.ne}={r.np}</td>
-                                            <td className="px-4 py-3 text-center tabular-nums">{r.nc} → <span className="font-semibold">{r.nr}</span></td>
+                                            <td className="px-4 py-3 text-center tabular-nums">
+                                                {r.nd}·{r.ne}={r.np}
+                                            </td>
+                                            <td className="px-4 py-3 text-center tabular-nums">
+                                                {r.nc} → <span className="font-semibold">{r.nr}</span>
+                                            </td>
                                             <td className="px-4 py-3 text-center">
                                                 <Badge className={cn(NIVEL_CLS[r.nivel_riesgo])}>{r.nivel_riesgo}</Badge>
                                             </td>
@@ -278,7 +314,13 @@ export default function IpercIndex({ rows, stats, needsClient }: Props) {
                                                         <Button variant="ghost" size="icon" onClick={() => openEdit(r)} aria-label="Editar">
                                                             <Pencil className="size-4" />
                                                         </Button>
-                                                        <Button variant="ghost" size="icon" onClick={() => destroy(r)} aria-label="Eliminar" className="text-destructive hover:text-destructive">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={() => destroy(r)}
+                                                            aria-label="Eliminar"
+                                                            className="text-destructive hover:text-destructive"
+                                                        >
                                                             <TriangleAlert className="size-4" />
                                                         </Button>
                                                     </div>
@@ -334,8 +376,17 @@ export default function IpercIndex({ rows, stats, needsClient }: Props) {
                         <div className="grid gap-4 sm:grid-cols-3">
                             <div className="grid gap-2">
                                 <Label htmlFor="clasificacion">Clasificación *</Label>
-                                <select id="clasificacion" value={data.clasificacion} onChange={(e) => setData('clasificacion', e.target.value)} className="border-input bg-background h-9 rounded-md border px-3 text-sm">
-                                    {CLASIFICACIONES.map((c) => <option key={c} value={c}>{c}</option>)}
+                                <select
+                                    id="clasificacion"
+                                    value={data.clasificacion}
+                                    onChange={(e) => setData('clasificacion', e.target.value)}
+                                    className="border-input bg-background h-9 rounded-md border px-3 text-sm"
+                                >
+                                    {CLASIFICACIONES.map((c) => (
+                                        <option key={c} value={c}>
+                                            {c}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                             <div className="grid gap-2 sm:col-span-2">
@@ -351,30 +402,61 @@ export default function IpercIndex({ rows, stats, needsClient }: Props) {
 
                         {/* Valoración GTC 45 con cálculo en vivo */}
                         <div className="bg-muted/40 space-y-3 rounded-lg border p-4">
-                            <div className="text-muted-foreground text-xs font-semibold uppercase tracking-wide">Valoración del riesgo (GTC 45)</div>
+                            <div className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">Valoración del riesgo (GTC 45)</div>
                             <div className="grid gap-4 sm:grid-cols-3">
                                 <div className="grid gap-2">
                                     <Label htmlFor="nd">Nivel de Deficiencia</Label>
-                                    <select id="nd" value={data.nd} onChange={(e) => setData('nd', Number(e.target.value))} className="border-input bg-background h-9 rounded-md border px-3 text-sm">
-                                        {ND.map((o) => <option key={o.v} value={o.v}>{o.l}</option>)}
+                                    <select
+                                        id="nd"
+                                        value={data.nd}
+                                        onChange={(e) => setData('nd', Number(e.target.value))}
+                                        className="border-input bg-background h-9 rounded-md border px-3 text-sm"
+                                    >
+                                        {ND.map((o) => (
+                                            <option key={o.v} value={o.v}>
+                                                {o.l}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="ne">Nivel de Exposición</Label>
-                                    <select id="ne" value={data.ne} onChange={(e) => setData('ne', Number(e.target.value))} className="border-input bg-background h-9 rounded-md border px-3 text-sm">
-                                        {NE.map((o) => <option key={o.v} value={o.v}>{o.l}</option>)}
+                                    <select
+                                        id="ne"
+                                        value={data.ne}
+                                        onChange={(e) => setData('ne', Number(e.target.value))}
+                                        className="border-input bg-background h-9 rounded-md border px-3 text-sm"
+                                    >
+                                        {NE.map((o) => (
+                                            <option key={o.v} value={o.v}>
+                                                {o.l}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="nc">Nivel de Consecuencia</Label>
-                                    <select id="nc" value={data.nc} onChange={(e) => setData('nc', Number(e.target.value))} className="border-input bg-background h-9 rounded-md border px-3 text-sm">
-                                        {NC.map((o) => <option key={o.v} value={o.v}>{o.l}</option>)}
+                                    <select
+                                        id="nc"
+                                        value={data.nc}
+                                        onChange={(e) => setData('nc', Number(e.target.value))}
+                                        className="border-input bg-background h-9 rounded-md border px-3 text-sm"
+                                    >
+                                        {NC.map((o) => (
+                                            <option key={o.v} value={o.v}>
+                                                {o.l}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
                             </div>
                             <div className="flex flex-wrap items-center gap-4 pt-1 text-sm">
-                                <span className="tabular-nums">NP = {data.nd}·{data.ne} = <b>{np}</b></span>
-                                <span className="tabular-nums">NR = {np}·{data.nc} = <b>{nr}</b></span>
+                                <span className="tabular-nums">
+                                    NP = {data.nd}·{data.ne} = <b>{np}</b>
+                                </span>
+                                <span className="tabular-nums">
+                                    NR = {np}·{data.nc} = <b>{nr}</b>
+                                </span>
                                 <Badge className={cn(NIVEL_CLS[niv])}>Nivel {niv}</Badge>
                                 <span className="text-muted-foreground">{aceptabilidad(niv)}</span>
                             </div>
@@ -383,12 +465,22 @@ export default function IpercIndex({ rows, stats, needsClient }: Props) {
                         {/* Medidas */}
                         <div className="grid gap-2">
                             <Label htmlFor="medidas">Medidas de intervención</Label>
-                            <textarea id="medidas" value={data.medidas} onChange={(e) => setData('medidas', e.target.value)} rows={2} className="border-input bg-background w-full rounded-md border px-3 py-1.5 text-sm" />
+                            <textarea
+                                id="medidas"
+                                value={data.medidas}
+                                onChange={(e) => setData('medidas', e.target.value)}
+                                rows={2}
+                                className="border-input bg-background w-full rounded-md border px-3 py-1.5 text-sm"
+                            />
                         </div>
 
                         <DialogFooter className="gap-2 pt-2">
-                            <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
-                            <Button type="submit" disabled={processing}>{editing ? 'Guardar' : 'Agregar peligro'}</Button>
+                            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                                Cancelar
+                            </Button>
+                            <Button type="submit" disabled={processing}>
+                                {editing ? 'Guardar' : 'Agregar peligro'}
+                            </Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>

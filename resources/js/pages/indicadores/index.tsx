@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { Building2, Pencil, Plus, Save, Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 type Sentido = 'asc' | 'desc';
 interface MesData {
@@ -205,13 +205,19 @@ export default function IndicadoresIndex({ indicators, anio, needsClient }: Prop
                                                     {ind.categoria}
                                                 </Badge>
                                                 {ind.es_legal && (
-                                                    <span className="rounded bg-blue-500/10 px-1.5 py-0.5 text-[10px] font-medium text-blue-700 dark:text-blue-400">Ley</span>
+                                                    <span className="rounded bg-blue-500/10 px-1.5 py-0.5 text-[10px] font-medium text-blue-700 dark:text-blue-400">
+                                                        Ley
+                                                    </span>
                                                 )}
                                             </div>
-                                            <p className="mt-0.5 text-sm font-semibold leading-tight">{ind.nombre}</p>
+                                            <p className="mt-0.5 text-sm leading-tight font-semibold">{ind.nombre}</p>
                                         </div>
                                         {ind.propio && canManage && (
-                                            <button onClick={() => eliminar(ind)} className="text-muted-foreground hover:text-red-600" title="Eliminar indicador">
+                                            <button
+                                                onClick={() => eliminar(ind)}
+                                                className="text-muted-foreground hover:text-red-600"
+                                                title="Eliminar indicador"
+                                            >
                                                 <Trash2 className="size-4" />
                                             </button>
                                         )}
@@ -225,10 +231,16 @@ export default function IndicadoresIndex({ indicators, anio, needsClient }: Prop
                                         <span className="text-muted-foreground flex items-center gap-1 text-xs">
                                             Meta {ind.sentido === 'asc' ? '≥' : '≤'} {fmt(ind.meta, ind.unidad)}
                                             {ind.meta_propia && (
-                                                <span className="rounded bg-indigo-500/10 px-1 py-0.5 text-[9px] font-medium text-indigo-700 dark:text-indigo-400">propia</span>
+                                                <span className="rounded bg-indigo-500/10 px-1 py-0.5 text-[9px] font-medium text-indigo-700 dark:text-indigo-400">
+                                                    propia
+                                                </span>
                                             )}
                                             {!ind.propio && canManage && (
-                                                <button onClick={() => openMeta(ind)} className="hover:text-foreground" title="Ajustar meta para este cliente">
+                                                <button
+                                                    onClick={() => openMeta(ind)}
+                                                    className="hover:text-foreground"
+                                                    title="Ajustar meta para este cliente"
+                                                >
                                                     <Pencil className="size-3" />
                                                 </button>
                                             )}
@@ -242,10 +254,17 @@ export default function IndicadoresIndex({ indicators, anio, needsClient }: Prop
                                             const ok = cumpleMes(d?.valor ?? null, ind.sentido, ind.meta);
                                             const h = d?.valor != null ? Math.max((d.valor / maxVal) * 100, 4) : 0;
                                             return (
-                                                <div key={i} className="flex flex-1 flex-col items-center gap-0.5" title={`${MESES[i]}: ${fmt(d?.valor ?? null, ind.unidad)}`}>
+                                                <div
+                                                    key={i}
+                                                    className="flex flex-1 flex-col items-center gap-0.5"
+                                                    title={`${MESES[i]}: ${fmt(d?.valor ?? null, ind.unidad)}`}
+                                                >
                                                     <div className="bg-muted flex h-10 w-full items-end overflow-hidden rounded-sm">
                                                         <div
-                                                            className={cn('w-full rounded-sm', ok === null ? 'bg-muted' : ok ? 'bg-green-600' : 'bg-red-500')}
+                                                            className={cn(
+                                                                'w-full rounded-sm',
+                                                                ok === null ? 'bg-muted' : ok ? 'bg-green-600' : 'bg-red-500',
+                                                            )}
                                                             style={{ height: `${h}%` }}
                                                         />
                                                     </div>
@@ -422,22 +441,43 @@ function NuevoIndicadorDialog({ open, onClose }: { open: boolean; onClose: () =>
                         </div>
                         <div className="col-span-2">
                             <Label htmlFor="nombre">Nombre</Label>
-                            <Input id="nombre" value={data.nombre} onChange={(e) => setData('nombre', e.target.value)} placeholder="Cobertura de inspecciones" />
+                            <Input
+                                id="nombre"
+                                value={data.nombre}
+                                onChange={(e) => setData('nombre', e.target.value)}
+                                placeholder="Cobertura de inspecciones"
+                            />
                             <InputError message={errors.nombre} />
                         </div>
                         <div className="col-span-2">
                             <Label htmlFor="num">Numerador</Label>
-                            <Input id="num" value={data.numerador_label} onChange={(e) => setData('numerador_label', e.target.value)} placeholder="N.° de inspecciones realizadas" />
+                            <Input
+                                id="num"
+                                value={data.numerador_label}
+                                onChange={(e) => setData('numerador_label', e.target.value)}
+                                placeholder="N.° de inspecciones realizadas"
+                            />
                             <InputError message={errors.numerador_label} />
                         </div>
                         <div className="col-span-2">
                             <Label htmlFor="den">Denominador</Label>
-                            <Input id="den" value={data.denominador_label} onChange={(e) => setData('denominador_label', e.target.value)} placeholder="N.° de inspecciones programadas" />
+                            <Input
+                                id="den"
+                                value={data.denominador_label}
+                                onChange={(e) => setData('denominador_label', e.target.value)}
+                                placeholder="N.° de inspecciones programadas"
+                            />
                             <InputError message={errors.denominador_label} />
                         </div>
                         <div>
                             <Label htmlFor="constante">Constante</Label>
-                            <Input id="constante" type="number" min={1} value={data.constante} onChange={(e) => setData('constante', Number(e.target.value))} />
+                            <Input
+                                id="constante"
+                                type="number"
+                                min={1}
+                                value={data.constante}
+                                onChange={(e) => setData('constante', Number(e.target.value))}
+                            />
                         </div>
                         <div>
                             <Label htmlFor="unidad">Unidad</Label>
@@ -465,7 +505,14 @@ function NuevoIndicadorDialog({ open, onClose }: { open: boolean; onClose: () =>
                         </div>
                         <div>
                             <Label htmlFor="meta">Meta</Label>
-                            <Input id="meta" type="number" min={0} step="0.01" value={data.meta} onChange={(e) => setData('meta', Number(e.target.value))} />
+                            <Input
+                                id="meta"
+                                type="number"
+                                min={0}
+                                step="0.01"
+                                value={data.meta}
+                                onChange={(e) => setData('meta', Number(e.target.value))}
+                            />
                         </div>
                     </div>
                     <DialogFooter>
