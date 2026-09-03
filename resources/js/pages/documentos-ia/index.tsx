@@ -10,7 +10,7 @@ import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import { Building2, CheckCircle2, Download, FileText, Loader2, Pencil, Sparkles, Trash2 } from 'lucide-react';
+import { Building2, CheckCircle2, Download, FileText, Loader2, Pencil, Sparkles, Trash2, Upload } from 'lucide-react';
 import { FormEventHandler, useEffect, useState } from 'react';
 
 interface Template {
@@ -142,12 +142,19 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Documentos IA" />
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
-                <div>
-                    <h1 className="font-brand text-2xl font-bold tracking-tight">Generación de Documentos con IA</h1>
-                    <p className="text-muted-foreground text-sm">
-                        Claude redacta documentos del SGI usando el contexto de <span className="font-medium">{tenant?.name ?? 'la empresa'}</span>.
-                        Revísalos y apruébalos.
-                    </p>
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">Generación de Documentos con IA</h1>
+                        <p className="text-muted-foreground text-sm">
+                            Claude redacta documentos del SGI usando el contexto de{' '}
+                            <span className="font-medium">{tenant?.name ?? 'la empresa'}</span>. Revísalos y apruébalos.
+                        </p>
+                    </div>
+                    <Button asChild variant="outline" className="gap-2">
+                        <Link href="/documentos-ia/plantillas">
+                            <Upload className="size-4" /> Plantillas
+                        </Link>
+                    </Button>
                 </div>
 
                 {notice && (

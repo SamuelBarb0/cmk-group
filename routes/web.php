@@ -1,16 +1,18 @@
 <?php
 
 use App\Http\Controllers\AiDocumentController;
+use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentoEmpresaController;
+use App\Http\Controllers\DocumentTemplateController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\FormatoController;
+use App\Http\Controllers\IndicatorController;
 use App\Http\Controllers\IpercController;
 use App\Http\Controllers\OrganizacionController;
-use App\Http\Controllers\IndicatorController;
-use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\SstDiagnosticController;
+use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\WorkPlanController;
 use Illuminate\Support\Facades\Route;
@@ -186,6 +188,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     | Generación de documentos SGI con IA (Claude) para el cliente activo.
     | Ver -> documents.view | Generar/editar -> documents.manage
     */
+    Route::get('documentos-ia/plantillas', [DocumentTemplateController::class, 'index'])
+        ->middleware(['permission:documents.view', 'module:documentos-ia'])->name('plantillas.index');
+    Route::post('documentos-ia/plantillas', [DocumentTemplateController::class, 'store'])
+        ->middleware(['permission:documents.manage', 'module:documentos-ia'])->name('plantillas.store');
+    Route::post('documentos-ia/plantillas/{plantilla}', [DocumentTemplateController::class, 'update'])
+        ->middleware(['permission:documents.manage', 'module:documentos-ia'])->name('plantillas.update');
+    Route::delete('documentos-ia/plantillas/{plantilla}', [DocumentTemplateController::class, 'destroy'])
+        ->middleware(['permission:documents.manage', 'module:documentos-ia'])->name('plantillas.destroy');
+
     Route::get('documentos-ia', [AiDocumentController::class, 'index'])
         ->middleware(['permission:documents.view', 'module:documentos-ia'])->name('documentos-ia.index');
     Route::post('documentos-ia/generar', [AiDocumentController::class, 'generate'])
@@ -196,6 +207,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:documents.manage', 'module:documentos-ia'])->name('documentos-ia.destroy');
     Route::get('documentos-ia/{documento}/export', [AiDocumentController::class, 'export'])
         ->middleware(['permission:documents.view', 'module:documentos-ia'])->name('documentos-ia.export');
+
+    /*
+    | Asistente conversacional (widget flotante). Chatea con Claude, que consulta
+    | los datos del cliente y genera documentos con herramientas.
+    | Consultar -> documents.view | crear/editar documentos -> documents.manage
+    | (lo verifica AssistantToolbox: el chat funciona igual, solo sin escritura).
+    */
+    Route::get('asistente/historial', [AssistantController::class, 'history'])
+        ->middleware(['permission:documents.view', 'module:documentos-ia'])->name('asistente.history');
+    Route::post('asistente/mensaje', [AssistantController::class, 'stream'])
+        ->middleware(['permission:documents.view', 'module:documentos-ia'])->name('asistente.stream');
+    Route::delete('asistente', [AssistantController::class, 'clear'])
+        ->middleware(['permission:documents.view', 'module:documentos-ia'])->name('asistente.clear');
 
     /*
     | Módulos de la plataforma (Fase 1: shells navegables protegidos por permiso).

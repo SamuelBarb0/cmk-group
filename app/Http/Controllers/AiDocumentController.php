@@ -5,15 +5,19 @@ namespace App\Http\Controllers;
 use App\Jobs\GenerateAiDocumentJob;
 use App\Models\DocumentTemplate;
 use App\Models\GeneratedDocument;
+use App\Models\Tenant;
+use App\Models\TenantDocument;
 use App\Services\DocumentFiller;
 use App\Services\DocxExporter;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use App\Support\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**
  * Generación de documentos SGI con IA (Claude) para el cliente activo.
@@ -42,7 +46,7 @@ class AiDocumentController extends Controller
 
         return Inertia::render('documentos-ia/index', [
             'needsClient' => false,
-            'templates' => DocumentTemplate::orderBy('orden')->get()->map(fn (DocumentTemplate $t) => [
+            'templates' => DocumentTemplate::visibles($this->context->id())->orderBy('orden')->get()->map(fn (DocumentTemplate $t) => [
                 'id' => $t->id,
                 'codigo' => $t->codigo,
                 'nombre' => $t->nombre,
@@ -67,7 +71,10 @@ class AiDocumentController extends Controller
             'document_template_id' => ['required', 'integer', 'exists:document_templates,id'],
         ]);
 
-        $template = DocumentTemplate::findOrFail($data['document_template_id']);
+        // visibles(): sin esto, cambiando el id a mano se podría generar
+        // un documento desde el formato privado de otra empresa.
+        $template = DocumentTemplate::visibles($this->context->id())
+            ->findOrFail($data['document_template_id']);
         $tenant = $this->context->get();
 
         if ($template->tieneBase()) {
@@ -113,7 +120,7 @@ class AiDocumentController extends Controller
     }
 
     /** Bloque de contexto del cliente para los prompts de redacción con IA. */
-    private function contextoCliente(\App\Models\Tenant $tenant): string
+    private function contextoCliente(Tenant $tenant): string
     {
         return "Datos de la empresa cliente:\n"
             ."- Nombre: {$tenant->name}\n"
@@ -164,18 +171,18 @@ class AiDocumentController extends Controller
 
         // El export QUEDA guardado para la empresa (repositorio documental):
         // un archivo por documento, la última versión reemplaza a la anterior.
-        $slug = \Illuminate\Support\Str::slug($documento->titulo);
+        $slug = Str::slug($documento->titulo);
         $archivo = "tenants/{$documento->tenant_id}/documentos/{$slug}.docx";
-        \Illuminate\Support\Facades\Storage::disk('local')->put($archivo, file_get_contents($path));
+        Storage::disk('local')->put($archivo, file_get_contents($path));
 
-        \App\Models\TenantDocument::updateOrCreate(
+        TenantDocument::updateOrCreate(
             ['generated_document_id' => $documento->id],
             [
                 'nombre' => "{$documento->titulo} (v{$documento->version})",
                 'categoria' => 'Documentos IA',
                 'origen' => 'export',
                 'path' => $archivo,
-                'size' => \Illuminate\Support\Facades\Storage::disk('local')->size($archivo),
+                'size' => Storage::disk('local')->size($archivo),
                 'mime' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                 'subido_por' => request()->user()?->name,
             ],
