@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\GeneratedDocument;
-use App\Services\DocumentFiller;
+use DOMDocument;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PhpOffice\PhpWord\IOFactory;
@@ -67,7 +67,7 @@ class DocxExporter
     {
         $company = config('cmk.company');
 
-        $phpWord = new PhpWord();
+        $phpWord = new PhpWord;
         $phpWord->setDefaultFontName('Calibri');
         $phpWord->setDefaultFontSize(11);
         $phpWord->addTitleStyle(1, ['size' => 15, 'bold' => true, 'color' => self::NAVY], ['spaceAfter' => 160]);
@@ -99,12 +99,83 @@ class DocxExporter
             ['spaceAfter' => 240],
         );
 
-        Html::addHtml($section, Str::markdown($doc->contenido), false, false);
+        Html::addHtml($section, $this->htmlParaWord($doc->contenido), false, false);
 
         $path = $this->rutaSalida($doc);
         IOFactory::createWriter($phpWord, 'Word2007')->save($path);
 
         return $path;
+    }
+
+    /**
+     * Markdown -> HTML bien formado para PhpWord.
+     *
+     * `Html::addHtml()` parsea con `DOMDocument::loadXML()`, o sea XML ESTRICTO:
+     * una sola etiqueta vacía de HTML5 sin cerrar (`<br>`, `<hr>`, `<img>`) o mal
+     * anidada aborta la exportación entera con «Opening and ending tag mismatch»
+     * y la descarga falla. El contenido lo redacta la IA, que intercala HTML
+     * suelto dentro del Markdown, así que no basta con sustituir `<br>`: se
+     * reparsea con el parser PERMISIVO de HTML y se vuelve a serializar como
+     * XML, que cierra por su cuenta todo lo que faltara.
+     */
+    private function htmlParaWord(string $markdown): string
+    {
+        $html = trim(Str::markdown($markdown));
+
+        if ($html === '') {
+            return '';
+        }
+
+        // El HTML de la IA trae avisos de parseo que no interesan: se silencian
+        // sin tocar el estado global de libxml para el resto de la petición.
+        $previo = libxml_use_internal_errors(true);
+
+        $dom = new DOMDocument('1.0', 'UTF-8');
+        $dom->loadHTML(
+            '<?xml encoding="utf-8" ?><div>'.$html.'</div>',
+            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NONET,
+        );
+
+        libxml_clear_errors();
+        libxml_use_internal_errors($previo);
+
+        $envoltorio = $dom->documentElement;
+
+        if ($envoltorio === null) {
+            return $html;
+        }
+
+        $this->quitarImagenes($dom);
+
+        $salida = '';
+
+        foreach ($envoltorio->childNodes as $hijo) {
+            $salida .= $dom->saveXML($hijo);
+        }
+
+        return $salida;
+    }
+
+    /**
+     * Saca las imágenes del HTML, dejando su texto alternativo.
+     *
+     * PhpWord resuelve cada `<img>` contra el disco y lanza «Could not load
+     * image» si no lo encuentra, tumbando la exportación entera. La IA redacta
+     * texto, no adjunta archivos: cualquier `src` que escriba apunta a algo que
+     * no existe, así que vale más perder la imagen que el documento.
+     */
+    private function quitarImagenes(DOMDocument $dom): void
+    {
+        $imagenes = iterator_to_array($dom->getElementsByTagName('img'));
+
+        foreach ($imagenes as $img) {
+            $alt = trim((string) $img->getAttribute('alt'));
+
+            $img->parentNode?->replaceChild(
+                $dom->createTextNode($alt === '' ? '' : '['.$alt.']'),
+                $img,
+            );
+        }
     }
 
     private function rutaSalida(GeneratedDocument $doc): string
