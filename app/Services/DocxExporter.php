@@ -14,11 +14,11 @@ use PhpOffice\PhpWord\TemplateProcessor;
 /**
  * Exporta un documento generado a .docx.
  *
- * - Si la plantilla tiene un .docx MODELO (tokenizado con ${...}): rellena los
- *   tokens con los datos del cliente sobre el Word original → LAYOUT EXACTO
- *   preservado, solo se reemplazan los datos (no se recrea nada).
- * - Si no hay modelo (redacción IA): construye el .docx desde el Markdown con
- *   membrete de CMK.
+ * - Si la plantilla tiene un .docx MODELO: rellena sus tokens con los datos del
+ *   cliente sobre el Word original → LAYOUT EXACTO preservado (tablas, membrete,
+ *   logo), no se recrea nada.
+ * - Si no hay modelo (redacción IA), o el consultor ya editó el documento:
+ *   construye el .docx desde el Markdown con membrete de CMK.
  */
 class DocxExporter
 {
@@ -30,13 +30,39 @@ class DocxExporter
 
     public function export(GeneratedDocument $doc): string
     {
-        $template = $doc->template;
-
-        if ($template && $template->archivo && Storage::disk('local')->exists($template->archivo)) {
-            return $this->desdeModelo($doc, $template->archivo);
+        if ($this->debeUsarModelo($doc)) {
+            return $this->desdeModelo($doc, $doc->template->archivo);
         }
 
         return $this->desdeMarkdown($doc);
+    }
+
+    /**
+     * ¿Se exporta sobre el Word original o se reconstruye desde el contenido?
+     *
+     * Sobre el original siempre que lo haya, PORQUE ES EL FORMATO DE CMK: los
+     * formatos y actas son tablas y membrete, y reconstruirlos desde el texto
+     * plano los deja como una lista de frases sin estructura.
+     *
+     * La excepción es un documento que el consultor YA editó. Rellenar el Word
+     * original solo sustituye tokens: no sabe nada de lo que se escribió en
+     * pantalla, así que exportarlo descartaría esas ediciones EN SILENCIO. Editar
+     * sube la versión (AiDocumentController::update), de modo que a partir de la
+     * v2 el contenido manda y se reconstruye — se pierde el layout, no el trabajo.
+     */
+    private function debeUsarModelo(GeneratedDocument $doc): bool
+    {
+        $template = $doc->template;
+
+        if (! $template || blank($template->archivo)) {
+            return false;
+        }
+
+        if (! Storage::disk('local')->exists($template->archivo)) {
+            return false;
+        }
+
+        return $doc->version === 1;
     }
 
     /**
@@ -120,7 +146,13 @@ class DocxExporter
      */
     private function htmlParaWord(string $markdown): string
     {
-        $html = trim(Str::markdown($markdown));
+        // `soft_break` a <br/>: sin esto, un salto de línea SIMPLE se trata como
+        // un espacio (regla de Markdown) y un texto plano de 200 líneas sale
+        // como UN SOLO párrafo corrido —que es justo lo que pasaba con los
+        // contenidos base extraídos a .txt, sin `#` ni líneas en blanco—. No
+        // afecta al Markdown de verdad: los encabezados, listas y tablas se
+        // siguen renderizando igual, porque ahí el salto ya separaba bloques.
+        $html = trim(Str::markdown($markdown, ['renderer' => ['soft_break' => "<br />\n"]]));
 
         if ($html === '') {
             return '';

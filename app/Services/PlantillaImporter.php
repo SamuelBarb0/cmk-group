@@ -41,11 +41,23 @@ class PlantillaImporter
 
     public function extraer(UploadedFile $archivo): string
     {
-        $extension = strtolower($archivo->getClientOriginalExtension());
+        return $this->extraerDe(
+            $archivo->getRealPath(),
+            strtolower($archivo->getClientOriginalExtension()),
+        );
+    }
 
+    /**
+     * Igual que extraer(), pero desde una ruta del disco.
+     *
+     * Lo usa `plantillas:reimportar` para volver a leer los .docx modelo de CMK
+     * sin pasar por una subida HTTP.
+     */
+    public function extraerDe(string $ruta, string $extension): string
+    {
         $texto = match ($extension) {
-            'docx' => $this->desdeDocx($archivo->getRealPath()),
-            'txt', 'md' => (string) file_get_contents($archivo->getRealPath()),
+            'docx' => $this->desdeDocx($ruta),
+            'txt', 'md' => (string) file_get_contents($ruta),
             default => throw new RuntimeException("No se leer archivos «.{$extension}». Sube un .docx, .txt o .md."),
         };
 
@@ -204,12 +216,19 @@ class PlantillaImporter
      * `w:r` cada vez que cambia el formato, y el espacio que los separa vive al
      * final de uno de ellos. Haciendole trim a cada uno salia «materia
      * deseguridad» pegado. Se recorta solo el resultado final.
+     *
+     * `w:p` entra en la consulta para separar PARRAFOS ANIDADOS: una celda de
+     * tabla suele llevar varios, y sin este corte se pegaban entre si —«Norte:
+     * XXXXSur: XXXXXEste:»—, que es el mismo defecto de arriba una escala mas
+     * arriba. Un `w:p` va antes que su propio texto en el documento, asi que
+     * marcar su apertura con un salto basta para separarlos; sobre un `w:p`
+     * suelto no cambia nada, porque `.//` solo mira descendientes.
      */
     private function textoDe(DOMNode $nodo, DOMXPath $xpath): string
     {
         $partes = [];
 
-        foreach ($xpath->query('.//w:t | .//w:tab | .//w:br | .//w:cr', $nodo) as $hijo) {
+        foreach ($xpath->query('.//w:t | .//w:tab | .//w:br | .//w:cr | .//w:p', $nodo) as $hijo) {
             $partes[] = match ($hijo->localName) {
                 't' => $hijo->textContent,
                 'tab' => ' ',

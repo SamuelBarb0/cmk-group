@@ -64,6 +64,29 @@ class DocxExporterHtmlTest extends TestCase
         $this->assertNotEmpty($section->getElements());
     }
 
+    /**
+     * El contenido base de las plantillas se extrajo a .txt: texto plano, con
+     * saltos de linea simples y sin un solo marcador de Markdown. Markdown trata
+     * el salto simple como un espacio, asi que un documento entero salia como UN
+     * parrafo corrido —«REPORTE DE AUTOGESTION PESVPLAN ESTRATEGICO...»—.
+     */
+    public function test_el_texto_plano_conserva_sus_lineas(): void
+    {
+        $html = $this->htmlParaWord("REPORTE DE AUTOGESTIÓN PESV\nPLAN ESTRATÉGICO DE SEGURIDAD VIAL\nRESOLUCIÓN 40595");
+
+        $this->assertSame(2, substr_count($html, '<br'), 'Las líneas se fundieron entre sí.');
+        $this->assertStringNotContainsString('PESVPLAN', strip_tags(str_replace('<br />', "\n", $html)));
+    }
+
+    /** Y el Markdown de verdad tiene que seguir dando estructura, no líneas sueltas. */
+    public function test_el_markdown_real_sigue_dando_encabezados_y_tablas(): void
+    {
+        $html = $this->htmlParaWord("# Objeto\n\nTexto.\n\n| Cargo | Responsable |\n| --- | --- |\n| SST | Ana |\n");
+
+        $this->assertStringContainsString('<h1>', $html);
+        $this->assertStringContainsString('<table>', $html);
+    }
+
     public function test_no_se_pierde_el_texto_por_el_camino(): void
     {
         $html = $this->htmlParaWord('La política **se revisa** cada año<br>y se comunica a todos.');

@@ -128,6 +128,31 @@ class PlantillasSubidasTest extends TestCase
         Storage::disk('local')->assertExists($plantilla->archivo);
     }
 
+    /**
+     * Antes el .docx solo se guardaba si traía `${TOKEN}`. El efecto fue el
+     * contrario del buscado: los formatos y actas —que son tablas y membrete, y
+     * casi nunca llevan tokens— se quedaban sin modelo y se descargaban como un
+     * muro de texto. Son justo los que más formato tienen que perder.
+     */
+    public function test_un_docx_sin_tokens_tambien_conserva_su_formato(): void
+    {
+        Storage::fake('local');
+        $tenant = $this->tenant();
+
+        $this->actingAs($this->consultor())
+            ->withSession(['active_tenant_id' => $tenant->id])
+            ->post(route('plantillas.store'), $this->formulario([
+                'archivo' => $this->docxReal('FT-AUTOGESTION-PESV'),
+                'codigo' => 'FT-TEST',
+                'tipo' => 'Formato',
+            ]));
+
+        $plantilla = DocumentTemplate::where('codigo', 'FT-TEST')->firstOrFail();
+
+        $this->assertNotNull($plantilla->archivo, 'El formato se quedó sin su Word modelo.');
+        Storage::disk('local')->assertExists($plantilla->archivo);
+    }
+
     public function test_una_plantilla_de_una_empresa_no_la_ve_otra(): void
     {
         Storage::fake('local');

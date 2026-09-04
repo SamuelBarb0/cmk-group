@@ -111,7 +111,7 @@ class DocumentTemplateController extends Controller
             'subida_at' => now(),
         ]);
 
-        $plantilla->archivo = $this->guardarOriginal($request->file('archivo'), $datos['codigo'], $tenantId, $contenido);
+        $plantilla->archivo = $this->guardarOriginal($request->file('archivo'), $datos['codigo'], $tenantId);
         $plantilla->save();
 
         return back()->with('success', "Plantilla «{$plantilla->nombre}» disponible para generar documentos.");
@@ -150,7 +150,7 @@ class DocumentTemplateController extends Controller
             $this->borrarOriginal($plantilla);
 
             $plantilla->contenido_base = $contenido;
-            $plantilla->archivo = $this->guardarOriginal($request->file('archivo'), $datos['codigo'], $plantilla->tenant_id, $contenido);
+            $plantilla->archivo = $this->guardarOriginal($request->file('archivo'), $datos['codigo'], $plantilla->tenant_id);
             $plantilla->subido_por = $request->user()?->name;
             $plantilla->subida_at = now();
         }
@@ -246,20 +246,21 @@ class DocumentTemplateController extends Controller
     }
 
     /**
-     * Guarda el .docx original SOLO si esta tokenizado con `${TOKEN}`.
+     * Guarda el .docx original de la plantilla.
      *
      * DocxExporter usa `archivo` para exportar sobre el Word original con
-     * TemplateProcessor, que sustituye tokens: eso conserva el membrete y el
-     * formato exactos. Pero en un .docx SIN tokens no hay nada que sustituir,
-     * asi que exportaria el documento original tal cual, ignorando lo que la IA
-     * genero y lo que el consultor edito. En ese caso vale mas no guardarlo y
-     * dejar que la exportacion vaya por Markdown, que si refleja el contenido.
+     * TemplateProcessor: eso conserva el membrete, el logo y las tablas exactas.
+     *
+     * ANTES solo se guardaba si el .docx traia `${TOKEN}`, con el razonamiento de
+     * que sin tokens no hay nada que sustituir y el export ignoraria lo redactado.
+     * El efecto real fue el contrario: los formatos y actas —que son tablas y
+     * membrete, y casi nunca llevan tokens— perdian TODO el formato y salian como
+     * un muro de texto. Se guarda siempre; quien decide si se usa el modelo o se
+     * reconstruye es `DocxExporter::debeUsarModelo()`, que respeta las ediciones.
      */
-    private function guardarOriginal(UploadedFile $archivo, string $codigo, ?int $tenantId, string $contenido): ?string
+    private function guardarOriginal(UploadedFile $archivo, string $codigo, ?int $tenantId): ?string
     {
-        $esDocx = strtolower($archivo->getClientOriginalExtension()) === 'docx';
-
-        if (! $esDocx || preg_match('/\$\{[A-Z_]+\}/', $contenido) !== 1) {
+        if (strtolower($archivo->getClientOriginalExtension()) !== 'docx') {
             return null;
         }
 
