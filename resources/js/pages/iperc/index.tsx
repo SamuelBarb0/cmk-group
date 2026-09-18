@@ -11,7 +11,7 @@ import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import { Building2, CheckCircle2, Pencil, Plus, ShieldAlert, TriangleAlert } from 'lucide-react';
+import { Building2, CheckCircle2, HardHat, Pencil, Plus, ShieldAlert, TriangleAlert } from 'lucide-react';
 import { FormEventHandler, useEffect, useState } from 'react';
 
 interface Row {
@@ -24,6 +24,7 @@ interface Row {
     clasificacion: string;
     peligro: string;
     efectos: string | null;
+    peor_consecuencia: string | null;
     control_fuente: string | null;
     control_medio: string | null;
     control_individuo: string | null;
@@ -34,15 +35,37 @@ interface Row {
     nr: number;
     nivel_riesgo: string;
     aceptabilidad: string;
+    criterio_controles: string | null;
+    // Jerarquía de controles (GTC 45), de mayor a menor eficacia.
+    med_eliminacion: string | null;
+    med_sustitucion: string | null;
+    med_ingenieria: string | null;
+    med_administrativos: string | null;
+    med_epp: string | null;
+    /** Lo calcula el modelo: el EPP quedó como único control propuesto. */
+    solo_epp: boolean;
     medidas: string | null;
     expuestos: number | null;
 }
 
 interface Props {
     rows: Row[];
-    stats: { total: number; no_aceptables: number };
+    stats: { total: number; no_aceptables: number; solo_epp: number };
     needsClient: boolean;
 }
+
+/**
+ * Los cinco escalones de la jerarquía de controles, en el orden de la GTC 45.
+ * El orden es el mensaje: se recorre de arriba abajo y el EPP va de último
+ * porque es el último recurso, no el primero.
+ */
+const JERARQUIA = [
+    { key: 'med_eliminacion', label: '1. Eliminación', ayuda: 'Quitar el peligro por completo.' },
+    { key: 'med_sustitucion', label: '2. Sustitución', ayuda: 'Reemplazarlo por algo menos peligroso.' },
+    { key: 'med_ingenieria', label: '3. Controles de ingeniería', ayuda: 'Aislar, encerrar, ventilar, automatizar.' },
+    { key: 'med_administrativos', label: '4. Controles administrativos y señalización', ayuda: 'Procedimientos, rotación, permisos, señales.' },
+    { key: 'med_epp', label: '5. Equipos de protección personal', ayuda: 'Último recurso: no elimina el peligro, protege a la persona.' },
+] as const;
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
@@ -94,12 +117,19 @@ const emptyForm = {
     clasificacion: 'Físico',
     peligro: '',
     efectos: '',
+    peor_consecuencia: '',
     control_fuente: '',
     control_medio: '',
     control_individuo: '',
     nd: 2,
     ne: 2,
     nc: 25,
+    criterio_controles: '',
+    med_eliminacion: '',
+    med_sustitucion: '',
+    med_ingenieria: '',
+    med_administrativos: '',
+    med_epp: '',
     medidas: '',
     expuestos: '' as number | string,
 };
@@ -151,6 +181,12 @@ export default function IpercIndex({ rows, stats, needsClient }: Props) {
     const nr = np * Number(data.nc);
     const niv = nivel(nr);
 
+    // Mismo criterio que `solo_epp` en el modelo, calculado aquí en vivo para
+    // avisar mientras se escribe y no después de guardar.
+    const avisoSoloEpp =
+        data.med_epp.trim() !== '' &&
+        JERARQUIA.slice(0, -1).every(({ key }) => data[key].trim() === '');
+
     function openCreate() {
         setEditing(null);
         clearErrors();
@@ -170,12 +206,19 @@ export default function IpercIndex({ rows, stats, needsClient }: Props) {
             clasificacion: r.clasificacion,
             peligro: r.peligro,
             efectos: r.efectos ?? '',
+            peor_consecuencia: r.peor_consecuencia ?? '',
             control_fuente: r.control_fuente ?? '',
             control_medio: r.control_medio ?? '',
             control_individuo: r.control_individuo ?? '',
             nd: r.nd,
             ne: r.ne,
             nc: r.nc,
+            criterio_controles: r.criterio_controles ?? '',
+            med_eliminacion: r.med_eliminacion ?? '',
+            med_sustitucion: r.med_sustitucion ?? '',
+            med_ingenieria: r.med_ingenieria ?? '',
+            med_administrativos: r.med_administrativos ?? '',
+            med_epp: r.med_epp ?? '',
             medidas: r.medidas ?? '',
             expuestos: r.expuestos ?? '',
         });
@@ -258,6 +301,8 @@ export default function IpercIndex({ rows, stats, needsClient }: Props) {
                 <div className="grid gap-4 sm:grid-cols-2">
                     <StatCard label="Peligros identificados" value={stats.total} icon={TriangleAlert} />
                     <StatCard label="Riesgos no aceptables (I / II)" value={stats.no_aceptables} icon={ShieldAlert} danger />
+                    {/* La observación que más levanta un auditor. Verla antes que él es el punto. */}
+                    <StatCard label="Solo EPP como control" value={stats.solo_epp} icon={HardHat} danger={stats.solo_epp > 0} />
                 </div>
 
                 <Card className="overflow-hidden">
@@ -399,6 +444,15 @@ export default function IpercIndex({ rows, stats, needsClient }: Props) {
                             <Label htmlFor="efectos">Efectos posibles</Label>
                             <Input id="efectos" value={data.efectos} onChange={(e) => setData('efectos', e.target.value)} />
                         </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="peor_consecuencia">Peor consecuencia</Label>
+                            <Input
+                                id="peor_consecuencia"
+                                value={data.peor_consecuencia}
+                                onChange={(e) => setData('peor_consecuencia', e.target.value)}
+                                placeholder="La peor consecuencia creíble si el peligro se materializa."
+                            />
+                        </div>
 
                         {/* Valoración GTC 45 con cálculo en vivo */}
                         <div className="bg-muted/40 space-y-3 rounded-lg border p-4">
@@ -462,9 +516,57 @@ export default function IpercIndex({ rows, stats, needsClient }: Props) {
                             </div>
                         </div>
 
-                        {/* Medidas */}
+                        {/* Medidas de intervención — jerarquía de controles (GTC 45).
+                            Se piden en orden y de arriba abajo a propósito: el formulario
+                            enseña la jerarquía mientras se diligencia. */}
+                        <div className="grid gap-3">
+                            <div>
+                                <Label>Medidas de intervención</Label>
+                                <p className="text-muted-foreground mt-0.5 text-xs">
+                                    Diligencia de arriba hacia abajo. El EPP va de último: protege a la persona, no elimina el peligro.
+                                </p>
+                            </div>
+
+                            {JERARQUIA.map(({ key, label, ayuda }) => (
+                                <div key={key} className="grid gap-1">
+                                    <Label htmlFor={key} className="text-xs font-medium">
+                                        {label}
+                                    </Label>
+                                    <textarea
+                                        id={key}
+                                        value={data[key]}
+                                        onChange={(e) => setData(key, e.target.value)}
+                                        rows={1}
+                                        placeholder={ayuda}
+                                        className="border-input bg-background w-full rounded-md border px-3 py-1.5 text-sm"
+                                    />
+                                </div>
+                            ))}
+
+                            {avisoSoloEpp && (
+                                <p className="text-amber-600 dark:text-amber-500 text-xs">
+                                    El EPP es el único control propuesto. Si de verdad no hay una medida de orden superior
+                                    viable, déjalo justificado en el criterio.
+                                </p>
+                            )}
+                        </div>
+
                         <div className="grid gap-2">
-                            <Label htmlFor="medidas">Medidas de intervención</Label>
+                            <Label htmlFor="criterio_controles">Criterio para los controles</Label>
+                            <textarea
+                                id="criterio_controles"
+                                value={data.criterio_controles}
+                                onChange={(e) => setData('criterio_controles', e.target.value)}
+                                rows={2}
+                                placeholder="Requisito legal, norma interna o criterio profesional que sustenta el control elegido."
+                                className="border-input bg-background w-full rounded-md border px-3 py-1.5 text-sm"
+                            />
+                        </div>
+
+                        {/* Campo libre anterior a la jerarquía. Se conserva para no perder
+                            lo que los consultores ya habían escrito en las filas existentes. */}
+                        <div className="grid gap-2">
+                            <Label htmlFor="medidas">Notas adicionales</Label>
                             <textarea
                                 id="medidas"
                                 value={data.medidas}
