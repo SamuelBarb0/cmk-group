@@ -41,6 +41,10 @@ interface Attendee {
     numero_documento: string | null;
     cargo: string | null;
     asistio: boolean;
+    /** 0 a 100. null = asistió pero no se le evaluó, que no es un cero. */
+    nota: number | null;
+    /** Lo deriva el backend de la nota y del umbral; aquí solo se muestra. */
+    eficaz?: boolean | null;
 }
 interface EmployeeRow {
     id: number;
@@ -58,6 +62,9 @@ interface OpenTraining {
     lugar: string | null;
     objetivo: string | null;
     estado: Estado;
+    evalua_eficacia: boolean;
+    nota_minima: number;
+    vigencia_meses: number | null;
     observaciones: string | null;
     attendees: Attendee[];
 }
@@ -299,6 +306,9 @@ function TrainingEditor({ training, employees, canManage }: { training: OpenTrai
     const [objetivo, setObjetivo] = useState(training.objetivo ?? '');
     const [estado] = useState<Estado>(training.estado);
     const [observaciones, setObservaciones] = useState(training.observaciones ?? '');
+    const [evaluaEficacia, setEvaluaEficacia] = useState(training.evalua_eficacia);
+    const [notaMinima, setNotaMinima] = useState(String(training.nota_minima ?? 70));
+    const [vigencia, setVigencia] = useState(training.vigencia_meses ? String(training.vigencia_meses) : '');
     const [attendees, setAttendees] = useState<Attendee[]>(training.attendees ?? []);
     const [picker, setPicker] = useState(false);
     const [saving, setSaving] = useState(false);
@@ -310,12 +320,12 @@ function TrainingEditor({ training, employees, canManage }: { training: OpenTrai
     function agregarEmpleados(ids: number[]) {
         const nuevos = employees
             .filter((e) => ids.includes(e.id))
-            .map<Attendee>((e) => ({ employee_id: e.id, nombres: e.nombre, numero_documento: e.numero_documento, cargo: e.cargo, asistio: true }));
+            .map<Attendee>((e) => ({ employee_id: e.id, nombres: e.nombre, numero_documento: e.numero_documento, cargo: e.cargo, asistio: true, nota: null }));
         setAttendees((a) => [...a, ...nuevos]);
         setPicker(false);
     }
     function agregarManual() {
-        setAttendees((a) => [...a, { employee_id: null, nombres: '', numero_documento: '', cargo: '', asistio: true }]);
+        setAttendees((a) => [...a, { employee_id: null, nombres: '', numero_documento: '', cargo: '', asistio: true, nota: null }]);
     }
     function setAtt(i: number, patch: Partial<Attendee>) {
         setAttendees((a) => a.map((x, j) => (j === i ? { ...x, ...patch } : x)));
@@ -336,6 +346,9 @@ function TrainingEditor({ training, employees, canManage }: { training: OpenTrai
                 lugar: lugar || null,
                 objetivo: objetivo || null,
                 estado: nuevoEstado ?? estado,
+                evalua_eficacia: evaluaEficacia,
+                nota_minima: notaMinima ? Number(notaMinima) : 70,
+                vigencia_meses: vigencia ? Number(vigencia) : null,
                 observaciones: observaciones || null,
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 attendees: attendees.filter((a) => a.nombres.trim() !== '') as any,
@@ -438,17 +451,24 @@ function TrainingEditor({ training, employees, canManage }: { training: OpenTrai
                             </p>
                         ) : (
                             <div className="divide-border overflow-hidden rounded-md border">
-                                <div className="text-muted-foreground bg-muted/40 grid grid-cols-[1fr_7rem_1fr_4rem_2rem] gap-2 border-b px-2 py-1.5 text-[11px] font-semibold">
+                                <div className={cn(
+                                        'text-muted-foreground bg-muted/40 grid gap-2 border-b px-2 py-1.5 text-[11px] font-semibold',
+                                        evaluaEficacia ? 'grid-cols-[1fr_7rem_1fr_4rem_9rem_2rem]' : 'grid-cols-[1fr_7rem_1fr_4rem_2rem]',
+                                    )}>
                                     <span>Nombre</span>
                                     <span>Documento</span>
                                     <span>Cargo</span>
                                     <span className="text-center">Asistió</span>
+                                    {evaluaEficacia && <span>Nota</span>}
                                     <span></span>
                                 </div>
                                 {attendees.map((a, i) => (
                                     <div
                                         key={i}
-                                        className="grid grid-cols-[1fr_7rem_1fr_4rem_2rem] items-center gap-2 border-b px-2 py-1.5 last:border-b-0"
+                                        className={cn(
+                                            'grid items-center gap-2 border-b px-2 py-1.5 last:border-b-0',
+                                            evaluaEficacia ? 'grid-cols-[1fr_7rem_1fr_4rem_9rem_2rem]' : 'grid-cols-[1fr_7rem_1fr_4rem_2rem]',
+                                        )}
                                     >
                                         <Input
                                             value={a.nombres}
@@ -478,6 +498,33 @@ function TrainingEditor({ training, employees, canManage }: { training: OpenTrai
                                                 className="size-4"
                                             />
                                         </div>
+                                        {evaluaEficacia && (
+                                            <div className="flex items-center gap-1">
+                                                <Input
+                                                    type="number"
+                                                    min={0}
+                                                    max={100}
+                                                    value={a.nota ?? ''}
+                                                    onChange={(e) =>
+                                                        setAtt(i, { nota: e.target.value === '' ? null : Number(e.target.value) })
+                                                    }
+                                                    disabled={!canManage || !a.asistio}
+                                                    placeholder="—"
+                                                    className="h-8"
+                                                />
+                                                {a.nota !== null && (
+                                                    <span
+                                                        className={
+                                                            a.nota >= Number(notaMinima || 70)
+                                                                ? 'text-xs text-emerald-600 dark:text-emerald-500'
+                                                                : 'text-destructive text-xs'
+                                                        }
+                                                    >
+                                                        {a.nota >= Number(notaMinima || 70) ? 'Eficaz' : 'No eficaz'}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
                                         {canManage && (
                                             <button
                                                 type="button"
@@ -495,6 +542,54 @@ function TrainingEditor({ training, employees, canManage }: { training: OpenTrai
                     </div>
 
                     <div>
+                        <div className="bg-muted/40 grid gap-3 rounded-md p-3 sm:grid-cols-3">
+                            <label className="flex cursor-pointer items-center gap-2 text-sm sm:col-span-3">
+                                <input
+                                    type="checkbox"
+                                    checked={evaluaEficacia}
+                                    onChange={(e) => setEvaluaEficacia(e.target.checked)}
+                                    disabled={!canManage}
+                                    className="size-4"
+                                />
+                                <span>
+                                    Se evalúa la eficacia
+                                    <span className="text-muted-foreground block text-xs">
+                                        Habilita la nota por asistente. Es lo que alimenta el indicador de eficacia de
+                                        capacitaciones.
+                                    </span>
+                                </span>
+                            </label>
+
+                            {evaluaEficacia && (
+                                <div className="grid gap-1.5">
+                                    <Label htmlFor="nota_minima">Nota mínima para aprobar</Label>
+                                    <Input
+                                        id="nota_minima"
+                                        type="number"
+                                        min={1}
+                                        max={100}
+                                        value={notaMinima}
+                                        onChange={(e) => setNotaMinima(e.target.value)}
+                                        disabled={!canManage}
+                                    />
+                                </div>
+                            )}
+
+                            <div className="grid gap-1.5">
+                                <Label htmlFor="vigencia_meses">Vigencia (meses)</Label>
+                                <Input
+                                    id="vigencia_meses"
+                                    type="number"
+                                    min={1}
+                                    max={120}
+                                    value={vigencia}
+                                    onChange={(e) => setVigencia(e.target.value)}
+                                    disabled={!canManage}
+                                    placeholder="No caduca"
+                                />
+                            </div>
+                        </div>
+
                         <Label>Observaciones</Label>
                         <textarea
                             value={observaciones}

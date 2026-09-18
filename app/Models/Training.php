@@ -25,6 +25,9 @@ class Training extends Model
         'lugar',
         'objetivo',
         'estado',
+        'evalua_eficacia',
+        'nota_minima',
+        'vigencia_meses',
         'observaciones',
         'creado_por',
     ];
@@ -32,8 +35,11 @@ class Training extends Model
     protected function casts(): array
     {
         return [
-            'fecha' => 'date',
+            'fecha' => 'date:Y-m-d',
             'duracion_minutos' => 'integer',
+            'evalua_eficacia' => 'boolean',
+            'nota_minima' => 'integer',
+            'vigencia_meses' => 'integer',
         ];
     }
 

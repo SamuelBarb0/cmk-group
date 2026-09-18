@@ -50,6 +50,9 @@ class TrainingController extends Controller
                 'lugar' => $capacitacion->lugar,
                 'objetivo' => $capacitacion->objetivo,
                 'estado' => $capacitacion->estado,
+                'evalua_eficacia' => $capacitacion->evalua_eficacia,
+                'nota_minima' => $capacitacion->nota_minima,
+                'vigencia_meses' => $capacitacion->vigencia_meses,
                 'observaciones' => $capacitacion->observaciones,
                 'attendees' => $capacitacion->attendees->map(fn ($a) => [
                     'employee_id' => $a->employee_id,
@@ -57,6 +60,8 @@ class TrainingController extends Controller
                     'numero_documento' => $a->numero_documento,
                     'cargo' => $a->cargo,
                     'asistio' => $a->asistio,
+                    'nota' => $a->nota,
+                    'eficaz' => $a->eficaz,
                 ])->values(),
             ],
         ]));
@@ -151,6 +156,9 @@ class TrainingController extends Controller
             'lugar' => ['nullable', 'string', 'max:255'],
             'objetivo' => ['nullable', 'string', 'max:2000'],
             'estado' => ['required', Rule::in(['programada', 'realizada'])],
+            'evalua_eficacia' => ['boolean'],
+            'nota_minima' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'vigencia_meses' => ['nullable', 'integer', 'min:1', 'max:120'],
             'observaciones' => ['nullable', 'string', 'max:2000'],
             'attendees' => ['nullable', 'array'],
             'attendees.*.employee_id' => ['nullable', 'integer'],
@@ -158,6 +166,8 @@ class TrainingController extends Controller
             'attendees.*.numero_documento' => ['nullable', 'string', 'max:40'],
             'attendees.*.cargo' => ['nullable', 'string', 'max:120'],
             'attendees.*.asistio' => ['boolean'],
+            // Sin nota = asistio pero no se le evaluo. No es un cero.
+            'attendees.*.nota' => ['nullable', 'numeric', 'min:0', 'max:100'],
         ]);
 
         $capacitacion->update([
@@ -169,19 +179,32 @@ class TrainingController extends Controller
             'lugar' => $data['lugar'] ?? null,
             'objetivo' => $data['objetivo'] ?? null,
             'estado' => $data['estado'],
+            'evalua_eficacia' => $data['evalua_eficacia'] ?? false,
+            'nota_minima' => $data['nota_minima'] ?? 70,
+            'vigencia_meses' => $data['vigencia_meses'] ?? null,
             'observaciones' => $data['observaciones'] ?? null,
         ]);
 
         // Sincroniza los asistentes: se reemplaza la lista completa.
         $capacitacion->attendees()->delete();
         foreach ($data['attendees'] ?? [] as $a) {
-            $capacitacion->attendees()->create([
+            $asistente = $capacitacion->attendees()->make([
                 'employee_id' => $a['employee_id'] ?? null,
                 'nombres' => $a['nombres'],
                 'numero_documento' => $a['numero_documento'] ?? null,
                 'cargo' => $a['cargo'] ?? null,
                 'asistio' => $a['asistio'] ?? true,
+                // Si la capacitación no evalúa, la nota no se guarda aunque
+                // venga en la petición: quedaría una eficacia calculada sobre
+                // un examen que nadie presentó.
+                'nota' => ($data['evalua_eficacia'] ?? false) ? ($a['nota'] ?? null) : null,
             ]);
+
+            // Se le entrega la capacitacion ya cargada antes de guardar: el
+            // modelo necesita su `nota_minima` para decidir la eficacia, y sin
+            // esto la buscaria en la base UNA VEZ POR ASISTENTE.
+            $asistente->setRelation('training', $capacitacion);
+            $asistente->save();
         }
 
         return back()->with('success', 'Capacitación guardada.');
