@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Controllers\AbsenceController;
+use App\Http\Controllers\AcpmActionController;
 use App\Http\Controllers\AiDocumentController;
+use App\Http\Controllers\AuditController;
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\CommitteeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentoEmpresaController;
 use App\Http\Controllers\DocumentTemplateController;
@@ -10,10 +14,21 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\FormatoController;
 use App\Http\Controllers\IndicatorController;
 use App\Http\Controllers\IpercController;
+use App\Http\Controllers\LegalRequirementController;
 use App\Http\Controllers\OrganizacionController;
+use App\Http\Controllers\PesvColaboradorController;
+use App\Http\Controllers\PesvContractorController;
+use App\Http\Controllers\PesvController;
+use App\Http\Controllers\PesvRouteController;
+use App\Http\Controllers\PesvSedeController;
+use App\Http\Controllers\PesvSiniestroController;
+use App\Http\Controllers\PesvVehicleController;
+use App\Http\Controllers\PpeController;
+use App\Http\Controllers\SafetyReportController;
 use App\Http\Controllers\SstDiagnosticController;
 use App\Http\Controllers\TrainingController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\WorkAccidentController;
 use App\Http\Controllers\WorkPlanController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -92,6 +107,59 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.manage', 'module:diagnostico'])->name('diagnostico.save');
 
     /*
+    | PESV — Plan Estratégico de Seguridad Vial (Res. 40595 de 2022).
+    |
+    | El plan son 24 pasos en 4 fases. Además del plan en sí, el módulo trae la
+    | caracterización que exige el Paso 5 (sedes, colaboradores/conductores,
+    | contratistas, vehículos y rutas) y el registro de siniestros viales que
+    | alimenta los pasos 13 y 21.
+    |
+    | Ver -> pesv.view | Gestionar -> pesv.manage
+    */
+    Route::middleware(['permission:pesv.view', 'module:pesv'])->group(function () {
+        Route::get('pesv', [PesvController::class, 'show'])->name('pesv.show');
+        Route::get('pesv/paso/{numero}', [PesvController::class, 'paso'])
+            ->whereNumber('numero')->name('pesv.paso');
+        Route::get('pesv/sedes', [PesvSedeController::class, 'index'])->name('pesv.sedes.index');
+        Route::get('pesv/colaboradores', [PesvColaboradorController::class, 'index'])->name('pesv.colaboradores.index');
+        Route::get('pesv/contratistas', [PesvContractorController::class, 'index'])->name('pesv.contratistas.index');
+        Route::get('pesv/vehiculos', [PesvVehicleController::class, 'index'])->name('pesv.vehiculos.index');
+        Route::get('pesv/rutas', [PesvRouteController::class, 'index'])->name('pesv.rutas.index');
+        Route::get('pesv/siniestros', [PesvSiniestroController::class, 'index'])->name('pesv.siniestros.index');
+    });
+
+    Route::middleware(['permission:pesv.manage', 'module:pesv'])->group(function () {
+        Route::put('pesv', [PesvController::class, 'savePlan'])->name('pesv.plan.save');
+        Route::post('pesv/paso/{numero}', [PesvController::class, 'saveStep'])
+            ->whereNumber('numero')->name('pesv.paso.save');
+        Route::post('pesv/comite', [PesvController::class, 'storeMiembro'])->name('pesv.comite.store');
+        Route::delete('pesv/comite/{miembro}', [PesvController::class, 'destroyMiembro'])->name('pesv.comite.destroy');
+
+        Route::post('pesv/sedes', [PesvSedeController::class, 'store'])->name('pesv.sedes.store');
+        Route::put('pesv/sedes/{sede}', [PesvSedeController::class, 'update'])->name('pesv.sedes.update');
+        Route::delete('pesv/sedes/{sede}', [PesvSedeController::class, 'destroy'])->name('pesv.sedes.destroy');
+
+        Route::put('pesv/colaboradores/{colaborador}', [PesvColaboradorController::class, 'update'])
+            ->name('pesv.colaboradores.update');
+
+        Route::post('pesv/contratistas', [PesvContractorController::class, 'store'])->name('pesv.contratistas.store');
+        Route::put('pesv/contratistas/{contratista}', [PesvContractorController::class, 'update'])->name('pesv.contratistas.update');
+        Route::delete('pesv/contratistas/{contratista}', [PesvContractorController::class, 'destroy'])->name('pesv.contratistas.destroy');
+
+        Route::post('pesv/vehiculos', [PesvVehicleController::class, 'store'])->name('pesv.vehiculos.store');
+        Route::put('pesv/vehiculos/{vehiculo}', [PesvVehicleController::class, 'update'])->name('pesv.vehiculos.update');
+        Route::delete('pesv/vehiculos/{vehiculo}', [PesvVehicleController::class, 'destroy'])->name('pesv.vehiculos.destroy');
+
+        Route::post('pesv/rutas', [PesvRouteController::class, 'store'])->name('pesv.rutas.store');
+        Route::put('pesv/rutas/{ruta}', [PesvRouteController::class, 'update'])->name('pesv.rutas.update');
+        Route::delete('pesv/rutas/{ruta}', [PesvRouteController::class, 'destroy'])->name('pesv.rutas.destroy');
+
+        Route::post('pesv/siniestros', [PesvSiniestroController::class, 'store'])->name('pesv.siniestros.store');
+        Route::put('pesv/siniestros/{siniestro}', [PesvSiniestroController::class, 'update'])->name('pesv.siniestros.update');
+        Route::delete('pesv/siniestros/{siniestro}', [PesvSiniestroController::class, 'destroy'])->name('pesv.siniestros.destroy');
+    });
+
+    /*
     | Matriz IPERC (GTC 45) del cliente activo.
     | Ver -> sst.view | Gestionar -> sst.manage
     */
@@ -103,6 +171,126 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.manage', 'module:iperc'])->name('iperc.update');
     Route::delete('iperc/{peligro}', [IpercController::class, 'destroy'])
         ->middleware(['permission:sst.manage', 'module:iperc'])->name('iperc.destroy');
+
+    /*
+    | Comites: COPASST y Comite de Convivencia Laboral. Es la fuente de los
+    | indicadores CUMP-COPASST y CUMP-COCOLAB.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::get('comites', [CommitteeController::class, 'index'])
+        ->middleware(['permission:sst.view', 'module:comites'])->name('comites.index');
+    Route::post('comites', [CommitteeController::class, 'store'])
+        ->middleware(['permission:sst.manage', 'module:comites'])->name('comites.store');
+    Route::put('comites/{comite}', [CommitteeController::class, 'update'])
+        ->middleware(['permission:sst.manage', 'module:comites'])->name('comites.update');
+    Route::delete('comites/{comite}', [CommitteeController::class, 'destroy'])
+        ->middleware(['permission:sst.manage', 'module:comites'])->name('comites.destroy');
+
+    /*
+    | Auditorias del sistema de gestion. La barra lateral ya apuntaba a
+    | /auditoria desde antes, pero la ruta NO existia: era un enlace muerto.
+    | Ver -> audit.view | Gestionar -> sst.manage
+    */
+    Route::get('auditoria', [AuditController::class, 'index'])
+        ->middleware(['permission:audit.view', 'module:auditoria'])->name('auditoria.index');
+    Route::post('auditoria', [AuditController::class, 'store'])
+        ->middleware(['permission:sst.manage', 'module:auditoria'])->name('auditoria.store');
+    Route::put('auditoria/{auditoria}', [AuditController::class, 'update'])
+        ->middleware(['permission:sst.manage', 'module:auditoria'])->name('auditoria.update');
+    Route::delete('auditoria/{auditoria}', [AuditController::class, 'destroy'])
+        ->middleware(['permission:sst.manage', 'module:auditoria'])->name('auditoria.destroy');
+
+    /*
+    | EPP: catalogo, matriz por cargo y entregas firmadas. Cierra el bucle que
+    | abrio la jerarquia de controles del IPERC.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::get('epp', [PpeController::class, 'index'])
+        ->middleware(['permission:sst.view', 'module:epp'])->name('epp.index');
+    Route::post('epp/items', [PpeController::class, 'storeItem'])
+        ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.items.store');
+    Route::put('epp/items/{item}', [PpeController::class, 'updateItem'])
+        ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.items.update');
+    Route::delete('epp/items/{item}', [PpeController::class, 'destroyItem'])
+        ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.items.destroy');
+    Route::post('epp/matriz', [PpeController::class, 'storeAssignment'])
+        ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.matriz.store');
+    Route::delete('epp/matriz/{asignacion}', [PpeController::class, 'destroyAssignment'])
+        ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.matriz.destroy');
+    Route::post('epp/entregas', [PpeController::class, 'storeDelivery'])
+        ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.entregas.store');
+    Route::put('epp/entregas/{entrega}', [PpeController::class, 'updateDelivery'])
+        ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.entregas.update');
+    Route::delete('epp/entregas/{entrega}', [PpeController::class, 'destroyDelivery'])
+        ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.entregas.destroy');
+
+    /*
+    | Requisitos legales (matriz) del cliente activo. Alimenta el indicador
+    | CUMP-LEG. Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::get('requisitos-legales', [LegalRequirementController::class, 'index'])
+        ->middleware(['permission:sst.view', 'module:requisitos-legales'])->name('requisitos-legales.index');
+    Route::post('requisitos-legales', [LegalRequirementController::class, 'store'])
+        ->middleware(['permission:sst.manage', 'module:requisitos-legales'])->name('requisitos-legales.store');
+    Route::put('requisitos-legales/{requisito}', [LegalRequirementController::class, 'update'])
+        ->middleware(['permission:sst.manage', 'module:requisitos-legales'])->name('requisitos-legales.update');
+    Route::delete('requisitos-legales/{requisito}', [LegalRequirementController::class, 'destroy'])
+        ->middleware(['permission:sst.manage', 'module:requisitos-legales'])->name('requisitos-legales.destroy');
+
+    /*
+    | ACPM: acciones correctivas, preventivas y de mejora. Registro común al que
+    | llegan los hallazgos de todos los módulos. Alimenta GEST-PA.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::get('acpm', [AcpmActionController::class, 'index'])
+        ->middleware(['permission:sst.view', 'module:acpm'])->name('acpm.index');
+    Route::post('acpm', [AcpmActionController::class, 'store'])
+        ->middleware(['permission:sst.manage', 'module:acpm'])->name('acpm.store');
+    Route::put('acpm/{accion}', [AcpmActionController::class, 'update'])
+        ->middleware(['permission:sst.manage', 'module:acpm'])->name('acpm.update');
+    Route::delete('acpm/{accion}', [AcpmActionController::class, 'destroy'])
+        ->middleware(['permission:sst.manage', 'module:acpm'])->name('acpm.destroy');
+
+    /*
+    | Reportes de actos y condiciones inseguras. Es el canal por el que cualquier
+    | trabajador levanta la mano. Alimenta RED-AC.
+    | Ver -> incidents.view | Gestionar -> incidents.manage
+    */
+    Route::get('reportes-ac', [SafetyReportController::class, 'index'])
+        ->middleware(['permission:incidents.view', 'module:reportes-ac'])->name('reportes-ac.index');
+    Route::post('reportes-ac', [SafetyReportController::class, 'store'])
+        ->middleware(['permission:incidents.manage', 'module:reportes-ac'])->name('reportes-ac.store');
+    Route::put('reportes-ac/{reporte}', [SafetyReportController::class, 'update'])
+        ->middleware(['permission:incidents.manage', 'module:reportes-ac'])->name('reportes-ac.update');
+    Route::delete('reportes-ac/{reporte}', [SafetyReportController::class, 'destroy'])
+        ->middleware(['permission:incidents.manage', 'module:reportes-ac'])->name('reportes-ac.destroy');
+
+    /*
+    | Ausentismo laboral. Fuente de AUS-CM y de los días perdidos del índice de
+    | severidad. Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::get('ausentismo', [AbsenceController::class, 'index'])
+        ->middleware(['permission:sst.view', 'module:ausentismo'])->name('ausentismo.index');
+    Route::post('ausentismo', [AbsenceController::class, 'store'])
+        ->middleware(['permission:sst.manage', 'module:ausentismo'])->name('ausentismo.store');
+    Route::put('ausentismo/{ausencia}', [AbsenceController::class, 'update'])
+        ->middleware(['permission:sst.manage', 'module:ausentismo'])->name('ausentismo.update');
+    Route::delete('ausentismo/{ausencia}', [AbsenceController::class, 'destroy'])
+        ->middleware(['permission:sst.manage', 'module:ausentismo'])->name('ausentismo.destroy');
+
+    /*
+    | Accidentes e incidentes de trabajo CON su investigación (Res. 1401 de 2007).
+    | Fuente de los índices de frecuencia, severidad y letalidad.
+    | Ver -> incidents.view | Gestionar -> incidents.manage
+    */
+    Route::get('accidentes', [WorkAccidentController::class, 'index'])
+        ->middleware(['permission:incidents.view', 'module:accidentes'])->name('accidentes.index');
+    Route::post('accidentes', [WorkAccidentController::class, 'store'])
+        ->middleware(['permission:incidents.manage', 'module:accidentes'])->name('accidentes.store');
+    Route::put('accidentes/{accidente}', [WorkAccidentController::class, 'update'])
+        ->middleware(['permission:incidents.manage', 'module:accidentes'])->name('accidentes.update');
+    Route::delete('accidentes/{accidente}', [WorkAccidentController::class, 'destroy'])
+        ->middleware(['permission:incidents.manage', 'module:accidentes'])->name('accidentes.destroy');
 
     /*
     | Plan de Trabajo Anual del SGI (cronograma por cláusulas ISO) del cliente activo.
@@ -227,7 +415,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     */
     $modules = [
         ['reportes', 'Reportes', 'Informes PDF auditables, indicadores y exportaciones.', 'reports.view'],
-        ['auditoria', 'Auditoría', 'Consulta y evidencia de información auditable del cliente.', 'audit.view'],
+        // 'auditoria' salio de aqui: ya tiene modulo real mas arriba. Ojo, este
+        // bucle se ejecuta DESPUES, y con la misma URI Laravel se queda con la
+        // ultima ruta registrada, asi que el shell tapaba al modulo entero.
     ];
 
     foreach ($modules as [$slug, $title, $desc, $permission]) {

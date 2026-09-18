@@ -91,6 +91,7 @@ return [
     */
     'modulos_contratables' => [
         'diagnostico'   => 'Diagnóstico SG-SST (Res. 0312)',
+        'pesv'          => 'PESV (Res. 40595)',
         'iperc'         => 'Matriz IPERC (GTC 45)',
         'plan-trabajo'  => 'Plan de Trabajo Anual',
         'indicadores'   => 'Indicadores',
@@ -100,5 +101,14 @@ return [
         'inspecciones'  => 'Formatos (inspecciones y actas)',
         'reportes'      => 'Reportes',
         'auditoria'     => 'Auditoría',
+
+        // Seguimiento de lo que ocurre y de lo que hay que hacer con ello.
+        'requisitos-legales' => 'Matriz de requisitos legales',
+        'acpm'          => 'ACPM (acciones correctivas y de mejora)',
+        'reportes-ac'   => 'Reportes de actos y condiciones inseguras',
+        'accidentes'    => 'Accidentalidad e investigación (Res. 1401)',
+        'ausentismo'    => 'Ausentismo laboral',
+        'comites'       => 'Comités (COPASST y convivencia laboral)',
+        'epp'           => 'EPP (matriz por cargo y entregas)',
     ],
 ];
