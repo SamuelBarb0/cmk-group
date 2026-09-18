@@ -10,7 +10,7 @@ import { usePermissions } from '@/hooks/use-permissions';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import { Briefcase, Building2, CheckCircle2, IdCard, Pencil, Plus, Trash2, UserRound, Users } from 'lucide-react';
+import { Briefcase, Building2, CheckCircle2, ClipboardList, IdCard, Pencil, Plus, Trash2, UserRound, Users } from 'lucide-react';
 import { FormEventHandler, useEffect, useState } from 'react';
 
 interface Employee {
@@ -37,11 +37,45 @@ interface Employee {
     arl: string | null;
     nivel_riesgo: string | null;
     is_active: boolean;
+
+    // Perfil sociodemográfico (encuesta 3.1.1). Edad, género, antigüedad en la
+    // empresa y tipo de contrato NO están aquí: salen de los campos de arriba.
+    estado_civil: string | null;
+    personas_a_cargo: string | null;
+    escolaridad: string | null;
+    tenencia_vivienda: string | null;
+    uso_tiempo_libre: string | null;
+    ingresos_smlv: string | null;
+    antiguedad_cargo: string | null;
+    actividades_salud: string[] | null;
+    consume_alcohol: boolean | null;
+    alcohol_frecuencia: string | null;
+    fuma: boolean | null;
+    fuma_promedio_dia: string | null;
+    practica_deporte: boolean | null;
+    deporte_frecuencia: string | null;
+    consentimiento_datos: boolean;
+    consentimiento_fecha: string | null;
+    perfil_actualizado_at: string | null;
+}
+
+/** Listas de opciones de la encuesta; las manda el backend. */
+interface OpcionesPerfil {
+    estado_civil: string[];
+    personas_a_cargo: string[];
+    escolaridad: string[];
+    tenencia_vivienda: string[];
+    uso_tiempo_libre: string[];
+    ingresos_smlv: string[];
+    antiguedad_cargo: string[];
+    actividades_salud: string[];
+    frecuencia: string[];
 }
 
 interface Props {
     employees: Employee[];
-    stats: { total: number; active: number; areas: number };
+    stats: { total: number; active: number; areas: number; sin_perfil: number };
+    opcionesPerfil: OpcionesPerfil;
     needsClient: boolean;
 }
 
@@ -49,6 +83,24 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Empleados', href: '/empleados' },
 ];
+
+/** Las siete preguntas de opción única. La clave coincide con la de `opcionesPerfil`. */
+const SELECTS_PERFIL = [
+    { key: 'estado_civil', label: 'Estado civil' },
+    { key: 'personas_a_cargo', label: 'Personas a cargo' },
+    { key: 'escolaridad', label: 'Nivel de escolaridad' },
+    { key: 'tenencia_vivienda', label: 'Tenencia de vivienda' },
+    { key: 'uso_tiempo_libre', label: 'Uso del tiempo libre' },
+    { key: 'ingresos_smlv', label: 'Promedio de ingresos (S.M.L.)' },
+    { key: 'antiguedad_cargo', label: 'Antigüedad en el cargo actual' },
+] as const;
+
+/** Los tres hábitos: un sí/no y, si es que sí, cada cuánto. */
+const HABITOS = [
+    { campo: 'consume_alcohol', label: 'Consume bebidas alcohólicas', frecuencia: 'alcohol_frecuencia', frecuenciaLabel: 'Frecuencia' },
+    { campo: 'fuma', label: 'Fuma', frecuencia: 'fuma_promedio_dia', frecuenciaLabel: 'Promedio diario' },
+    { campo: 'practica_deporte', label: 'Practica algún deporte', frecuencia: 'deporte_frecuencia', frecuenciaLabel: 'Frecuencia' },
+] as const;
 
 const emptyForm = {
     nombres: '',
@@ -73,6 +125,25 @@ const emptyForm = {
     arl: '',
     nivel_riesgo: '',
     is_active: true as boolean,
+
+    estado_civil: '',
+    personas_a_cargo: '',
+    escolaridad: '',
+    tenencia_vivienda: '',
+    uso_tiempo_libre: '',
+    ingresos_smlv: '',
+    antiguedad_cargo: '',
+    actividades_salud: [] as string[],
+    // null = sin responder, que no es lo mismo que «no». La encuesta se puede
+    // diligenciar a medias y hay que poder distinguirlo en la tabulación.
+    consume_alcohol: null as boolean | null,
+    alcohol_frecuencia: '',
+    fuma: null as boolean | null,
+    fuma_promedio_dia: '',
+    practica_deporte: null as boolean | null,
+    deporte_frecuencia: '',
+    consentimiento_datos: false as boolean,
+    consentimiento_fecha: '',
 };
 
 function StatCard({ label, value, icon: Icon }: { label: string; value: number; icon: React.ElementType }) {
@@ -91,7 +162,7 @@ function StatCard({ label, value, icon: Icon }: { label: string; value: number; 
     );
 }
 
-export default function EmpleadosIndex({ employees, stats, needsClient }: Props) {
+export default function EmpleadosIndex({ employees, stats, opcionesPerfil, needsClient }: Props) {
     const { can } = usePermissions();
     const canManage = can('sst.manage');
     const page = usePage<SharedData>();
@@ -146,6 +217,23 @@ export default function EmpleadosIndex({ employees, stats, needsClient }: Props)
             arl: emp.arl ?? '',
             nivel_riesgo: emp.nivel_riesgo ?? '',
             is_active: emp.is_active,
+
+            estado_civil: emp.estado_civil ?? '',
+            personas_a_cargo: emp.personas_a_cargo ?? '',
+            escolaridad: emp.escolaridad ?? '',
+            tenencia_vivienda: emp.tenencia_vivienda ?? '',
+            uso_tiempo_libre: emp.uso_tiempo_libre ?? '',
+            ingresos_smlv: emp.ingresos_smlv ?? '',
+            antiguedad_cargo: emp.antiguedad_cargo ?? '',
+            actividades_salud: emp.actividades_salud ?? [],
+            consume_alcohol: emp.consume_alcohol,
+            alcohol_frecuencia: emp.alcohol_frecuencia ?? '',
+            fuma: emp.fuma,
+            fuma_promedio_dia: emp.fuma_promedio_dia ?? '',
+            practica_deporte: emp.practica_deporte,
+            deporte_frecuencia: emp.deporte_frecuencia ?? '',
+            consentimiento_datos: emp.consentimiento_datos,
+            consentimiento_fecha: emp.consentimiento_fecha ?? '',
         });
         setOpen(true);
     }
@@ -237,6 +325,8 @@ export default function EmpleadosIndex({ employees, stats, needsClient }: Props)
                     <StatCard label="Empleados" value={stats.total} icon={Users} />
                     <StatCard label="Activos" value={stats.active} icon={CheckCircle2} />
                     <StatCard label="Áreas" value={stats.areas} icon={Briefcase} />
+                    {/* Activos sin encuesta: sin ellos el análisis de condiciones de salud sale incompleto. */}
+                    <StatCard label="Sin perfil sociodemográfico" value={stats.sin_perfil} icon={ClipboardList} />
                 </div>
 
                 {/* Tabla / listado */}
@@ -533,6 +623,148 @@ export default function EmpleadosIndex({ employees, stats, needsClient }: Props)
                                 </div>
                             </div>
                         </div>
+
+                        {/* Perfil sociodemográfico (encuesta 3.1.1 del libro de CMK).
+                            Va plegado: son 12 preguntas que no se responden al dar de alta
+                            a alguien, sino cuando el trabajador contesta la encuesta. */}
+                        <details className="rounded-md border">
+                            <summary className="cursor-pointer px-4 py-3 text-sm font-medium">
+                                Perfil sociodemográfico
+                                {editing?.perfil_actualizado_at ? (
+                                    <span className="text-muted-foreground ml-2 font-normal">
+                                        diligenciado el {new Date(editing.perfil_actualizado_at).toLocaleDateString('es-CO')}
+                                    </span>
+                                ) : (
+                                    <span className="text-muted-foreground ml-2 font-normal">sin diligenciar</span>
+                                )}
+                            </summary>
+
+                            <div className="space-y-4 border-t px-4 py-4">
+                                <p className="text-muted-foreground text-xs">
+                                    La edad, el género, la antigüedad en la empresa y el tipo de contrato no se
+                                    preguntan aquí: ya salen de los datos de arriba.
+                                </p>
+
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                    {SELECTS_PERFIL.map(({ key, label }) => (
+                                        <div key={key} className="grid gap-2">
+                                            <Label htmlFor={key}>{label}</Label>
+                                            <select
+                                                id={key}
+                                                value={data[key]}
+                                                onChange={(ev) => setData(key, ev.target.value)}
+                                                className="border-input bg-background h-9 w-full rounded-md border px-3 text-sm"
+                                            >
+                                                <option value="">Sin responder</option>
+                                                {opcionesPerfil[key].map((o) => (
+                                                    <option key={o} value={o}>
+                                                        {o}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <InputError message={errors[key]} />
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label>Actividades de salud en las que ha participado</Label>
+                                    <div className="grid gap-2 sm:grid-cols-2">
+                                        {opcionesPerfil.actividades_salud.map((act) => (
+                                            <label key={act} className="flex cursor-pointer items-center gap-2 text-sm">
+                                                <Checkbox
+                                                    checked={data.actividades_salud.includes(act)}
+                                                    onCheckedChange={(v) =>
+                                                        setData(
+                                                            'actividades_salud',
+                                                            v === true
+                                                                ? [...data.actividades_salud, act]
+                                                                : data.actividades_salud.filter((a) => a !== act),
+                                                        )
+                                                    }
+                                                />
+                                                <span>{act}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Hábitos: sí/no + cada cuánto. El «sin responder» es una
+                                    opción real, distinta de «no», o la tabulación contaría
+                                    como abstemio a quien no contestó. */}
+                                <div className="grid gap-4 sm:grid-cols-3">
+                                    {HABITOS.map(({ campo, label, frecuencia, frecuenciaLabel }) => (
+                                        <div key={campo} className="grid gap-2">
+                                            <Label htmlFor={campo}>{label}</Label>
+                                            <select
+                                                id={campo}
+                                                value={data[campo] === null ? '' : data[campo] ? 'si' : 'no'}
+                                                onChange={(ev) =>
+                                                    setData(campo, ev.target.value === '' ? null : ev.target.value === 'si')
+                                                }
+                                                className="border-input bg-background h-9 w-full rounded-md border px-3 text-sm"
+                                            >
+                                                <option value="">Sin responder</option>
+                                                <option value="si">Sí</option>
+                                                <option value="no">No</option>
+                                            </select>
+
+                                            {data[campo] === true &&
+                                                (frecuencia === 'fuma_promedio_dia' ? (
+                                                    <Input
+                                                        value={data.fuma_promedio_dia}
+                                                        onChange={(ev) => setData('fuma_promedio_dia', ev.target.value)}
+                                                        placeholder={frecuenciaLabel}
+                                                    />
+                                                ) : (
+                                                    <select
+                                                        value={data[frecuencia]}
+                                                        onChange={(ev) => setData(frecuencia, ev.target.value)}
+                                                        className="border-input bg-background h-9 w-full rounded-md border px-3 text-sm"
+                                                    >
+                                                        <option value="">{frecuenciaLabel}</option>
+                                                        {opcionesPerfil.frecuencia.map((f) => (
+                                                            <option key={f} value={f}>
+                                                                {f}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                ))}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Consentimiento informado, Ley 1581 de 2012. Sin él estos
+                                    datos no se pueden tratar ni tabular. */}
+                                <div className="bg-muted/40 grid gap-3 rounded-md p-3">
+                                    <label className="flex cursor-pointer items-start gap-3">
+                                        <Checkbox
+                                            className="mt-0.5"
+                                            checked={data.consentimiento_datos}
+                                            onCheckedChange={(v) => setData('consentimiento_datos', v === true)}
+                                        />
+                                        <span className="text-sm">
+                                            El trabajador autorizó el tratamiento de sus datos personales
+                                            <span className="text-muted-foreground block text-xs">
+                                                Ley 1581 de 2012. Sin esta autorización el perfil no se puede tabular.
+                                            </span>
+                                        </span>
+                                    </label>
+                                    {data.consentimiento_datos && (
+                                        <div className="grid gap-2 sm:max-w-xs">
+                                            <Label htmlFor="consentimiento_fecha">Fecha de la autorización</Label>
+                                            <Input
+                                                id="consentimiento_fecha"
+                                                type="date"
+                                                value={data.consentimiento_fecha}
+                                                onChange={(ev) => setData('consentimiento_fecha', ev.target.value)}
+                                            />
+                                            <InputError message={errors.consentimiento_fecha} />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </details>
 
                         <label className="flex cursor-pointer items-center gap-3 pt-1">
                             <Checkbox checked={data.is_active} onCheckedChange={(v) => setData('is_active', v === true)} />

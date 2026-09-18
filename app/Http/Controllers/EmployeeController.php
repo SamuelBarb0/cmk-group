@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Support\PerfilSociodemografico;
 use App\Support\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -31,7 +32,8 @@ class EmployeeController extends Controller
             return Inertia::render('empleados/index', [
                 'needsClient' => true,
                 'employees' => [],
-                'stats' => ['total' => 0, 'active' => 0, 'areas' => 0],
+                'stats' => ['total' => 0, 'active' => 0, 'areas' => 0, 'sin_perfil' => 0],
+                'opcionesPerfil' => PerfilSociodemografico::opciones(),
             ]);
         }
 
@@ -47,7 +49,12 @@ class EmployeeController extends Controller
                 'total' => $employees->count(),
                 'active' => $employees->where('is_active', true)->count(),
                 'areas' => $employees->pluck('area')->filter()->unique()->count(),
+                // Activos a los que les falta la encuesta sociodemográfica. Sin
+                // ella no se puede tabular el análisis de condiciones de salud.
+                'sin_perfil' => $employees->where('is_active', true)
+                    ->whereNull('perfil_actualizado_at')->count(),
             ],
+            'opcionesPerfil' => PerfilSociodemografico::opciones(),
         ]);
     }
 
@@ -110,6 +117,10 @@ class EmployeeController extends Controller
             'arl' => ['nullable', 'string', 'max:255'],
             'nivel_riesgo' => ['nullable', 'string', 'max:3'],
             'is_active' => ['boolean'],
+
+            // Perfil sociodemográfico. Las opciones y sus reglas viven en un
+            // solo sitio para que el formulario y la validación no se separen.
+            ...PerfilSociodemografico::reglas(),
         ]);
     }
 }
