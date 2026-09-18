@@ -36,7 +36,7 @@ class FormRecord extends Model
         return [
             'schema' => 'array',
             'data' => 'array',
-            'fecha' => 'date',
+            'fecha' => 'date:Y-m-d',
         ];
     }
 
