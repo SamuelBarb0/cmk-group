@@ -111,5 +111,6 @@ return [
         'comites' => 'Comités (COPASST y convivencia laboral)',
         'epp' => 'EPP (matriz por cargo y entregas)',
         'emergencias' => 'Plan de emergencias y brigada',
+        'salud-ocupacional' => 'Salud ocupacional (profesiograma y exámenes médicos)',
     ],
 ];

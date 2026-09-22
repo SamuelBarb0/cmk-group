@@ -16,6 +16,7 @@ use App\Http\Controllers\FormatoController;
 use App\Http\Controllers\IndicatorController;
 use App\Http\Controllers\IpercController;
 use App\Http\Controllers\LegalRequirementController;
+use App\Http\Controllers\OccupationalHealthController;
 use App\Http\Controllers\OrganizacionController;
 use App\Http\Controllers\PesvColaboradorController;
 use App\Http\Controllers\PesvContractorController;
@@ -260,6 +261,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.manage', 'module:emergencias'])->name('emergencias.directorio.update');
     Route::delete('emergencias/directorio/{contacto}', [EmergencyController::class, 'destroyContacto'])
         ->middleware(['permission:sst.manage', 'module:emergencias'])->name('emergencias.directorio.destroy');
+
+    /*
+    | Salud ocupacional: profesiograma por cargo y examenes medicos
+    | ocupacionales (Res. 2346 de 2007, estandar 3.1.4). Alimenta COB-EMO.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::get('salud-ocupacional', [OccupationalHealthController::class, 'index'])
+        ->middleware(['permission:sst.view', 'module:salud-ocupacional'])->name('salud-ocupacional.index');
+    Route::post('salud-ocupacional/examenes', [OccupationalHealthController::class, 'storeExamen'])
+        ->middleware(['permission:sst.manage', 'module:salud-ocupacional'])->name('salud-ocupacional.examenes.store');
+    Route::put('salud-ocupacional/examenes/{examen}', [OccupationalHealthController::class, 'updateExamen'])
+        ->middleware(['permission:sst.manage', 'module:salud-ocupacional'])->name('salud-ocupacional.examenes.update');
+    Route::delete('salud-ocupacional/examenes/{examen}', [OccupationalHealthController::class, 'destroyExamen'])
+        ->middleware(['permission:sst.manage', 'module:salud-ocupacional'])->name('salud-ocupacional.examenes.destroy');
+    // Antes que la ruta con {perfil}, igual que las lineas nacionales de emergencias.
+    Route::post('salud-ocupacional/profesiograma/desde-nomina', [OccupationalHealthController::class, 'perfilesDesdeNomina'])
+        ->middleware(['permission:sst.manage', 'module:salud-ocupacional'])->name('salud-ocupacional.perfiles.nomina');
+    Route::post('salud-ocupacional/profesiograma', [OccupationalHealthController::class, 'storePerfil'])
+        ->middleware(['permission:sst.manage', 'module:salud-ocupacional'])->name('salud-ocupacional.perfiles.store');
+    Route::put('salud-ocupacional/profesiograma/{perfil}', [OccupationalHealthController::class, 'updatePerfil'])
+        ->middleware(['permission:sst.manage', 'module:salud-ocupacional'])->name('salud-ocupacional.perfiles.update');
+    Route::delete('salud-ocupacional/profesiograma/{perfil}', [OccupationalHealthController::class, 'destroyPerfil'])
+        ->middleware(['permission:sst.manage', 'module:salud-ocupacional'])->name('salud-ocupacional.perfiles.destroy');
 
     /*
     | Requisitos legales (matriz) del cliente activo. Alimenta el indicador

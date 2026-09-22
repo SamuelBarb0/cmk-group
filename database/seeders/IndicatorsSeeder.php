@@ -92,6 +92,11 @@ class IndicatorsSeeder extends Seeder
             ['PART-EMERG', 'Participación en simulacros y socializaciones del plan de emergencias', 'SST',
                 'Número de participantes', 'Número de personas convocadas', 100, '%', 'asc', 80],
 
+            // Estándar 3.1.4: evaluaciones médicas ocupacionales. Lo alimenta el
+            // módulo de salud ocupacional (trabajadores con el examen al día).
+            ['COB-EMO', 'Cobertura de exámenes médicos ocupacionales al día', 'SST',
+                'Número de trabajadores con examen médico vigente', 'Número de trabajadores activos', 100, '%', 'asc', 100],
+
             // Las dos versiones «sobre trabajadores» del dashboard de CMK. Ver
             // la advertencia de la cabecera: no son las de la Resolución 0312.
             ['IF-TRAB', 'Índice de frecuencia sobre n.° de trabajadores (dashboard CMK)', 'SST',
