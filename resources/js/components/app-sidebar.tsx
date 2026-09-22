@@ -22,6 +22,7 @@ import {
     Contact,
     FileBarChart,
     FileText,
+    Flame,
     Gauge,
     GraduationCap,
     HardHat,
@@ -73,6 +74,7 @@ const navGroups: { label: string; items: NavEntry[] }[] = [
             { title: 'Documentos IA', url: '/documentos-ia', icon: Sparkles, permission: 'documents.view', module: 'documentos-ia' },
             { title: 'Comités', url: '/comites', icon: UsersRound, permission: 'sst.view', module: 'comites' },
             { title: 'EPP', url: '/epp', icon: HardHat, permission: 'sst.view', module: 'epp' },
+            { title: 'Emergencias', url: '/emergencias', icon: Flame, permission: 'sst.view', module: 'emergencias' },
         ],
     },
     {

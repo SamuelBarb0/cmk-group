@@ -11,24 +11,24 @@
 return [
 
     'company' => [
-        'name'        => 'CMK GROUP',
-        'legal_name'  => 'CMK GROUP S.A.S.',
-        'nit'         => '901.959.302-4',
-        'email'       => 'profesional02.cmk@gmail.com',
-        'phones'      => ['+57 310 333 40 06', '+57 317 886 38 27'],
-        'domain'      => 'cmkgroup.com',
-        'addresses'   => [
+        'name' => 'CMK GROUP',
+        'legal_name' => 'CMK GROUP S.A.S.',
+        'nit' => '901.959.302-4',
+        'email' => 'profesional02.cmk@gmail.com',
+        'phones' => ['+57 310 333 40 06', '+57 317 886 38 27'],
+        'domain' => 'cmkgroup.com',
+        'addresses' => [
             [
-                'label'   => 'Valledupar',
-                'line'    => 'Carrera 19A2 # 4-77, Sector Rincón de Rosales',
-                'city'    => 'Valledupar, Cesar',
-                'zip'     => '200005',
+                'label' => 'Valledupar',
+                'line' => 'Carrera 19A2 # 4-77, Sector Rincón de Rosales',
+                'city' => 'Valledupar, Cesar',
+                'zip' => '200005',
             ],
             [
-                'label'   => 'Barranquilla',
-                'line'    => 'Carrera 72 # 91 A - 100, Torre 6, Oficina 823, Barrio Villa Carolina',
-                'city'    => 'Barranquilla, Atlántico',
-                'zip'     => '080001',
+                'label' => 'Barranquilla',
+                'line' => 'Carrera 72 # 91 A - 100, Torre 6, Oficina 823, Barrio Villa Carolina',
+                'city' => 'Barranquilla, Atlántico',
+                'zip' => '080001',
             ],
         ],
     ],
@@ -38,11 +38,11 @@ return [
     | Se referencia también en resources/css/app.css.
     */
     'brand' => [
-        'navy'      => '#16243F', // azul marino principal (letras CMK)
+        'navy' => '#16243F', // azul marino principal (letras CMK)
         'navy_deep' => '#0F1B30',
-        'gray'      => '#6E7277', // gris del isotipo
+        'gray' => '#6E7277', // gris del isotipo
         'gray_soft' => '#9AA0A6',
-        'paper'     => '#F5F4F1', // fondo tipo papel del logo
+        'paper' => '#F5F4F1', // fondo tipo papel del logo
     ],
 
     /*
@@ -52,34 +52,34 @@ return [
     */
     'roles' => [
         'consultor_admin' => [
-            'label'  => 'Consultor administrador',
-            'scope'  => 'cmk',
-            'desc'   => 'Control total: gestiona clientes, usuarios, módulos, configuración y ve el dashboard maestro consolidado.',
+            'label' => 'Consultor administrador',
+            'scope' => 'cmk',
+            'desc' => 'Control total: gestiona clientes, usuarios, módulos, configuración y ve el dashboard maestro consolidado.',
         ],
         'consultor_operativo' => [
-            'label'  => 'Consultor operativo',
-            'scope'  => 'cmk',
-            'desc'   => 'Ejecuta la consultoría: carga información, hallazgos y reportes de los clientes asignados.',
+            'label' => 'Consultor operativo',
+            'scope' => 'cmk',
+            'desc' => 'Ejecuta la consultoría: carga información, hallazgos y reportes de los clientes asignados.',
         ],
         'cliente_admin' => [
-            'label'  => 'Cliente administrador',
-            'scope'  => 'client',
-            'desc'   => 'Responsable por parte del cliente. Gestiona la información y los usuarios de su empresa.',
+            'label' => 'Cliente administrador',
+            'scope' => 'client',
+            'desc' => 'Responsable por parte del cliente. Gestiona la información y los usuarios de su empresa.',
         ],
         'cliente_usuario' => [
-            'label'  => 'Cliente usuario',
-            'scope'  => 'client',
-            'desc'   => 'Usuario operativo del cliente. Consulta y diligencia información con permisos limitados.',
+            'label' => 'Cliente usuario',
+            'scope' => 'client',
+            'desc' => 'Usuario operativo del cliente. Consulta y diligencia información con permisos limitados.',
         ],
         'inspector' => [
-            'label'  => 'Inspector (app móvil)',
-            'scope'  => 'client',
-            'desc'   => 'Inspecciones en campo desde la PWA: checklists, fotos con GPS, firmas e incidentes (offline).',
+            'label' => 'Inspector (app móvil)',
+            'scope' => 'client',
+            'desc' => 'Inspecciones en campo desde la PWA: checklists, fotos con GPS, firmas e incidentes (offline).',
         ],
         'auditor' => [
-            'label'  => 'Auditor',
-            'scope'  => 'client',
-            'desc'   => 'Solo consulta y evidencia documentos, indicadores e información auditable del cliente. Sin edición.',
+            'label' => 'Auditor',
+            'scope' => 'client',
+            'desc' => 'Solo consulta y evidencia documentos, indicadores e información auditable del cliente. Sin edición.',
         ],
     ],
 
@@ -90,25 +90,26 @@ return [
     | y siempre están habilitados (alimentan al resto).
     */
     'modulos_contratables' => [
-        'diagnostico'   => 'Diagnóstico SG-SST (Res. 0312)',
-        'pesv'          => 'PESV (Res. 40595)',
-        'iperc'         => 'Matriz IPERC (GTC 45)',
-        'plan-trabajo'  => 'Plan de Trabajo Anual',
-        'indicadores'   => 'Indicadores',
+        'diagnostico' => 'Diagnóstico SG-SST (Res. 0312)',
+        'pesv' => 'PESV (Res. 40595)',
+        'iperc' => 'Matriz IPERC (GTC 45)',
+        'plan-trabajo' => 'Plan de Trabajo Anual',
+        'indicadores' => 'Indicadores',
         'capacitaciones' => 'Capacitaciones',
-        'documentos'    => 'Documentos de la empresa',
+        'documentos' => 'Documentos de la empresa',
         'documentos-ia' => 'Documentos IA',
-        'inspecciones'  => 'Formatos (inspecciones y actas)',
-        'reportes'      => 'Reportes',
-        'auditoria'     => 'Auditoría',
+        'inspecciones' => 'Formatos (inspecciones y actas)',
+        'reportes' => 'Reportes',
+        'auditoria' => 'Auditoría',
 
         // Seguimiento de lo que ocurre y de lo que hay que hacer con ello.
         'requisitos-legales' => 'Matriz de requisitos legales',
-        'acpm'          => 'ACPM (acciones correctivas y de mejora)',
-        'reportes-ac'   => 'Reportes de actos y condiciones inseguras',
-        'accidentes'    => 'Accidentalidad e investigación (Res. 1401)',
-        'ausentismo'    => 'Ausentismo laboral',
-        'comites'       => 'Comités (COPASST y convivencia laboral)',
-        'epp'           => 'EPP (matriz por cargo y entregas)',
+        'acpm' => 'ACPM (acciones correctivas y de mejora)',
+        'reportes-ac' => 'Reportes de actos y condiciones inseguras',
+        'accidentes' => 'Accidentalidad e investigación (Res. 1401)',
+        'ausentismo' => 'Ausentismo laboral',
+        'comites' => 'Comités (COPASST y convivencia laboral)',
+        'epp' => 'EPP (matriz por cargo y entregas)',
+        'emergencias' => 'Plan de emergencias y brigada',
     ],
 ];

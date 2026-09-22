@@ -78,6 +78,20 @@ class IndicatorsSeeder extends Seeder
             ['CUMP-COPASST', 'Cumplimiento del plan de trabajo del COPASST', 'Proceso',
                 'Número de actividades ejecutadas', 'Número de actividades programadas', 100, '%', 'asc', 90],
 
+            // Los tres del «Programa de emergencias» (hojas 5.1.1 / 8.2). Los
+            // alimenta el módulo de emergencias. El Excel fija como meta 1
+            // «mínimo 2 simulacros al año»: como cifra absoluta no cabe en
+            // num/den, así que se mide realizados sobre programados y la meta
+            // de los dos al año la vigila la pantalla del módulo.
+            ['CUMP-SIM', 'Cumplimiento de simulacros de emergencia', 'SST',
+                'Número de simulacros realizados', 'Número de simulacros programados', 100, '%', 'asc', 100],
+            ['REC-SIM', 'Recomendaciones de simulacros implementadas', 'SST',
+                'Número de recomendaciones implementadas', 'Número total de recomendaciones de los simulacros', 100, '%', 'asc', 90],
+            // El texto de la meta dice 80 %; la tabla del mismo Excel pone 90 %.
+            // Se toma el texto, que es lo que firma la gerencia; es editable.
+            ['PART-EMERG', 'Participación en simulacros y socializaciones del plan de emergencias', 'SST',
+                'Número de participantes', 'Número de personas convocadas', 100, '%', 'asc', 80],
+
             // Las dos versiones «sobre trabajadores» del dashboard de CMK. Ver
             // la advertencia de la cabecera: no son las de la Resolución 0312.
             ['IF-TRAB', 'Índice de frecuencia sobre n.° de trabajadores (dashboard CMK)', 'SST',

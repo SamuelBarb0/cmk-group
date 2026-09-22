@@ -3,13 +3,14 @@
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AcpmActionController;
 use App\Http\Controllers\AiDocumentController;
-use App\Http\Controllers\AuditController;
 use App\Http\Controllers\AssistantController;
+use App\Http\Controllers\AuditController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CommitteeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentoEmpresaController;
 use App\Http\Controllers\DocumentTemplateController;
+use App\Http\Controllers\EmergencyController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\FormatoController;
 use App\Http\Controllers\IndicatorController;
@@ -223,6 +224,42 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.entregas.update');
     Route::delete('epp/entregas/{entrega}', [PpeController::class, 'destroyDelivery'])
         ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.entregas.destroy');
+
+    /*
+    | Plan de emergencias: brigada, simulacros, equipos y directorio MEDEVAC
+    | (estandares 5.1.1 y 5.1.2 de la Res. 0312). Los simulacros alimentan
+    | CUMP-SIM, REC-SIM y PART-EMERG.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::get('emergencias', [EmergencyController::class, 'index'])
+        ->middleware(['permission:sst.view', 'module:emergencias'])->name('emergencias.index');
+    Route::post('emergencias/brigada', [EmergencyController::class, 'storeBrigadista'])
+        ->middleware(['permission:sst.manage', 'module:emergencias'])->name('emergencias.brigada.store');
+    Route::put('emergencias/brigada/{brigadista}', [EmergencyController::class, 'updateBrigadista'])
+        ->middleware(['permission:sst.manage', 'module:emergencias'])->name('emergencias.brigada.update');
+    Route::delete('emergencias/brigada/{brigadista}', [EmergencyController::class, 'destroyBrigadista'])
+        ->middleware(['permission:sst.manage', 'module:emergencias'])->name('emergencias.brigada.destroy');
+    Route::post('emergencias/simulacros', [EmergencyController::class, 'storeSimulacro'])
+        ->middleware(['permission:sst.manage', 'module:emergencias'])->name('emergencias.simulacros.store');
+    Route::put('emergencias/simulacros/{simulacro}', [EmergencyController::class, 'updateSimulacro'])
+        ->middleware(['permission:sst.manage', 'module:emergencias'])->name('emergencias.simulacros.update');
+    Route::delete('emergencias/simulacros/{simulacro}', [EmergencyController::class, 'destroySimulacro'])
+        ->middleware(['permission:sst.manage', 'module:emergencias'])->name('emergencias.simulacros.destroy');
+    Route::post('emergencias/equipos', [EmergencyController::class, 'storeEquipo'])
+        ->middleware(['permission:sst.manage', 'module:emergencias'])->name('emergencias.equipos.store');
+    Route::put('emergencias/equipos/{equipo}', [EmergencyController::class, 'updateEquipo'])
+        ->middleware(['permission:sst.manage', 'module:emergencias'])->name('emergencias.equipos.update');
+    Route::delete('emergencias/equipos/{equipo}', [EmergencyController::class, 'destroyEquipo'])
+        ->middleware(['permission:sst.manage', 'module:emergencias'])->name('emergencias.equipos.destroy');
+    // Antes que la ruta con {contacto}: si no, «nacionales» se tomaria por un id.
+    Route::post('emergencias/directorio/nacionales', [EmergencyController::class, 'cargarLineasNacionales'])
+        ->middleware(['permission:sst.manage', 'module:emergencias'])->name('emergencias.directorio.nacionales');
+    Route::post('emergencias/directorio', [EmergencyController::class, 'storeContacto'])
+        ->middleware(['permission:sst.manage', 'module:emergencias'])->name('emergencias.directorio.store');
+    Route::put('emergencias/directorio/{contacto}', [EmergencyController::class, 'updateContacto'])
+        ->middleware(['permission:sst.manage', 'module:emergencias'])->name('emergencias.directorio.update');
+    Route::delete('emergencias/directorio/{contacto}', [EmergencyController::class, 'destroyContacto'])
+        ->middleware(['permission:sst.manage', 'module:emergencias'])->name('emergencias.directorio.destroy');
 
     /*
     | Requisitos legales (matriz) del cliente activo. Alimenta el indicador
