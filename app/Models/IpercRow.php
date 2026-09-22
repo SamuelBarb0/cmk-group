@@ -15,11 +15,29 @@ class IpercRow extends Model
 
     protected $fillable = [
         'proceso', 'zona', 'actividad', 'tarea', 'rutinaria',
-        'clasificacion', 'peligro', 'efectos',
+        'clasificacion', 'peligro', 'efectos', 'peor_consecuencia',
         'control_fuente', 'control_medio', 'control_individuo',
         'nd', 'ne', 'nc', 'np', 'nr', 'nivel_riesgo', 'aceptabilidad',
+        'criterio_controles',
+        'med_eliminacion', 'med_sustitucion', 'med_ingenieria',
+        'med_administrativos', 'med_epp',
         'medidas', 'expuestos',
     ];
+
+    /**
+     * La jerarquía de controles de la GTC 45, de mayor a menor eficacia. El
+     * orden importa: es el que decide si una propuesta de control es aceptable.
+     */
+    public const JERARQUIA = [
+        'med_eliminacion',
+        'med_sustitucion',
+        'med_ingenieria',
+        'med_administrativos',
+        'med_epp',
+    ];
+
+    /** Va al front con cada fila: la tabla marca ahí el aviso de EPP como único control. */
+    protected $appends = ['solo_epp'];
 
     protected function casts(): array
     {
@@ -39,6 +57,33 @@ class IpercRow extends Model
             $row->nivel_riesgo = self::nivelRiesgo($row->nr);
             $row->aceptabilidad = self::aceptabilidad($row->nivel_riesgo);
         });
+    }
+
+    /**
+     * Marca las filas donde el EPP quedó como ÚNICO control propuesto.
+     *
+     * La GTC 45 pone el EPP en el último escalón: proteger a la persona no
+     * elimina el peligro, solo la interpone. Una matriz donde el único control
+     * de un riesgo alto es «usar guantes» es la observación más repetida en una
+     * auditoría, y hasta ahora no se podía detectar porque las cinco medidas
+     * vivían fundidas en un solo campo de texto.
+     *
+     * No es un error que bloquee el guardado: a veces el EPP es de verdad lo
+     * único viable. Es un aviso para que el consultor lo justifique.
+     */
+    public function getSoloEppAttribute(): bool
+    {
+        if (blank($this->med_epp)) {
+            return false;
+        }
+
+        foreach (array_slice(self::JERARQUIA, 0, -1) as $campo) {
+            if (filled($this->{$campo})) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /** Nivel de Riesgo (GTC 45) a partir del NR. */

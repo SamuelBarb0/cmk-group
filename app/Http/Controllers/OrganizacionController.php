@@ -35,13 +35,25 @@ class OrganizacionController extends Controller
 
         return Inertia::render('organizacion/index', [
             'needsClient' => false,
-            'organizacion' => $tenant?->only([
-                'id', 'name', 'legal_name', 'nit', 'email', 'phone', 'city', 'address',
-                'actividad_economica', 'codigo_ciiu', 'sector', 'nivel_riesgo', 'arl',
-                'tamano_empresa', 'num_trabajadores', 'representante_legal', 'representante_cc',
-                'responsable_sgsst', 'licencia_sgsst', 'licencia_sgsst_vence',
-                'curso_sst_horas', 'curso_sst_fecha',
-            ]),
+            'organizacion' => $tenant === null ? null : array_merge(
+                $tenant->only([
+                    'id', 'name', 'legal_name', 'nit', 'email', 'phone', 'city', 'address',
+                    'actividad_economica', 'codigo_ciiu', 'sector', 'nivel_riesgo', 'arl',
+                    'tamano_empresa', 'num_trabajadores', 'representante_legal', 'representante_cc',
+                    'responsable_sgsst', 'licencia_sgsst',
+                    'curso_sst_horas',
+                ]),
+                [
+                    // Las dos fechas van aparte y formateadas a mano: `only()`
+                    // devuelve el Carbon en crudo y se salta la serializacion del
+                    // modelo, asi que el cast `date:Y-m-d` NO se aplica y al front
+                    // le llegaba «2027-05-01T00:00:00.000000Z». Un
+                    // <input type="date"> rechaza ese formato y se queda vacio,
+                    // de modo que abrir la ficha y guardar BORRABA las dos fechas.
+                    'licencia_sgsst_vence' => $tenant->licencia_sgsst_vence?->toDateString(),
+                    'curso_sst_fecha' => $tenant->curso_sst_fecha?->toDateString(),
+                ],
+            ),
             // Conteo real de empleados registrados (referencia vs. el declarado).
             'empleadosCount' => Employee::count(),
         ]);

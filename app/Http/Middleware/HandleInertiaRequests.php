@@ -2,9 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\PesvStep;
 use App\Support\TenantContext;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -61,6 +63,11 @@ class HandleInertiaRequests extends Middleware
             // Prop de nivel superior: los controladores pisan 'tenant' con su propia
             // versión por página y se perdería si viajara dentro de 'tenant'.
             'modulos_contratados' => $context->get()?->modulos,
+            // Los 24 pasos del PESV para armar el árbol del sidebar. Es un
+            // catálogo global e inmutable, así que se cachea y no se vuelve a
+            // consultar; se comparte aquí para no duplicar los títulos en el
+            // TypeScript y que se desincronicen del seeder.
+            'pesv_pasos' => $this->pesvPasos(),
             'company' => config('cmk.company'),
             // Mensajes flash de una sola vez (confirmaciones de acciones).
             'flash' => [
@@ -68,5 +75,20 @@ class HandleInertiaRequests extends Middleware
                 'error' => $request->session()->get('error'),
             ],
         ]);
+    }
+
+    /**
+     * Catálogo de pasos del PESV para el árbol del sidebar.
+     *
+     * Cacheado para siempre porque no cambia: si algún día se reordenan los
+     * pasos, el seeder debe limpiar la clave 'pesv.pasos.nav'.
+     *
+     * @return array<int, array{numero: int, fase: int, fase_nombre: string, titulo: string}>
+     */
+    private function pesvPasos(): array
+    {
+        return Cache::rememberForever('pesv.pasos.nav', fn () => PesvStep::orderBy('orden')
+            ->get(['numero', 'fase', 'fase_nombre', 'titulo'])
+            ->toArray());
     }
 }

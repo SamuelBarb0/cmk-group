@@ -3,8 +3,9 @@
 namespace Tests\Feature;
 
 use App\Http\Middleware\SetCurrentTenant;
+use App\Models\EmergencyEquipment;
 use App\Models\Employee;
-use App\Models\IpercRow;
+use App\Models\PpeItem;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Support\TenantContext;
@@ -17,7 +18,7 @@ use Tests\TestCase;
 
 /**
  * Hueco del 22-sep-2026: SetCurrentTenant corría DESPUÉS del route model
- * binding, así que `/iperc/{peligro}` resolvía el id sin el filtro del
+ * binding, así que `/epp/items/{item}` resolvía el id sin el filtro del
  * TenantScope. El administrador de la empresa A borraba registros de la
  * empresa B con solo cambiar el número en la URL.
  *
@@ -61,15 +62,6 @@ class AislamientoEntreEmpresasTest extends TestCase
         return $m;
     }
 
-    /** Un peligro IPERC mínimo; el modelo calcula NP, NR y el nivel al guardar. */
-    private function peligro(string $peligro): array
-    {
-        return [
-            'proceso' => 'Operación', 'actividad' => 'Bodega', 'clasificacion' => 'Físico',
-            'peligro' => $peligro, 'nd' => 6, 'ne' => 3, 'nc' => 60,
-        ];
-    }
-
     public function test_el_tenant_se_resuelve_antes_del_binding_en_todas_las_rutas(): void
     {
         // El kernel HTTP es quien le pasa los grupos y la prioridad al router, y
@@ -101,15 +93,20 @@ class AislamientoEntreEmpresasTest extends TestCase
     {
         $admin = tap(User::factory()->create(['tenant_id' => $this->a->id]))->assignRole('cliente_admin');
 
-        $item = $this->deB(IpercRow::class, $this->peligro('Ruido'));
+        $item = $this->deB(PpeItem::class, ['nombre' => 'Casco', 'categoria' => 'cabeza', 'activo' => true]);
+        $equipo = $this->deB(EmergencyEquipment::class, [
+            'ubicacion' => 'Bodega', 'elemento' => 'Extintor', 'cantidad' => 1, 'tipo' => 'contra_incendios', 'estado' => 'bueno',
+        ]);
         $empleado = $this->deB(Employee::class, [
             'nombres' => 'Ana', 'apellidos' => 'Perez', 'tipo_documento' => 'CC', 'numero_documento' => '123',
         ]);
 
-        $this->peticionNueva($admin)->delete('/iperc/'.$item->id)->assertNotFound();
-        $this->peticionNueva($admin)->put('/iperc/'.$item->id, ['peligro' => 'Pisado'])->assertNotFound();
+        $this->peticionNueva($admin)->delete('/epp/items/'.$item->id)->assertNotFound();
+        $this->peticionNueva($admin)->delete('/emergencias/equipos/'.$equipo->id)->assertNotFound();
+        $this->peticionNueva($admin)->put('/epp/items/'.$item->id, ['nombre' => 'Pisado', 'categoria' => 'cabeza'])->assertNotFound();
 
-        $this->assertTrue(IpercRow::withoutTenantScope()->whereKey($item->id)->where('peligro', 'Ruido')->exists());
+        $this->assertTrue(PpeItem::withoutTenantScope()->whereKey($item->id)->where('nombre', 'Casco')->exists());
+        $this->assertTrue(EmergencyEquipment::withoutTenantScope()->whereKey($equipo->id)->exists());
 
         // Empleados no pasa por sst.manage sino por su propio permiso; basta
         // con que no lo borre, venga como venga el rechazo.
@@ -120,12 +117,12 @@ class AislamientoEntreEmpresasTest extends TestCase
     public function test_el_consultor_trabajando_en_una_empresa_no_toca_otra(): void
     {
         $consultor = tap(User::factory()->create(['tenant_id' => null]))->assignRole('consultor_admin');
-        $item = $this->deB(IpercRow::class, $this->peligro('Caida'));
+        $item = $this->deB(PpeItem::class, ['nombre' => 'Guante', 'categoria' => 'manos', 'activo' => true]);
 
         $this->app->forgetInstance(TenantContext::class);
         $this->actingAs($consultor)->withSession(['active_tenant_id' => $this->a->id])
-            ->delete('/iperc/'.$item->id)->assertNotFound();
+            ->delete('/epp/items/'.$item->id)->assertNotFound();
 
-        $this->assertTrue(IpercRow::withoutTenantScope()->whereKey($item->id)->exists());
+        $this->assertTrue(PpeItem::withoutTenantScope()->whereKey($item->id)->exists());
     }
 }
