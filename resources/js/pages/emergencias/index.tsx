@@ -451,8 +451,7 @@ export default function EmergenciasIndex({ anio, brigada, simulacros, equipos, d
         else fCon.post(route('emergencias.directorio.store'), opts);
     };
 
-    const eliminar = (ruta: string, id: number, pregunta: string) =>
-        confirm(pregunta) && router.delete(route(ruta, id), { preserveScroll: true });
+    const eliminar = (ruta: string, id: number, pregunta: string) => confirm(pregunta) && router.delete(route(ruta, id), { preserveScroll: true });
 
     const cambiarAnio = (a: number) => router.get(route('emergencias.index'), { anio: a }, { preserveState: true, preserveScroll: true });
 
@@ -519,12 +518,7 @@ export default function EmergenciasIndex({ anio, brigada, simulacros, equipos, d
             }
         >
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                <StatCard
-                    label="Brigadistas activos"
-                    value={stats.brigadistas}
-                    icon={Users}
-                    alerta={stats.roles_vacantes.length > 0}
-                />
+                <StatCard label="Brigadistas activos" value={stats.brigadistas} icon={Users} alerta={stats.roles_vacantes.length > 0} />
                 <StatCard
                     label={`Simulacros ${anio} (meta ${stats.meta_anual}, ${stats.meta_externos} externo)`}
                     value={`${stats.simulacros_realizados} / ${stats.simulacros_programados}`}
@@ -535,9 +529,7 @@ export default function EmergenciasIndex({ anio, brigada, simulacros, equipos, d
                     label="Recomendaciones implementadas"
                     value={porcentaje(stats.recomendaciones_implementadas, stats.recomendaciones_total)}
                     icon={ShieldAlert}
-                    alerta={
-                        stats.recomendaciones_total > 0 && stats.recomendaciones_implementadas / stats.recomendaciones_total < 0.9
-                    }
+                    alerta={stats.recomendaciones_total > 0 && stats.recomendaciones_implementadas / stats.recomendaciones_total < 0.9}
                 />
                 <StatCard
                     label="Equipos vencidos o en mal estado"
@@ -558,18 +550,20 @@ export default function EmergenciasIndex({ anio, brigada, simulacros, equipos, d
                     )}
                     {stats.sin_primer_respondiente > 0 && (
                         <p>
-                            <span className="font-medium text-amber-700 dark:text-amber-400">{stats.sin_primer_respondiente}</span> brigadista(s)
-                            sin el curso de primer respondiente, que el formato marca como obligatorio.
+                            <span className="font-medium text-amber-700 dark:text-amber-400">{stats.sin_primer_respondiente}</span> brigadista(s) sin
+                            el curso de primer respondiente, que el formato marca como obligatorio.
                         </p>
                     )}
                     {stats.equipos_por_vencer > 0 && (
                         <p>
-                            <span className="font-medium text-amber-700 dark:text-amber-400">{stats.equipos_por_vencer}</span> equipo(s) vencen en
-                            los próximos 30 días.
+                            <span className="font-medium text-amber-700 dark:text-amber-400">{stats.equipos_por_vencer}</span> equipo(s) vencen en los
+                            próximos 30 días.
                         </p>
                     )}
                     {stats.participacion !== null && (
-                        <p>Participación en los simulacros realizados de {anio}: {stats.participacion} % (meta 80 %).</p>
+                        <p>
+                            Participación en los simulacros realizados de {anio}: {stats.participacion} % (meta 80 %).
+                        </p>
                     )}
                 </div>
             )}
@@ -627,7 +621,11 @@ export default function EmergenciasIndex({ anio, brigada, simulacros, equipos, d
                                                                 variant="ghost"
                                                                 aria-label="Eliminar"
                                                                 onClick={() =>
-                                                                    eliminar('emergencias.brigada.destroy', b.id, `¿Retirar a ${b.nombres} de la brigada?`)
+                                                                    eliminar(
+                                                                        'emergencias.brigada.destroy',
+                                                                        b.id,
+                                                                        `¿Retirar a ${b.nombres} de la brigada?`,
+                                                                    )
                                                                 }
                                                             >
                                                                 <Trash2 className="size-4" />
@@ -771,7 +769,9 @@ export default function EmergenciasIndex({ anio, brigada, simulacros, equipos, d
                                                 <td className="px-4 py-2.5 whitespace-nowrap tabular-nums">
                                                     {q.fecha_vencimiento ?? '—'}
                                                     {q.vencido && <span className="text-destructive text-xs"> · vencido</span>}
-                                                    {q.por_vencer && <span className="text-xs text-amber-600 dark:text-amber-400"> · por vencer</span>}
+                                                    {q.por_vencer && (
+                                                        <span className="text-xs text-amber-600 dark:text-amber-400"> · por vencer</span>
+                                                    )}
                                                 </td>
                                                 {canManage && (
                                                     <td className="px-4 py-2.5">
@@ -784,7 +784,11 @@ export default function EmergenciasIndex({ anio, brigada, simulacros, equipos, d
                                                                 variant="ghost"
                                                                 aria-label="Eliminar"
                                                                 onClick={() =>
-                                                                    eliminar('emergencias.equipos.destroy', q.id, `¿Eliminar ${q.elemento} del inventario?`)
+                                                                    eliminar(
+                                                                        'emergencias.equipos.destroy',
+                                                                        q.id,
+                                                                        `¿Eliminar ${q.elemento} del inventario?`,
+                                                                    )
                                                                 }
                                                             >
                                                                 <Trash2 className="size-4" />
@@ -805,8 +809,8 @@ export default function EmergenciasIndex({ anio, brigada, simulacros, equipos, d
                             {canManage && (
                                 <div className="flex items-center justify-between gap-2 border-b p-3 text-sm">
                                     <span className="text-muted-foreground">
-                                        Las líneas nacionales (123, bomberos, Cruz Roja…) se cargan de una vez; las locales dependen de dónde opera
-                                        la empresa.
+                                        Las líneas nacionales (123, bomberos, Cruz Roja…) se cargan de una vez; las locales dependen de dónde opera la
+                                        empresa.
                                     </span>
                                     <Button
                                         size="sm"
@@ -1027,8 +1031,8 @@ export default function EmergenciasIndex({ anio, brigada, simulacros, equipos, d
                     <DialogHeader>
                         <DialogTitle>{editSim ? 'Editar simulacro' : 'Nuevo simulacro'}</DialogTitle>
                         <DialogDescription>
-                            La lista de chequeo detallada del simulacro se diligencia en Formatos (FT-LCH-SIMULACRO); aquí van las cifras que miden
-                            el programa.
+                            La lista de chequeo detallada del simulacro se diligencia en Formatos (FT-LCH-SIMULACRO); aquí van las cifras que miden el
+                            programa.
                         </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={guardarSim} className="space-y-4">
@@ -1085,7 +1089,12 @@ export default function EmergenciasIndex({ anio, brigada, simulacros, equipos, d
                                     />
                                 </Campo>
                                 <Campo id="s-hf" label="Hora de finalización" error={fSim.errors.hora_fin}>
-                                    <Input id="s-hf" type="time" value={fSim.data.hora_fin} onChange={(e) => fSim.setData('hora_fin', e.target.value)} />
+                                    <Input
+                                        id="s-hf"
+                                        type="time"
+                                        value={fSim.data.hora_fin}
+                                        onChange={(e) => fSim.setData('hora_fin', e.target.value)}
+                                    />
                                 </Campo>
                                 <Campo id="s-te" label="Tiempo de evacuación (segundos)" error={fSim.errors.tiempo_evacuacion_segundos}>
                                     <Input
