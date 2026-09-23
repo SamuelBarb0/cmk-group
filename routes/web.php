@@ -286,6 +286,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.manage', 'module:salud-ocupacional'])->name('salud-ocupacional.perfiles.update');
     Route::delete('salud-ocupacional/profesiograma/{perfil}', [OccupationalHealthController::class, 'destroyPerfil'])
         ->middleware(['permission:sst.manage', 'module:salud-ocupacional'])->name('salud-ocupacional.perfiles.destroy');
+
+    /*
     | Programas de gestion: PVE, alcohol y SPA, fatiga, velocidad, distraccion,
     | actores viales y ambiental (estandar 4.2.1 de la Res. 0312). Las
     | actividades e indicadores cuelgan del programa y no tienen rutas propias.
@@ -303,6 +305,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.manage', 'module:programas'])->name('programas.destroy');
     Route::post('programas/{programa}/renovar', [ProgramaGestionController::class, 'renovar'])
         ->middleware(['permission:sst.manage', 'module:programas'])->name('programas.renovar');
+
+    /*
     | Gestion del cambio (estandar 2.11.1, ISO 45001 8.1.3): solicitud, doble
     | aprobacion (Gerencia y SG-SST), plan de accion y cierre.
     | Ver -> sst.view | Gestionar -> sst.manage
