@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<title>Informe de gestión del SG-SST · {{ $informe['empresa']['nombre'] }}</title>
+<title>{{ $meta['titulo'] }} · {{ $informe['empresa']['nombre'] }}</title>
 <style>
     @page { margin: 105px 48px 60px 48px; }
     body { font-family: 'DejaVu Sans', sans-serif; font-size: 9px; color: #1f2937; line-height: 1.4; }
@@ -37,12 +37,12 @@
     <img src="{{ $logo }}" alt="CMK GROUP">
     <div class="derecha">
         <b>{{ mb_strtoupper($company['legal_name'] ?? 'CMK GROUP S.A.S.') }} · NIT {{ $company['nit'] ?? '' }}</b><br>
-        Informe de gestión del SG-SST · {{ $informe['empresa']['nombre'] }}
+        {{ $meta['titulo'] }} · {{ $informe['empresa']['nombre'] }}
     </div>
 </header>
 <footer>{{ $company['name'] ?? 'CMK GROUP' }} · {{ $company['domain'] ?? '' }}</footer>
 
-<h1>INFORME DE GESTIÓN DEL SG-SST</h1>
+<h1>{{ mb_strtoupper($meta['titulo']) }}</h1>
 <p class="empresa">{{ $informe['empresa']['razon_social'] }}</p>
 <p class="gris" style="margin-top:0">NIT {{ $informe['empresa']['nit'] ?: '—' }}@if($informe['empresa']['ciudad']) · {{ $informe['empresa']['ciudad'] }}@endif</p>
 <table class="pares">
@@ -51,9 +51,9 @@
     <tr><td class="k">Elaborado por</td><td>{{ $informe['generado']['por'] }} — {{ $company['name'] ?? 'CMK GROUP' }}</td></tr>
 </table>
 
-<h2>Puntos de atención</h2>
+<h2>{{ $meta['atencion_titulo'] }}</h2>
 @if ($informe['atencion'] === [])
-    <p>No se encontraron situaciones que requieran acción inmediata en los módulos revisados.</p>
+    <p>{{ $meta['atencion_vacia'] }}</p>
 @else
     <ul class="atencion">
         @foreach ($informe['atencion'] as $a)
@@ -63,7 +63,7 @@
 @endif
 
 @if (filled($observaciones))
-    <h2>Análisis y recomendaciones del consultor</h2>
+    <h2>{{ $meta['observaciones_titulo'] }}</h2>
     <div class="obs">
         @foreach (preg_split('/\R{2,}/', trim($observaciones)) as $parrafo)
             <p>{!! nl2br(e($parrafo)) !!}</p>
@@ -106,8 +106,9 @@
 
 <table class="firmas">
     <tr>
-        <td><div class="linea"><b>Elaboró: {{ $informe['generado']['por'] }}</b><br><span class="gris">{{ $company['name'] ?? 'CMK GROUP' }}</span></div></td>
-        <td><div class="linea"><b>Recibió</b><br><span class="gris">Representante legal · {{ $informe['empresa']['nombre'] }}</span></div></td>
+        @foreach ($meta['firmas'] as [$rol, $nombre, $cargo])
+            <td><div class="linea"><b>{{ $rol }}{{ $nombre ? ': '.$nombre : '' }}</b><br><span class="gris">{{ $cargo }}</span></div></td>
+        @endforeach
     </tr>
 </table>
 </body>

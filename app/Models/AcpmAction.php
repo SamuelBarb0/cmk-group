@@ -44,7 +44,7 @@ class AcpmAction extends Model
 
     public const ESTADOS = ['abierta', 'en_proceso', 'cerrada'];
 
-    public const ORIGENES = ['manual', 'accidente', 'reporte', 'auditoria', 'inspeccion', 'iperc'];
+    public const ORIGENES = ['manual', 'accidente', 'reporte', 'auditoria', 'inspeccion', 'iperc', 'siniestro_vial'];
 
     /** Va al front: la tabla marca ahí las vencidas. */
     protected $appends = ['vencida', 'dias_restantes'];

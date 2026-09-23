@@ -27,7 +27,11 @@ use App\Http\Controllers\OrganizacionController;
 use App\Http\Controllers\PesvColaboradorController;
 use App\Http\Controllers\PesvConductorController;
 use App\Http\Controllers\PesvContractorController;
+use App\Http\Controllers\PesvAutogestionController;
 use App\Http\Controllers\PesvController;
+use App\Http\Controllers\PesvRutaPlanController;
+use App\Http\Controllers\PesvViaInternaController;
+use App\Http\Controllers\PesvEstadisticaController;
 use App\Http\Controllers\PesvDocumentosController;
 use App\Http\Controllers\PesvEncuestaController;
 use App\Http\Controllers\PesvInfraccionController;
@@ -159,7 +163,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Pasos 5 y 6: encuesta de movilidad y matriz de riesgos viales.
         Route::get('pesv/encuesta', [PesvEncuestaController::class, 'index'])->name('pesv.encuesta.index');
         Route::get('pesv/riesgos-viales', [PesvRiesgoVialController::class, 'index'])->name('pesv.riesgos.index');
+        // Pasos 13, 14, 15 y 21.
+        Route::get('pesv/estadistica', [PesvEstadisticaController::class, 'index'])->name('pesv.estadistica.index');
+        Route::get('pesv/vias-internas', [PesvViaInternaController::class, 'index'])->name('pesv.vias.index');
+        Route::get('pesv/rutas/{ruta}/plan', [PesvRutaPlanController::class, 'show'])->name('pesv.rutas.plan');
         Route::get('pesv/infracciones', [PesvInfraccionController::class, 'index'])->name('pesv.infracciones.index');
+        // Paso 20: reporte de autogestión anual.
+        Route::get('pesv/autogestion', [PesvAutogestionController::class, 'index'])->name('pesv.autogestion.index');
+        Route::get('pesv/autogestion/descargar', [PesvAutogestionController::class, 'descargar'])->name('pesv.autogestion.descargar');
     });
 
     Route::middleware(['permission:pesv.manage', 'module:pesv'])->group(function () {
@@ -188,6 +199,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('pesv/riesgos-viales', [PesvRiesgoVialController::class, 'store'])->name('pesv.riesgos.store');
         Route::put('pesv/riesgos-viales/{riesgo}', [PesvRiesgoVialController::class, 'update'])->name('pesv.riesgos.update');
         Route::delete('pesv/riesgos-viales/{riesgo}', [PesvRiesgoVialController::class, 'destroy'])->name('pesv.riesgos.destroy');
+        Route::put('pesv/estadistica/km', [PesvEstadisticaController::class, 'guardarKm'])->name('pesv.estadistica.km');
+        Route::put('pesv/autogestion', [PesvAutogestionController::class, 'update'])->name('pesv.autogestion.update');
+        Route::post('pesv/vias-internas', [PesvViaInternaController::class, 'store'])->name('pesv.vias.store');
+        Route::put('pesv/vias-internas/{via}', [PesvViaInternaController::class, 'update'])->name('pesv.vias.update');
+        Route::delete('pesv/vias-internas/{via}', [PesvViaInternaController::class, 'destroy'])->name('pesv.vias.destroy');
+        Route::put('pesv/rutas/{ruta}/plan', [PesvRutaPlanController::class, 'update'])->name('pesv.rutas.plan.update');
+        Route::post('pesv/siniestros/{siniestro}/acpm', [PesvSiniestroController::class, 'crearAccion'])->name('pesv.siniestros.acpm');
 
         Route::post('pesv/sedes', [PesvSedeController::class, 'store'])->name('pesv.sedes.store');
         Route::put('pesv/sedes/{sede}', [PesvSedeController::class, 'update'])->name('pesv.sedes.update');

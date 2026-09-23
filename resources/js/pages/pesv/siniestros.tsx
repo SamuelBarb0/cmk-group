@@ -32,6 +32,19 @@ interface Siniestro {
     costo: string | number | null;
     investigado: boolean;
     acciones: string | null;
+    tipo_desplazamiento: string;
+    nivel_perdida: number | null;
+    nivel: number;
+    nivel_sugerido: number;
+    costo_directo: string | number | null;
+    costo_indirecto: string | number | null;
+    fecha_investigacion: string | null;
+    equipo_investigador: string | null;
+    causas_inmediatas: string | null;
+    causas_basicas: string | null;
+    leccion_aprendida: string | null;
+    leccion_divulgada: boolean;
+    acciones_acpm: { id: number; codigo: string; estado: string }[];
     vehiculo?: { id: number; placa: string } | null;
     conductor?: { id: number; nombres: string; apellidos: string } | null;
 }
@@ -52,6 +65,8 @@ interface Props {
     conductores: { id: number; nombres: string; apellidos: string }[];
     tipos: string[];
     gravedades: string[];
+    desplazamientos?: Record<string, string>;
+    nivelesPerdida?: Record<string, { nombre: string; personas: string; costos: string }>;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -87,12 +102,38 @@ const vacio = {
     lesionados: 0,
     fallecidos: 0,
     dias_incapacidad: '' as number | string,
-    costo: '' as number | string,
     investigado: false,
     acciones: '',
+    tipo_desplazamiento: 'laboral',
+    nivel_perdida: '' as number | string,
+    costo_directo: '' as number | string,
+    costo_indirecto: '' as number | string,
+    fecha_investigacion: '',
+    equipo_investigador: '',
+    causas_inmediatas: '',
+    causas_basicas: '',
+    leccion_aprendida: '',
+    leccion_divulgada: false,
 };
 
-export default function PesvSiniestros({ needsClient, siniestros, stats, vehiculos, conductores, tipos, gravedades }: Props) {
+const NIVEL_CLASS: Record<number, string> = {
+    4: 'bg-red-600 text-white',
+    3: 'bg-orange-500 text-white',
+    2: 'bg-amber-400 text-black',
+    1: 'bg-slate-400 text-white',
+};
+
+export default function PesvSiniestros({
+    needsClient,
+    siniestros,
+    stats,
+    vehiculos,
+    conductores,
+    tipos,
+    gravedades,
+    desplazamientos = {},
+    nivelesPerdida = {},
+}: Props) {
     const { can } = usePermissions();
     const canManage = can('pesv.manage');
     const page = usePage<SharedData>();
@@ -101,6 +142,8 @@ export default function PesvSiniestros({ needsClient, siniestros, stats, vehicul
     const [open, setOpen] = useState(false);
     const [editando, setEditando] = useState<Siniestro | null>(null);
     const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({ ...vacio });
+    const [planDe, setPlanDe] = useState<Siniestro | null>(null);
+    const accion = useForm({ accion: '', responsable: '', fecha_limite: '' });
 
     if (needsClient || !stats) {
         return (
@@ -134,9 +177,18 @@ export default function PesvSiniestros({ needsClient, siniestros, stats, vehicul
             lesionados: s.lesionados,
             fallecidos: s.fallecidos,
             dias_incapacidad: s.dias_incapacidad ?? '',
-            costo: s.costo ?? '',
             investigado: s.investigado,
             acciones: s.acciones ?? '',
+            tipo_desplazamiento: s.tipo_desplazamiento ?? 'laboral',
+            nivel_perdida: s.nivel_perdida ?? '',
+            costo_directo: s.costo_directo ?? '',
+            costo_indirecto: s.costo_indirecto ?? '',
+            fecha_investigacion: s.fecha_investigacion ?? '',
+            equipo_investigador: s.equipo_investigador ?? '',
+            causas_inmediatas: s.causas_inmediatas ?? '',
+            causas_basicas: s.causas_basicas ?? '',
+            leccion_aprendida: s.leccion_aprendida ?? '',
+            leccion_divulgada: s.leccion_divulgada ?? false,
         });
         setOpen(true);
     }
@@ -207,8 +259,8 @@ export default function PesvSiniestros({ needsClient, siniestros, stats, vehicul
                     <CardContent className="p-0">
                         {siniestros.length === 0 ? (
                             <p className="text-muted-foreground p-8 text-center text-sm">
-                                Sin siniestros registrados. Un histórico vacío también es un dato válido, pero debe ser real: el paso 21 se
-                                construye sobre él.
+                                Sin siniestros registrados. Un histórico vacío también es un dato válido, pero debe ser real: el paso 21 se construye
+                                sobre él.
                             </p>
                         ) : (
                             <div className="overflow-x-auto">
@@ -219,7 +271,8 @@ export default function PesvSiniestros({ needsClient, siniestros, stats, vehicul
                                             <th className="p-3 font-medium">Tipo</th>
                                             <th className="p-3 font-medium">Gravedad</th>
                                             <th className="p-3 font-medium">Vehículo / conductor</th>
-                                            <th className="p-3 font-medium">Investigado</th>
+                                            <th className="p-3 font-medium">Nivel de pérdida</th>
+                                            <th className="p-3 font-medium">Investigación y plan</th>
                                             {canManage && <th className="p-3" />}
                                         </tr>
                                     </thead>
@@ -248,6 +301,17 @@ export default function PesvSiniestros({ needsClient, siniestros, stats, vehicul
                                                     )}
                                                 </td>
                                                 <td className="p-3">
+                                                    <span
+                                                        title={nivelesPerdida[s.nivel]?.personas}
+                                                        className={cn('rounded px-1.5 py-0.5 text-xs font-semibold', NIVEL_CLASS[s.nivel])}
+                                                    >
+                                                        {s.nivel} · {nivelesPerdida[s.nivel]?.nombre}
+                                                    </span>
+                                                    <div className="text-muted-foreground text-xs">
+                                                        {desplazamientos[s.tipo_desplazamiento] ?? ''}
+                                                    </div>
+                                                </td>
+                                                <td className="p-3">
                                                     {s.investigado ? (
                                                         <Badge variant="secondary" className="bg-emerald-600/15 text-emerald-700">
                                                             Sí
@@ -255,18 +319,41 @@ export default function PesvSiniestros({ needsClient, siniestros, stats, vehicul
                                                     ) : (
                                                         <span className="text-amber-700">Pendiente</span>
                                                     )}
+                                                    {s.acciones_acpm.length > 0 && (
+                                                        <div className="mt-1 flex flex-wrap gap-1">
+                                                            {s.acciones_acpm.map((a) => (
+                                                                <a key={a.id} href="/acpm" className="text-primary font-mono text-xs hover:underline">
+                                                                    {a.codigo}
+                                                                </a>
+                                                            ))}
+                                                        </div>
+                                                    )}
                                                 </td>
                                                 {canManage && (
                                                     <td className="p-3 text-right whitespace-nowrap">
-                                                        <Button variant="ghost" size="icon" onClick={() => abrirEdicion(s)}>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => {
+                                                                accion.reset();
+                                                                accion.clearErrors();
+                                                                setPlanDe(s);
+                                                            }}
+                                                        >
+                                                            + Acción
+                                                        </Button>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            aria-label="Editar siniestro"
+                                                            onClick={() => abrirEdicion(s)}
+                                                        >
                                                             <Pencil className="size-4" />
                                                         </Button>
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            onClick={() =>
-                                                                router.delete(`/pesv/siniestros/${s.id}`, { preserveScroll: true })
-                                                            }
+                                                            onClick={() => router.delete(`/pesv/siniestros/${s.id}`, { preserveScroll: true })}
                                                         >
                                                             <Trash2 className="size-4 text-red-600" />
                                                         </Button>
@@ -283,7 +370,7 @@ export default function PesvSiniestros({ needsClient, siniestros, stats, vehicul
             </div>
 
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="sm:max-w-xl">
+                <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-2xl">
                     <form onSubmit={enviar}>
                         <DialogHeader>
                             <DialogTitle>{editando ? 'Siniestro vial' : 'Registrar siniestro'}</DialogTitle>
@@ -397,13 +484,56 @@ export default function PesvSiniestros({ needsClient, siniestros, stats, vehicul
                                 />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="costo">Costo estimado</Label>
+                                <Label htmlFor="tipo_desplazamiento">Desplazamiento</Label>
+                                <select
+                                    id="tipo_desplazamiento"
+                                    className="border-input bg-background h-9 rounded-md border px-3 text-sm"
+                                    value={data.tipo_desplazamiento}
+                                    onChange={(e) => setData('tipo_desplazamiento', e.target.value)}
+                                >
+                                    {Object.entries(desplazamientos).map(([v, l]) => (
+                                        <option key={v} value={v}>
+                                            {l}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="nivel_perdida">Nivel de pérdida</Label>
+                                <select
+                                    id="nivel_perdida"
+                                    className="border-input bg-background h-9 rounded-md border px-3 text-sm"
+                                    value={data.nivel_perdida}
+                                    onChange={(e) => setData('nivel_perdida', e.target.value)}
+                                >
+                                    <option value="">Automático según las consecuencias</option>
+                                    {Object.entries(nivelesPerdida)
+                                        .reverse()
+                                        .map(([v, n]) => (
+                                            <option key={v} value={v}>
+                                                {v} · {n.nombre}: {n.personas}
+                                            </option>
+                                        ))}
+                                </select>
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="costo_directo">Costos directos ($)</Label>
                                 <Input
-                                    id="costo"
+                                    id="costo_directo"
                                     type="number"
-                                    step="0.01"
-                                    value={data.costo}
-                                    onChange={(e) => setData('costo', e.target.value)}
+                                    min={0}
+                                    value={data.costo_directo}
+                                    onChange={(e) => setData('costo_directo', e.target.value)}
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="costo_indirecto">Costos indirectos ($)</Label>
+                                <Input
+                                    id="costo_indirecto"
+                                    type="number"
+                                    min={0}
+                                    value={data.costo_indirecto}
+                                    onChange={(e) => setData('costo_indirecto', e.target.value)}
                                 />
                             </div>
 
@@ -428,7 +558,61 @@ export default function PesvSiniestros({ needsClient, siniestros, stats, vehicul
                                 />
                             </div>
 
-                            <label className="flex items-center gap-2 text-sm md:col-span-2">
+                            <h3 className="font-semibold md:col-span-2">Investigación (paso 13)</h3>
+                            <div className="grid gap-2">
+                                <Label htmlFor="fecha_investigacion">Fecha de la investigación</Label>
+                                <Input
+                                    id="fecha_investigacion"
+                                    type="date"
+                                    value={data.fecha_investigacion}
+                                    onChange={(e) => setData('fecha_investigacion', e.target.value)}
+                                />
+                                <InputError message={errors.fecha_investigacion} />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="equipo_investigador">Equipo investigador</Label>
+                                <Input
+                                    id="equipo_investigador"
+                                    placeholder="Jefe inmediato, SST, líder PESV…"
+                                    value={data.equipo_investigador}
+                                    onChange={(e) => setData('equipo_investigador', e.target.value)}
+                                />
+                            </div>
+                            <div className="grid gap-2 md:col-span-2">
+                                <Label htmlFor="causas_inmediatas">Causas inmediatas (actos y condiciones)</Label>
+                                <textarea
+                                    id="causas_inmediatas"
+                                    rows={2}
+                                    className="border-input bg-background rounded-md border px-3 py-2 text-sm"
+                                    value={data.causas_inmediatas}
+                                    onChange={(e) => setData('causas_inmediatas', e.target.value)}
+                                />
+                            </div>
+                            <div className="grid gap-2 md:col-span-2">
+                                <Label htmlFor="causas_basicas">Causas básicas (factores personales y del trabajo)</Label>
+                                <textarea
+                                    id="causas_basicas"
+                                    rows={2}
+                                    className="border-input bg-background rounded-md border px-3 py-2 text-sm"
+                                    value={data.causas_basicas}
+                                    onChange={(e) => setData('causas_basicas', e.target.value)}
+                                />
+                            </div>
+                            <div className="grid gap-2 md:col-span-2">
+                                <Label htmlFor="leccion_aprendida">Lección aprendida</Label>
+                                <textarea
+                                    id="leccion_aprendida"
+                                    rows={2}
+                                    className="border-input bg-background rounded-md border px-3 py-2 text-sm"
+                                    value={data.leccion_aprendida}
+                                    onChange={(e) => setData('leccion_aprendida', e.target.value)}
+                                />
+                            </div>
+                            <label className="flex items-center gap-2 text-sm">
+                                <Checkbox checked={data.leccion_divulgada} onCheckedChange={(v) => setData('leccion_divulgada', v === true)} />
+                                Lección aprendida divulgada
+                            </label>
+                            <label className="flex items-center gap-2 text-sm">
                                 <Checkbox checked={data.investigado} onCheckedChange={(v) => setData('investigado', v === true)} />
                                 Investigación cerrada
                             </label>
@@ -451,6 +635,65 @@ export default function PesvSiniestros({ needsClient, siniestros, stats, vehicul
                             </Button>
                             <Button type="submit" disabled={processing}>
                                 {editando ? 'Guardar' : 'Registrar'}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
+
+            {/* Plan de acción: cada acción nace en ACPM, enlazada al siniestro */}
+            <Dialog open={planDe !== null} onOpenChange={(o) => !o && setPlanDe(null)}>
+                <DialogContent className="sm:max-w-md">
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            if (planDe) accion.post(`/pesv/siniestros/${planDe.id}/acpm`, { preserveScroll: true, onSuccess: () => setPlanDe(null) });
+                        }}
+                    >
+                        <DialogHeader>
+                            <DialogTitle>Acción correctiva del siniestro {planDe?.fecha}</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <p className="text-muted-foreground text-sm">Se crea en ACPM como acción correctiva, con origen en este siniestro.</p>
+                            <div className="grid gap-2">
+                                <Label htmlFor="a_accion">Acción</Label>
+                                <textarea
+                                    id="a_accion"
+                                    rows={3}
+                                    className="border-input bg-background rounded-md border px-3 py-2 text-sm"
+                                    value={accion.data.accion}
+                                    onChange={(e) => accion.setData('accion', e.target.value)}
+                                />
+                                <InputError message={accion.errors.accion} />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="a_resp">Responsable</Label>
+                                    <Input
+                                        id="a_resp"
+                                        value={accion.data.responsable}
+                                        onChange={(e) => accion.setData('responsable', e.target.value)}
+                                    />
+                                    <InputError message={accion.errors.responsable} />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="a_fecha">Fecha límite</Label>
+                                    <Input
+                                        id="a_fecha"
+                                        type="date"
+                                        value={accion.data.fecha_limite}
+                                        onChange={(e) => accion.setData('fecha_limite', e.target.value)}
+                                    />
+                                    <InputError message={accion.errors.fecha_limite} />
+                                </div>
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button type="button" variant="outline" onClick={() => setPlanDe(null)}>
+                                Cancelar
+                            </Button>
+                            <Button type="submit" disabled={accion.processing}>
+                                Crear en ACPM
                             </Button>
                         </DialogFooter>
                     </form>

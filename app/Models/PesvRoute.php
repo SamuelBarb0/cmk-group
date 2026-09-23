@@ -32,6 +32,7 @@ class PesvRoute extends Model
         'horario',
         'peligros',
         'controles',
+        'plan',
         'nivel_riesgo',
         'is_active',
     ];
@@ -39,6 +40,7 @@ class PesvRoute extends Model
     protected function casts(): array
     {
         return [
+            'plan' => 'array',
             'distancia_km' => 'decimal:2',
             'duracion_min' => 'integer',
             'is_active' => 'boolean',
