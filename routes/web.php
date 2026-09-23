@@ -8,6 +8,7 @@ use App\Http\Controllers\AuditController;
 use App\Http\Controllers\ChangeRequestController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CommitteeController;
+use App\Http\Controllers\ContratistaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentoEmpresaController;
 use App\Http\Controllers\DocumentTemplateController;
@@ -330,6 +331,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.manage', 'module:mantenimiento'])->name('mantenimiento.registros.update');
     Route::delete('mantenimiento/registros/{registro}', [MaintenanceController::class, 'destroyRecord'])
         ->middleware(['permission:sst.manage', 'module:mantenimiento'])->name('mantenimiento.registros.destroy');
+
+    /*
+    | Contratistas y proveedores (estandar 2.10.1 de la Res. 0312 e ISO 8.4):
+    | hoja de vida, documentos, seleccion, requisitos SST y evaluacion. Usa el
+    | mismo registro que el PESV (pesv_contractors).
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::get('contratistas', [ContratistaController::class, 'index'])
+        ->middleware(['permission:sst.view', 'module:contratistas'])->name('contratistas.index');
+    Route::post('contratistas', [ContratistaController::class, 'store'])
+        ->middleware(['permission:sst.manage', 'module:contratistas'])->name('contratistas.store');
+    Route::put('contratistas/evaluaciones/{evaluacion}', [ContratistaController::class, 'updateEvaluacion'])
+        ->middleware(['permission:sst.manage', 'module:contratistas'])->name('contratistas.evaluaciones.update');
+    Route::delete('contratistas/evaluaciones/{evaluacion}', [ContratistaController::class, 'destroyEvaluacion'])
+        ->middleware(['permission:sst.manage', 'module:contratistas'])->name('contratistas.evaluaciones.destroy');
+    Route::get('contratistas/{contratista}', [ContratistaController::class, 'show'])
+        ->middleware(['permission:sst.view', 'module:contratistas'])->name('contratistas.show');
+    Route::put('contratistas/{contratista}', [ContratistaController::class, 'update'])
+        ->middleware(['permission:sst.manage', 'module:contratistas'])->name('contratistas.update');
+    Route::delete('contratistas/{contratista}', [ContratistaController::class, 'destroy'])
+        ->middleware(['permission:sst.manage', 'module:contratistas'])->name('contratistas.destroy');
+    Route::post('contratistas/{contratista}/evaluaciones', [ContratistaController::class, 'storeEvaluacion'])
+        ->middleware(['permission:sst.manage', 'module:contratistas'])->name('contratistas.evaluaciones.store');
 
     /*
     | Gestion del cambio (estandar 2.11.1, ISO 45001 8.1.3): solicitud, doble
