@@ -38,13 +38,14 @@ class InformeWord
         $celda = $fila->addCell(7400);
         $celda->addText(Str::upper($company['legal_name'] ?? 'CMK GROUP S.A.S.').'  ·  NIT '.($company['nit'] ?? ''),
             ['bold' => true, 'size' => 8, 'color' => self::NAVY], ['alignment' => 'right', 'spaceAfter' => 0]);
-        $celda->addText('Informe de gestión del SG-SST · '.$informe['empresa']['nombre'],
+        $meta = self::meta($informe);
+        $celda->addText($meta['titulo'].' · '.$informe['empresa']['nombre'],
             ['size' => 8, 'color' => self::GRIS], ['alignment' => 'right', 'spaceAfter' => 0]);
         $sec->addFooter()->addPreserveText('Página {PAGE} de {NUMPAGES}  ·  '.($company['name'] ?? 'CMK GROUP').'  ·  '.($company['domain'] ?? ''),
             ['size' => 8, 'color' => '888888'], ['alignment' => 'center']);
 
         // Portada breve
-        $sec->addText('INFORME DE GESTIÓN DEL SG-SST', ['bold' => true, 'size' => 18, 'color' => self::NAVY], ['spaceAfter' => 60]);
+        $sec->addText(Str::upper($meta['titulo']), ['bold' => true, 'size' => 18, 'color' => self::NAVY], ['spaceAfter' => 60]);
         $sec->addText($informe['empresa']['razon_social'], ['bold' => true, 'size' => 12], ['spaceAfter' => 0]);
         $sec->addText('NIT '.($informe['empresa']['nit'] ?: '—').($informe['empresa']['ciudad'] ? '  ·  '.$informe['empresa']['ciudad'] : ''), ['color' => self::GRIS], ['spaceAfter' => 120]);
         $this->pares($sec, [
@@ -53,9 +54,9 @@ class InformeWord
             ['Elaborado por', $informe['generado']['por'].' — '.($company['name'] ?? 'CMK GROUP')],
         ]);
 
-        $sec->addTitle('Puntos de atención', 1);
+        $sec->addTitle($meta['atencion_titulo'], 1);
         if ($informe['atencion'] === []) {
-            $sec->addText('No se encontraron situaciones que requieran acción inmediata en los módulos revisados.');
+            $sec->addText($meta['atencion_vacia']);
         }
         foreach ($informe['atencion'] as $a) {
             $run = $sec->addListItemRun(0, null, ['spaceAfter' => 40]);
@@ -64,7 +65,7 @@ class InformeWord
         }
 
         if (filled($observaciones)) {
-            $sec->addTitle('Análisis y recomendaciones del consultor', 1);
+            $sec->addTitle($meta['observaciones_titulo'], 1);
             foreach (preg_split('/\R{2,}/', trim($observaciones)) as $parrafo) {
                 $sec->addText(str_replace(["\r\n", "\n"], ' ', $parrafo), [], ['spaceAfter' => 100]);
             }
@@ -99,7 +100,7 @@ class InformeWord
         $sec->addTextBreak(2);
         $firmas = $sec->addTable(['width' => 100 * 50, 'unit' => 'pct']);
         $f = $firmas->addRow();
-        foreach ([['Elaboró', $informe['generado']['por'], $company['name'] ?? 'CMK GROUP'], ['Recibió', '', 'Representante legal · '.$informe['empresa']['nombre']]] as [$rol, $nombre, $cargo]) {
+        foreach ($meta['firmas'] as [$rol, $nombre, $cargo]) {
             $c = $f->addCell(4600);
             $c->addText('_______________________________', ['color' => '999999'], ['spaceBefore' => 600, 'spaceAfter' => 0]);
             $c->addText($rol.($nombre ? ': '.$nombre : ''), ['bold' => true], ['spaceAfter' => 0]);
@@ -116,8 +117,36 @@ class InformeWord
         return $ruta;
     }
 
+    /**
+     * Textos del documento. El informe de gestión usa los de siempre; otros
+     * informes con la misma estructura (p. ej. el reporte de autogestión del
+     * PESV) los cambian con las llaves opcionales del arreglo.
+     *
+     * @param  array<string, mixed>  $informe
+     * @return array{titulo: string, atencion_titulo: string, atencion_vacia: string, observaciones_titulo: string, firmas: list<array{0: string, 1: string, 2: string}>}
+     */
+    public static function meta(array $informe): array
+    {
+        $company = config('cmk.company');
+
+        return [
+            'titulo' => $informe['titulo'] ?? 'Informe de gestión del SG-SST',
+            'atencion_titulo' => $informe['atencion_titulo'] ?? 'Puntos de atención',
+            'atencion_vacia' => $informe['atencion_vacia'] ?? 'No se encontraron situaciones que requieran acción inmediata en los módulos revisados.',
+            'observaciones_titulo' => $informe['observaciones_titulo'] ?? 'Análisis y recomendaciones del consultor',
+            'firmas' => $informe['firmas'] ?? [
+                ['Elaboró', $informe['generado']['por'], $company['name'] ?? 'CMK GROUP'],
+                ['Recibió', '', 'Representante legal · '.$informe['empresa']['nombre']],
+            ],
+        ];
+    }
+
     public static function nombre(array $informe): string
     {
+        if (isset($informe['archivo'])) {
+            return $informe['archivo'];
+        }
+
         return 'informe-gestion-'.Str::slug($informe['empresa']['nombre']).'-'.$informe['periodo']['desde'].'-a-'.$informe['periodo']['hasta'];
     }
 

@@ -16,6 +16,7 @@ class InformePdf
     {
         $html = view('reportes.informe', [
             'informe' => $informe,
+            'meta' => InformeWord::meta($informe),
             'observaciones' => $observaciones,
             'company' => config('cmk.company'),
             // Embebido: dompdf no tiene que salir a buscar nada, y el logo ya
