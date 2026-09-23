@@ -15,6 +15,7 @@ import { usePermissions } from '@/hooks/use-permissions';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import {
+    ArrowLeftRight,
     Building2,
     CalendarRange,
     CalendarX,
@@ -88,6 +89,7 @@ const navGroups: { label: string; items: NavEntry[] }[] = [
             { title: 'Accidentalidad', url: '/accidentes', icon: Siren, permission: 'incidents.view', module: 'accidentes' },
             { title: 'Ausentismo', url: '/ausentismo', icon: CalendarX, permission: 'sst.view', module: 'ausentismo' },
             { title: 'ACPM', url: '/acpm', icon: ListChecks, permission: 'sst.view', module: 'acpm' },
+            { title: 'Gestión del cambio', url: '/gestion-cambio', icon: ArrowLeftRight, permission: 'sst.view', module: 'gestion-cambio' },
         ],
     },
     {
