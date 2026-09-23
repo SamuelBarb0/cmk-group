@@ -1143,6 +1143,131 @@ class ManagementProgramsSeeder extends Seeder
                     ],
                 ],
             ],
+            [
+                'codigo' => 'PR-SST-06',
+                'nombre' => 'Programa de mantenimiento locativo, de máquinas, equipos y herramientas',
+                'categoria' => 'sst',
+                'objetivo' => 'Mantener en óptimas condiciones funcionales los equipos, herramientas e infraestructura de la organización.',
+                'alcance' => 'Todas las áreas y equipos de la organización.',
+                'recursos' => 'Económicos, Técnicos, Humanos, Infraestructura',
+                // Los activos, su plan y los registros de lo realizado viven en
+                // el módulo de Mantenimiento; aquí va el cronograma PHVA.
+                'formato' => null,
+                'actividades' => [
+                    [
+                        'fase' => 'planear',
+                        'nombre' => 'Establecer objetivos y metas',
+                        'responsable' => 'SST',
+                        'meses' => [1],
+                    ],
+                    [
+                        'fase' => 'planear',
+                        'nombre' => 'Establecer indicadores de gestión',
+                        'responsable' => 'SST',
+                        'meses' => [1],
+                    ],
+                    [
+                        'fase' => 'planear',
+                        'nombre' => 'Establecer los mecanismos para controlar el riesgo',
+                        'responsable' => 'SST',
+                        'meses' => [1],
+                    ],
+                    [
+                        'fase' => 'planear',
+                        'nombre' => 'Definir los mantenimientos a realizar',
+                        'responsable' => 'SST',
+                        'meses' => [1],
+                    ],
+                    [
+                        'fase' => 'hacer',
+                        'nombre' => 'Mantenimiento locativo',
+                        'responsable' => 'SST',
+                        'meses' => [],
+                    ],
+                    [
+                        'fase' => 'hacer',
+                        'nombre' => 'Control de vectores',
+                        'responsable' => 'SST',
+                        'meses' => [],
+                    ],
+                    [
+                        'fase' => 'hacer',
+                        'nombre' => 'Lavado, limpieza y desinfección de los tanques de almacenamiento de agua',
+                        'responsable' => 'SST',
+                        'meses' => [],
+                    ],
+                    [
+                        'fase' => 'hacer',
+                        'nombre' => 'Limpieza y mantenimiento preventivo de máquinas, equipos y herramientas',
+                        'responsable' => 'SST',
+                        'meses' => [],
+                    ],
+                    [
+                        'fase' => 'hacer',
+                        'nombre' => 'Mantenimiento de grifería y aparatos sanitarios',
+                        'responsable' => 'SST',
+                        'meses' => [],
+                    ],
+                    [
+                        'fase' => 'hacer',
+                        'nombre' => 'Mantenimiento de software',
+                        'responsable' => 'SST',
+                        'meses' => [],
+                    ],
+                    [
+                        'fase' => 'hacer',
+                        'nombre' => 'Mantenimiento correctivo',
+                        'responsable' => 'SST',
+                        'meses' => [],
+                    ],
+                    [
+                        'fase' => 'hacer',
+                        'nombre' => 'Revisión e inspección de mantenimiento',
+                        'responsable' => 'SST',
+                        'meses' => [],
+                    ],
+                    [
+                        'fase' => 'verificar',
+                        'nombre' => 'Seguimiento a Indicadores',
+                        'responsable' => 'SST',
+                        'meses' => [7, 11],
+                    ],
+                    [
+                        'fase' => 'verificar',
+                        'nombre' => 'Seguimiento a las acciones tomadas frente a los hallazgos',
+                        'responsable' => 'SST',
+                        'meses' => [7, 11],
+                    ],
+                    [
+                        'fase' => 'actuar',
+                        'nombre' => 'Implementación de acciones correctivas y preventivas',
+                        'responsable' => 'SST',
+                        'meses' => [1],
+                    ],
+                ],
+                'indicadores' => [
+                    [
+                        'clave' => 'cumplimiento',
+                        'nombre' => 'Cumplimiento',
+                        'numerador' => 'Actividades ejecutadas',
+                        'denominador' => 'Actividades programadas',
+                        'meta' => 80,
+                        'sentido' => 'asc',
+                        'frecuencia' => 'semestral',
+                        'automatico' => true,
+                    ],
+                    [
+                        'clave' => 'eficacia',
+                        'nombre' => 'Eficacia',
+                        'numerador' => 'Hallazgos cerrados',
+                        'denominador' => 'Total de hallazgos',
+                        'meta' => 90,
+                        'sentido' => 'asc',
+                        'frecuencia' => 'semestral',
+                        'automatico' => false,
+                    ],
+                ],
+            ],
         ];
     }
 }

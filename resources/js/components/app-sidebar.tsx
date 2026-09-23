@@ -40,6 +40,7 @@ import {
     TriangleAlert,
     Users,
     UsersRound,
+    Wrench,
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
@@ -80,6 +81,7 @@ const navGroups: { label: string; items: NavEntry[] }[] = [
             { title: 'Emergencias', url: '/emergencias', icon: Flame, permission: 'sst.view', module: 'emergencias' },
             { title: 'Salud ocupacional', url: '/salud-ocupacional', icon: Stethoscope, permission: 'sst.view', module: 'salud-ocupacional' },
             { title: 'Programas de gestión', url: '/programas', icon: Target, permission: 'sst.view', module: 'programas' },
+            { title: 'Mantenimiento', url: '/mantenimiento', icon: Wrench, permission: 'sst.view', module: 'mantenimiento' },
         ],
     },
     {
