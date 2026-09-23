@@ -42,6 +42,7 @@ class Indicadores extends Seccion
     {
         $tenantId = app(TenantContext::class)->id();
         $indicadores = Indicator::where(fn ($q) => $q->whereNull('tenant_id')->orWhere('tenant_id', $tenantId))
+            ->when(! app(TenantContext::class)->get()?->moduloHabilitado('pesv'), fn ($q) => $q->where('categoria', '!=', 'PESV'))
             ->orderBy('orden')->orderBy('id')->get();
         $metas = IndicatorGoal::pluck('meta', 'indicator_id');
 

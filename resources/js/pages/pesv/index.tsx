@@ -11,7 +11,7 @@ import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import { CheckCircle2, CircleDashed, Plus, TrafficCone, Trash2, TriangleAlert, Users } from 'lucide-react';
+import { CheckCircle2, CircleDashed, Pencil, Plus, TrafficCone, Trash2, TriangleAlert, Users } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
 
 interface Paso {
@@ -22,6 +22,8 @@ interface Paso {
     descripcion: string | null;
     estado: string;
     responsable: string | null;
+    /** false = la norma no lo exige en el nivel del plan (no cuenta en el avance). */
+    aplica: boolean;
 }
 
 interface Fase {
@@ -34,6 +36,7 @@ interface Fase {
 
 interface Miembro {
     id: number;
+    employee_id: number | null;
     nombre: string;
     documento: string | null;
     cargo: string | null;
@@ -45,6 +48,7 @@ interface Props {
     needsClient: boolean;
     plan: {
         nivel: string;
+        misionalidad: number | null;
         periodo_inicio: number | null;
         periodo_fin: number | null;
         lider_nombre: string | null;
@@ -54,10 +58,32 @@ interface Props {
         avance: number;
     } | null;
     fases: Fase[];
-    resumen: { total: number; cumple: number; en_proceso: number; no_cumple: number; no_aplica: number; pendiente: number } | null;
+    resumen: {
+        total: number;
+        cumple: number;
+        en_proceso: number;
+        no_cumple: number;
+        no_aplica: number;
+        pendiente: number;
+        no_exigidos: number;
+    } | null;
     comite?: Miembro[];
+    empleados?: { id: number; nombre: string; documento: string | null; cargo: string | null }[];
     niveles?: string[];
-    nivelSugerido?: { nivel: string; vehiculos: number; conductores: number; contratistas: number; rutas: number };
+    misionalidades?: Record<string, string>;
+    nivelSugerido?: {
+        nivel: string | null;
+        calculado: boolean;
+        obligada: boolean | null;
+        flota: number;
+        vehiculos: number;
+        vehiculos_contratistas: number;
+        conductores: number;
+        conductores_propios: number;
+        conductores_contratistas: number;
+        contratistas: number;
+        rutas: number;
+    };
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -71,7 +97,17 @@ const NIVEL_LABEL: Record<string, string> = {
     avanzado: 'Avanzado',
 };
 
-export default function PesvIndex({ needsClient, plan, fases, resumen, comite = [], niveles = [], nivelSugerido }: Props) {
+export default function PesvIndex({
+    needsClient,
+    plan,
+    fases,
+    resumen,
+    comite = [],
+    empleados = [],
+    niveles = [],
+    misionalidades = {},
+    nivelSugerido,
+}: Props) {
     const { can } = usePermissions();
     const canManage = can('pesv.manage');
     const page = usePage<SharedData>();
@@ -80,9 +116,12 @@ export default function PesvIndex({ needsClient, plan, fases, resumen, comite = 
 
     const [planOpen, setPlanOpen] = useState(false);
     const [comiteOpen, setComiteOpen] = useState(false);
+    // null = agregando; un integrante = editándolo.
+    const [editando, setEditando] = useState<Miembro | null>(null);
 
     const planForm = useForm({
         nivel: plan?.nivel ?? 'basico',
+        misionalidad: plan?.misionalidad ? String(plan.misionalidad) : '',
         periodo_inicio: plan?.periodo_inicio ?? new Date().getFullYear(),
         periodo_fin: plan?.periodo_fin ?? new Date().getFullYear() + 1,
         lider_nombre: plan?.lider_nombre ?? '',
@@ -92,12 +131,37 @@ export default function PesvIndex({ needsClient, plan, fases, resumen, comite = 
     });
 
     const comiteForm = useForm({
+        employee_id: '',
         nombre: '',
         documento: '',
         cargo: '',
         rol_comite: 'integrante',
         es_representante_direccion: false as boolean,
     });
+
+    function abrirComite(m: Miembro | null) {
+        setEditando(m);
+        comiteForm.clearErrors();
+        comiteForm.setData({
+            employee_id: m?.employee_id ? String(m.employee_id) : '',
+            nombre: m?.nombre ?? '',
+            documento: m?.documento ?? '',
+            cargo: m?.cargo ?? '',
+            rol_comite: m?.rol_comite ?? 'integrante',
+            es_representante_direccion: m?.es_representante_direccion ?? false,
+        });
+        setComiteOpen(true);
+    }
+
+    /** Elegir un empleado trae su nombre, documento y cargo; «otra persona» los deja libres. */
+    function elegirEmpleado(id: string) {
+        const e = empleados.find((x) => String(x.id) === id);
+        comiteForm.setData((d) => ({
+            ...d,
+            employee_id: id,
+            ...(e ? { nombre: e.nombre, documento: e.documento ?? '', cargo: e.cargo ?? '' } : {}),
+        }));
+    }
 
     if (needsClient || !plan || !resumen) {
         return (
@@ -113,16 +177,21 @@ export default function PesvIndex({ needsClient, plan, fases, resumen, comite = 
         planForm.put('/pesv', { preserveScroll: true, onSuccess: () => setPlanOpen(false) });
     };
 
-    const agregarMiembro: FormEventHandler = (e) => {
+    const guardarMiembro: FormEventHandler = (e) => {
         e.preventDefault();
-        comiteForm.post('/pesv/comite', {
+        const opts = {
             preserveScroll: true,
             onSuccess: () => {
                 comiteForm.reset();
                 setComiteOpen(false);
             },
-        });
+        };
+        if (editando) comiteForm.put(`/pesv/comite/${editando.id}`, opts);
+        else comiteForm.post('/pesv/comite', opts);
     };
+
+    const nivelTexto = NIVEL_LABEL[plan.nivel] ?? plan.nivel;
+    const comiteExigido = plan.nivel !== 'basico';
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -170,6 +239,7 @@ export default function PesvIndex({ needsClient, plan, fases, resumen, comite = 
                             <p className="text-muted-foreground mt-2 text-xs">
                                 {resumen.cumple} de {resumen.total - resumen.no_aplica} pasos aplicables cumplidos
                                 {resumen.no_aplica > 0 ? ` · ${resumen.no_aplica} marcados como no aplica` : ''}
+                                {resumen.no_exigidos > 0 ? ` · ${resumen.no_exigidos} no exigidos en nivel ${nivelTexto.toLowerCase()}` : ''}
                             </p>
                         </div>
                         <div className="text-right">
@@ -193,14 +263,44 @@ export default function PesvIndex({ needsClient, plan, fases, resumen, comite = 
                     <Card>
                         <CardContent className="space-y-3 p-5">
                             <h2 className="font-semibold">Nivel del PESV</h2>
-                            <p className="text-2xl font-bold">{NIVEL_LABEL[plan.nivel] ?? plan.nivel}</p>
+                            <p className="text-2xl font-bold">{nivelTexto}</p>
+                            {plan.misionalidad && <p className="text-muted-foreground text-sm">Misionalidad: {misionalidades[plan.misionalidad]}</p>}
                             {nivelSugerido && (
-                                <p className="text-muted-foreground text-sm">
-                                    Según lo cargado ({nivelSugerido.vehiculos} vehículos, {nivelSugerido.conductores} conductores,{' '}
-                                    {nivelSugerido.contratistas} contratistas, {nivelSugerido.rutas} rutas), la caracterización apunta a{' '}
-                                    <span className="font-medium">{NIVEL_LABEL[nivelSugerido.nivel]}</span>. Es una orientación: el nivel
-                                    definitivo lo determina la misionalidad del transporte y lo fija el consultor.
-                                </p>
+                                <>
+                                    <p className="text-muted-foreground text-sm">
+                                        Flota: <span className="text-foreground font-medium">{nivelSugerido.flota}</span> vehículos (
+                                        {nivelSugerido.vehiculos} en el inventario
+                                        {nivelSugerido.vehiculos_contratistas > 0
+                                            ? ` + ${nivelSugerido.vehiculos_contratistas} declarados por contratistas`
+                                            : ''}
+                                        ) · Conductores: <span className="text-foreground font-medium">{nivelSugerido.conductores}</span> (
+                                        {nivelSugerido.conductores_propios} propios
+                                        {nivelSugerido.conductores_contratistas > 0
+                                            ? ` + ${nivelSugerido.conductores_contratistas} de contratistas`
+                                            : ''}
+                                        ).
+                                    </p>
+                                    {!nivelSugerido.calculado ? (
+                                        <p className="text-sm text-amber-700 dark:text-amber-400">
+                                            Define la misionalidad en «Editar plan y líder» para calcular el nivel que exige la Res. 40595.
+                                        </p>
+                                    ) : nivelSugerido.nivel === null ? (
+                                        <p className="text-sm text-amber-700 dark:text-amber-400">
+                                            Con lo cargado, la empresa está por debajo del umbral de la Res. 40595 (desde 11 vehículos o 2
+                                            conductores): no estaría obligada a tener PESV. Revisa que la flota y los conductores estén completos.
+                                        </p>
+                                    ) : nivelSugerido.nivel !== plan.nivel ? (
+                                        <p className="text-sm text-amber-700 dark:text-amber-400">
+                                            La Res. 40595 exige nivel <span className="font-semibold">{NIVEL_LABEL[nivelSugerido.nivel]}</span> para
+                                            esta misionalidad y tamaño, pero el plan está en {nivelTexto.toLowerCase()}. Si el inventario está
+                                            completo, cambia el nivel.
+                                        </p>
+                                    ) : (
+                                        <p className="text-sm text-green-700 dark:text-green-400">
+                                            Coincide con el nivel que exige la Res. 40595 para esta misionalidad y tamaño.
+                                        </p>
+                                    )}
+                                </>
                             )}
                         </CardContent>
                     </Card>
@@ -234,14 +334,22 @@ export default function PesvIndex({ needsClient, plan, fases, resumen, comite = 
                         <div className="flex flex-wrap items-center justify-between gap-3">
                             <div>
                                 <h2 className="font-semibold">Comité de Seguridad Vial (Paso 2)</h2>
-                                <p className="text-muted-foreground text-sm">{comite.length} integrantes registrados.</p>
+                                <p className="text-muted-foreground text-sm">
+                                    {comite.length} integrantes registrados.
+                                    {!comiteExigido && ' No es exigible en nivel básico (aplica a estándar y avanzado).'}
+                                </p>
                             </div>
                             {canManage && (
-                                <Button variant="outline" size="sm" className="gap-2" onClick={() => setComiteOpen(true)}>
+                                <Button variant="outline" size="sm" className="gap-2" onClick={() => abrirComite(null)}>
                                     <Plus className="size-4" /> Agregar integrante
                                 </Button>
                             )}
                         </div>
+                        {comiteExigido && comite.length < 3 && (
+                            <p className="text-sm text-amber-700 dark:text-amber-400">
+                                La Res. 40595 pide al menos 3 personas con poder de decisión, designadas por el nivel directivo.
+                            </p>
+                        )}
 
                         {comite.length === 0 ? (
                             <p className="text-muted-foreground text-sm">
@@ -261,13 +369,22 @@ export default function PesvIndex({ needsClient, plan, fases, resumen, comite = 
                                             </span>
                                         </div>
                                         {canManage && (
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                onClick={() => router.delete(`/pesv/comite/${m.id}`, { preserveScroll: true })}
-                                            >
-                                                <Trash2 className="size-4 text-red-600" />
-                                            </Button>
+                                            <div className="flex">
+                                                <Button variant="ghost" size="icon" aria-label="Editar integrante" onClick={() => abrirComite(m)}>
+                                                    <Pencil className="size-4" />
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    aria-label="Retirar integrante"
+                                                    onClick={() =>
+                                                        confirm(`¿Retirar a ${m.nombre} del comité?`) &&
+                                                        router.delete(`/pesv/comite/${m.id}`, { preserveScroll: true })
+                                                    }
+                                                >
+                                                    <Trash2 className="size-4 text-red-600" />
+                                                </Button>
+                                            </div>
                                         )}
                                     </li>
                                 ))}
@@ -294,7 +411,10 @@ export default function PesvIndex({ needsClient, plan, fases, resumen, comite = 
                                     <Link
                                         key={paso.numero}
                                         href={`/pesv/paso/${paso.numero}`}
-                                        className="hover:bg-muted/60 flex items-start justify-between gap-3 rounded-lg border p-3 transition-colors"
+                                        className={cn(
+                                            'hover:bg-muted/60 flex items-start justify-between gap-3 rounded-lg border p-3 transition-colors',
+                                            !paso.aplica && 'opacity-60',
+                                        )}
                                     >
                                         <div className="min-w-0">
                                             <div className="font-medium">
@@ -302,7 +422,13 @@ export default function PesvIndex({ needsClient, plan, fases, resumen, comite = 
                                             </div>
                                             {paso.responsable && <div className="text-muted-foreground text-xs">{paso.responsable}</div>}
                                         </div>
-                                        <EstadoBadge estado={paso.estado} />
+                                        {paso.aplica ? (
+                                            <EstadoBadge estado={paso.estado} />
+                                        ) : (
+                                            <span className="text-muted-foreground shrink-0 rounded border px-1.5 py-0.5 text-[11px]">
+                                                No exigido en {nivelTexto.toLowerCase()}
+                                            </span>
+                                        )}
                                     </Link>
                                 ))}
                             </div>
@@ -335,6 +461,27 @@ export default function PesvIndex({ needsClient, plan, fases, resumen, comite = 
                                     ))}
                                 </select>
                                 <InputError message={planForm.errors.nivel} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="misionalidad">Misionalidad (Res. 40595)</Label>
+                                <select
+                                    id="misionalidad"
+                                    className="border-input bg-background h-9 rounded-md border px-3 text-sm"
+                                    value={planForm.data.misionalidad}
+                                    onChange={(e) => planForm.setData('misionalidad', e.target.value)}
+                                >
+                                    <option value="">Sin definir</option>
+                                    {Object.entries(misionalidades).map(([v, l]) => (
+                                        <option key={v} value={v}>
+                                            {l}
+                                        </option>
+                                    ))}
+                                </select>
+                                <p className="text-muted-foreground text-xs">
+                                    Con la flota y los conductores define el nivel exigido. Las empresas de transporte suben de nivel antes.
+                                </p>
+                                <InputError message={planForm.errors.misionalidad} />
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
@@ -415,19 +562,33 @@ export default function PesvIndex({ needsClient, plan, fases, resumen, comite = 
             {/* Diálogo: integrante del comité */}
             <Dialog open={comiteOpen} onOpenChange={setComiteOpen}>
                 <DialogContent className="sm:max-w-md">
-                    <form onSubmit={agregarMiembro}>
+                    <form onSubmit={guardarMiembro}>
                         <DialogHeader>
-                            <DialogTitle>Integrante del comité</DialogTitle>
+                            <DialogTitle>{editando ? 'Editar integrante' : 'Integrante del comité'}</DialogTitle>
                         </DialogHeader>
 
                         <div className="grid gap-4 py-4">
                             <div className="grid gap-2">
+                                <Label htmlFor="m_empleado">Colaborador</Label>
+                                <select
+                                    id="m_empleado"
+                                    className="border-input bg-background h-9 rounded-md border px-3 text-sm"
+                                    value={comiteForm.data.employee_id}
+                                    onChange={(e) => elegirEmpleado(e.target.value)}
+                                >
+                                    <option value="">Otra persona (no está en Empleados)</option>
+                                    {empleados.map((e) => (
+                                        <option key={e.id} value={e.id}>
+                                            {e.nombre}
+                                            {e.cargo ? ` — ${e.cargo}` : ''}
+                                        </option>
+                                    ))}
+                                </select>
+                                <InputError message={comiteForm.errors.employee_id} />
+                            </div>
+                            <div className="grid gap-2">
                                 <Label htmlFor="m_nombre">Nombre</Label>
-                                <Input
-                                    id="m_nombre"
-                                    value={comiteForm.data.nombre}
-                                    onChange={(e) => comiteForm.setData('nombre', e.target.value)}
-                                />
+                                <Input id="m_nombre" value={comiteForm.data.nombre} onChange={(e) => comiteForm.setData('nombre', e.target.value)} />
                                 <InputError message={comiteForm.errors.nombre} />
                             </div>
                             <div className="grid grid-cols-2 gap-3">
@@ -441,11 +602,7 @@ export default function PesvIndex({ needsClient, plan, fases, resumen, comite = 
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="m_cargo">Cargo</Label>
-                                    <Input
-                                        id="m_cargo"
-                                        value={comiteForm.data.cargo}
-                                        onChange={(e) => comiteForm.setData('cargo', e.target.value)}
-                                    />
+                                    <Input id="m_cargo" value={comiteForm.data.cargo} onChange={(e) => comiteForm.setData('cargo', e.target.value)} />
                                 </div>
                             </div>
                             <div className="grid gap-2">
@@ -475,7 +632,7 @@ export default function PesvIndex({ needsClient, plan, fases, resumen, comite = 
                                 Cancelar
                             </Button>
                             <Button type="submit" disabled={comiteForm.processing} className="gap-2">
-                                <Users className="size-4" /> Agregar
+                                <Users className="size-4" /> {editando ? 'Guardar' : 'Agregar'}
                             </Button>
                         </DialogFooter>
                     </form>

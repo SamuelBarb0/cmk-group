@@ -1,0 +1,2152 @@
+Resolución 20223040040595 (40595) de 2022 — Ministerio de Transporte
+Metodología para el diseño, implementación y verificación del PESV.
+Texto tomado el 23-sep-2026 de la compilación jurídica oficial:
+https://normograma.mincultura.gov.co/mincultura/compilacion/docs/resolucion_mintransporte_40595_2022.htm
+(idéntico en https://normas.cra.gov.co/gestor/docs/resolucion_mintransporte_40595_2022.htm).
+OJO: las tablas vienen aplanadas y las ilustraciones no están. En el indicador 1
+(TSV) la constante dice «5000.000»: es un error de transcripción; K = 1.000.000 km.
+=====================================================================
+
+RESOLUCIÓN 20223040040595 DE 2022
+
+(julio 12)
+
+Diario Oficial No. 52.102 de 21 de julio de 2022
+
+MINISTERIO DE TRANSPORTE
+
+Por la cual se adopta la metodología para el diseño, implementación y verificación de los Planes Estratégicos de Seguridad Vial y se dictan otras disposiciones.
+
+Resumen de Notas de Vigencia
+
+LA MINISTRA DE TRANSPORTE, 
+
+en ejercicio de sus facultades constitucionales y legales, en especial de las consagradas en los artículos 1o y 3o de la Ley 769 de 2002, 12 de la Ley 1503 de 2011 modificado por el artículo 110 del Decreto ley 2106 de 2019, 1o de la Ley 2050 de 2020, 6o numerales 6.2 y 6.3 del Decreto número 87 de 2011, y
+
+CONSIDERANDO:
+
+Que el artículo 1o de la Ley 769 de 2002 Código Nacional de Tránsito Terrestre, modificado por el artículo 1o de la Ley 1383 del 2010, determina que le corresponde al Ministerio de Transporte como autoridad suprema de tránsito definir, orientar, vigilar e inspeccionar la ejecución de la política nacional en materia de tránsito; 
+
+Que el artículo 12 de la Ley 1503 de 2011, modificado por el artículo 110 del Decreto ley 2106 de 2019 dispuso acerca del Diseño, implementación y verificación del Plan Estratégico de Seguridad Vial lo siguiente: 
+
+“Artículo 12. Modificado por el Decreto número 2106 de 2019, artículo 110. Diseño, implementación y verificación del Plan estratégico de Seguridad Vial. Toda entidad, organización o empresa del sector público o privado, que cuente con una flota de vehículos automotores o no automotores superior a diez (10) unidades, o que contrate o administre personal de conductores, deberá diseñar e implementar un Plan Estratégico de Seguridad Vial en función de su misionalidad y tamaño, de acuerdo con la metodología expedida por el Ministerio de Transporte y articularlo con su Sistema de Gestión de Seguridad y Salud en el Trabajo (SGSST). 
+
+En ningún caso el Plan Estratégico de Seguridad Vial requerirá aval para su implementación. 
+
+Para tal efecto, deberá diseñar el Plan Estratégico de Seguridad Vial que contendrá como mínimo: 
+
+1. Diagnóstico y caracterización de los riesgos de seguridad vial de la empresa, asociados a la flota de vehículos o al personal de conductores. 
+
+2. Capacitaciones en seguridad vial a los trabajadores de su entidad organización o empresa independientemente del cargo o rol que desempeñe. 
+
+3. Compromisos claros del nivel directivo de la entidad organización o empresa orientados al cumplimiento de las acciones y estrategias en seguridad vial.
+
+4. Actividades de inspección y mantenimiento periódico a los vehículos de la entidad organización o empresa incluidos los vehículos propios de los trabajadores puestos al servicio de la organización para el cumplimiento misional de su objeto o función”; 
+
+Que así mismo el artículo 1o de la Ley 2050 de 2020 estableció que “La verificación de la implementación del Plan Estratégico de Seguridad Vial corresponderá a la Superintendencia de Transporte, los organismos de Tránsito o el Ministerio de Trabajo, quienes podrán, cada una en el marco de sus competencias, supervisar la implementación de los Planes Estratégicos de Seguridad Vial (PESV). Las condiciones para efectuar la verificación serán establecidas en la Metodología que expida el Ministerio de Transporte en cumplimiento de lo establecido en el artículo 110 del Decreto ley 2106 de 2019 o la norma que la modifique, sustituya o derogue”; 
+
+Que en virtud de lo contemplado en el artículo 6o de la Ley 2050 de 2020, las entidades, organizaciones y empresas públicas o privadas que no diseñen e implementen debidamente el Plan Estratégico de Seguridad Vial, serán sancionadas conforme lo disponen las normas pertinentes del capítulo noveno de la Ley 336 de 1996. Las entidades, organizaciones o empresas cuya misionalidad no se encuentra relacionada con el transporte y que omitan el diseño e implementación del Plan Estratégico de Seguridad Vial, incurrirán en las sanciones dispuestas en el artículo 13 de la Ley 1562 de 2012, las normas que a su vez la adicionen, modifiquen o sustituyan; 
+
+Que el artículo 2.3.2.3.2 del Decreto número 1079 de 2015, Único Reglamentario del Sector Transporte, establece que las entidades, organizaciones o empresas del sector público o privado de las que trata el artículo 12 de la Ley 1503 de 2011, modificado por el artículo 110 del Decreto ley 2106 de 2019, deberán diseñar e implementar su Plan Estratégico de Seguridad Vial de acuerdo con su misionalidad y tamaño, así mismo deberán articularlo con su Sistema de Gestión de Seguridad y Salud en el Trabajo (SGSST), según lo establecido en la metodología de Diseño, Implementación y Verificación del Plan Estratégico de Seguridad Vial, que adopte el Ministerio de Transporte; 
+
+Que el Viceministerio de Transporte solicitó la expedición del presente acto administrativo, mediante Memorando número 20221130015213 del 10 de febrero 2022, indicando lo siguiente: 
+
+“En virtud de los cambios normativos producidos por el Decreto ley 2106 de 2019 y la Ley 2050 de 2020, que han modificado aspectos importantes a tener en cuenta en la metodología para la elaboración de Planes Estratégicos de Seguridad Vial expedida a través de la Resolución número 1565 de 2014 del Ministerio de Transporte, se hace necesario derogar dicho acto administrativo, con el fin de armonizar y ajustar la metodología para el diseño, implementación y verificación de los planes estratégicos de seguridad vial, en consideración de la misionalidad y tamaño de las obligadas a diseñar e implementar un Plan Estratégico de Seguridad Vial, la articulación con el Sistema de Gestión de Seguridad y Salud en el Trabajo (SGSST), los contenidos mínimos del Plan y las funciones de verificación atribuidas a las autoridades competentes. 
+
+En línea con lo anterior, la Agencia Nacional de Seguridad Vial mediante comunicación con Radicado número 20221200004921 de fecha 09-02-2022, remitió los documentos técnicos relacionados, a fin de que esta cartera ministerial realice las modificaciones pertinentes; teniendo en cuenta para este fin, las siguientes consideraciones: 
+
+“Que la Agencia Nacional de Seguridad Vial, en su Dirección de Comportamiento, elaboró el documento: “Metodología para el diseño, implementación y verificación de los Planes Estratégicos de Seguridad Vial”: documento orientador que desarrolla las fases, pasos y requisitos de obligatorio cumplimiento, mediante los cuales se diseña, implementa y verifica el Plan Estratégico de Seguridad Vial; 
+
+Que dadas las particularidades de las entidades, organizaciones o empresas obligadas a diseñar e implementar un Plan Estratégico de Seguridad Vial, es necesario establecer en función de su misionalidad y tamaño unas pautas claras de diseño e implementación que les permitan hacer una gestión eficiente del riesgo en seguridad vial adecuada a sus necesidades, y adicionalmente se requiere el establecimiento de unas pautas de verificación a la implementación acordes con las competencias de las autoridades señaladas para tal fin. 
+
+Que en virtud del principio de corresponsabilidad en la política de seguridad vial, se convocó la participación de las entidades, organizaciones y empresas, así como de representantes de las autoridades de verificación a la implementación; quienes durante los meses de agosto y septiembre de 2020 participaron en el desarrollo de 20 mesas virtuales de socialización con 3640 participantes, así como dos mesas de expertos en las que se absolvieron preguntas e inquietudes y se recibieron observaciones y propuestas para lograr la construcción de una metodología integral y participativa que permita el diseño, implementación y verificación de los PESV reconociendo las necesidades en seguridad vial; 
+
+Que la “Guía Metodológica para la elaboración del Plan Estratégico de Seguridad Vial': adoptada mediante la Resolución número 1565 de 2014 del Ministerio de Transporte, contemplaba líneas de acción, condiciones de registro, adopción y cumplimiento que ya no guardan armonía con lo dispuesto en el artículo 110 del Decreto ley 2106 de 2019, ni en el artículo 1o de la Ley 2050 de 2020, en consecuencia dichos aspectos deben ser reformulados en una nueva Metodología de diseño, implementación y verificación”. 
+
+De acuerdo con lo anterior, se hace necesario expedir un nuevo acto administrativo con la Metodología para el Diseño, implementación y verificación de los Planes Estratégicos de Seguridad Vial; 
+
+Que el contenido de la presente resolución fue publicado en la página Web del Ministerio de Transporte entre el 25 de febrero de 2022 y el 11 de marzo de 2022, en cumplimiento de lo establecido en el numeral 8 del artículo 8o de la Ley 1437 de 2011, el artículo 2.1.2.1.14 del Decreto número 1081 de 2015 modificado y adicionado por el Decreto número 270 de 2017 y la Resolución número 994 de 2017 de la entidad entre el 25 de febrero al 11 de marzo de 2022 con el propósito de recibir opiniones, sugerencias, comentarios o propuestas alternativas de la ciudadanía o interesados; 
+
+Que mediante Memorando número 20221130063453 del 23 de junio de 2022, el Viceministerio de Transporte certificó que durante el tiempo de publicación se presentaron por parte de ciudadanos e interesados observaciones, las cuales fueron atendidas en su totalidad; 
+
+Que la Oficina Asesora Jurídica conservará los documentos asociados a la publicación del presente acto administrativo. Todo ello en concordancia con las políticas de gestión documental y de archivo de la entidad; 
+
+En mérito de lo expuesto, 
+
+RESUELVE: 
+
+ARTÍCULO 1o. OBJETO. <Artículo compilado en el artículo 7.2.1 de la Resolución 20223040045295 de 2022> La presente resolución tiene por objeto adoptar la “Metodología para el diseño, Implementación y verificación de los Planes Estratégicos de Seguridad Vial”, contenida en el anexo de la presente resolución, la cual hace parte integral de la misma. 
+
+ARTÍCULO 2o. ÁMBITO DE APLICACIÓN. <Artículo compilado en el artículo 7.2.2 de la Resolución 20223040045295 de 2022> La “Metodología para el diseño, Implementación y verificación de los Planes Estratégicos de Seguridad Vial”, contenida en la presente resolución, aplica a todas las entidades, organizaciones o empresas del sector público o privado obligadas a diseñar e implementar el Plan Estratégico de Seguridad Vial, según lo establecido en el artículo 12 de la Ley 1503 de 2011, modificado por el artículo 110 del Decreto ley 2106 de 2019, así como al Ministerio de Trabajo, Superintendencia de Transporte y Organismos de Tránsito como autoridades de verificación a la implementación en el marco de sus competencias y de conformidad con el artículo 1o de la Ley 2050 de 2020. 
+
+ARTÍCULO 3o. ENTIDADES, ORGANIZACIONES O EMPRESAS NUEVAS. <Artículo compilado en el artículo 7.2.3 de la Resolución 20223040045295 de 2022> Los sujetos obligados a diseñar e implementar los Planes Estratégicos de Seguridad Vial, que se creen con posterioridad a la entrada en vigencia de la presente resolución, deberán diseñarlo e implementarlo en un plazo máximo de un (1) año, contado a partir de su constitución. 
+
+ARTÍCULO 4o. TRANSITORIO. <Artículo compilado en el artículo 7.2.4 de la Resolución 20223040045295 de 2022> Las entidades, organizaciones o empresas obligadas a diseñar e implementar los Planes Estratégicos de Seguridad Vial que hayan registrado y/o cuenten con aval emitido por la autoridad competente con anterioridad a la entrada en vigencia de este acto administrativo deberán actualizarlo en un plazo máximo de un (1) año, contado a partir de la entrada en vigencia de la presente resolución. 
+
+ARTÍCULO 5o. VIGENCIA Y DEROGATORIAS. La presente resolución rige a partir de su publicación en el Diario Oficial y deroga la Resolución número 1565 de 2014 del Ministerio de Transporte. 
+
+Publíquese y cúmplase. 
+
+Ángela María Orozco Gómez
+
+CONSULTAR ANEXO EN EL DIARIO OFICIAL IMPRESO O EN EL FORMATO PDF PUBLICADO EN LA WEB WWW.IMPRENTA.GOV.CO
+
+<Consultar anexo directamente en el siguiente enlace:
+
+http://168.61.69.177/documentospdf/PDF/ANEXO.pdf
+
+ANEXO. 
+
+METODOLOGIA PARA EL DISEÑO, IMPLEMENTACIÓN Y VERIFICACIÓN DE LOS PLANES ESTRATÉGICOS DE SEGURIDAD VIAL PESV. 
+
+CONTENIDO
+
+Objeto, ámbito de aplicación y generalidades
+
+Marco Legal y Reglamentario
+
+Capitulo I. Metodología para el diseño e implementación del PESV
+
+Fase 1. Planificación del PESV
+
+Paso 1. Líder del diseño e implementación del PESV (Aplica para todos los niveles)
+
+Paso 2. Comité de seguridad vial (Aplica para el nivel Estándar y Avanzado) 
+
+Paso 3. Política de Seguridad Vial de la Organización (Aplica para todos los niveles)
+
+Paso 4. Liderazgo, compromiso y corresponsabilidad del nivel directivo (Aplica para todos los niveles)
+
+Paso 5. Diagnóstico (Aplica para todos los niveles)
+
+Paso 6. Caracterización, evaluación y control de riesgos (Aplica para todos los niveles)
+
+Paso 7. Objetivos y metas del PESV (Aplica para todos los niveles)
+
+Paso 8. Programas de gestión de riesgos críticos y factores de desempeño (Aplica para todos los niveles)
+
+Fase 2. Implementación y Ejecución del PESV
+
+Paso 9. Plan anual de trabajo (Aplica para todos los niveles)
+
+Paso 10. Competencia y plan anual de formación (Aplica para todos los niveles)
+
+Paso 11. Responsabilidad y comportamiento seguro (Aplica para nivel Avanzado)
+
+Paso 12. Plan de preparación y respuesta ante emergencias viales (Aplica para todos los niveles)
+
+Paso 13. Investigación interna de siniestros viales (Aplica para el nivel Estándar y Avanzado)
+
+Paso 14. Vías seguras administradas por la organización (Aplica para todos los niveles)
+
+Paso 15. Planificación de desplazamientos laborales (Aplica para todos los niveles)
+
+Paso 16. Inspección de vehículos y equipos (Aplica para todos los niveles) 
+
+Paso 17. Mantenimiento y control de vehículos seguros y equipos (Aplica para todos los niveles)
+
+Paso 18. Gestión del cambio y gestión de contratistas (Aplica para el nivel Estándar y Avanzado)
+
+Paso 19. Archivo y retención documental (Aplica para el nivel Estándar y Avanzado)
+
+Fase 3. Seguimiento por la Organización
+
+Paso 20. Indicadores y reporte de autogestión PESV (Aplica para todos los niveles)
+
+Paso 22. Registro y análisis estadístico de siniestros viales (aplica para nivel Avanzado)
+
+Paso 22. Auditoria anual (aplica para todos los niveles)
+
+Fase 4. Mejora continua del PESV
+
+Paso 23. Mejora continua, acciones preventivas y correctivas (aplica para todos los niveles)
+
+Paso 24. Mecanismos de comunicación y participación (aplica para todos los niveles)
+
+Capítulo II. Metodología para verificación de la implementación del PESV
+
+Etapa 1. Esquema de visitas de verificación
+
+Etapa 2. Planificación de la vista de verificación
+
+Etapa 3. Lista de verificación
+
+Etapa 4. Realización de la vista de verificación
+
+Etapa 5. Acta o informe de la vista de verificación
+
+Lista de Ilustraciones
+
+Ilustración 1. Fase para el diseño e implementación del PESV
+
+Ilustración 2. Pasos de preparación para la elaboración del PESV
+
+Ilustración 3. Pasos para la planificación del PESV
+
+Ilustración 4. Proceso de Gestión del Riesgo en Seguridad Vial
+
+Ilustración 5. Ejemplo de la curva de la cultura de la seguridad vial
+
+Ilustración 6. Paso a paso para investigar siniestros viales
+
+Ilustración 7. Ejemplo metodología para investigar siniestros viales
+
+Ilustración 8. Ejemplo plan de acción
+
+Ilustración 9. Ejemplo formato de lecciones aprendidas
+
+Ilustración 10. Ejemplo pirámide de la Seguridad Vial
+
+Ilustración 11. Ejemplo Análisis de indicadores de seguridad vial
+
+Ilustración 12. Esquema de comunicación y coordinación interinstitucional
+
+Lista de Tablas
+
+Tabla 1. Resumen grupos PESV en función de la misionalidad y tamaño de la organización
+
+Tabla 2. Pasos fase de planificación del PESV
+
+Tabla 3. Ejemplo nivel de exposición
+
+Tabla 4. Ejemplo nivel de probabilidad
+
+Tabla 5. Ejemplo mapa de calor para la valoración del nivel de riesgo
+
+Tabla 6. Pasos fase de implementación del PESV
+
+Tabla 7. Ejemplo de Gestión de la velocidad
+
+Tabla 8. Ejemplo Gestión de la fatiga
+
+Tabla 9. Pasos fase de seguimiento del PESV
+
+Tabla 10. Indicadores de Gestión del PESV
+
+Tabla 11. Ejemplo Matriz de Nivel de Perdida
+
+Tabla 12. Pasos fase de mejora del PESV
+
+Tabla 13. Ejemplo programa de visitas de verificación
+
+Tabla 14. Ejemplo tamaño de la muestra
+
+Tabla 15. Ejemplo planificación de la vista de verificación
+
+Tabla 16. Ejemplo: lista de verificación
+
+Tabla 17. Ejemplo formato acta de visita de verificación
+
+Tabla 18. Tabla de articulación y correspondencia PESV, SG-SST e ISO 39001
+
+Tabla 19. Tabla resumen por nivel de diseño e implementación del PESV
+
+Siglas
+
+COPASST: Comité Paritario de Seguridad y Salud en el Trabajo. 
+
+CSV: Comité de Seguridad Vial.
+
+PESV: Plan Estratégico de Seguridad Vial.
+
+PHVA: Planear, Hacer. Verificar y Actuar.
+
+PNSV: Plan Nacional de Seguridad Vial.
+
+SG-SST: Sistema de Gestión de Seguridad y Salud en el Trabajo.
+
+Objeto, ámbito de aplicación y generalidades
+
+La presente metodología desarrolla las fases, pasos y requisitos de obligatorio cumplimiento, mediante los cuales se diseña, implementa y verifica el Plan Estratégico de Seguridad Vial.
+
+Esta metodología está diseñada para ser articulada con el Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST) y deberá adaptarse a las características propias de cada entidad, organización o empresa del sector público o privado (en adelante organización), que cuente con una flota de vehículos automotores y no automotores superior a diez (10) unidades, o que contrate o administre personal de conductores, de acuerdo con lo establecido en el artículo 12 de la Ley 1503 de 2011, modificado por el articulo 110 del Decreto Ley 2106 de 2019 y demás normas concordantes.
+
+Cuando uno de los pasos establecidos en esta metodología no se pueda aplicar debido a la naturaleza y particularidades de la organización, esta debe documentar la justificación de la no aplicabilidad para efectos de que en la verificación no le sea exigible.
+
+Para el caso de las organizaciones con casa matriz, filiales o subsidiarias: y demás modelos de asociatividad empresarial que se constituyan de acuerdo con la normatividad vigente, podrá diseñarse un Plan Estratégico de Seguridad Vial por grupo empresarial, con el fin de optimizar y compartir talento humano, recursos tecnológicos, procedimientos y actividades de capacitación, planes de emergencia, primeros auxilios, señalización, entre otras. Sin embargo, cada organización debe garantizar que la implementación del PESV esté acorde a sus características particulares, teniendo en cuenta que cada razón social tiene un NIT diferente y le corresponde mantener evidencias y demostrar el cumplimiento del PESV de manera independiente.
+
+Marco legal y reglamentario
+
+En el diseño, implementación y verificación del Plan Estratégico de Seguridad Vial son relevantes las siguientes disposiciones legales y reglamentarias:
+
+1. Artículo 1o de la Ley 1503 de 2011, "Por la cual se promueve la formación de hábitos, comportamientos y conductas seguros en la vía y se dictan otras disposiciones ".
+
+"Articulo 1o. Objeto. La presente ley tiene por objeto definir lineamientos generales en educación, responsabilidad social empresarial y acciones estatales y comunitarias para promover en las personas la formación de hábitos, comportamientos y conductas seguros en la vía y, en consecuencia, la formación de criterios autónomos, solidarios y prudentes para la toma de decisiones en situaciones de desplazamiento o de uso de la vía pública
+
+2. Artículo 12 de la Ley 1503 de 2011, modificado por el artículo 110 del Decreto Ley 2106 de 2019, "Por el cual se dictan normas para simplificar, suprimir y reformar trámites, procesos y procedimientos innecesarios en la administración pública".
+
+Artículo 12. Diseño, implementación y verificación del Plan Estratégico de Seguridad Vial. Toda entidad, organización o empresa del sector público o privado, que cuente con una flota de vehículos automotores o no automotores superior a diez (10) unidades, o que contrate o administre personal de conductores, deberá diseñar e implementar un Plan Estratégico de Seguridad Vial en función de su misionalidad y tamaño, de acuerdo con la metodología expedida por el Ministerio de Transporte y articularlo con su Sistema de Gestión de Seguridad y Salud en el Trabajo -SGSST.
+
+En ningún caso el Plan Estratégico de Seguridad Vial requerirá aval para su implementación.
+
+Para tal efecto, deberá diseñar el Plan Estratégico de Seguridad Vial que contendrá como mínimo:
+
+1. Diagnóstico y caracterización de los riesgos de seguridad vial de la empresa, asociados a la flota de vehículos o al personal de conductores.
+
+2. Capacitaciones en seguridad vial a los trabajadores de su entidad organización o empresa independientemente del cargo o rol que desempeñe.
+
+3. Compromisos claros del nivel directivo de la entidad organización o empresa orientados al cumplimiento de las acciones y estrategias en seguridad vial
+
+4. Actividades de inspección y mantenimiento periódico a los vehículos de la entidad organización o empresa incluidos los vehículos propios de los trabajadores puestos al servicio de la organización para el cumplimiento misional de su objeto o función. “
+
+3. Ley 1702 de 2013, "Por la cual se crea la Agencia Nacional de Seguridad Vial y se dictan otras disposiciones",
+
+"Artículo 5o. Definiciones. Para la aplicación de la presente ley se tendrán en cuenta las siguientes definiciones:
+
+Seguridad Vial Entiéndase por seguridad vial el conjunto de acciones y políticas dirigidas a prevenir, controlar y disminuir el riesgo de muerte o de lesión de las personas en sus desplazamientos ya sea en medios motorizados o no motorizados. Se trata de un enfoque multidisciplinario sobre medidas que intervienen en todos los factores que contribuyen a los accidentes de tráfico en la vía, desde el diseño de la vía y equipamiento vial, el mantenimiento de las infraestructuras viales, la regulación del tráfico, el diseño de vehículos y los elementos de protección activa y pasiva, la inspección vehicular, la formación de conductores y los reglamentos de conductores, la educación e información de los usuarios de las vías, la supervisión policial y las sanciones, la gestión institucional hasta la atención a las víctimas.
+
+Plan Nacional de Seguridad Vial Se tratará de un plan, basado en el diagnóstico de la accidentalidad y del funcionamiento de los sistemas de seguridad vial del país. Determinará objetivos, acciones y calendarios, de forma que concluyan en una (sic) la acción multisectorial encaminada a reducir de (sic) victimas por siniestros de tránsito. La Agencia Nacional de Seguridad Vial (ANSV) será el órgano responsable del proceso de elaboración, planificación, coordinación y seguimiento del Plan Nacional de Seguridad Vial, que seguirá vigente hasta que se apruebe la ley y se promulgue un nuevo Plan Nacional de Seguridad Vial
+
+Campañas de Prevención Vial Decididos intentos de informar, persuadir o motivar a las personas en procura de cambiar sus creencias y/o conductas para mejorar la seguridad vial en general o en un público grande especifico y bien definido, típicamente en un plazo de tiempo determinado por medio de actividades de comunicación organizadas en las que participen canales específicos de medios de comunicación con el apoyo interpersonal y u otras acciones de apoyo como las actividades de las fuerzas policiales, educación, legislación, aumento del compromiso personal, gratificaciones, entre otros".
+
+4. Ley 2050 de 2020, "Por medio de la cual se modifica y adiciona la ley 1503 de 2011 y se dictan otras disposiciones en seguridad vial y tránsito"
+
+“Articulo 1o. Verificación de los Planes Estratégicos de Seguridad Vial. La verificación de la implementación del Plan Estratégico de Seguridad Vial corresponderá a la Superintendencia de Transporte, los Organismos de Tránsito o el Ministerio de Trabajo, quienes podrán, cada una en el marco de sus competencias, supervisar la implementación de los Planes Estratégicos de Seguridad Vial - PESV. Las condiciones para efectuar la verificación serán establecidas en la Metodología que expida el Ministerio de Transporte en cumplimiento de lo establecido en el articulo 110 del Decreto -Ley 2106 de 2019 o la norma que la modifique, sustituya o derogue".
+
+5. Artículo 2.2.4.6.4 del Decreto 1072 de 2015 "Por medio del cual se expide el Decreto Único Reglamentario del Sector Trabajo",
+
+"Artículo 2.2.4.6.4. Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG- SST). El Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST) consiste en el desarrollo de un proceso lógico y por etapas, basado en la mejora continua y que incluye la política, la organización, la planificación, la aplicación, la evaluación, la auditoría y las acciones de mejora con el objetivo de anticipar, reconocer, evaluar y controlar los riesgos que puedan afectar la seguridad y la salud en el trabajo.
+
+El SG-SST debe ser liderado e implementado por el empleador o contratante, con la participación de los trabajadores y/o contratistas, garantizando a través de dicho sistema, la aplicación de las medidas de Seguridad y Salud en el Trabajo, el mejoramiento del comportamiento de los trabajadores, las condiciones y el medio ambiente laboral, y el control eficaz de los peligros y riesgos en el lugar de trabajo. Para el efecto, el empleador o contratante debe abordar la prevención de los accidentes y las enfermedades laborales y también la protección y promoción de la salud de los trabajadores y/o contratistas, a través de la implementación, mantenimiento y mejora continua de un sistema de gestión cuyos principios estén basados en el ciclo PHVA (Planificar. Hacer. Verificar y Actuar).
+
+PARÁGRAFO 1o. El Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST) debe adaptarse al tamaño y características de la empresa; igualmente, puede ser compatible con los otros sistemas de gestión de la empresa y estar integrado en ellos.
+
+PARÁGRAFO 2o. Dentro de los parámetros de selección y evaluación de proveedores y contratistas, el contratante podrá incluir criterios que le permitan conocer que la empresa a contratar cuente con el Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST)."
+
+6. Literal a) del artículo 2.3.2.1 del Decreto 1079 de 2015 "Por medio del cual se expide el Decreto Único Reglamentario del Sector Transporte", modificado por el artículo 1o del Decreto 1252 de 2021.
+
+"a) Plan Estratégico de Seguridad Vial: Herramienta de gestión que contiene las acciones, mecanismos, estrategias y medidas de planificación, implementación, seguimiento y mejora que deben adoptar las diferentes entidades, organizaciones o empresas del sector público o privado de conformidad con el articulo 110 del Decreto Ley 2106 de 2019, encaminadas a generar hábitos, comportamientos y conductas seguras en las vías para prevenir riesgos, reducir la accidentalidad vial y disminuir sus efectos nocivos. "
+
+7. Artículo 2.3.2.3.2. del Decreto 1079 de 2015 "Por medio del cual se expide el Decreto Único Reglamentario del Sector Transporte",
+
+"Articulo 2.3.2.3.2. Diseño, implementación y verificación. (...) Las entidades, organizaciones o empresas del sector público o privado de las que trata el articulo 12 de la Ley 1503 de 2011. modificado por el articulo 110 del Decreto Ley 2106 de 2019. deberán diseñar e implementar su Plan Estratégico de Seguridad Vial de acuerdo con su misionalidad y tamaño, así mismo deberán articularlo con su Sistema de Gestión de Seguridad y Salud en el Trabajo -SGSST. según lo establecido en la metodología de Diseño, implementación y Verificación del Plan Estratégico de Seguridad Vial, que adopte el Ministerio de Transporte.
+
+La verificación de la implementación del Plan Estratégico de Seguridad Vial, se realizará por parte de las autoridades previstas en el artículo 1o de la Ley 2050 de 2020. de acuerdo con las condiciones y criterios que se establezcan en la Metodología para el Diseño, implementación y Verificación del Plan Estratégico de Seguridad Vial adoptada por el Ministerio de Transporte.
+
+Para el caso del Sector Transporte, la verificación se realizará por las siguientes autoridades en el marco de sus competencias, de la siguiente manera:
+
+a. Por la Superintendencia de Transporte a las empresas que pres-ten servicio público de transporte terrestre de pasajeros, carga y mixto, en las modalidades de radio de acción nacional.
+
+b. Por los Organismos de Tránsito en su jurisdicción, a las empresas que prestan el servicio público de transporte terrestre de pasaje-ros y mixto en el radio de acción municipal, distrital, o metropolitano.
+
+PARÁGRAFO. Las entidades, organizaciones o empresas del sector público o privado podrán optar por certificarse en la norma ISO 39001: Sistema de Gestión de la Seguridad Vial vigente o la norma que la modifique, adicione o sustituya, para acreditar el diseño e implementación del Plan Estratégico de Seguridad Vial, para este efecto deberán contar con la respectiva certificación vigente. (...)".
+
+Nota: La Ley 769 de 2002 “Por la cual se expide el Código Nacional de Tránsito Terrestre y se dictan otras disposiciones", define accidentes de tránsito, no obstante, dada la adopción del enfoque Sistema Seguro, así como el enfoque visión cero, el presente documento utiliza la expresión "siniestro vial” ya que éste refleja la concepción incorporada en dichos enfoques, reforzando la idea de que los eventos en las vías son prevenibles.
+
+Capitulo I. Metodología para el diseño e implementación del PESV
+
+Teniendo en cuenta que la Ley 1503 de 2011 define lineamientos en responsabilidad social empresarial de cara a la política de seguridad vial del país, corresponde a las organizaciones promover en sus colaboradores la formación de hábitos, comportamientos y conductas seguros en la vía independientemente del rol que asuman como actor vial (peatón, pasajeros, ciclista, motociclista o conductor), para ello el PESV representa una herramienta de gestión del riesgo en seguridad vial para las organizaciones y su comunidad.
+
+Para efectos del PESV, son colaboradores de la organización, todos los trabajadores independientemente de su forma de vinculación o contratación, los empleados, contratistas, afiliados, o personas vinculadas mediante tercerización, subcontratación, outsourcing o por intermediación laboral de manera permanente u ocasional, que realizan funciones para los diferentes procesos de la organización.
+
+Respecto de la comunidad de la organización, corresponde a todas las personas que tienen relación con la organización, incluye además de los colaboradores, a los clientes, estudiantes, entre otros (algunos ejemplos de comunidad de la organización son: comunidad educativa, comunidad empresarial, etc.).
+
+Para efectos de esta metodología son desplazamientos laborales los que desarrollan los colaboradores de la organización para el cumplimiento de su contrato o funciones en los procesos estratégicos, misionales y de apoyo al servicio de la organización.
+
+Para el diserto e implementación del plan estratégico de seguridad vial, la organización se ubicará en alguno de los siguientes tres (3) niveles: básico, estándar o avanzado, de acuerdo con su misionalidad y tamaño. La ubicación en uno de los mencionados niveles le determinará los pasos aplicables de conformidad con lo definido en esta Metodología.
+
+La misionalidad de las organizaciones para efectos del PESV. se define en función de la exposición del riesgo en seguridad vial y la prestación o no del servicio de transporte, por lo que en esta Metodología se establecen dos misionalidades diferentes:
+
+Mísionalidad 1. La de las empresas dedicadas a la prestación del servicio de transporte terrestre automotor.
+
+Misionalidad 2. La de las organizaciones dedicadas a actividad diferente al transporte.
+
+Respecto del tamaño de la organización, para efectos del PESV, se define en función de:
+
+a) Flota de vehículos automotores o no automotores: incluye el número de vehículos automotores y no automotores puestos al servicio de la organización para el cumplimiento de sus funciones en los procesos estratégicos, misionales y de apoyo, ya sean vehículos propios, arrendados, en leasing, renting, entre otros, o que hagan parte de cualquier modelo de vinculación, contratación, intermediación o administración que realice la organización con el propietario, tenedor o conductor del vehículo, también incluye los vehículos utilizados por los contratistas y trabajadores de la organización, o
+
+b) Conductores contratados o administrados por la organización: corresponde al número de personas que utilizan un vehículo automotor y no automotor puesto al servicio de la organización para el cumplimiento de sus funciones, independientemente del modelo de contratación o administración (vinculación o intermediación) que utilice la organización.
+
+De acuerdo con lo anterior, la ubicación de la organización en alguno de los niveles de diserto e implementación del PESV, en función de la misionalidad y el tamaño de las organizaciones, se muestra en la Tabla 1. Resumen grupos PESV en función de la misionalidad y tamaño de la organización;
+
+Tabla 1. Resumen grupos PESV en función de la misionalidad y tamaño de la
+organización
+
+Fuente: Elaboración propia
+
+Misionalidad 1. Empresas dedicadas a la prestación del servicio de transporte terrestre automotor: Organizaciones cuya misionalidad es la prestación del servicio de transporte terrestre automotor.
+
+Tamaño 1. Nivel Básico: Organizaciones con una flota de vehículos automotores o no automotores entre once (11) y diecinueve (19) unidades, o que contraten o administren entre dos (2) y diecinueve (19) conductores.
+
+Tamaño 2. Nivel Estándar: Organizaciones con una flota de vehículos automotores o no automotores entre veinte (20) y cincuenta (50) unidades o que contraten o administren entre veinte (20) y cincuenta (50) conductores.
+
+Tamaño 3. Nivel Avanzado. Organizaciones con una flota de vehículos automotores o no automotores superior a cincuenta (50) unidades o que contraten o administren más de cincuenta (50) conductores.
+
+Misionalidad 2. Organizaciones dedicadas a actividad diferente al transporte: Organizaciones cuya actividad es diferente a la prestación del servicio de transporte.
+
+Tamaño 1. Nivel Básico: Organizaciones con una flota de vehículos automotores o no automotores entre (11) y (49) unidades o que contraten o administren entre dos (2) y cuarenta y nueve (49) conductores.
+
+Tamaño 2. Nivel Estándar: Organizaciones con una flota de vehículos automotores o no automotores entre cincuenta (50) y cien (100) unidades o que contraten o administren entre cincuenta (50) y cien (100) conductores.
+
+Tamaño 3. Nivel Avanzado: Organizaciones con una flota de vehículos automotores o no automotores superior a cien (100) unidades o que contraten o administren más de cien (100) conductores.
+
+En caso de que la entidad, organización o empresa de acuerdo con el número de unidades de su flota de vehículos o el número de conductores, se ubique al mismo tiempo en dos de los niveles establecidos en la Tabla 1. Resumen grupos PESV en función de la misionalidad y tamaño de la organización-, la definición del nivel corresponderá al más alto.
+
+La metodología se encuentra integrada por una serie de fases y pasos consecutivos, que deben seguirse de una manera sistemática bajo el ciclo PHVA para lograr resultados en mejora de la seguridad vial.
+
+En consecuencia, la metodología del PESV se divide en cuatro (4) fases que facilitan su diserto e implementación.
+
+Ilustración 1. Fases para el diseño e implementación del PESV
+
+Fuente. Elaboración propia a partir del ciclo PHVA.
+
+Para facilitar la aplicación de los niveles mencionados en la Tabla 1. Resumen grupos PESV en función de la misionalidad y tamaño de la organización, la metodología describe cada una de las cuatro (4) fases para el diserto e implementación del PESV:
+
+Fase 1. Planificación del PESV
+
+Para iniciar la planificación es necesario tener en cuenta que el PESV deberá estar articulado con el SG-SST. por lo tanto, un gran número de sus requisitos se complementan para mejorar la seguridad vial.
+
+En la elaboración del PESV se deben seguir unos pasos que. en principio permitirán una preparación, incluyendo la asignación de responsabilidad, autoridad y recursos necesarios para su diserto e implementación como se muestra a continuación:
+
+Ilustración 2. Pasos de preparación para la elaboración del PESV.
+
+Fuente. Elaboración propia.
+
+Luego de realizar la preparación para la elaboración del PESV, se deben ejecutar los pasos de planificación como se muestra a continuación:
+
+Ilustración 3. Pasos para la planificación del PESV.
+
+Fuente. Elaboración propia a partir de los sistemas de gestión.
+
+En resumen, los pasos y niveles que corresponden a la Fase de Planificación del PESV y su aplicación en los niveles básico, estándar y avanzado, son los siguientes:
+
+Tabla 2. Pasos fase de planificación del PESV.
+
+Pasos del PESV | Niveles del PESV | 
+
+Básico | Estándar | Avanzado | 
+
+1. Líder del diseño e implementación del
+PESV | APLICA | APLICA | APLICA | 
+
+2. Comité de seguridad vial | No Aplica | APLICA | APLICA | 
+
+3. Política de Seguridad Vial de la Organización | APLICA | APLICA | APLICA | 
+
+4. Liderazgo, compromiso y corresponsabilidad del nivel directivo | APLICA | APLICA | APLICA | 
+
+5. Diagnóstico | APLICA | APLICA | APLICA | 
+
+6. Caracterización, evaluación y control de riesgos | APLICA | APLICA | APLICA | 
+
+7. Objetivos y metas del PESV | APLICA | APLICA | APLICA | 
+
+8. Programas de gestión de riesgos críticos y factores de desempeño | APLICA | APLICA | APLICA | 
+
+Fuente. Elaboración propia.
+
+Paso 1. Líder del diseño e implementación del PESV (Aplica para todos los niveles)
+
+El nivel directivo debe designar una persona con poder de decisión en los temas relacionados con la gestión de la seguridad vial, para que lidere el diseño e implementación del PESV, de acuerdo con lo establecido en el Capítulo l de la Metodología del diseño, implementación y verificación de Planes Estratégicos de Seguridad Vial, los requisitos legales aplicables en materia de seguridad vial y demás requisitos que establezca la organización.
+
+El líder del diseño e implementación del PESV es el responsable de velar por que se cumplan las etapas de planificación, implementación, seguimiento y mejora del PESV, también es el responsable de diligenciar el reporte de autogestión anual y los resultados de la medición de los indicadores del Plan Estratégico de Seguridad Vial conforme se indica en el Paso 20. Indicadores y reporte de autogestión PESV (Aplica para todos los niveles).
+
+La organización debe definir la competencia del líder del diseño e implementación del PESV de acuerdo con los riesgos de seguridad vial de las actividades relacionadas con los desplazamientos laborales al servicio de la organización, y teniendo en cuenta lo indicado en el Paso 10. Competencia y plan anual de formación (Aplica para todos los niveles).
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: La definición del líder del diseño e implementación de PESV, se asemeja al requisito establecido en el SG-SST y a lo señalado en la ISO 39001, así:
+
+PESV | Decreto 1072 de 2015 SG-SST | ISO 39001 | 
+
+Paso 1. Líder del diseño e implementación del PESV (Aplica para todos los niveles) | Artículo 2.2.4.6.8.
+Obligaciones de los empleadores | 5.3 Roles, responsabilidades y autoridades
+organizacionales | 
+
+El líder del diseño e implementación del PESV puede ser el mismo responsable del SG-SST.
+
+Paso 2. Comité de seguridad vial (Aplica para el nivel Estándar y Avanzado)
+
+El Comité de Seguridad Vial (CSV) es el conjunto de personas que apoyan el diseño, implementación. seguimiento y mejora del Plan Estratégico de Seguridad Vial, influenciando y promoviendo en la comunidad de la organización la formación de hábitos, comportamientos interdependientes y conductas seguras en la vía; y, en consecuencia, la formación de criterios autónomos, solidarios y prudentes para la toma de decisiones en situaciones de desplazamiento o de uso de las vías para el cumplimiento de los objetivos en materia de seguridad vial.
+
+Los miembros del Comité de Seguridad Vial (CSV), serán designados por el nivel directivo de la organización. El CSV estará conformado por al menos tres (3) personas con poder de decisión (incluyendo al líder del diseño e implementación del PESV). La competencia y formación mínima que deben tener los integrantes del CSV deberá ser definida por la Organización de acuerdo con lo señalado en el Paso 10. Competencia y plan anual de formación (Aplica para todos los niveles).
+
+Las responsabilidades y funciones del CSV, son:
+
+a) Definir el objetivo general, la visión y alcance del PESV. en cumplimiento de las fases, pasos y requisitos establecidos en el presente documento, manteniendo la alineación con el Plan Nacional de Seguridad Vial vigente y la articulación con el Sistema de Gestión de Seguridad y Salud en el Trabajo.
+
+b) Realizar las acciones tendientes a diseñar, implementar, mantener y mejorar continuamente el PESV, en el marco de lo establecido en el Plan Nacional de Seguridad Vial e incluyendo a todos los actores viales de la organización (peatones, personas con discapacidad, ciclistas, motociclistas, conductores, pasajeros).
+
+c) Promover la participación de la comunidad de la organización en las acciones de seguridad vial, siendo actores claves en el logro de los objetivos del PESV.
+
+d) Definir los procesos y/o áreas que acompañará cada miembro del Comité de Seguridad Vial para influenciar la mejora en términos de seguridad vial.
+
+e) Analizar los indicadores de siniestralidad vial, las investigaciones internas de siniestros viales y realizar seguimiento a los planes de acción que surgen de los resultados o conclusiones de las investigaciones, teniendo en cuenta que se deben investigar todos los siniestros viales donde se ven involucrados colaboradores de la organización que realizan desplazamientos laborales, donde se presentan muertos, lesionados o daños de la organización o de terceros.
+
+f) Revisar el PESV al menos una vez por trimestre y documentar el seguimiento, análisis y evaluación de los resultados de la siniestralidad vial e indicadores y reporte de autogestión del PESV, del plan anual de trabajo, de las auditorías y de la implementación del PESV. con el objetivo de tomar decisiones enfocadas en la mejora de la seguridad vial
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: La conformación del CSV es un requisito similar al contemplado en el SG-SST y en la ISO 39001, así:
+
+PESV | Decreto 1072 de 2015 SG-SST | ISO 39001 | 
+
+Paso 2. Comité de seguridad vial (Aplica para el nivel Estándar y Avanzado) | Artículo 2.2.4.6.8.
+Obligaciones de los empleadores | 5.3 Roles,
+responsabilidades y
+autoridades
+organizacionales | 
+
+El CSV del PESV y el COPASST del SGSST, son comités que se pueden articular siempre y cuando se tengan en cuenta las diferencias en el alcance frente al riesgo (en lo laboral es un riesgo diferente al riesgo dinámico en la seguridad vial) y se cumpla con lo establecido en el presente documento.
+
+Paso 3. Política de Seguridad Vial de la Organización (Aplica para todos los niveles)
+
+La Política de Seguridad Vial es el documento en el que el nivel directivo de la organización se compromete a suministrar y garantizar los recursos para la planificación, implementación, seguimiento y mejora del PESV. Los programas asociados a la política se definen en el Paso 8. Programas de gestión de riesgos críticos y factores de desempeño (Aplica para todos los niveles).
+
+La organización debe documentar la Política de Seguridad Vial con alcance sobre los desplazamientos laborales y los trayectos en itinere para todos sus colaboradores, dicha política debe:
+
+a) Establecer compromisos claros del nivel directivo frente al PESV y orientados al cumplimiento de las acciones y estrategias en seguridad vial.
+
+b) Ser adecuada para las actividades y tamaño de la organización, y apropiada para la naturaleza de sus riesgos en seguridad vial.
+
+c) Proporcionar un marco de referencia para el establecimiento de los objetivos en seguridad vial.
+
+d) Incluir el cumplimiento de los requisitos legales aplicables en seguridad vial como compromiso.
+
+e) Incluir el compromiso de mejora continua del PESV.
+
+f) Ser concisa, redactada con claridad, estar fechada y firmada por el (la) representante legal de la organización.
+
+g) Ser revisada, como mínimo cada tres (3) años, socializada y accesible para todos los niveles de la organización.
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: La definición de una política, en este caso de seguridad vial guarda relación con el requisito de definición de una política en el SGSST en lo de su competencia; en el caso del requisito establecido en la ISO. guarda plena correspondencia al ser las dos políticas de seguridad Vial
+
+PESV | Decreto 1072 de 2015 SGSST | ISO 39001 | 
+
+Paso 3. Política de
+Seguridad Vial de la Organización (Aplica para todos los niveles) | Articulo 2.2.4.6.5. Política de seguridad y salud en el trabajo (SST) | 
+5.2 Política de SV | 
+
+La Política de Seguridad Vial exigida en PESV se puede articular con la Política del SG- SST y/o con los demás sistemas de gestión que tenga implementados la organización, siempre y cuando se cumpla lo establecido en el presente documento.
+
+Paso 4. Liderazgo, compromiso y corresponsabilidad del nivel directivo (Aplica para todos los niveles)
+
+El nivel directivo de la organización debe demostrar liderazgo, compromiso y corresponsabilidad mediante:
+
+a) La definición de la política y los objetivos del PESV. que sean compatibles con la dirección estratégica de la organización, buscando prevenir siniestros viales, reducir las muertes y disminuir el riesgo de lesiones o daños derivados de los siniestros viales.
+
+b) Promover en la organización la formación y aplicación de hábitos, comportamientos y conductas seguras en la vía.
+
+c) El suministro de recursos financieros, técnicos y humanos requeridos para el diseño, implementación, verificación y mejora del PESV.
+
+d) La adquisición o contratación de vehículos, equipos, repuestos y servicios que cumplan especificaciones de seguridad, de acuerdo con la normatividad vigente en la materia.
+
+e) El seguimiento para que los contratistas, afiliados, asociados, terceros y la comunidad de la organización cumplan los requisitos de seguridad vial que establezca la organización.
+
+f) El cumplimiento de las acciones y estrategias definidas en el plan de trabajo anual del PESV.
+
+g) La atención oportuna de la solicitud de información por parte de las entidades verificadoras, la participación en la reunión de apertura y reunión de cierre y la gestión de los hallazgos resultantes de las visitas de verificación que realicen el Ministerio de Trabajo, la Superintendencia de Transporte o los Organismos de Tránsito según corresponda de acuerdo con la función de verificación de la implementación del Plan Estratégico de Seguridad Vial de conformidad con lo establecido en el artículo 1o de la Ley 2050 de 2020 y las disposiciones que lo reglamenten.
+
+h) La participación en una (1) reunión del comité de seguridad vial por lo menos una (1) vez al año para revisar los resultados de la planificación, implementación, seguimiento y mejora del PESV.
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: El liderazgo, compromiso y corresponsabilidad del nivel directivo en PESV se encuentra también establecido en los requisitos del SG-SST y la norma ISO 39001, así:
+
+PESV | Decreto 1072 de 2015 SGSST | ISO 39001 | 
+
+Paso 4. Liderazgo, compromiso y corresponsabilidad del nivel directivo (Aplica para todos los niveles) | Articulo 2.2.4.6.5.
+Obligaciones de los
+empleadores.
+Articulo 2.2.4.6.31.
+Revisión por la alta
+dirección | 5.1 Liderazgo y compromiso | 
+
+Paso 5. Diagnóstico (Aplica para todos los nivelas)
+
+Para realizar el diagnóstico y evaluación inicial del PESV, la organización debe conocer el escenario de partida por medio de la definición de la línea base o primera medición del estado actual de la seguridad vial, conforme se explica en el Paso 21. Registro y análisis estadístico de siniestros viales (Aplica para nivel Avanzado) para identificar los problemas de seguridad vial El diagnóstico al menos debe contener:
+
+a) Cantidad de sedes, servicios que presta la organización.
+
+b) Lista de contratistas (ocasionales y permanentes), incluyendo flotas fidelizadas, flotas ocasionales, afiliados, personas vinculadas mediante tercerización, subcontratación, outsourcing o por intermediación laboral y personas naturales, que realizan desplazamientos laborales para dar cumplimiento al objeto de su contrato con la organización.
+
+c) Lista de colaboradores de la organización, incluyendo fecha de nacimiento, género, cargo, escolaridad, estado civil, vigencia de la licencia de conducción (si tiene), capacitaciones, evaluación de la competencia, siniestros viales, cantidad, tipo y estado de pago de sus infracciones de tránsito, medio de transporte que utiliza para el desplazamiento hacia el trabajo, y si tiene rol de conductor para desplazamientos laborales, tipo de vehículo automotor o no automotor que conduce y fecha de vinculación a la organización.
+
+d) Lista de vehículos automotores y no automotores: propios de la organización, afiliados, asociados, o que están puestos al servicio de la organización para realizar desplazamientos laborales, incluyendo placa del vehículo, número VIN, número de motor, kilometraje, fecha de fabricación, especificaciones técnicas del vehículo, vigencia SOAT, vigencia revisión técnico-mecánica, reporte de siniestros viales del vehículo, plan de mantenimiento preventivo, control de acciones de mantenimiento, tipo de vehículo y promedio o estimado de kilómetros que recorren al mes.
+
+e) Lista de rutas frecuentes de los desplazamientos laborales, incluyendo el número de kilómetros, frecuencia del uso de la ruta (número de veces que se utiliza la ruta en la semana, al mes o al año).
+
+f) Número de colaboradores capacitados en el plan de emergencias viales de la organización, descripción y número de equipos, equipamiento o elementos de primeros auxilios dispuestos para la atención de siniestros viales, tipo y fecha de simulacros de atención de emergencias viales realizados.
+
+Teniendo en cuenta estos elementos, el diagnóstico debe estar documentado y se debe actualizar al menos una vez al año.
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: El diagnóstico para el diseño del PESV, se encuentra establecido tanto en los requisitos del SG-SST como en la norma ISO 39001, así:
+
+PESV | Decreto 1072 de 2015 SG-SST | ISO 39001 | 
+
+Paso 5. Diagnóstico (Aplica para todos los niveles) | Articulo 2.2.4.6.16.
+Evaluación inicial del Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST) | 4.1 Conocimiento de la organización y su contexto. | 
+
+Paso 6. Caracterización, evaluación y control de riesgos (Aplica para todos los niveles)
+
+La organización debe definir y aplicar uno (1) o varios procedimientos de evaluación y control de riesgos en seguridad vial, que tenga alcance sobre todos los procesos, funciones y actividades relacionadas con el tránsito para el cumplimiento de su misión: dicho procedimiento debe permitir identificar, analizar y valorar los riesgos en seguridad vial de la organización, donde se incluyan desplazamientos laborales, las vías que administra la organización, el entorno próximo de la organización (vecinos y vías aledañas) y los trayectos en itinere, con alcance a la comunidad de la organización, con el fin de priorizar e implementar los controles necesarios para prevenir los riesgos de seguridad vial.
+
+Existen variedad de técnicas de gestión del riesgo que puede utilizar la organización, algunas son cualitativas, semicuantitativas y cuantitativas, su implementación depende del conocimiento, de los recursos y de los datos (sociodemográficos, espaciales y temporales) que aporte la organización, a continuación, en la Ilustración
+
+4. Proceso de Gestión del Riesgo en Seguridad Vial, se muestra el esquema de gestión del riesgo con algunos ejemplos para las etapas de identificación, análisis y valoración de riesgos:
+
+Ilustración 4. Proceso de Gestión del Riesgo en Seguridad Vial
+
+Fuente: Elaboración propia a partir de la ISO 31000 (ICONTEC, 2018)
+
+El procedimiento de evaluación y control de riesgos en seguridad vial al menos debe contener:
+
+1. Identificación del riesgo:
+
+El propósito de la identificación del riesgo en seguridad vial es encontrar, reconocer y describir los riesgos de la seguridad vial teniendo en cuenta a todos los colaboradores de la organización (peatones/pasajeros y conductores de vehículos automotores y no automotores), con enfoque en los desplazamientos laborales. La organización debe tener en cuenta que en seguridad vial el riesgo es dinámico, debido al cambio del entorno y asociado a la velocidad de los desplazamientos, donde cada segundo cambian las condiciones de riesgo en la vía.
+
+Algunas herramientas que se pueden utilizar para identificar los riesgos son: el análisis de las causas de los siniestros viales, las encuestas para identificar la percepción de los colaboradores; la lluvia de ideas con expertos, entre otras.
+
+La organización debe analizar sus actividades, productos y servicios, así como los riesgos e impactos que genera en materia de seguridad vial (por ejemplo, una concesión vial gestiona el riesgo vial de sus colaboradores y el riesgo vial de los usuarios de su infraestructura vial; un supermercado gestiona el riesgo que genera el tráfico para acceder y salir de sus instalaciones; una empresa que transporta mercancías peligrosas gestiona el riesgo del tránsito de acuerdo con la naturaleza y la compatibilidad de la carga, un colegio gestiona los riesgos para el ingreso y salida de estudiantes).
+
+La identificación del riesgo debe contemplar a todos los actores viales que realizan desplazamientos laborales (por ejemplo, conductores, motociclistas, ciclistas y peatones), los factores de la seguridad vial del sistema seguro (comportamiento seguro, vehículos seguros, velocidades seguras, entorno o infraestructura vial y viajes seguros) y las variables de riesgo necesarias para mejorar la seguridad vial de la organización (por ejemplo. Comportamiento: exceso de horas de conducción, distracción, no uso del cinturón de seguridad, no uso del casco, etc.; Velocidad: exceso de velocidad, frenadas bruscas, aceleraciones bruscas, deficiente espacio de seguridad, etc.; Vehículos: incumplimiento al plan de mantenimiento, deficiencias en la inspección preoperacional, falta de idoneidad del personal de mantenimiento, etc.;
+
+Viajes: errores en la planificación de los viajes, falta de controles operacionales, pobre análisis dinámico de riesgos, etc.).
+
+2. Análisis del riesgo:
+
+El propósito del análisis del riesgo en seguridad vial es comprender la naturaleza del riesgo y sus características, por ello, al menos debe considerar factores de exposición y probabilidad.
+
+Algunas herramientas que se pueden utilizar para analizar los riesgos son: el análisis pajarita para riesgos críticos (cualitativa), la Matriz de probabilidad/consecuencia (cualitativa), el análisis de los modos de fallo y de los efectos (semicuantitativa) o las estadísticas y redes Bayesianas (cuantitativa).
+
+3. Valoración del riesgo:
+
+El propósito de la valoración del riesgo en seguridad vial es obtener información suficiente o necesaria para facilitar (a toma de decisiones, en la valoración se comparan los resultados del análisis con los criterios del riesgo.
+
+La herramienta que se puede utilizar para valorar los riesgos es el mapa de calor que se basa en términos de probabilidad y exposición. La construcción del mapa de calor se inicia definiendo el nivel de exposición (por ejemplo: frecuente, ocasional o esporádica) con respecto al tiempo de la exposición al riesgo vial como se muestra en el siguiente ejemplo:
+
+Tabla 3. Ejemplo nivel de exposición.
+
+NIVEL DE EXPOSICIÓN | VALOR | DESCRIPCIÓN | 
+
+Frecuente | 3 | La exposición riesgo vial se presenta más de 6 horas al día. | 
+
+Ocasional | 2 | La exposición riesgo vial se presenta entre 3 y 6 horas al dia. | 
+
+Esporádica | 1 | La exposición riesgo vial se presenta menos de 3 horas al dia. | 
+
+Fuente: Elaboración propia a partir de la ISO 31000.
+
+Luego se define el nivel de probabilidad con respecto a los controles que se tienen implementados para reducir el riesgo vial como se muestra en el siguiente ejemplo:
+
+Tabla 4. Ejemplo nivel de probabilidad.
+
+NIVEL DE
+PROBABILID AD | VALOR | DESCRIPCIÓN | 
+
+Muy Probable | 3 | No se tienen establecidos controles eficaces. | 
+
+Poco Probable | 2 | Se tienen controles, pero su eficacia es baja. | 
+
+No es Probable | 1 | Se tienen controles eficaces. | 
+
+Fuente: Elaboración propia a partir de la ISO 31000.
+
+Nota: en el ejemplo no se muestra el nivel de consecuencia debido a que, en seguridad vial siempre va a ser crítico y afectaría la gestión que se puede realizar sobre cada variable.
+
+Finalmente se elabora el mapa de calor teniendo en cuenta el nivel de exposición y el nivel de probabilidad para identificar los riesgos críticos, como se muestra en el siguiente ejemplo:
+
+Tabla 5. Ejemplo mapa de calor para la valoración del nivel de riesgo.
+
+NIVEL DE RIESGO
+
+NIVEL DE RIESGO | VALOR DE NR | 
+
+1: Crítico | 6-9 | 
+
+II: Moderado | 3-4 | 
+
+III: Bajo | 1-2 | 
+
+Fuente: Elaboración propia a partir de la ISO 31000.
+
+4. Tratamiento de los riesgos
+
+El propósito del tratamiento del riesgo en seguridad vial es seleccionar e implementar controles y acciones para abordarlo.
+
+Las acciones que puede tomar la organización frente al riesgo son: Evitarlo, aceptarlo, eliminar la fuente que lo ocasiona, modificar los factores de exposición y probabilidad.
+
+La evaluación y control de los riesgos se debe actualizar como mínimo una (1) vez al año y/o cada vez que ocurra un siniestro vial en el cual resulte involucrado un vehículo de la organización o puesto al servicio de ella y a consecuencia del mismo se causen fatalidades o lesiones; o cuando se presente un siniestro vial de un miembro de la comunidad de la organización al interior o en su entorno, o cuando se presenten cambios en las actividades misionales relacionadas con el transporte.
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: La caracterización, evaluación y control de riesgos del PESV. se encuentran establecidos en los requisitos del SG-SST y en la norma ISO 39001, así:
+
+PESV | Decreto 1072 de 2015 SG- SST | ISO 39001 | 
+
+Paso 6. Caracterización, evaluación y control de riesgos (Aplica para todos los niveles) | Articulo 2.2.4.6.15.
+Identificación de peligros, evaluación y valoración de los riesgos | 6.2 Acciones para abordar riesgos y oportunidades | 
+
+La caracterización, evaluación y control de riesgos del PESV se puede articular con la identificación de peligros, evaluación y valoración de riesgos del SG-SST. siempre y cuando se tengan en cuenta las diferencias en el alcance frente al riesgo de seguridad vial, principalmente en la identificación de riesgos (en lo laboral es un riesgo diferente al riesgo dinámico en la seguridad vial) y se cumpla con lo establecido en el presente documento.
+
+Paso 7. Objetivos y metas del PESV (Aplica para todos los niveles)
+
+En este paso se deben definir los objetivos y metas del PESV de conformidad con la política de Seguridad Vial de la organización, los cuales deben estar enfocados a la prevención, ser claros, medibles y cuantificables. Los objetivos deben ser coherentes con la política definida en el Paso 3. Política de Seguridad Vial de la Organización (Aplica para todos los niveles) y con el plan de trabajo anual del PESV definido en el Paso 9. Plan anual de trabajo (Aplica para todos los niveles), compatibles con la normatividad vigente, comunicados a todos los colaboradores de la organización, documentados, actualizados, revisados y evaluados mínimo una (1) vez al año.
+
+Los objetivos y metas también deben ser coherentes con los riesgos definidos en el Paso 6. Caracterización, evaluación y control de riesgos (Aplica para todos los niveles) y con los factores de desempeño de la seguridad vial definidos en el Paso 8. Programas de gestión de riesgos críticos y factores de desempeño (Aplica para todos los niveles).
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: La definición de objetivos y metas del PESV. se encuentra también establecida en los requisitos para el SG-SST y en la norma ISO 39001, así:
+
+PESV | Decreto 1072 de 2015 SGSST | ISO 39001 | 
+
+Paso 7. Objetivos y metas del PESV (Aplica para todos los niveles) | Articulo 2.2.4.6.18.
+Objetivos del Sistema de Gestión de la Seguridad y Salud en el Trabajo (SGSST) | 6.4 Objetivos de la SV y planificación para lograrlos | 
+
+Teniendo en cuenta que la definición de los objetivos y metas del PESV debe orientarse a la reducción de siniestros viales, se puede articular con los objetivos y metas definidos en el SGSST, así mismo se puede realizar el seguimiento bajo un mismo tablero de control.
+
+Paso 8. Programas de gestión de riesgos críticos y factores de desempeño (Aplica para todos los niveles)
+
+Los programas de gestión de riesgos críticos establecen los lineamientos y factores de desempeño para tratar (eliminar o sustituir o reducir o controlar) y manejar los riesgos identificados. El factor de desempeño, según la ISO 39001 es definido como el factor medible, elemento o criterio que contribuye a la seguridad vial en el que una organización puede ejercer influencia, y que le permite determinar los impactos en la seguridad vial.
+
+Tanto los programas de gestión de riesgos críticos como los factores de desempeño, permiten tomar decisiones adecuadas, fijar las directrices en seguridad vial y establecer las guías de acción necesarias para todos los colaboradores de la organización.
+
+Para definir los programas de gestión de riesgos y factores de desempeño del PESV. la organización primero deberá seleccionar los riesgos con valoración crítica para asociar los programas y posteriormente diseñar programas de intervención para colaboradores de la organización.
+
+Los programas deben estar documentados y contener como mínimo: nombre del programa, lineamiento y/o límites y/o alcance, fecha de inicio, duración, línea base. objetivo(s) y meta(s). indicador(es) y forma de medición, uno o varios factores de desempeño relacionados, actividades. responsable(s), presupuesto, cronograma y mecanismos para realizar seguimiento al programa.
+
+La organización debe diseñar e implementar, como mínimo los siguientes programas:
+
+1. Programa de Gestión de la Velocidad Segura: Procedimiento para controlar la velocidad de los vehículos automotores el cual debe estar alineado con el enfoque del sistema seguro y debe contener: mecanismo o equipo de medición que se va a utilizar, frecuencia de mantenimiento y calibración del equipo; responsables del programa; frecuencia de evaluación de los resultados; procedimiento en caso de excesos de velocidad y casos reiterativos; mecanismos de comunicación y campañas de prevención vial en torno a la gestión de la velocidad.
+
+Los factores de desempeño de la gestión de la velocidad segura, entre otros, pueden ser: promover el cumplimiento de los límites de velocidad, sustituir incentivos de pago que generan presión de velocidad en el recorrido, implementación de tecnología para control de velocidad como el Tacógrafo, GPS o Computador a bordo, entre otros.
+
+2. Programa de Prevención de la Fatiga: Procedimiento para controlar la jornada de trabajo, horas de conducción y descanso de los conductores, debe contener: mecanismo o equipo de medición que se va a utilizar; revisión y cumplimiento de las políticas laborales en cuanto a los tiempos de conducción y jornada de trabajo; planificación de los viajes para evitar excesos en las jornadas de trabajo; responsable(s) del programa; frecuencia de evaluación de los resultados; procedimiento en caso de encontrar excesos en las jornadas de trabajo u horas de conducción y casos reiterativos por parte de planificadores de ruta y conductores.
+
+Los factores de desempeño de la prevención de la fatiga, entre otros pueden ser: promover el cumplimiento de la jornada laboral del personal que conduce un vehículo para los desplazamientos laborales; sustituir incentivos de pago asociados al exceso de kilómetros recorridos diariamente; controlar la jornada de descanso entre turnos; controlar los sitios y horarios de descanso durante la jornada laboral.
+
+3. Programa de Prevención de la Distracción: Procedimiento para controlar y monitorear la distracción en la conducción, el programa debe contener: mecanismo o equipo de control que se va a utilizar; responsables del programa y de monitorear la distracción de los conductores durante la conducción; identificación de las principales distracciones de los conductores; frecuencia de evaluación de los resultados del programa; procedimiento en caso de evidenciar distracción durante la conducción; mecanismos de comunicación y campañas de prevención de la distracción durante la conducción.
+
+Los factores de desempeño de la prevención de la distracción, entre otros pueden ser: control del uso de teléfonos móviles, control del uso de elementos distractores dentro del vehículo.
+
+4. Programa de Cero Tolerancia a la conducción bajo los efectos del Alcohol y Sustancias Psicoactivas: Procedimiento para evitar que se conduzca bajo los efectos del consumo de alcohol y sustancias psicoactivas. el programa debe contener: estrategias para identificar posibles casos de conducción bajo el efecto de alcohol y psicoactivas; acciones y correctivos; responsables del programa; frecuencia de evaluación de los resultados; procedimiento en caso de presentarse conducción bajo el influjo de alcohol o sustancias psicoactivas y casos reiterativos; mecanismos de comunicación y campañas de prevención vial en torno a la cero tolerancia a la conducción bajo los efectos del consumo de alcohol y sustancias psicoactivas.
+
+Los factores de desempeño de Cero Tolerancia a la conducción bajo los efectos del Alcohol y Sustancias Psicoactivas. entre otros pueden ser: pruebas aleatorias de alcohol a los conductores de vehículos automotores y no automotores que realicen actividades al servicio de la organización, o en las instalaciones de la organización, o en zonas aledañas que estén bajo el control de la organización, prueba de control anual en sangre para alcohol y en orina para sustancias psicoactivas para conductores que realizan recorridos al servicio de la organización.
+
+5. Programa para la protección de actores viales vulnerables: Procedimiento con las directrices de seguridad vial para promover la protección de los actores viales vulnerables (peatones, pasajeros, ciclistas y motociclistas) de la organización en sus desplazamientos laborales y la generación de hábitos conductas y comportamientos seguros en las vías en todos los colaboradores de la organización, el programa debe contener: definición de las directrices; responsable(s) del programa; seguimiento a la implementación del programa; frecuencia para evaluar los resultados; procedimiento en caso de identificar incumplimiento de las directrices y casos reiterativos; mecanismos de comunicación y campañas de prevención vial en torno a la protección de actores vulnerables.
+
+Los factores de desempeño para la protección de actores viales vulnerables, entre otros pueden ser: control del uso de casco de seguridad y de elementos de protección personal por motociclistas y ciclistas, control de los desplazamientos laborales de los actores viales vulnerables para reducir su exposición al riesgo.
+
+6. Otros programas relacionados con los riesgos de la organización, el cumplimiento de normas de tránsito y la política nacional de seguridad vial, así como la articulación con los programas del SG-SST como los relativos a medicina del trabajo, prevención y promoción de la salud en trabajo, condiciones de salud, entre otros.
+
+Los programas y factores de desempeño del PESV deben ser actualizados como mínimo una (1) vez al año para lograr una mejora sistemática en la seguridad vial, así mismo deben ser divulgados a todos los colaboradores de la organización y se les debe realizar análisis y evaluación de resultados de manera trimestral en el CSV.
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: La definición de programas para la gestión de riesgos críticos y factores de desempeño, se encuentra igualmente establecida tanto en el SGSST como en la norma ISO 39001, así:
+
+PESV | Decreto 1072 de 2015 SG-SST | ISO 39001 | 
+
+Paso 8. Programas de gestión de riesgos críticos y factores de desempeño (Aplica para todos los niveles) | Artículos 2.2.4.6.23 y
+2.2.4.6.24 Gestión de los peligros y riesgos y Medidas de prevención y control | 6.3 Factores de desempeño de la SV | 
+
+Con respecto a los factores de desempeño de la seguridad vial, es un elemento exclusivo del PESV. teniendo en cuenta la variabilidad de los riesgos.
+
+Fase 2. Implementación y Ejecución del PESV
+
+En la fase de ejecución del PESV se implementan las acciones definidas en la Fase 1. Planificación del PESV y todas las actividades necesarias para mejorar la seguridad vial en la organización, asi como para generar hábitos y comportamientos seguros por parte de toda la organización y controlar los riesgos, con el fin de reducir los siniestros viales.
+
+En resumen, los pasos que corresponden a la Fase de implementación y ejecución del PESV son los siguientes:
+
+Tabla 6. Pasos fase de implementación del PESV.
+
+Paso | Básico | Estándar | Avanzado | 
+
+9. Plan anual de trabajo | Aplica | Aplica | Aplica | 
+
+10. Competencia y plan anual de formación | Aplica | Aplica | Aplica | 
+
+11. Responsabilidad y comportamiento seguro | No Aplica | No Aplica | Aplica | 
+
+12. Plan de preparación y respuesta ante emergencias viales | Aplica | Aplica | Aplica | 
+
+13. Investigación interna de siniestros
+viales | No Aplica | Aplica | Aplica | 
+
+14. Vías seguras administradas por la organización | Aplica | Aplica | Aplica | 
+
+15. Planificación de desplazamientos laborales | Aplica | Aplica | Aplica | 
+
+16. Inspección de vehículos y equipos | Aplica | Aplica | Aplica | 
+
+17. Mantenimiento y control de vehículos seguros y equipos | Aplica | Aplica | Aplica | 
+
+18. Gestión del cambio y gestión de contratistas | No Aplica | Aplica | Aplica | 
+
+19. Archivo y retención documental | No Aplica | Aplica | Aplica | 
+
+Fuente. Elaboración propia.
+
+Paso 9. Plan anual de trabajo (Aplica para todos los niveles)
+
+El plan anual de trabajo del PESV. es el documento de gestión orientado al cumplimiento de las acciones y estrategias de la organización en seguridad vial para la planificación, implementación, seguimiento y mejora del PESV, la alineación con el Plan Nacional de Seguridad Vial y la articulación con el Sistema de Gestión de Seguridad y Salud en el Trabajo.
+
+Para definir el plan anual de trabajo, la organización debe tener en cuenta lo establecido en el Paso 3. Política de Seguridad Vial de la Organización (Aplica para todos los niveles),
+
+Paso 5. Diagnóstico (Aplica para todos los niveles). Paso 6. Caracterización, evaluación y control de riesgos (Aplica para todos los niveles). Paso 7. Objetivos y metas del PESV (Aplica para todos los niveles) y Paso 8. Programas de gestión de riesgos críticos y factores de desempeño (Aplica para todos los niveles).
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: La definición de un plan anual de trabajo es común tanto en PESV, como en el SGSST y la norma ISO 39001. así:
+
+PESV | Decreto 1072 de 2015 SG-SST | ISO 39001 | 
+
+Paso 9. Plan anual de trabajo (Aplica para todos los niveles) | Articulo 2.2.4.6.17.
+Planificación del Sistema de Gestión de la Seguridad y Salud en el Trabajo (SGSST) | 6.4 Objetivos de la SV y planificación para lograrlos | 
+
+El Plan Anual de Trabajo del PESV se puede articular con el Plan Anual de Trabajo del SGSST, dado que ambos planes deben estructurarse con igual contenido (objetivos, metas, responsabilidades, recursos y cronograma de actividades).
+
+Paso 10. Competencia y plan anual de formación (Aplica para todos los niveles)
+
+La organización debe definir la competencia en seguridad vial de los colaboradores que realizan desplazamientos laborales al servicio de la organización. La competencia se define en términos de:
+
+a) Educación: nivel de estudios.
+
+b) Formación: capacitaciones en seguridad vial.
+
+c) Experiencia: en conducción relacionada con el cargo.
+
+La organización al menos debe documentar la competencia de los siguientes cargos y roles:
+
+1. Líder del diseño e implementación del PESV.
+
+2. Miembros del Comité de Seguridad Vial.
+
+3. Capacitadores en seguridad vial.
+
+4. Planificadores de rutas o personas que realizan la función de coordinar desplazamientos laborales.
+
+5. Coordinadores y técnicos de mantenimiento de vehículos.
+
+6. Auditores de seguridad vial.
+
+7. Brigadista Vial o personas de la organización con conocimientos en primeros auxilios, rescate vehicular y manejo de extintores, encargadas de brindar apoyo en la atención de los siniestros viales, bien sea como primer respondiente o como soporte en la atención.
+
+8. investigadores Internos de siniestros viales.
+
+9. Colaboradores que conducen un vehículo para sus desplazamientos laborales.
+
+La organización debe establecer los lineamientos generales de sensibilización y capacitación para promover en los colaboradores de la organización la formación de hábitos, comportamientos y conductas seguras en la vía. El plan anual de formación es el documento de gestión del conocimiento que contiene los temas de capacitación y sensibilización por cada actor vial (independientemente del rol que desempeñe), la intensidad horaria de la formación (capacitación teórica, práctica, talleres y/o simuladores), la modalidad (presencial y/o virtual), la frecuencia, el(los) responsable(s) de ejecución, así como los recursos, las herramientas metodológicas y pedagógicas.
+
+Para definir el plan anual de formación, la organización debe tener en cuenta el Paso 6. Caracterización, evaluación y control de riesgos (Aplica para todos los niveles), el Paso 9. Plan anual de trabajo (Aplica para todos los niveles) y el Paso 21. Registro y análisis estadístico de siniestros viales (Aplica para nivel Avanzado): adicionalmente, la organización debe priorizar la formación de acuerdo con los resultados de dichos análisis y sus procedimientos internos.
+
+El Plan Anual de formación debe incluir la capacitación de todos los colaboradores de la organización, en relación con los contratistas la organización deberá tener en cuenta lo establecido en el Paso 18. Gestión del cambio y gestión de contratistas (Aplica para el nivel Estándar y Avanzado).
+
+información sobre la articulación del PESV con el SG-SST e ISO 39001: La definición de un plan anual de formación es común tanto en el PESV. como en el SGSST y la norma ISO 39001, así:
+
+PESV | Decreto 1072 de 2015
+SG-SST | ISO 39001 | 
+
+Paso 10. Competencia y plan anual de formación (Aplica para todos los niveles) | Articulo 2.2.4.6.11. Capacitación en seguridad y salud en el trabajo - SST. | 7.3 Competencia | 
+
+Paso 11. Responsabilidad y comportamiento seguro (Aplica para nivel Avanzado)
+
+Para la definición de la responsabilidad de los colaboradores en el PESV y la evaluación de su comportamiento en relación con la seguridad vial, la organización debe:
+
+1. Documentar en uno (1) o varios procedimientos en los que se establezcan los requisitos de contratación en seguridad vial de los colaboradores que realizan desplazamientos laborales (pruebas teóricas y prácticas, exámenes médicos, entre otros).
+
+2. Asignar, documentar y comunicar en debida forma las funciones y responsabilidades en materia de seguridad vial de todos colaboradores de la organización, las cuales al menos deben contener:
+
+a) El reporte de siniestros viales en desplazamientos laborales.
+
+b) La participación en capacitaciones de seguridad vial.
+
+c) El compromiso de los colaboradores de la organización en cumplir la legislación y los lineamientos de seguridad vial de la organización.
+
+d) El reporte oportuno y veraz de sus condiciones de salud.
+
+3. Evaluar el comportamiento de los colaboradores relacionado con la seguridad vial, al menos una (1) vez al año. Dicha evaluación debe contener como mínimo:
+
+a) Siniestros viales en el periodo evaluado, en los que se han visto involucrados colaboradores de la organización.
+
+b) Infracciones de tránsito cometidas en el periodo evaluado por los colaboradores de la organización.
+
+c) Quejas durante el periodo evaluado relacionadas con comportamientos de los colaboradores que pongan en riesgo su seguridad vial y/o la de los demás miembros de la comunidad de la organización y/o la de otros actores viales.
+
+d) Capacitaciones recibidas por los colaboradores en el periodo evaluado.
+
+Posteriormente, la organización debe documentar el procedimiento de evaluación del comportamiento de los colaboradores relacionado con la seguridad vial con el fin de identificar los colaboradores que requieren un refuerzo en los programas de formación.
+
+4. Definir y documentar una estrategia para promover la formación de hábitos, comportamientos y conductas seguras en la vía por parte de todos los colaboradores de la organización, particularmente promover en sus colaboradores la generación de comportamientos interdependientes, entendidos como aquellos que permiten que los colaboradores se cuiden a sí mismos y ayuden a proteger a los demás actores viales para evitar siniestros viales (ejemplo de comportamiento interdependiente: permitir que otro actor vial realice adelantamiento seguro en tramos bidireccionales con línea punteada), también se refieren a la corresponsabilidad que tienen los colaboradores de la organización frente a la seguridad vial de la misma.
+
+La definición de la estrategia para la formación de hábitos y comportamientos seguros puede guiarse de la Curva de Bradley (Jasiulewicz-Kaczmarek, Szwedzka, & Szczuka, 2015) usada para lograr la cultura de la seguridad vial como lo muestra la Ilustración 5. Ejemplo de la curva de la cultura de la seguridad vial., donde se busca pasar de comportamientos reactivos, a comportamientos dependientes, luego migrar a comportamientos independientes, para finalmente lograr comportamientos interdependientes, por medio de herramientas y estrategias que pueda lograr implementar la organización según sus recursos, conocimientos y objetivos en materia de seguridad vial.
+
+Ilustración 5. Ejemplo de la curva de la cultura de la seguridad vial.
+
+Fuente: Elaboración propia a partir de la Curva de Bradley.
+
+Teniendo en cuenta la ilustración anterior, la organización podrá tomar como base el siguiente ejemplo sobre la estrategia para promover comportamientos interdependientes en la organización relacionados con la seguridad vial, en todo caso se debe mantener el cumplimiento de los requisitos aplicables del SG-SST:
+
+a. Definir el perfil y el profesiograma.
+
+b. Identificar las brechas del conocimiento en seguridad vial y emprender programas de formación para mejorar su competencia.
+
+c. Definir la clasificación del nivel de riesgo en seguridad vial.
+
+d. Evaluar la competencia, el desempeño y el nivel de riesgo trimestralmente.
+
+e. Incluir un programa de motivación para incentivar comportamientos interdependientes y otro programa para intervenir comportamientos riesgosos.
+
+f. Definir un decálogo de las normas de comportamiento para lograr comportamientos independientes.
+
+g. Definir campañas para apoyar el logro de comportamientos interdependientes.
+
+h. Incluir un mecanismo de seguimiento o auditoria para verificar si se cumplen con los comportamientos interdependientes.
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: La definición de responsabilidades es un elemento establecido tanto en PESV como en el SG-SST y la norma ISO 39001, asi:
+
+PESV | Decreto 1072 de 2015 SG-SST | ISO 39001 | 
+
+Paso 11. Responsabilidad y comportamiento seguro (Aplica para nivel
+Avanzado) | Artículos 2.2.4.6.10 y 2.2.4.7.5Responsabilidades de los trabajadores y Sistema de Estándares Mínimos | 7.3 Competencia
+7.4 Toma de conciencia | 
+
+Respecto de la evaluación del comportamiento de los colaboradores relacionado con la seguridad vial, es un elemento exclusivo del PESV, teniendo en cuenta que la generación de hábitos, comportamientos y conductas seguras de los actores viales es el principal propósito del PESV.
+
+Paso 12. Plan de preparación y respuesta ante emergencias viales (Aplica para todos los niveles)
+
+La gestión en la atención integral a victimas permite mitigar los efectos de los siniestros viales. Para ello, la organización, debe elaborar y documentar uno (1) o varios Plan(es) de Preparación y Respuesta Ante Emergencias Viales (PPRAEV), como mínimo el plan debe incluir: reporte de siniestros viales: funcionamiento de la cadena de llamado al interior de la organización y al número único de emergencias: los riesgos de las rutas; la ubicación de los centros de atención médica; protocolo que debe realizar el brigadista vial o el primer respondiente de la organización; capacitación en protocolos de atención a víctimas incluyendo las acciones a realizar ante la ocurrencia de un siniestro vial en relación con la atención de la emergencia vial (por ejemplo, aplicación del Protocolo PAS: Proteger, Avisar, Socorrer); el equipo que se utilizará para la atención de las emergencias viales y la realización de simulacros como mínimo una (1) vez alaño y donde sea posible integrando a los organismos de socorro, comités empresariales y comunidad de tas rutas frecuentes que utiliza la organización.
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: El plan de atención y respuesta ante emergencias es un requisito común establecido tanto en el PESV, como en el SG-SST y la norma ISO 39001, asi:
+
+PESV | Decreto 1072 de 2015 SGSST | ISO 39001 | 
+
+Paso 12. Plan de preparación y respuesta ante emergencias viales (Aplica para todos los niveles) | Articulo 2.2.4.6.25. Prevención, preparación y respuesta ante emergencias | 8.2 Preparación y respuesta ante emergencias | 
+
+Respecto del PPRAEV puede ser un anexo o un capitulo del plan de emergencias del SGSST o puede ser un protocolo independiente.
+
+Paso 13. Investigación interna de siniestros viales (Aplica para el nivel Estándar y Avanzado)
+
+La organización debe documentar y aplicar una (1) o varias técnica(s), metodologia(s) o procedimiento(s) para la investigación interna de siniestros viales, con el fin de reportar, registrar, investigar, analizar y divulgar los siniestros viales en los que se ven involucrados los colaboradores de la organización en los desplazamientos laborales y en el entorno próximo de la organización.
+
+La investigación interna de siniestros viales no involucra ni suple la investigación que deban realizar las autoridades de acuerdo con su competencia, pero puede complementarse con la investigación de los accidentes laborales ocasionados por siniestros viales.
+
+A continuación, se muestra un ejemplo del paso a paso para investigar siniestros viales al interior de la organización, teniendo en cuenta que los colaboradores que realizan desplazamientos Laborales deben reportar todo tipo de siniestro vial en el que se vean involucrados:
+
+Ilustración 6. Paso a paso para investigar siniestros viales.
+
+Fuente: elaboración propia.
+
+Las investigaciones internas de los siniestros viales con fallecidos y/o lesionados en los que la organización se ve involucrada, se deben realizar teniendo en cuenta el factor humano, factor infraestructura y factor vehículo, determinando las causas inmediatas, causas raíz, las fallas de control y los planes de acción para evitar que se presenten nuevos casos, conforme se muestra en el siguiente ejemplo:
+
+Ilustración 7. Ejemplo metodología para investigar siniestros viales.
+
+Fuente: elaboración propia a partir de la metodología del árbol de causas.
+
+A partir de la identificación de la causa raíz del siniestro vial, se generan los planes de acción, conforme se muestra en el siguiente ejemplo:
+
+Ilustración 8. Ejemplo plan de acción.
+
+Actividades | Responsable | Fecha | Recursos | Seguimiento | 
+
+Entrenar la alta dirección en gestión de riesgos | Gerencia
+General | 06/2020 | $6.000.000 | 50% | 
+
+Irnptementar un procedimiento para despacho de viajes ocasionales | Gerente de Logística | 20/04/2020 | $200 000 | 100% | 
+
+Crear programa de administracion contratistas | Gerente de Compras | 30/09/2020 | | 
+
+Entrenar en liderazgo visible a jefes y supervisores | Orente de
+Recursos
+Humanos | | 
+
+Otros | | | 
+
+Fuente: elaboración propia
+
+Finalmente se deben divulgar las lecciones aprendidas de los siniestros viales, a continuación, se muestra un ejemplo de un formato de lecciones aprendidas y se debe evaluar la eficacia de las acciones correctivas implementadas.
+
+Ilustración 9. Ejemplo formato de lecciones aprendidas
+
+Fuente: elaboración propia
+
+La investigación interna de siniestros viales es un requisito común establecido tanto para el PESV. como en el SG-SST y la norma ISO 39001, así:
+
+PESV | Decreto 1072 de 2015
+SG-SST | ISO 39001 | 
+
+Paso 13.
+Investigación interna de siniestros viales (Aplica para el nivel Estándar y
+Avanzado) | Articulo 2.2.4.6.32. Investigación de incidentes, accidentes de trabajo y enfermedades laborales | 9.2 Investigación de accidentes de tráfico y otros incidentes de tráfico en la vía | 
+
+Respecto de la investigación de incidentes o accidentes de trabajo requerida en el SGSST y la investigación interna de siniestros viales del PESV. es posible su articulación en algunas etapas de la investigación como en el reporte, registro y divulgación; mientras que en las etapas de investigación y análisis no es posible dicha articulación debido a la diferencia de las variables del riesgo dinámico.
+
+Paso 14. Vías seguras administradas por la organización (Aplica para todos los niveles)
+
+La organización debe documentar en un (1) protocolo de operación y mantenimiento de las vías públicas y/o privadas que tenga a cargo, que administre o que controle la organización, así mismo debe documentar los siniestros viales ocasionados por sus colaboradores en dichas vías o por terceros generando afectaciones a sus colaboradores.
+
+El protocolo de vías administradas por la organización, al menos debe contener la identificación de zonas de conflicto de tránsito con sus respectivos planes de acción para controlar los riesgos, la realización de inspecciones anuales de las vías, el plan de mantenimiento preventivo de la infraestructura vial y su respectiva ejecución, incluyendo señalización.
+
+Para el caso de las concesiones viales este paso aplica para el tramo concesionado, con el fin de gestionar los riesgos que se generan para los diferentes actores viales y se deben realizar las inspecciones de seguridad vial en los puntos críticos de mayor siniestralidad vial, de acuerdo con la metodología definida por el Ministerio de Transporte para tal fin.
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: El protocolo de vías administradas por la organización es un requisito común establecido tanto para el PESV, como en la norma ISO 39001, así:
+
+PESV | Decreto 1072 de 2015 SG-SST | ISO 39001 | 
+
+Paso 14. Vías seguras administradas por la organización (Aplica para todos los niveles)
+Paso 13. Investigación interna de siniestros viales (Aplica para el nivel Estándar y Avanzado) | Articulo 2.2.4.6.24.
+Medidas de prevención y control. | 8.1 Planificación y control operacional. | 
+
+Dado que el protocolo de vías administradas por la organización es un requisito exclusivo del PESV. no es posible la articulación con el SGSST, puesto que en dicho sistema de gestión no contempla una acción enfocada a la infraestructura vial.
+
+Paso 15. Planificación de desplazamientos laborales (Aplica para todos los niveles)
+
+La organización debe documentar uno (1) o varios procedimientos para la planificación de desplazamientos laborales de los colaboradores de la organización, incluyendo las salidas extramurales (salidas de integración, salidas pedagógicas), teniendo en cuenta los riesgos en relación con la seguridad vial y el sistema seguro, la identificación de rutas con puntos críticos de siniestralidad vial, riesgos en ruta, riesgos de sitios que utiliza la organización (controlados directamente o por terceros) en el origen o en el destino. También el procedimiento debe incluir la planificación del ingreso y salida de los colaboradores de la organización de sus instalaciones, con el fin de que se realice de manera ordenada y disminuyendo riesgos relacionados con su entorno.
+
+El procedimiento de planificación de desplazamientos laborales al menos debe contener: tiempo de antelación con la que se planifica el recorrido, requisitos para el inicio del viaje, horarios y tiempos de conducción, velocidades seguras en los desplazamientos laborales, factores de desempeño aplicables, requisitos de seguridad vial para conductores y vehículos, documentación que deben portar y los registros que deben diligenciar los colaboradores de la organización, condiciones de los sitios de parada segura (alojamiento, restaurantes, sitios de descanso, parqueaderos, entre otros), controles que se realizarán durante el recorrido, condiciones para prevenir factores de riesgo (fatiga, velocidad, distracción del conductor etc.), requisitos para la finalización del viaje y capacitaciones a los colaboradores de la organización principalmente en la identificación y análisis dinámico de riesgos en las vías externas para los desplazamientos laborales.
+
+La organización puede optar por el uso de tecnología y la adopción de estándares internacionales o buenas prácticas para la parametrización y planificación de los desplazamientos laborales como el uso de GPS u OBC (Por sus siglas en inglés. On Board Computer - Computador de a bordo) para el control de las diferentes variables de riesgo asociadas a la velocidad y la fatiga conforme se muestra en el siguiente ejemplo, donde la organización define los rangos que quiere lograr para reducir la siniestralidad vial y reducir sus costos asociados a la operación.
+
+Tabla 7. Ejemplo Gestión de la velocidad
+
+Fuente: elaboración propia
+
+Tabla 8. Ejemplo Gestión de la fatiga
+
+Fuente: elaboración propia
+
+Adicionalmente la organización puede realizar análisis temporales y espaciales de los conflictos de tránsito relacionados con los datos e información que generan los controles y la tecnología que tienen implementados, con el fin de focalizar las acciones que permitirán actuar proactivamente y prevenir que se presenten siniestros viales.
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: La planificación de desplazamientos laborales del PESV. es un requisito igualmente establecido en el SG-SST y la norma ISO 39001, asi:
+
+PESV | Decreto 1072 de 2015 SG-SST | ISO 39001 | 
+
+Paso 15. Planificación de desplazamientos laborales (Aplica para todos los niveles) | Articulo 2.2.4.6.24.
+Medidas de prevención y control | 8.1 Planificación y control operativo | 
+
+Dado que el procedimiento de planificación de desplazamientos laborales al servicio de la organización es un requisito exclusivo del PESV, no es posible la articulación con el SGSST, puesto que en dicho sistema de gestión no contempla una acción enfocada a la planificación de viajes por carretera.
+
+Paso 16. Inspección de vehículos y equipos (Aplica para todos los niveles)
+
+La organización debe definir uno (1) o varios procedimientos y mecanismo(s) para el registro de la inspección preoperacional diaria de vehículos automotores y no automotores que se utilizan para desplazamientos laborales al servicio de la organización, teniendo en cuenta el nivel de riesgo vial de la operación por cada tipo de vehículo.
+
+El procedimiento debe contener como mínimo: los responsables de realizar la inspección preoperacional y los responsables del control de las inspecciones; y criterios y condiciones de conservación de los registros de las inspecciones preoperacionales realizadas en el último año.
+
+El mecanismo o formato de registro de la inspección preoperacional diaria al menos debe contener la lista de chequeo que permita verificar la disponibilidad de los elementos a inspeccionar, el buen funcionamiento del vehículo, su estado y los niveles aceptables para el funcionamiento y la seguridad del vehículo y de sus ocupantes.
+
+Los principales elementos a inspeccionar son:
+
+- Documentos del vehículo y del conductor: licencia de tránsito. SOAT, revisión técnico-mecánica, licencia de conducción y cédula de ciudadanía.
+
+- Luces (externas e internas del vehículo, incluyendo direccionales)
+
+- Llantas (incluyendo llantas de repuesto para vehículos)
+
+- Fluidos
+
+- Cinturones de seguridad (vehículos)
+
+- Limpia brisas (vehículos)
+
+- Espejos
+
+- Equipo de prevención y seguridad
+
+- Casco (motocicletas)
+
+Dentro de las buenas prácticas además de la inspección preoperacional diaria, la organización puede realizar inspecciones posteriores a cada recorrido, o al finalizar el día, o al cambiar de conductor; también puede crear un sistema de alarmas que le permita identificar las fechas de vencimiento de los diferentes aspectos verificados en la inspección para realizar un mejor seguimiento, lo cual es un insumo importante para el plan de mantenimiento predictivo.
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: La inspección de vehículos y equipos es un requisito común del PESV, del SGSST y de la norma ISO 39001, así:
+
+PESV
+ | Decreto 1072 de 2015
+SG-SST | ISO 39001 | 
+
+Paso 16. Inspección de vehículos y equipos (Aplica para todos los niveles) | Articulo 2.2.4.6.24. Medidas de prevención y control | 8.1 Planificación y control operativo | 
+
+Paso 17. Mantenimiento y control de vehículos seguros y equipos (Aplica para todos los niveles)
+
+La organización debe diseñar e implementar uno (1) o varios planes de mantenimiento preventivo para vehículos automotores y no automotores que se utilizan para los desplazamientos laborales al servicio de la organización. Realizar el mantenimiento periódico de los vehículos y equipos, teniendo como insumos: los informes de inspección preoperacional. reportes de condiciones inseguras, riesgos de la operación, manuales y/o fichas técnicas de los proveedores y/o las recomendaciones de los fabricantes de vehículos y equipos.
+
+La organización debe documentar y mantener la hoja de vida de cada vehículo automotor y no automotor usado para los desplazamientos laborales; dicha hoja de vida debe contener, como mínimo: el historial de adquisición de los vehículos, los responsables de la ejecución de las reparaciones y/o mantenimiento; así como los equipos y repuestos que se hayan utilizado para la reparación y/o mantenimiento, y la trazabilidad del mantenimiento realizado.
+
+La organización debe documentar el mantenimiento de los vehículos de propiedad de los colaboradores puestos al servicio de la organización, para el cumplimiento de sus funciones.
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: El mantenimiento y control de vehículos y equipos en el PESV. es un requisito común establecido tanto en el SG-SST, como en la norma ISO 39001. así:
+
+PESV | Decreto 1072 de 2015 SGSST | ISO 39001 | 
+
+Paso 17. Mantenimiento y control de vehículos seguros y equipos (Aplica para todos los niveles) | Artículo 2.2.4.6.24. parágrafo 2 Medidas de prevención y control | 8.1 Planificación y control operativo | 
+
+Paso 18. Gestión del cambio y gestión de contratistas (Aplica para el nivel Estándar y Avanzado)
+
+Para la Gestión del Cambio, la organización debe disponer de un (1) procedimiento para evaluar los impactos que puedan generan cambios externos e internos en la seguridad vial Dichos cambios pueden ser: nuevas rutas, nuevas tecnologías para vehículos o equipos, nueva legislación, nuevos clientes, nuevos productos y servicios, entre otros. El impacto de los cambios planeados y no planeados debe ser analizado y gestionado previamente para prevenir riesgos y consecuencias en la seguridad vial de la organización.
+
+Respecto de la Gestión de Contratistas, la organización debe documentar uno (1) o varios protocolos o manuales para implementar acciones y medidas que le garanticen el cumplimiento del objetivo del PESV y la gestión de la seguridad vial por parte de sus contratistas o terceros, como mínimo las acciones deben orientarse a:
+
+1. Verificar que los contratistas que están obligados a diseñar e implementar el PESV de conformidad con lo dispuesto en el artículo 12 de la Ley 1503 de 2011, modificado por el articulo 110 del Decreto Ley 2106 de 2019 o las normas que lo modifiquen o sustituyan, cumplan con dicha obligación.
+
+2. Establecer las disposiciones que en seguridad vial deben cumplir los contratistas, subcontratistas y terceros, incluyendo conductores y propietarios de vehículos permanentes y ocasionales que no están obligados a diseñar e implementar un PESV. pero que realizan desplazamientos laborales para cumplir con el objeto de su contrato con la organización. Las disposiciones mínimas que debe establecer la organización son:
+
+a. Los requisitos de seguridad vial que deben cumplir los vehículos y conductores, incluyendo los requisitos legales aplicables y los lineamientos de seguridad vial que establezca la organización (antigüedad de los vehículos, requisitos de seguridad activa y pasiva de los vehículos, edad mínima y máxima de los conductores, competencia mínima de los conductores, entre otras).
+
+b. El propietario del vehículo debe poner a disposición de la organización el historial del conductor (infracciones a las normas de tránsito, capacitación recibida en seguridad vial, afiliaciones al sistema de seguridad social, entre otros) y el historial del vehículo (mantenimiento preventivo, mantenimiento correctivo, siniestros viales, entre otros).
+
+c. El propietario del vehículo debe presentar a la organización la documentación vigente del conductor y del vehículo, al menos una vez al año si la vinculación es permanente o antes de iniciar cada recorrido si la vinculación es ocasional (SOAT, revisión técnico-mecánica, licencia de tránsito, licencia de conducción, pago mensual de seguridad social en el nivel de riesgo correspondiente, entre otros).
+
+d. El conductor debe participar en las capacitaciones de seguridad vial que defina la organización, según lo establecido en su PESV.
+
+e. El conductor debe presentar diariamente a la organización la inspección preoperacional del vehículo de acuerdo con los estándares definidos por la organización.
+
+f. El propietario del vehículo y el conductor deben cumplir los controles administrativos y operativos de seguridad vial definidos por la organización.
+
+g. Los conductores deben reportar todo tipo de siniestro vial que se presente mientras esté al servicio de la organización.
+
+h. El conductor debe reportar de manera oportuna y veraz cualquier condición de salud que pueda afectar la conducción.
+
+i. La organización debe implementar un mecanismo para evaluar el cumplimiento de los requisitos establecidos para conductores, vehículos y propietarios de vehículos.
+
+Nota: La organización también debe definir los requisitos de seguridad vial que deben cumplir los contratistas que desarrollan productos o servicios que tiene impacto en la seguridad vial de la organización.
+
+3. Definir los responsables de supervisar el cumplimiento de las obligaciones en seguridad vial establecidas a los contratistas que realizan desplazamientos laborales.
+
+información sobre la articulación del PESV con el SG-SST e ISO 39001: La gestión del Cambio y la Gestión de Contratistas del PESV, se asimila a los requisitos establecidos en el SG-SST y la norma ISO 39001, así:
+
+PESV | Decreto 1072 de 2015 SGSST | ISO 39001 | 
+
+Paso 18. Gestión del cambio y gestión de contratistas (Aplica para el nivel Estándar y Avanzado) | Artículo 2.2.4.6.26. Gestión del cambio
+Articulo 2.2.4.6.27.
+Adquisiciones
+Articulo 2.2.4.6.28 Contratación | 8.1 Planificación y control operativo | 
+
+Paso 19. Archivo y retención documental (Aplica para el nivel Estándar y Avanzado)
+
+La organización debe establecer un (1) procedimiento para mantener disponible, debidamente controlada y actualizada la documentación del Plan Estratégico de Seguridad Vial y la retención documental de registros y evidencias que soportan la implementación del PESV. asegurando su identificación, legibilidad, accesibilidad y protección contra daños o perdida, los cuales deben almacenarse al menos por cinco (5) años, salvo norma especial en contrario; excepto los registros de las inspecciones preoperacionales que deben ser almacenados por un (1) año.
+
+En el manejo de datos personales, se debe tener en cuenta la Ley 1581 de 2012 "Por la cual se dictan disposiciones generales para la protección de datos personales".
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: El archivo y retención documental contemplado en el PESV. es un requisito también establecido en el SG-SST y en la norma ISO 39001, asi:
+
+PESV | Decreto 1072 de 2015 SG-SST | ISO 39001 | 
+
+Paso 19. Archivo y retención documental (Aplica para el nivel Estándar y Avanzado) | Articulo 2.2.4.6.12 Documentación
+Articulo 2.2.4.6.13 Conservación de los documentos | 7.6 Información documentada | 
+
+Fase 3. Seguimiento por la Organización
+
+Se entiende por seguimiento las actividades propias de una organización para controlar, monitorear y validar la ejecución del PESV. En la fase de seguimiento al PESV el CSV analiza y evalúa trimestralmente las estadísticas, los resultados de la medición de los indicadores y las auditorias.
+
+En resumen, los pasos que corresponden a la Fase de seguimiento del PESV son los siguientes:
+
+Tabla 9. Pasos fase de seguimiento del PESV.
+
+Paso | Básico | Estándar | Avanzado | 
+
+20. Indicadores y reporte de autogestión PESV | APLICA | APLICA | APLICA | 
+
+21. Registro y análisis estadístico de siniestros viales | No Aplica | No Aplica | APLICA | 
+
+22. Auditoría anual | APLICA | APLICA | APLICA | 
+
+Fuente. Elaboración propia.
+
+Paso 20. indicadores y reporte de autogestión PESV (Aplica para todos los niveles)
+
+La organización debe definir un (1) protocolo para el manejo de los indicadores que le permitan realizar seguimiento, medición, análisis y evaluación en la gestión de la seguridad vial, los cuales deben estar relacionados con la planificación, implementación, seguimiento y mejora del PESV y en la verificación del impacto y resultados de las acciones y estrategias definidas en el Paso 9. Plan anual de trabajo (Aplica para todos los niveles). Los datos de las variables a medir, los resultados de la medición de estos indicadores y su cumplimiento deben ser analizados y evaluados por el comité de seguridad vial. Los indicadores mínimos que deben llevar registro, medición y análisis son los siguientes:
+
+Tabla 10. Indicadores de Gestión del PESV
+
+INDICADORES DE GESTIÓN SEGURIDAD VIAL | FRECUENCIA ANÁLISIS | BASICO | ESTANDAR | AVANZADO | 
+
+indicador 1:
+Tasa de Siniestros viales por nivel de perdida. TSV(n)
+Variables a medir en el Indicador
+SV(tn): Número de siniestros viales por trimestre por nivel de pérdida: fatalidades, heridos graves con más de 30 dias de incapacidad, heridos leves con hasta 30 días de incapacidad, choques simples.
+K: Constante equivalente a 5000.000 de kilómetros.
+Km(t): Número de kilómetros recorridos por trimestre por toda la flota de vehículos de la organización.
+formula:
+TSV(n) - SV(tn) K / km(t) | Trimestral
+y
+acumulado
+año | 
+Aplica | 
+Aplica | 
+Aplica | 
+
+indicador 2:
+Costos Siniestros Viales por nivel de pérdida: SSV(n)
+Variables a medir en el indicador:
+COSV(tn): Costos directos de siniestros viales por trimestre por nivel de pérdida. 
+CISV(tn): Costos Indirectos de siniestros viales por trimestre por nivel de pérdida.
+Formula:
+$SV(n) - CDSV(tn) * COSVftn) | Trimestral y acumulado
+año | No Aplica | Aplica | Aplica | 
+
+indicador 3:
+3.1 Riesgos de Seguridad Vial Identificados: RSVl (relacionados con el paso 6)
+3.2 Gestión de Riesgos Viales: GRV
+Variables a medir en el indicador:
+RI(e): Cantidad de riesgos identificados al inicio del año (total en matriz).
+Rl(fa): Cantidad de riesgos identificados al final del año (total en matriz).
+RVA(la): Cantidad de riesgos con valoración alta al inicio del año.
+RVA(fa): Cantidad de riesgos con valoración alta al final del año.
+Formulas:
+RSVl - RI(fa) - RI(la)
+GRV - RVA(fa) - RVA(la) | 
+Anual | 
+Aplica | 
+Aplica | 
+Aplica | 
+
+indicador 4:
+Cumplimiento Metas PESV: CM PESV
+Variables a medir en el indicador:
+MA(t): Numero de metas alcanzadas o logradas en el PESV por trimestre
+TM(t): Número total de metas definidas PESV por trimestre
+Formula:
+CM PESV - MA(t) / TM(t) * 100 | 
+Trimestral y Acumulado año | 
+Aplica | 
+Aplica | 
+Aplica | 
+
+indicador 5:
+Cumplimiento de actividades plan anual
+PESV: CPtan PESV
+Variables a medir en el indicador:
+AEPlan(t): Numero de actividades ejecutadas del plan anual de trabajo PESV por trimestre.
+APPlan(t) Numero total de actividades programadas del plan anual de trabajo PESV por trimestre.
+Formula:
+CPIan PESV - AEPlan(t) / APPlan(t) 100 | Trimestral y Acumulado año | Aplica | 
+Aplica | Aplica | 
+
+indicador 6:
+% Exceso Jornadas Laborales | Mensual y Acumulado | Aplica | 
+Aplica | Aplica | 
+
+Conductores: %EJLC
+variables a medir en el indicador:
+#EJD: Numero de excesos en la jornada diaria de trabajo de los conductores (eventos en los que los conductores han superado el tiempo máximo permitido en la legislación) por mes.
+#SDT: Sumatoria total de días trabajados por todos los conductores que realizan desplazamientos laborales por mes.
+Formula:
+%EJL = #EJO / #SOT* 100 | Año | 
+ | 
+ | 
+
+indicador 7:
+Cobertura Programa de Gestión Velocidad Empresarial: GVF (Paso 8).
+Variables a medir en el indicador:
+#VlP: Vehículos incluidos en el programa de gestión de la velocidad (propios, contratistas y de terceros utilizados permanentemente para desplazamientos laborales) por mes
+#VDL: Numero de vehículos utilizados para desplazamientos laborales por mes.
+Formula:
+GVE = #VlP / #VDL * 100 | 
+Mensual y Acumulado AAo | 
+No Aplica | 
+Aplica | 
+Aplica | 
+
+Indicador 8:
+Excesos Limite de Velocidad Laboral. ELVL
+#DLEV: Número diario de desplazamientos laborales con exceso de velocidad (casos en los que se superó el limite definido por la organización) por mes
+#TDL: Numero total de desplazamientos laborales por mes
+Formula:
+ELVL = #DLEV / #TDL * 100 | 
+Acumulado Mes y Año | 
+No Aplica | 
+No Aplica | 
+Aplica | 
+
+indicador 9:
+inspecciones Diarias Preoperacionales: IDP
+variables a medir en el indicador:
+#VID: Número de vehículos inspeccionados diariamente
+#TV: Número total de vehículos que trabajan diariamente.
+Formula:
+IDP - #VID / #TV* 100 | 
+Acumulado Mes y Arto | 
+Aplica | 
+Aplica | 
+Aplica | 
+
+indicador 10:
+Cumplimiento plan mantenimento preventivo de vehículos: CPMVh
+Variables a medir en el indicador:
+MEVh(t): Numero de actividades de mantenimiento preventivo ejecutadas por trimestre.
+MPVh(t): Numero total de actividades de mantenimiento preventivo programadas por trimestre.
+Formula:
+CPMVh - MEVh(t) / MPVh(t) * 100 | 
+Trimestral y Acumulado año | 
+Aplica | 
+Aplica | 
+Aplica | 
+
+indicador 11:
+Cumplimiento plan de formación en seguridad vial CPF PESV
+Variables a medir en el indicador:
+CESV(t): Numero de capacitaciones en seguriad vial ejecutadas por trimestre.
+CPSV(t): Numero total de capacitaciones en seguriad vial programadas por trimestre.
+Formula:
+CPFSV = CEPF(t) / CTPF(t)* 100 | 
+Trimestral y Acumulado año | 
+Aplica | 
+Aplica | 
+Aplica | 
+
+indicador 12:
+Cobertura plan de formación en segundad viaL CPF PESV
+variables a medir en el indicador:
+CFSV(t): Numero de colaboradores de la organización capacitados en seguridad vial 
+CT(t): Numero total colaboradores de la organización.
+Formula:
+CPFSV = CEPF(t) / CTPF(t)* 100 | 
+Acumulado Trimestre y año | 
+Aplica | 
+Aplica | 
+Aplica | 
+
+indicador 13:
+No Conformidades Auditoria Cerradas: NCAC
+Variables a medir en el indicador:
+#NCI: Numero dé no conformidades identificadas y analizadas.
+#NCG: No conformidades gestionadas y cerradas.
+Formula:
+NCAN = #NCG / #NCI * 100 | 
+Anual | 
+Aplica | 
+Aplica | 
+Aplica | 
+
+En la definición de los indicadores adicionales a los mínimos definidos en la Tabla 10 la organización debe tener en cuenta que cada indicador, tenga al menos las siguientes características:
+
+- Debe ser claro, preciso y auto explicativo.
+
+- Que cualquier persona entienda qué se mide con ese indicador.
+
+- El nombre del indicador debe permitir identificar si su evolución será ascendente o descendente.
+
+- Poseer una(s) fuente(s) de información confiable(s) sobre la que se obtendrán los datos para medición y análisis.
+
+- Establecer la línea base y las metas.
+
+- Los cortes trimestrales se realizan al 31 de marzo, 30 de junio, 30 de septiembre y 31 de diciembre.
+
+La organización debe realizar un reporte de autogestión, el cual consiste en reportar anualmente por los medios que disponga la entidad verificadora que le corresponda (Ministerio de Trabajo. Superintendencia de Transporte u Organismo de Tránsito) los resultados de la medición y análisis de los indicadores a los que hace referencia la Tabla 10. Indicadores de Gestión del PESV y la información que se lista a continuación con corte al 31 de diciembre de cada año. teniendo en cuenta que el reporte se debe realizar a más tardar el 31 de enero de cada año:
+
+a) Razón social o nombre, Nit, Dirección y Teléfono del domicilio o sede principal de la empresa, entidad u organización.
+
+b) Nombre, cargo y correo electrónico institucional del líder del diseño e implementación del PESV.
+
+c) Nombre, cargo y correo electrónico de auditor(es) del PESV en el último año.
+
+d) Nombre del representante legal de la empresa, entidad u organización.
+
+e) Misionalidad y tamaño de la organización para efectos del PESV.
+
+f) Número de vehículos automotores o no automotores (flota de vehículos): Tipo y cantidad de vehículos utilizados para desplazamientos laborales propios, contratistas, tercerizados y de propiedad de colaboradores puestos al servicio de la organización, de acuerdo con lo establecido en el Capítulo I. Metodología para el diseño e implementación del PESV.
+
+g) Cantidad de colaboradores de la organización por tipo de actor vial (conductores, peatones, motociclistas, ciclistas), de acuerdo con lo establecido en el Capítulo I. Metodología para el diseño e implementación del PESV.
+
+h) Tipo y número de contratistas, subcontratistas y terceros, incluyendo conductores y propietarios de vehículos permanentes y ocasionales que tienen impacto directo en la ejecución del PESV.
+
+i) Descripción de los objetivos y metas del PESV de acuerdo con lo definido en el Paso 7 (año finalizado y propuestos para el nuevo año).
+
+j) Descripción de los programas de gestión de riesgos críticos y factores de desempeño de acuerdo con lo definido en el Paso 8 (año finalizado y propuestos para el nuevo año).
+
+k) Número de infracciones por tipo o código de infracción a las normas de tránsito de los conductores de la organización.
+
+l) Copia del informe de la última auditoria interna realizada al PESV, donde se constate que el PESV está implementado y el nivel de cumplimiento de los 24 pasos establecidos en la metodología de PESV.
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: La definición de indicadores en el PESV coincide con los requisitos establecidos en el SG-SST y con los establecidos en la norma ISO 39001, así:
+
+PESV | Decreto 1072 de 2015 SG-SST | ISO 39001 | 
+
+Paso 20. Indicadores y reporte de autogestión PESV (Aplica para todos los niveles) | Artículos 2.2.4.6.19,
+2.2.4.6.20. 2.2.4.6.21 y 2.2.4.6.22 indicadores del sistema de gestión de la seguridad y salud en el trabajo, Indicadores que evalúan la estructura del sistema de gestión de la seguridad y salud en el trabajo. Indicadores que evalúan el proceso del sistema de gestión de la seguridad y salud en el trabajo e Indicadores que evalúan el resultado del sistema de gestión de la seguridad y salud en el trabajo | 9.1 Seguimiento, medición, análisis y evaluación | 
+
+El CSV puede articular los indicadores del PESV con los indicadores del SG-SST, para ello se deben dejar actas del análisis de los indicadores y presentar un informe semestral al nivel directivo sobre los resultados del PESV.
+
+Paso 21. Registro y análisis estadístico de siniestros viales (Aplica para nivel Avanzado)
+
+A partir de la linea base establecida siguiendo los lineamientos del Paso 5. Relacionado con el Diagnóstico, la Organización debe definir y documentar su nivel de pérdida clasificando sus siniestros viales con miras a proyectar estadísticamente la mejora y/o reducción de los mismos, según la metodología de la Pirámide de la Seguridad Vial (Hyden, 1987).
+
+El nivel de pérdida es la representación de la punta de la Pirámide de la Seguridad Vial, adicionando variables de pérdida que son relevantes para las organizaciones y permite analizar los siniestros viales según su severidad; los niveles de la pirámide muestran que para eliminar los siniestros viales más graves se deben prevenir los siniestros leves. La pirámide contiene los siguientes niveles: los siniestros con muertos, los siniestros con Lesionados graves, los siniestros con Lesionados leves, los siniestros con solo daños materiales, cuasi colisiones, conflictos leves, conflictos potenciales y eventos normales. Tal como se muestra en la ilustración 10.
+
+Ilustración 10. Ejemplo Pirámide de la Seguridad Vial
+
+Fuente. Pirámide de la Seguridad Vial (Hyden, 1987).
+
+Luego, con base en la Pirámide de la Seguridad Vial, la organización construye e implementa una Matriz de Nivel de Pérdida, la cual depende de las variables que son más relevantes para la organización y que permitan mantener en el tiempo, estadísticas según los siniestros viales. En la Tabla 11. Ejemplo Matriz de Nivel de Pérdida se muestra un ejemplo para la definición del nivel de perdida:
+
+Tabla 11. Ejemplo Matriz de Nivel de Pérdida
+
+Fuente. Elaboración propia a partir de la Pirámide de la Seguridad Vial (Hyden, 1987).
+
+Posteriormente, si se tiene información disponible, se clasifican los datos históricos de los siniestros viales con base en el nivel de pérdida (preferiblemente de los últimos cinco años), luego se establece la tendencia de los siniestros viales y se define su límite máximo tolerable por la organización.
+
+En caso de que la organización no cuente con datos históricos de sus siniestros viales, la clasificación del nivel de pérdida se debe empezar a construir a partir del diseño e implementación del PESV.
+
+Finalmente, se realiza una proyección estadística con base en los siniestros viales del último año. la cual debe ser realista, e implementar la visión de cero siniestros viales.
+
+La organización debe documentar el registro estadístico de los siniestros viales, diferenciando los siniestros viales de acuerdo con la gravedad del evento según el nivel de pérdida y separando los análisis estadísticos de los desplazamientos laborales de los desplazamientos cotidianos/ no laborales: luego debe analizar este registro y establecer las conclusiones del análisis. lo cual será el punto de partida del Paso 9. Plan anual de trabajo (Aplica para todos los niveles) y del Paso 10. Competencia y plan anual de formación (Aplica para todos los niveles).
+
+En este paso, el CSV analiza los resultados de la siniestralidad vial, las tendencias incluyendo el análisis de correlación espacial y temporal, las causas inmediatas y causas raíz de los siniestros viales de la organización y de contratistas, con el objetivo de que la organización focalice los recursos de la seguridad vial en los factores principales que contribuyen en los siniestros viales y que están bajo el control de la organización.
+
+En la siguiente imagen se muestra un ejemplo del tablero de control para realizar el análisis de los siniestros viales y las acciones del PESV.
+
+Ilustración 11. Ejemplo Análisis de Indicadores de Seguridad Vial
+
+Fuente: Elaboracion propia
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: El registro y análisis estadístico de los siniestros viales del PESV, coincide con los requisitos establecidos en el SG-SST y la norma ISO 39001. asi:
+
+PESV | Decreto 1072 de 2015 SG-SST | ISO 39001 | 
+
+Paso 21. Registro y análisis estadístico de siniestros viales (Aplica para nivel Avanzado) | Articulo 2.2.4.6.21 Indicadores que evalúan el proceso del sistema de gestión de la seguridad y salud en el trabajo
+Articulo 2.2.4.6.22 indicadores que evalúan el proceso del sistema de gestión de la seguridad y salud en el trabajo e Indicadores que evalúan el resultado del sistema de gestión de la seguridad y salud en el trabajo | 9.1 Seguimiento, medición, análisis y evaluación | 
+
+Paso 22. Auditoría anual (Aplica para todos los niveles)
+
+La organización debe realizar al menos una (1) auditoria anual interna para evaluar el cumplimiento y las evidencias de la planificación, implementación, seguimiento y mejora del PESV. de acuerdo con lo establecido en el Capítulo I de la Metodología del diseño, implementación y verificación de Planes Estratégicos de Seguridad Vial, los requisitos legales aplicables en materia de seguridad vial y demás requisitos que establezca la organización. En las auditorías internas debe ser validada la no aplicabilidad de los pasos.
+
+La organización debe documentar y aplicar un (1) procedimiento para la realización de las auditorías internas al PESV de la organización; el cual por lo menos debe contener: la planificación de las auditorias, las pautas de su realización y los responsables; así mismo los contenidos mínimos del informe de auditoría y el seguimiento a las no conformidades y planes de acción o mejora, producto de la auditoría.
+
+La organización debe definir la competencia del (los) auditor(es) internas) para el PESV. siguiendo los requisitos del Paso 10. Competencia y plan anual de formación (Aplica para todos los niveles), y teniendo en cuenta que la auditoria hace parte de la información a reportar a las entidades verificadoras tal como se establece en el Paso 20. Indicadores y reporte de autogestión PESV (Aplica para todos los niveles).
+
+El (los) auditor(es) interno(s) debe(n) ser persona(s) diferente(s) al líder del diseño e implementación del PESV y las auditorias serán planificadas con la participación del Comité de Seguridad Vial, se pueden manejar auditorias virtuales, sin embargo, se recomiendan auditorias presenciales y la aplicación de técnicas de muestreo para agregar mayor valor a la seguridad vial La organización puede optar por manejar auditorías integradas y como buena práctica se recomienda que la organización realice las auditorías internas según lo establecido en la norma ISO 19011 (Directrices para la auditoría de los sistemas de gestión) y apoyarse en el Capítulo II del presente documento, adicionalmente en las auditorías internas debe ser validada la no aplicabilidad.
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: La Auditoria anual del PESV. se asimila a los requisitos establecidos en el SG-SST y la norma ISO 39001. así:
+
+PESV | Decreto 1072 de 2015 SG-SST | ISO 39001 | 
+
+Paso 22. Auditoria anual (Aplica para todos los niveles) | Articulo 2.2.4.6.29 Auditoría de cumplimiento del sistema de gestión de la seguridad y salud en el trabajo 2.2.4.6.30 Alcance de la auditoria de cumplimiento del Sistema de Gestión de la Seguridad y Salud en el Trabajo del Decreto 1072 de 2015. | 9.3 Auditoria interna | 
+
+Fase 4. Mejora Continua del PESV
+
+En esta fase la organización demuestra la mejora del PESV con la implementación de los planes de acción para lograr altos estándares de seguridad vial. En resumen, los pasos que corresponden a la Fase de mejora continua del PESV son los siguientes: 
+
+Tabla 12. Pasos fase de mejora del PESV.
+
+Paso | Básico | Estándar | Avanzado | 
+
+23. Mejora continua, acciones preventivas y correctivas | APLICA | APLICA | APLICA | 
+
+24. Mecanismos de comunicacion | APLICA | APLICA | APLICA | 
+
+Fuente: Elaboracion propia
+
+Paso 23. Mejora continua, acciones preventivas y correctivas (Aplica para todos los niveles)
+
+La organización debe definir e implementar las acciones preventivas y/o correctivas necesarias con base en los resultados de la medición y análisis de los indicadores y auditorías y visitas de verificación del PESV.
+
+La mejora se puede demostrar a través de la evolución de cada uno de los pasos del PESV. incluyendo las acciones articuladas que se realizan con contratistas, como por ejemplo, las tendencias del análisis estadístico de los siniestros viales, la verificación de la eficacia del cierre de hallazgos identificados en auditoria, el cierre de los planes de acción de las investigaciones de los siniestros viales, el seguimiento a los resultados de los simulacros realizados en el marco del plan de emergencias viales, la activación y funcionamiento del plan de emergencias viales cuando ocurre un siniestro vial, el cumplimiento del plan de formación, plan de trabajo y planes de acción de los diferentes pasos del PESV, la ejecución de los programas y factores de desempeño, la identificación, análisis, valoración y tratamiento de las diferentes variables de riesgo dinámico que aplican a seguridad vial, entre otras.
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: El paso 23. Mejora del PESV, encuentra similitud en los requisitos planteados en el SG-SST y la norma ISO 39001, así:
+
+PESV | Decreto 1072 de 2015 SG-SST | ISO 39001 | 
+
+Paso 23. Mejora continua, acciones preventivas y correctivas (Aplica para todos los niveles) | Articulo 2.2.4.6.31 Revisión por la alta dirección 
+Articulo 2.2.4.6.33 Acciones preventivas y correctivas y Articulo 2.2.4.6.34 Mejora continua | 10. Mejora | 
+
+Paso 24. Mecanismos de comunicación y participación (Aplica para todos los niveles)
+
+La organización debe disponer de mecanismos de comunicación y participación para:
+
+a) Garantizar que las políticas, lineamientos y actividades ejecutadas en el marco de la seguridad vial sean comunicados a todos los niveles de la organización.
+
+b) Recibir retroalimentación o propuestas de mejora por parte de todos los colaboradores de la organización.
+
+c) Recibir y responder las comunicaciones internas y externas relativas al PESV.
+
+d) Promover en los colaboradores de la organización la formación de hábitos, comportamientos y conductas seguras en la vía y en consecuencia la formación de criterios autónomos, solidarios y prudentes para la toma de decisiones en situaciones de desplazamiento o uso de la vía pública.
+
+e) Aprender de las lecciones que dejan los siniestros viales.
+
+La organización debe definir y documentar los mecanismos de comunicación y la frecuencia de las comunicaciones que, por lo menos, debe ser trimestral y contener la promoción de la seguridad vial, la comunicación de los indicadores, los resultados de la implementación del PESV, los riesgos y controles adoptados por la organización con el fin de prevenir siniestros viales.
+
+Información sobre la articulación del PESV con el SG-SST e ISO 39001: La definición de mecanismos de comunicación y participación en el PESV guarda similitud con los requisitos establecidos en el SG-SST y la norma ISO 39001, así:
+
+PESV | Decreto 1072 de 2015 SG-SST | ISO 39001 | 
+
+Paso 24. Mecanismos de comunicación y participación (Aplica para todos los niveles) | Artículo 2.2.4.6.14. del Decreto 1072 de 2015 del Ministerio de Trabajo. Comunicación | 7.5 Comunicación | 
+
+Capítulo II. Metodología para verificación de la implementación del PESV
+
+De acuerdo con el artículo 1o de la Ley 2050 de 2020, la verificación de la implementación del PESV la realizarán el Ministerio de Trabajo, la Superintendencia de Transporte o los Organismos de Tránsito, cada una en el marco de sus competencias, y bajo sus propios procedimientos.
+
+El Ministerio de Trabajo verificará el PESV en todo tipo de organización cuya misionalidad no sea la prestación del servicio de transporte y realizará la verificación del SG-SST en las empresas de transporte terrestre automotor de conformidad con las normas que rigen la materia de SG-SST.
+
+Teniendo en cuenta lo establecido en el articulo 2.3.2.3.2. del Decreto 1079 de 2015, modificado por el Decreto 1252 de 2021, '(...) Para el caso del Sector Transporte, la verificación se realizará por las siguientes autoridades en el marco de sus competencias, de la siguiente manera:
+
+a. Por la Superintendencia de Transporte a las empresas que presten servicio público de transporte terrestre de pasajeros, carga y mixto, en las modalidades de radio de acción nacional.
+
+b. Por los Organismos de Tránsito en su jurisdicción, a las empresas que prestan el servicio público de transporte terrestre de pasajeros y mixto en el radio de acción municipal, distrital, o metropolitano".
+
+Para efectos de gestionar la verificación se podrá efectuar en el marco de una
+coordinación y/o comunicación interinstitucional entre las autoridades mencionadas:
+
+Ilustración 12. Esquema de comunicación y coordinación interinstitucional.
+
+Fuente: Elaboración propia.
+
+La verificación de la implementación de los Planes Estratégicos de Seguridad Vial se basa en evaluar el cumplimiento de los requisitos establecidos en los 24 pasos del "Capítulo I. Metodología para el diseño e implementación del PESV" y se realiza a partir de lo establecido en el Paso 20. Indicadores y reporte de autogestión PESV (Aplica para todos los niveles).
+
+La Metodología para Verificación de la implementación del PESV incluye las siguientes etapas que permitirán realizar una adecuada planificación y ejecución de visitas de verificación, teniendo en cuenta que cada entidad verificadora tiene sus propios lineamientos para la inspección, vigilancia y control en el marco de sus competencias.
+
+Etapa 1. Esquema de visitas de verificación
+
+Elaborar, implementar y mantener, un esquema de visitas virtuales, presenciales o documentales para verificar si el PESV de las organizaciones se encuentra implementado conforme al presente documento y la manera como está articulado con el SG-SST y alineado con el PNSV, dicho programa puede incluir entre otros, lo siguiente:
+
+1. Frecuencia y criterios para programar las visitas.
+
+2. Métodos de verificación que utilizará en las visitas.
+
+3. Responsabilidad de las personas que realizarán las visitas.
+
+4. Requisitos de planificación.
+
+5. Elaboración de informes.
+
+En la siguiente ilustración se muestra un ejemplo de la planeación del esquema de visitas de verificación:
+
+Tabla 13. Ejemplo programa de visitas de verificación.
+
+Esquema de Visitas de Verificación del PESV
+
+Frecuencia
+Visitas: | Se realizará priorización de las visitas teniendo en cuenta la capacidad de inspección de la entidad verificadora, y los siniestros viales de las empresas vigiladas. | 
+
+Métodos de verificación | La verificación se realizará de manera sistemática aplicando los procedimientos propios de la entidad verificadora, por medio de visitas virtuales o presenciales, evaluando la existencia de evidencias que respalden la implementación de los 24 Pasos del PESV, las autoridades podrán verificar documentos y registros (impresos y/o digitales), desarrollar entrevistas a colaboradores de la organización, y/o realizar ejercicios de observación que permitan evidenciar el cumplimiento de los requisitos del PESV. | 
+
+Responsabilidad | Líder de la visita: responsable por coordinar y ejecutar la visita. Acompañantes en la visita: responsables por revisar cada uno de los pasos del PESV. | 
+
+Requisitos de Planificación: | Las autoridades podrán desarrollar planes de las visitas. No obstante, para el Ministerio de Trabajo la planificación de las mismas, se realizará de acuerdo con lo definido en el articulo 486 del CST. el cual establece que los Inspectores de Trabajo y de la Seguridad Social, "podrán entrar sin previo aviso, y en cualquier momento mediante su identificación como tales, en toda empresa con el mismo fin y ordenar las medidas preventivas que consideren necesarias" | 
+
+Acta de la visita: | El acta de la visita se entregará tan pronto finalice la visita y se mantendrá un archivo físico y digital. | 
+
+Fuente: Elaboración propia a partir de la ISO 19011: "Directrices para auditorías de Sistemas de Gestión".
+
+Etapa 2. Planificación de la visita de verificación
+
+Para la planificación de la visita las autoridades de verificación podrán tomar como referente la metodología de la Guia Técnica Colombiana ISO 19011: Directrices para la Auditoria de los Sistemas de Gestión (ICONTEC. 2018) o usar las herramientas que ellas hayan adoptado o aprobado para el desarrollo de las actividades de inspección, vigilancia y control, en el marco de sus competencias.
+
+En las visitas es recomendable realizar un muestreo estadístico (tomando como base la población del proceso a verificar, se pueden tener en cuenta personas que realizan desplazamientos laborales, técnicos de mantenimiento, planificadores de ruta, etc.) como se indica en la siguiente tabla y un muestro basado en juicios (tomando como base los riesgos críticos y la causa raíz de los siniestros viales).
+
+Tabla 14. Ejemplo tamaño de la muestra.
+
+TAMAÑO DE LA POBLACIÓN | MUESTRA SUGERIDA | 
+
+2-10 | 100% | 
+
+11-25 | 50% | 
+
+26-100 | 25% | 
+
+101-500 | 10% | 
+
+501-1000 | 5% | 
+
+Superior a 1000 | 1-2% | 
+
+Fuente: Icontec, 2019.
+
+El formato de planificación de la visita debe contener:
+
+1. Objetivo de la visita: Lo que se espera lograr con la verificación.
+
+2. Alcance de la visita: Incluye factores tales como la ubicación geográfica, las funciones, procesos o actividades a verificar, así como el periodo de tiempo que se destinará para la visita.
+
+3. Fechas y horarios de la visita: se refiere a las fechas exactas y tiempos definidos para la visita, información que deberá ser previamente notificada a la organización objeto de la visita
+
+4. Responsables: se incluye el nombre de la(s) persona(s) que realizará(n) la verificación
+
+5. Secuencia de la verificación: Revisión documental y definición del plan de la visita
+
+6. Lista de verificación o lista de chequeo: Es el formato que utiliza la entidad verificadora, en el cual consignan la evidencia de los hallazgos identificados de acuerdo con los criterios definidos previamente.
+
+En la siguiente ilustración se muestra un ejemplo del formato de planificación de la verificación.
+
+Tabla 15. Ejemplo planificación de la visita de verificación.
+
+OBJETIVO | Verificar la implementación del PESV de acuerdo a los requisitos de la presente metodología, y si hay medidas que no se están realizando cuya ausencia pueda estar contribuyendo a la ocurrencia de siniestros viales en la empresa. | 
+
+ALCANCE | Empresa X en la ciudad... | 
+
+CRITERIOS | Ley 769/02. Ley 1503/11. Decreto 1079/15. Decreto Ley 2106 de 2019 y Ley 2050 de 2020. | 
+
+LIDER DE LA VERIFICACIÓN | Nombre responsable de la visita | EQUIPO: Nombre de otros miembros que participarán en la visita. | 
+
+ATENCIÓN A LA VISITA | Nombre de las personas de la organización que reciben y participan en la visita de verificación | 
+
+FECHA | HORA | ACTIVIDADES DE LA VISITA DE CAMPO | 
+
+13/04/2020 | 8:00 | Reunión de Apertura | 
+
+8:15 | Entrevista Comité de Seguridad Vial y responsable del PESV | 
+
+9:00 | Revisión factor institucional | 
+
+10:00 | Revisión factor atención a víctimas | 
+
+11:00 | Revisión factor infraestructura | 
+
+12:00 | Receso | 
+
+14:00 | Revisión factor vehículo | 
+
+15:00 | Revisión factor humano | 
+
+16:00 | Reunión responsables de la visita | 
+
+16:30 | Reunión de Cierre | 
+
+Fuente: elaboración propia a partir de la ISO 19011.
+
+En el muestreo de las visitas de verificación es indispensable entrevistar a los colaboradores de la organización, principalmente a planificadores de rutas.
+
+Etapa 3. Lista de verificación
+
+En cuanto a la lista de verificación o lista de chequeo o check list de verificación, es una herramienta de trabajo de las autoridades de verificación para tener un hilo conductor durante la visita: se diseñará una lista con al menos los aspectos que se muestran en la siguiente Tabla 16. Ejemplo: lista de verificación, y de acuerdo con los criterios de la visita que se basa en las fases, pasos y los requisitos de la presente metodología, los requisitos legales aplicables y el nivel que le corresponde a la organización para el diseño e implementación del PESV, en función de su misionalidad y tamaño.
+
+Las autoridades de verificación tienen la potestad de verificar los pasos aplicables a cada organización o de realizar una verificación parcial según sus necesidades.
+
+Tabla 16. Ejemplo: lista de verificación.
+
+VERIFICACIÓN DE REQUISITOS
+
+1. Líder del diseño e
+implementación del PESV | NIVELES | CUMPLE/NO CUMPLE/NO APLICA/ NO VERIFICADO | OBSERVACIONES | 
+
+1.1 ¿Se tiene designada una persona con poder de decisión en los temas relacionados con la gestión de seguridad vial, para que lidere el diseño e implementación del PESV y lo articule con el SG-SST? | TODOS
+LOS
+NIVELES | | 
+
+1.2 El líder del diseño e implementación del PESV es el responsable de diligenciar el reporte de autogestión anual y los resultados de la medición de los indicadores del Plan Estratégico de Seguridad Vial | TODOS
+LOS
+NIVELES | | 
+
+2. Comité de seguridad vial | NIVELES | CUMPLE/NO CUMPLE/ NO APLICA/ NO VERIFICADO | OBSERVACIONES | 
+
+2.1 ¿El nivel directivo designo los miembros del Comité de Seguridad Vial (CSV), este comité está conformado por al menos tres (3) personas con poder de decisión (incluyendo al líder del diseño e implementación del PESV y se recomienda número impar de participantes)? | ESTANDAR
+Y
+AVANZADO | | 
+
+2.2 ¿En caso de que el Comité de Seguridad Vial (CSV) está integrado con el COPASST, cumple los requisitos definidos en la normatividad vigente en materia de Seguridad y Salud en el Trabajo?. | ESTÁNDAR
+Y
+AVANZADO | | 
+
+2.3 ¿El Comité de Seguridad Vial (CSV) cumple con las
+responsabilidades y funciones del paso 2? | ESTÁNDAR
+Y
+AVANZADO | | 
+
+3. Política de Seguridad Vial de la Organización | NIVELES | CUMPLE/NOCUMPLE/NO APLICA/ NO
+VERIFICADO | OBSERVACIONES | 
+
+3.1 ¿Se cuenta con Política de Seguridad Vial documentada con alcance sobre los desplazamientos laborales y los trayectos en itinere para todos los colaboradores de la organizacion? | TODOS LOS
+NIVELES | | 
+
+3.2.¿La politica de Seguridad Vial documentada cumpla con los requisitos definidos en el paso 3? | TODOS LOS
+NIVELES | | 
+
+4. Liderazgo, compromiso y corresponsabilidad del nivel directo | NIVELES | CUMPLE/NOCUMPLE/NO APLICA/ NO
+VERIFICADO | OBSERVACIONES | 
+
+4.1. ¿El nivel demuestra liderazgo, compromiso y corresponsabilidad. ¿se cumplen con los requisitos definidos en el paso 4? | TODOS LOS
+NIVELES | | 
+
+5. Diagnostico | NIVELES | CUMPLE/NOCUMPLE/NO APLICA/ NO
+VERIFICADO | OBSERVACIONES | 
+
+5.1 ¿ La organizacion definio de la linea base para identificar los problemas de seguridad vial, es conforme con los requisitos definidos en el paso 21 de la guia metodologica del PESV? | TODOS LOS
+NIVELES | | 
+
+5.2 ¿ El diagnostico del PESV al menos contiene los requisitos definidos en el paso 5 de la Metodologia del PESV? | TODOS LOS
+NIVELES | | 
+
+5.3 ¿ En caso de que aplique, el diagnostico del PESV se actualiza al menos una vez al año? | TODOS LOS
+NIVELES | | 
+
+6. Caracterizacion, Evaluacion y control de riesgos | NIVELES | CUMPLE/NOCUMPLE/NO APLICA/ NO
+VERIFICADO | OBSERVACIONES | 
+
+6.1. ¿ Se tiene definidos y aplicado un procedimiento de evaluacion y control de riesgos en seguridad vial y al menos contiene los requisitos definidos en el paso 6? | TODOS LOS
+NIVELES | | 
+
+6.2. ¿ La organizacion cuenta con una herramienta para la evaluacion y control de los riesgos en seguridad vial y se actualiza como minimo una (1) vez al año y/o cada vez que ocurra un siniestro vial? | TODOS LOS
+NIVELES | | 
+
+7. Obejtos y ,metas del PESV | NIVELES | CUMPLE/NOCUMPLE/NO APLICA/ NO
+VERIFICADO | OBSERVACIONES | 
+
+7.1 ¿ Estan definidos los objetos y metas del PESV y estan enfocados a la prevención en seguridad vial son claros, medibles y cuantificables | TODOS LOS
+NIVELES | | 
+
+7.2 ¿Los objetivos y metas del PESV son coherentes con la Política de Seguridad Vial, la evaluación y control de riesgos en seguridad vial, el plan de trabajo anual del PESV y los Programas de gestión de riesgos críticos y factores de desempeño en seguridad vial? | TODOS
+LOS
+NIVELES | | 
+
+7.3 ¿Los objetivos y metas del PESV fueron comunicados a todos los colaboradores de la organización, así como actualizados. revisados y evaluados mínimo una (1) vez al año? | TODOS
+LOS
+NIVELES | | 
+
+8. Programas de gestión de riesgos críticos y factores de desempeño | NIVELES | CUMPLE/ NO CUMPLE/
+NO APLICA/ NOVERIFICADO | OBSERVACIONES | 
+
+8.1 ¿La organización tiene definidos como mínimo los siguientes programas de gestión de riesgos críticos y factores de desempeño del PESV: Gestión de la Velocidad Segura, Prevención de la Fatiga, Prevención de la Distracción, cero tolerancia a la conducción bajo los efectos de alcohol y de sustancias psicoactivas, protección de actores viales vulnerables, y otros programas relacionados con el SG-SST, y cumplen con los requisitos definidos en el paso 8? | TODOS
+LOS
+NIVELES | | 
+
+8.2 ¿Los programas de gestión de riesgos críticos y factores de desempeño del PESV son actualizados como mínimo una (1) vez al año? | TODOS
+LOS
+NIVELES | | 
+
+8.3 ¿Los programas de gestión de riesgos críticos y factores de desempeño del PESV fueron divulgados a todos los colaboradores de la organización, y se les realizo análisis y evaluación de resultados de manera trimestral en el Comité de Seguridad Vial? | TODOS
+LOS
+NIVELES | | 
+
+9. Plan anual de trabajo | NIVELES | CUMPLE/ NO CUMPLE/NO APLICA/ N OVERIFICADO | OBSERVACIONES | 
+
+¿El plan anual del PESV está documentado, contiene los objetivos, metas, responsabilidades, recursos y cronograma de actividades del arto y está articulado con el plan anual de actividades del SG-SST y cumplen con los requisitos definidos en el paso 9? | TODOS LOS
+NIVELES | | 
+
+10. Competencia y plan anual de formación | NIVELES | CUMPLE/ NO CUMPLE/NO APLICA/ N O VERIFICADo | OBSERVACIONES | 
+
+10.1 ¿La organización definió y documentó la competencia en seguridad vial de los colaboradores de la organización y los siguientes cargos y roles: 1) Líder del diseño e implementación del PESV (ver paso 2) Miembros del Comité de Seguridad Vial (ver paso 3), Capacitadores en seguridad vial. 4) Planificadores de rutas o personas que realizan la función de coordinar desplazamientos laborales. 5) Coordinadores y técnicos de mantenimiento de vehículos. 6) Auditores de seguridad vial, 7) Brigadista Vial, Investigadores de siniestros viales, 8) Colaboradores que conducen un vehículo para sus desplazamientos laborales, cumple con lo indicado en el Paso 10 (según corresponda)?. | TODOS LOS
+NIVELES | | 
+
+10.2 ¿La organización definió los lineamientos generales de sensibilización y capacitación para promover en la organización la formación de hábitos, comportamientos y conductas seguras en la vía? | TODOS LOS
+NIVELES | | 
+
+10.3 ¿El plan anual de formación incluye los temas de seguridad vial por cada actor vial independientemente del cargo o rol que desempeña, está enfocado en los riesgos identificados en el paso 6 y cumple con los requisitos definidos en el paso 10? | TODOS LOS
+NIVELE | | 
+
+11. Responsabilidad y comportamiento seguro | NIVELES | CUMPLE/ NO CUMPLE/NO APLICA/ N O VERIFICADo | OBSERVACIONES | 
+
+11.1 ¿La organización asigno, documentó y comunicó en debida forma las funciones y responsabilidades en materia de seguridad vial de todos los actores viales de la organización, ¿contiene como mínimo lo indicado en el Paso 11? | AVANZADO | | 
+
+11.2 ¿La organización realizó la evaluación de la competencia en seguridad vial a colaboradores que realizan desplazamientos laborales, al menos una (1) vez al año. contiene como mínimo lo indicado en el Paso 11? | AVANZADO | | 
+
+11.3 ¿La organización cuenta con el procedimiento documentado de evaluación de la competencia de los conductores? | AVANZADO | | 
+
+11.4 ¿La organización definió la metodología para lograr comportamientos interdependientes y promoción de la formación de hábitos y conductas seguros en la vía? | AVANZADO | | 
+
+12. Plan de preparación y respuesta ante emergencias viales | NIVELES | CUMPLE/ NO CUMPLE/NO APLICA/ N O VERIFICADo | OBSERVACIONES | 
+
+12.1 ¿La organización elaboró un plan de preparación y respuesta ante emergencias viales, incluye como mínimo los requisitos mencionados en el Paso 12? | TODOS
+LOS
+NIVELES | | 
+
+12.2 ¿El plan de preparación y respuesta ante emergencias viales tiene en cuenta a todos los colaboradores de la organización, los riesgos de las rutas, la ubicación de los centros de atención médica y los organismos de socorro en rutas frecuentes? | TODOS
+LOS
+NIVELES | | 
+
+13. Investigación Interna de siniestros viales | NIVELES | CUMPLE/ NO CUMPLE/NO APLICA/ N O VERIFICADo | OBSERVACIONES | 
+
+13.1 ¿La organización documentó y aplicó una técnica, metodología o procedimiento para reportar, registrar, investigar, analizar y divulgar los siniestros viales en los que se ven involucrados los colaboradores de la organización en los desplazamientos laborales y en el entorno próximo de la organización. incluye como mínimo los requisitos mencionados en el Paso 13? | ESTÁNDAR
+Y
+AVANZADO | | 
+
+13.2 ¿La organización divulgó las lecciones aprendidas de los siniestros viales? | ESTÁNDAR Y
+AVANZADO | | 
+
+14. Vías seguras administradas por la organización | NIVELES | CUMPLE/ NO CUMPLE/NO APLICA/ N O VERIFICADo | OBSERVACIONES | 
+
+14.1 ¿La organización documentó un protocolo de operación y mantenimiento de las vías públicas y/o privadas que tenga a cargo, que administre o que controle directamente la organización, incluye como mínimo los requisitos mencionados en el Paso 14? | TODOS
+LOS
+NIVELES | | 
+
+14.2 ¿La organización documentó los siniestros viales que se presentan por parte de terceros o por parte de colaboradores de la organización que utilizan las vías que administra y controla la organización, contiene como mínimo los Requisitos mencionados en el Paso 14? | TODOS
+LOS
+NIVELES | | 
+
+14.3 ¿Para el caso de las concesiones viales aplican los requisitos mínimos mencionados en el Paso 14? | TODOS
+LOS
+NIVELES | | 
+
+15. Planificación de desplazamientos laborales. | NIVELES | CUMPLE/ NO CUMPLE/NO APLICA/ N O VERIFICADo | OBSERVACIONES | 
+
+¿Se tiene documentado el procedimiento que utiliza la organización para la planificación de viajes misionales de los colaboradores de la organización, teniendo en cuenta los riesgos en relación con la seguridad vial, ¿contiene como mínimo los requisitos mencionados en el Paso 15? | TODOS
+LOS
+NIVELES | | 
+
+16. Inspección de vehículos y equipos | NIVELES | CUMPLE/ NO CUMPLE/NO APLICA/ N O VERIFICADo | OBSERVACIONES | 
+
+16.1 ¿La organización definió un procedimiento y un formato de registro para la inspección preoperacional diaria de vehículos automotores y no automotores que se utilizan para desplazamientos laborales de la organización teniendo en cuenta el nivel de riesgo vial de la operacion? | TODOS
+LOS
+NIVELES | | 
+
+16.2 ¿La inspección preoperacional diaria contiene al menos la disponibilidad de los elementos a inspeccionar, el buen funcionamiento del vehículo, su estado y los niveles aceptables para el funcionamiento y la seguridad del vehículo y de sus ocupantes y demás requisitos mencionados en el Paso 16? | TODOS
+LOS
+NIVELES | | 
+
+17. Mantenimiento y control de vehículos seguros y equipos | NIVELES | CUMPLE/ NO CUMPLE/NO APLICA/ N O VERIFICADo | OBSERVACIONES | 
+
+17.1 ¿La organización diseñó e implemento un plan de mantenimiento preventivo para vehículos automotores y no automotores que se utilizan para los desplazamientos laborales al servicio de la organización, contempla los requisitos mencionados en el Paso 17? | TODOS
+LOS
+NIVELES | | 
+
+17.2 ¿La organización documentó y mantiene la hoja de vida de cada vehículos automotores y no automotores que se utilizan para los fines misionales de la organización y contempla los requisitos mencionados en el Paso 17? | TODOS
+LOS
+NIVELES | | 
+
+17.3 ¿La organización documenta el mantenimiento de los vehículos de propiedad de los colaboradores puestos al servicio de la organización, para el cumplimiento de sus funciones? | TODOS
+LOS
+NIVELES | | 
+
+18. Gestión del cambio y gestión de contratistas | NIVELES | CUMPLE/ NO CUMPLE/NO APLICA/ N O VERIFICADo | OBSERVACIONES | 
+
+18.1 ¿La organización dispone de un procedimiento para evaluar los impactos que puedan generar los cambios externos e internos en la seguridad vial? | ESTÁNDARY
+AVANZADO | | 
+
+18.2 ¿La organización realizó el análisis del impacto de los cambios planeados y no planeados y realizo las gestiones de manera previa para prevenir riesgos y consecuencias en seguridad vial? | ESTÁNDARY
+AVANZADO | | 
+
+18.3 ¿La organización verificó que los contratistas que están obligado a diseñar e implementar el PESV de conformidad con lo dispuesto en el articulo 12 de la Ley 1503 de 2011. modificado por el artículo 110 del Decreto Ley 2106 de 2019 o las normas que lo modifiquen o sustituyan, cumplan con dicha obligación? | ESTÁNDARY
+AVANZADO | | 
+
+18.4 ¿La organización estableció las disposiciones que en seguridad vial deben cumplir, los contratistas, subcontratistas y terceros, incluyendo conductores y propietarios de vehículos permanentes y ocasionales que no están obligados a diseñar e implementar un PESV, cumplen con las disposiciones mínimas mencionadas en el Paso 18? | ESTÁNDARY
+AVANZADO | | 
+
+18.5 ¿La organización definió los responsables de supervisar el cumplimiento de las obligaciones en seguridad vial establecidas a los contratistas que realizan desplazamientos laborales? | ESTÁNDARY
+AVANZADO | | 
+
+19. Archivo y retención documental | NIVELES | CUMPLE/ NO CUMPLE/NO APLICA/ N O VERIFICADo | OBSERVACIONES | 
+
+19.1 ¿La organización mantiene disponible, debidamente controlada y actualizada la documentación del Plan Estratégico de Seguridad Vial? | ESTÁNDARY
+AVANZADO | | 
+
+19.2 ¿La organización realizo la retención documental de registros y evidencias que soportan la implementación del PESV, asegurando su identificación, legibilidad, accesibilidad y protección contra daños o perdida, los cuales y deben almacenarse al menos por cinco (5) años salvo norma especial en contrario? | ESTÁNDARY
+AVANZADO | | 
+
+19.2 ¿La organización realiza el almacenamiento de los registros de las inspecciones preoperacionales por un (1) año? | ESTÁNDARY
+AVANZADO | | 
+
+20. Definición de indicadores | NIVELES | CUMPLE/ NO CUMPLE/NO APLICA/ N O VERIFICADo | OBSERVACIONES | 
+
+20.1 ¿La organización realizó el registro, la medición y análisis de los indicadores mínimos de gestión del PESV de acuerdo al ivel aplicable según lo establecido en la Tabla 10 del Capitulo l del presente anexo? | TODOS
+LOS
+NIVELES | | 
+
+20.2 ¿La organización definió indicadores adicionales a los mínimos descritos en la Tabla 10 del Capítulo l del presente anexo. cada indicador adicional fue construido de acuerdo a las características mencionados en el Paso 20? | TODOS
+LOS
+NIVELES | | 
+
+20.3 ¿La organización realizo el reporte de autogestión anual a la entidad verificadora que le corresponda de los resultados de la medición y análisis de los indicadores a los que hace referencia la Tabla 10 del Capitulo I del presente anexo y la información listada en el paso 20 con corte al 31 de diciembre de cada año. y teniendo en cuenta que el reporte se debe realizar a más tardar el 31 de enero de cada año? | TODOS
+LOS
+NIVELES | | 
+
+21. Registro y análisis estadístico de siniestros viales | NIVELES | CUMPLE/ NO CUMPLE/NO APLICA/ N O VERIFICADo | OBSERVACIONES | 
+
+21.1 ¿La organización definió su linea base de la siníestralidad vial, en la cual se determina la posición actual de la organización con relación a la seguridad vial de acuerdo con su nivel de pérdida? | AVANZADO | | 
+
+21.2 ¿La organización lleva registro estadístico, tendencia, proyección a nivel estadístico y análisis de los siniestros viales, diferenciando los siniestros viales de acuerdo con la gravedad del evento según el nivel de pérdida y separando los análisis estadísticos de los desplazamientos laborales y de los desplazamientos cotidianos / no laborales. | AVANZADO | | 
+
+21.3 El Comité de Seguridad Vial analiza los resultados de la siníestralidad vial de acuerdo con lo definido en el Paso 21? | | 
+
+22. Auditoria anual | NIVELES | CUMPLE/ NO CUMPLE/NO APLICA/ N O VERIFICADo | OBSERVACIONES | 
+
+22.1 ¿La organización realizo al menos una auditoria anual interna para evaluar el cumplimiento y las evidencias de la planificación, implementación. seguimiento y mejora del PESV. de acuerdo con lo establecido en el Capitulo 1 del presente anexo?
+Nota: La organización puede optar por manejar auditorías integradas y aplicar | TODOS
+LOS
+NIVELES | | 
+
+22.2 ¿La organización documentó y aplico un procedimiento para la realización de las auditorias internas al PESV de la organización y contempla lo mencionado en el Paso 22? | TODOS
+LOS
+NIVELES | | 
+
+22.3 ¿La organización definió la competencia de los auditores internos para el PESV, siguiendo los requisitos del Paso 10. ¿Competencia y plan anual de formación? | TODOS
+LOS
+NIVELES | | 
+
+22.4 ¿El (los) auditor(es) interno(s) son persona(s) diferente(s) al líder del diseño e implementación del PESV y las auditorias fueron planificadas con la participación del Comité de Seguridad Vial? | TODOS
+LOS
+NIVELES | | 
+
+23. Mejora continua, acciones preventivas y correctivas | NIVELES | CUMPLE/ NO CUMPLE/NO APLICA/ N O VERIFICADo | OBSERVACIONES | 
+
+23.1 ¿La organización definió e implementó las acciones preventivas y/o correctivas necesarias con base en los resultados de la medición y análisis de los indicadores y auditorías del PESV? | TODOS
+LOS
+NIVELES | | 
+
+24. Mecanismos de comunicación y participación | NIVELES | CUMPLE/ NO CUMPLE/NO APLICA/ N O VERIFICADo | OBSERVACIONES | 
+
+24.1 ¿La organización definió y puso a disposición los mecanismos de comunicación y participación «n relación con la seguridad vial, así como la frecuencia de las comunicaciones, que por lo menos, debe ser trimestral y contener la promoción de la seguridad vial, de acuerdo con lo definido en el Paso 24? | TODOS
+LOS
+NIVELES | | 
+
+VERIFICACIÓN DE REQUISITOS
+
+TOTAL NO CUMPLE 
+
+Fuente: Elaboración propia.
+
+La lista de verificación es de uso de las autoridades de verificación y en ella se determinan los hallazgos de cumplimiento y las observaciones frente a la evidencia revisada en la visita de verificación.
+
+Etapa 4. Realización de la visita de verificación
+
+Para el trabajo de campo (visitas presenciales o virtuales), la visita de verificación incluye las siguientes actividades:
+
+1. Reunión de apertura: presentar al equipo responsable de la visita, confirmar y solucionar dudas sobre el plan de verificación previsto para realizar la visita.
+
+2. Comunicación durante la visita: entrevistar al Comité de Seguridad Vial y/o al responsable del PESV, entrevistar a los colaboradores de la organización.
+
+3. Revisión y verificación de la información documentada: revisar las evidencias que soportan la implementación del PESV y evaluar si éste cumple con los criterios (requisitos legales y acciones para la reducción de riesgos).
+
+4. Reunión de cierre: presentar a la organización los hallazgos, riesgos identificados y conclusiones de la visita de verificación, resaltando el tiempo máximo para subsanar los hallazgos y para el cierre de las acciones preventivas y/o correctivas que se acuerden con la organización, y cuando la entidad que realice la verificación lo estime necesario, establecer los plazos de seguimiento de una nueva visita para verificar el cierre de las acciones correctivas y/o preventivas que se evidenciaron durante la visita de verificación.
+
+Etapa 5. Acta o informe de la visita de verificación
+
+El acta o informe de visita de verificación, al menos debe contener: nombre de la empresa visitada, fecha de la visita, objetivos de la visita, alcance, criterios, hallazgos y conclusiones de la visita.
+
+En la siguiente tabla se muestra un ejemplo del formato que se puede utilizar para el informe de la visita de verificación.
+
+La entidad verificadora reportará el informe de la visita de verificación en las condiciones que se establezcan con la adopción del mecanismo informático del que hace relación el artículo 3o de la Ley 2050 de 2020.
+
+Tabla 17. Ejemplo formato acta de visita de verificación.
+
+EMPRESA | Nombre de la organizacion | 
+
+FECHA | Fecha de la visita de verificacion | 
+
+OBJETIVO | Verificar la implementacion del PESV | 
+
+ALCANCE | Empres X en la ciudad | 
+
+CRITERIOS | Ley 769/02 Ley 1503/11 Decreto 1079/15 Decreto Ley 2106/19 y Ley 2050 de 2020 | 
+
+SINIESTROS VIALES | Numero de siniestros viales de los ultimos 5 años | 
+
+LIDER | Nombre responsable de la visita | EQUIPO: Nombre de otros miembros que participaran en la visita | 
+
+HALLAZGOS | Se relacionan los hallazgos que no cumplen con los criterios de los requisitos legales:
+1... | 
+
+CONCLUSIONES | Se mencionan las conclusiones de la visita de verificacion con base a los riesgos identificados de la organizacion y en el cumplimiento de los criterios de los requisitos legales:
+1... | 
+
+SEGUIMIENTO
+HALLAZGOS | a) Fecha máxima para entregar las acciones correctivas y preventivas
+b) Fecha máxima para el envío de evidencias a la entidad verificadora
+c) Fecha máxima para el cierre de las acciones preventivas y/o correctivas | 
+
+Fuente: elaboración propia.
+
+Tabla 18. Tabla de articulación y correspondencia PESV, SG-SST e ISO 39001
+
+PESV | Decreto 1072 de 2015 SG-SS | ISO 39001 | 
+
+Paso 1. Líder del diseño e implementación del PESV (Aplica para todos los niveles) | Artículo 2.2.4.6.8.
+Obligaciones de los empleadores | 5.3 Roles.
+responsabilidades y
+autoridades
+organizacionales | 
+
+Paso 2. Comité de seguridad vial (Aplica para el nivel Estándar y Avanzado | Artículo 2.2.46.8. Obligaciones de los empleadores | 5.3 Roles.
+responsabilidades y
+autoridades
+organizacionales | 
+
+Paso 3. Política de
+Seguridad Vial de la Organización (Aplica para todos los niveles | Artículo 2.2.4.6.5. Política de seguridad y salud en el trabajo (SST) | 5.2 Política de SV | 
+
+Paso 4. Liderazgo, compromiso y corresponsabilidad del nivel directivo (Aplica para todos los niveles) | Artículo 2.2.4.6.8.
+Obligaciones de los empleadores | 5.1 Liderazgo y compromiso | 
+
+Paso 5. Diagnóstico (Aplica para todos los niveles | Artículo 2.2.4.6.16.
+Evaluación inicial del Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST | 4.1 Contexto de la organización | 
+
+Paso 6. Caracterización, evaluación y control de riesgos (Aplica para todos los niveles | Articulo 2.2.4.6.15.
+Identificación de peligros, evaluación y valoración de los riesgos | 6.2 Acciones para abordar riesgos y oportunidades | 
+
+Paso 7. Objetivos y metas del PESV (Aplica para todos los niveles) | Articulo 2.2.4.6.18.
+Objetivos del Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG- SST) | 6.4 Objetivos de la SV y planificación para lograrlos | 
+
+Paso 8. Programas de gestión de riesgos críticos y factores de desempeño (Aplica para todos los niveles) | Artículos 2.2.4.6.23 y 2.2.4.6.24 Gestión de los peligros y riesgos y Medidas de prevención y control | 6.3 Factores de desempeño de la SV | 
+
+Paso 9. Plan anual de trabajo (Aplica para todos los niveles) | Articulo 2.2.4.6.17.
+Planificación del Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST) | 6.4 Objetivos de la SV y planificación para lograrlos | 
+
+Paso 10. Competencia y plan anual de formación (Aplica para todos los niveles) | Articulo 2.2.4.6.11.
+Capacitación en seguridad y salud en el trabajo - SST | 7.3 Competencia | 
+
+Paso 11. Responsabilidad y comportamiento seguro (Aplica para nivel Avanzado) | Artículos 1.6.2.2.4.6.10 y 2.2.4.7.5
+Responsabilidades de los trabajadores y Sistema de Estándares Mínimos | 7.3 Competencia
+7.4 Toma de conciencia | 
+
+Paso 12. Plan de preparación y respuesta ante emergencias viales (Aplica para todos los niveles) | Articulo 2.2.4.6.25.
+Prevención, preparación y respuesta ante emergencias | 8.2 Preparación y respuesta ante emergencias | 
+
+Paso 13. Investigación interna de siniestros viales (Aplica para el nivel Estándar y Avanzado) | Articulo 2.2.4.6.32.
+Investigación de incidentes, accidentes de trabajo y enfermedades laborales | 9.2 Investigación de accidentes de tráfico y otros incidentes de tráfico en la vía | 
+
+Paso 14. Vías seguras administradas por la organización (Aplica para todos los niveles) | Articulo 2.2.4.6.24.
+parágrafo 2 Medidas de prevención y control | 8.1 Planificación y control operativo | 
+
+Paso 15. Planificación de desplazamientos laborales (Aplica para todos los niveles) | Articulo 2.2.4.6.24.
+Medidas de prevención y control | 8.1 Planificación y control operativo | 
+
+Paso 16. Inspección de vehículos y equipos (Aplica para todos los niveles) | Articulo 2.2.4.6.24.
+Medidas de prevención y control | 8.1 Planificación y control operativo | 
+
+Paso 17. Mantenimiento y control de vehículos seguros y equipos (Aplica para todos los niveles) | Articulo 2.2.4.6.24.
+parágrafo 2 Medidas de prevención y control | 8.1 Planificación y control operativo | 
+
+Paso 18. Gestión del cambio y gestión de contratistas (Aplica para el nivel Estándar y Avanzado) | Artículo 2.2.4.6.26. Gestión del cambio
+Articulo 2.2.4.6.27. Adquisiciones
+Articulo 2.2.4.6.28 Contratación | 8.1 Planificación y control operativo | 
+
+Paso 19. Archivo y retención documental
+(Aplica para el nivel Estándar y Avanzado) | Artículo 2.2.4.6.12 Documentación
+Articulo 2.2.4.6.13 Conservación de los documentos | 7.6 Información documentada | 
+
+Paso 20. Indicadores y reporte de autogestión PESV (Aplica para todos los niveles) | Artículos 2.2.4.6.19. 2.2.4.6.20. 2.2.4.6.21 y 2.2.4.6.22 indicadores del sistema de gestión de la seguridad y salud en el trabajo. Indicadores que evalúan la estructura del sistema de gestión de la seguridad y salud en el trabajo. Indicadores que evalúan el proceso del sistema de gestión de la seguridad y salud en el trabajo e Indicadores que evalúan el resultado del sistema de gestión de la seguridad y salud en el trabajo | 9.1 Seguimiento, medición, análisis y evaluación | 
+
+Paso 21. Registro y análisis estadístico de siniestros viales (Aplica para nivel Avanzado) | Artículo 2.2.4.6.21 Indicadores que evalúan el proceso del sistema de gestión de la seguridad y salud en el trabajo | 9.1 Seguimiento, medición, análisis y evaluación | 
+
+Articulo 2.2.4.6.22
+Indicadores que evalúan el proceso del sistema de gestión de la seguridad y salud en el trabajo e Indicadores que evalúan el resultado del sistema de gestión de la seguridad y salud en el trabajo | 
+
+Paso 22. Auditoria anual (Aplica para todos los niveles) | Articulo 2.2.4.6.29 Auditoría de cumplimiento del sistema de gestión de la seguridad y salud en el trabajo 2.2.4.6.30 Alcance de la auditoria de cumplimiento del Sistema de Gestión de la Seguridad y Salud en el Trabajo. | 9.3 Auditoria interna | 
+
+Paso 23. Mejora continua, acciones preventivas y correctivas (Aplica para todos los niveles) | Articulo 2.2.4.6.31 Revisión por la alta dirección
+Articulo 2.2.4.6.33 Acciones preventivas y correctivas y Articulo 2.2.4.6.34 Mejora continua | 10. Mejora | 
+
+Paso 24. Mecanismos de comunicación y
+participación (Aplica para todos los niveles) | Articulo 2.2.4.6.14.
+Comunicación | 7.5 Comunicación | 
+
+Tabla 19. Tabla resumen por nivel de diseño e implementación del PESV
+
+PESV | BÁSICO | ESTÁNDAR | AVANZADO | 
+
+Paso 1. Líder del diseño e implementación del PESV (Aplica para todos los niveles) | X | X | X | 
+
+Paso 2. Comité de seguridad vial (Aplica para el nivel Estándar y Avanzado) | No
+Aplica | X | X | 
+
+Paso 3. Política de Seguridad Vial de la Organización (Aplica para todos los niveles) | X | X | X | 
+
+Paso 4. Liderazgo. compromiso y corresponsabilidad del nivel directivo (Aplica para todos los niveles) | X | X | X | 
+
+Paso 5. Diagnóstico (Aplica para todos los niveles) | X | X | X | 
+
+Paso 6. Caracterización, evaluación y control de riesgos (Aplica para todos los niveles) | X | X | X | 
+
+Paso 7. Objetivos y metas del PESV (Aplica para todos los niveles) | X | X | X | 
+
+Paso 8. Programas de gestión de riesgos críticos y factores de desempeño (Aplica para todos los niveles) | X | X | X | 
+
+Paso 9. Plan anual de trabajo (Aplica para todos los niveles) | X | X | X | 
+
+Paso 10. Competencia y plan anual de formación (Aplica para todos los niveles) | X | X | X | 
+
+Paso 11. Responsabilidad y comportamiento seguro (Aplica para nivel Avanzado) | No
+Aplica | No Aplica | X | 
+
+Paso 12. Plan de preparación y respuesta ante emergencias viales (Aplica para todos los niveles) | X | X | X | 
+
+Paso 13. Investigación interna de siniestros viales (Aplica para el nivel Estándar y Avanzado) | No
+Aplica | X | X | 
+
+Paso 14. Vías seguras administradas por la organización (Aplica para todos los niveles) | X | X | X | 
+
+Paso 15. Planificación de desplazamientos laborales (Aplica para todos los niveles) | X | X | X | 
+
+Paso 16. Inspección de vehículos y equipos (Aplica para todos los niveles) | X | X | X | 
+
+Paso 17. Mantenimiento y control de vehículos seguros y equipos (Aplica para todos los niveles) | X | X | X | 
+
+Paso 18. Gestión del cambio y gestión de contratistas (Aplica para el nivel Estándar y Avanzado) | No
+Aplica | X | X | 
+
+Paso 19. Archivo y retención documental (Aplica para el nivel Estándar y Avanzado) | No
+Aplica | X | X | 
+
+Paso 20. Indicadores y reporte de autogestión PESV (Aplica para todos los niveles) | X | X | X | 
+
+Paso 21. Registro y análisis estadístico de siniestros viales (Aplica para nivel Avanzado) | No
+Aplica | No Aplica | X | 
+
+Paso 22. Auditoría anual (Aplica para todos los niveles) | X | X | X | 
+
+Paso 23. Mejora continua, acciones preventivas y correctivas (Aplica para todos los niveles) | X | X | X | 
+
+Paso 24. Mecanismos de comunicación y participación (Aplica para todos los niveles) | X | X | X | 
+
+TOTAL | 18 | 22 | 24 | 
+
+ Compilación Jurídica del Ministerio de las Culturas, las Artes y los Saberes de Colombia
+
+
+ ISBN 978-958-753-493-1
+
+
+ Última actualización: 
+
+
+ Control de versiones
+
+
+ Créditos y reserva de derechos de autor
+
+
+ Ministerio de las Culturas, las Artes y los Saberes - DRA © 2021 - 2023
+
+
+ Ministerio de las Culturas, las Artes y los Saberes
+
+ Calle 9 No. 8 31
+
+
+ Bogotá D.C., Colombia
+
+
+ Horario de atención:
+
+
+ Lunes a viernes de 8:00 a.m. a 5:00 p.m. (Días no festivos)
+
+
+ youtube 
+
+ Youtube
+
+ instragram 
+
+ Instagram
+
+ facebook 
+
+ Facebook
+
+ twitter 
+
+ Twitter
+
+ Contacto
+
+ Correspondencia:
+
+ Presencial: Lunes a viernes de 8:00 a.m. a 3:00 p.m. jornada contínua
+
+
+ Casa Abadía, Calle 8 #8a-31
+
+
+ Virtual: correo oficial - [email protected]
+
+
+ (Los correos que se reciban después de las 5:00 p. m., se radicarán el siguiente día hábil)
+
+
+ Teléfono: (601) 3424100
+
+
+ Fax: (601) 3816353 ext. 1183 
+
+ Línea gratuita: 018000 938081 
+
+ Copyright © 2023
+
+ ×
+
+
+ Contraste
+
+
+ Reducir letra
+
+
+ Aumentar letra
+
+
+ Retornar valores
+
+
+ Ir arriba
+
+
+ Ir abajo
+
+
+ Inicio documento
+
+
+ Fin documento

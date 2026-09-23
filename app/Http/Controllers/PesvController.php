@@ -52,7 +52,7 @@ class PesvController extends Controller
             'needsClient' => false,
             'plan' => [
                 ...$plan->only([
-                    'nivel', 'periodo_inicio', 'periodo_fin',
+                    'nivel', 'misionalidad', 'periodo_inicio', 'periodo_fin',
                     'lider_nombre', 'lider_cargo', 'lider_documento',
                 ]),
                 'lider_designacion_fecha' => $plan->lider_designacion_fecha?->toDateString(),
@@ -61,8 +61,12 @@ class PesvController extends Controller
             'fases' => $this->agruparPorFase($pasos),
             'resumen' => $this->resumen($pasos),
             'comite' => $plan->comite()->orderBy('rol_comite')->get(),
+            'empleados' => Employee::where('is_active', true)->orderBy('apellidos')->orderBy('nombres')
+                ->get(['id', 'nombres', 'apellidos', 'numero_documento', 'cargo'])
+                ->map(fn (Employee $e) => ['id' => $e->id, 'nombre' => trim($e->nombres.' '.$e->apellidos), 'documento' => $e->numero_documento, 'cargo' => $e->cargo]),
             'niveles' => PesvPlan::NIVELES,
-            'nivelSugerido' => $this->nivelSugerido(),
+            'misionalidades' => PesvPlan::MISIONALIDADES,
+            'nivelSugerido' => $this->nivelSugerido($plan),
         ]);
     }
 
@@ -91,6 +95,9 @@ class PesvController extends Controller
                 'fase_nombre' => $step->fase_nombre,
                 'titulo' => $step->titulo,
                 'descripcion' => $step->descripcion,
+                'aplica' => $step->aplicaA($plan->nivel),
+                'niveles' => $step->niveles ?? PesvStep::nivelesDe($step->numero),
+                'nivel_plan' => $plan->nivel,
                 'estado' => $planStep->estado,
                 'observaciones' => $planStep->observaciones,
                 'responsable' => $planStep->responsable,
@@ -114,6 +121,7 @@ class PesvController extends Controller
 
         $datos = $request->validate([
             'nivel' => ['required', Rule::in(PesvPlan::NIVELES)],
+            'misionalidad' => ['nullable', 'integer', Rule::in(array_keys(PesvPlan::MISIONALIDADES))],
             'periodo_inicio' => ['nullable', 'integer', 'min:2000', 'max:2100'],
             'periodo_fin' => ['nullable', 'integer', 'min:2000', 'max:2100', 'gte:periodo_inicio'],
             'lider_nombre' => ['nullable', 'string', 'max:255'],
@@ -122,7 +130,10 @@ class PesvController extends Controller
             'lider_designacion_fecha' => ['nullable', 'date'],
         ]);
 
-        $this->plan()->update($datos);
+        $plan = $this->plan();
+        $plan->update($datos);
+        // El nivel decide qué pasos cuentan: cambiarlo cambia el avance.
+        $plan->recalcular();
 
         return back()->with('success', 'Plan actualizado.');
     }
@@ -161,18 +172,33 @@ class PesvController extends Controller
             return back()->withErrors(['tenant' => 'Selecciona un cliente antes de editar el comité.']);
         }
 
-        $datos = $request->validate([
-            'employee_id' => ['nullable', 'integer', 'exists:employees,id'],
+        $this->plan()->comite()->create($this->validarMiembro($request));
+
+        return back()->with('success', 'Integrante agregado al comité.');
+    }
+
+    public function updateMiembro(Request $request, PesvCommitteeMember $miembro): RedirectResponse
+    {
+        abort_unless($this->context->has() && $miembro->pesv_plan_id === $this->plan()->id, 404);
+
+        $miembro->update($this->validarMiembro($request));
+
+        return back()->with('success', 'Integrante actualizado.');
+    }
+
+    /** @return array<string, mixed> */
+    private function validarMiembro(Request $request): array
+    {
+        return $request->validate([
+            // Solo empleados de ESTA empresa: un `exists` pelado aceptaba el id
+            // de un trabajador de otro cliente.
+            'employee_id' => ['nullable', 'integer', Rule::exists('employees', 'id')->where('tenant_id', $this->context->id())],
             'nombre' => ['required', 'string', 'max:255'],
             'documento' => ['nullable', 'string', 'max:30'],
             'cargo' => ['nullable', 'string', 'max:255'],
             'rol_comite' => ['required', Rule::in(PesvCommitteeMember::ROLES)],
             'es_representante_direccion' => ['boolean'],
         ]);
-
-        $this->plan()->comite()->create($datos);
-
-        return back()->with('success', 'Integrante agregado al comité.');
     }
 
     public function destroyMiembro(PesvCommitteeMember $miembro): RedirectResponse
@@ -208,6 +234,7 @@ class PesvController extends Controller
 
         return PesvStep::orderBy('orden')->get()->map(fn (PesvStep $step) => [
             'numero' => $step->numero,
+            'aplica' => $step->aplicaA($plan->nivel),
             'fase' => $step->fase,
             'fase_nombre' => $step->fase_nombre,
             'titulo' => $step->titulo,
@@ -227,8 +254,8 @@ class PesvController extends Controller
             'fase' => (int) $fase,
             'nombre' => $grupo->first()['fase_nombre'],
             'pasos' => $grupo->values()->all(),
-            'cumplidos' => $grupo->where('estado', 'cumple')->count(),
-            'total' => $grupo->count(),
+            'cumplidos' => $grupo->where('aplica', true)->where('estado', 'cumple')->count(),
+            'total' => $grupo->where('aplica', true)->count(),
         ])->values()->all();
     }
 
@@ -238,7 +265,11 @@ class PesvController extends Controller
      */
     private function resumen(Collection $pasos): array
     {
+        $noExigidos = $pasos->where('aplica', false)->count();
+        $pasos = $pasos->where('aplica', true);
+
         return [
+            'no_exigidos' => $noExigidos,
             'total' => $pasos->count(),
             'cumple' => $pasos->where('estado', 'cumple')->count(),
             'en_proceso' => $pasos->where('estado', 'en_proceso')->count(),
@@ -249,32 +280,44 @@ class PesvController extends Controller
     }
 
     /**
-     * Nivel que sugiere la caracterización cargada.
+     * Nivel que exige la Res. 40595 (Tabla 1) con lo que hay cargado.
      *
-     * OJO: es una AYUDA, no la norma. La Res. 40595 fija el nivel por la
-     * misionalidad del transporte y el tamaño de la flota; aquí solo se mira
-     * lo que hay en la plataforma para orientar al consultor, que es quien
-     * decide. Por eso el campo `nivel` del plan se edita a mano.
+     * Flota = vehículos del inventario + los que los contratistas declaran
+     * aportar y no están registrados uno por uno. Conductores = propios + los
+     * de contratistas: la norma cuenta a todo el que conduce al servicio de la
+     * organización, «independientemente del modelo de contratación».
+     *
+     * Sigue siendo una SUGERENCIA: el nivel del plan lo fija el consultor,
+     * porque el inventario puede estar incompleto. La pantalla avisa si no
+     * coinciden.
      *
      * @return array<string, mixed>
      */
-    private function nivelSugerido(): array
+    private function nivelSugerido(PesvPlan $plan): array
     {
-        $vehiculos = PesvVehicle::where('is_active', true)->count();
-        $conductores = Employee::where('is_active', true)->conductores()->count();
-        $contratistas = PesvContractor::where('is_active', true)->count();
+        $inventario = PesvVehicle::where('is_active', true)->count();
+        $deContratistasRegistrados = PesvVehicle::where('is_active', true)->where('propiedad', 'contratista')->count();
+        $declarados = (int) PesvContractor::where('is_active', true)->sum('num_vehiculos');
+        $extra = max(0, $declarados - $deContratistasRegistrados);
 
-        $sugerido = match (true) {
-            $vehiculos > 10 || $conductores > 10 => 'avanzado',
-            $vehiculos > 0 || $conductores > 1 => 'estandar',
-            default => 'basico',
-        };
+        $propios = Employee::where('is_active', true)->conductores()->count();
+        $deContratistas = (int) PesvContractor::where('is_active', true)->sum('num_conductores');
+
+        $flota = $inventario + $extra;
+        $conductores = $propios + $deContratistas;
+        $nivel = $plan->misionalidad ? PesvPlan::nivelPorNorma($plan->misionalidad, $flota, $conductores) : null;
 
         return [
-            'nivel' => $sugerido,
-            'vehiculos' => $vehiculos,
+            'nivel' => $nivel,
+            'calculado' => $plan->misionalidad !== null,
+            'obligada' => $plan->misionalidad === null ? null : $nivel !== null,
+            'flota' => $flota,
+            'vehiculos' => $inventario,
+            'vehiculos_contratistas' => $extra,
             'conductores' => $conductores,
-            'contratistas' => $contratistas,
+            'conductores_propios' => $propios,
+            'conductores_contratistas' => $deContratistas,
+            'contratistas' => PesvContractor::where('is_active', true)->count(),
             'rutas' => PesvRoute::where('is_active', true)->count(),
         ];
     }

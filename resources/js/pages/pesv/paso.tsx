@@ -20,6 +20,8 @@ interface Insumo {
     cantidad: number | null;
 }
 
+const NIVELES: Record<string, string> = { basico: 'Básico', estandar: 'Estándar', avanzado: 'Avanzado' };
+
 interface Props {
     needsClient: boolean;
     paso: {
@@ -28,6 +30,9 @@ interface Props {
         fase_nombre: string;
         titulo: string;
         descripcion: string | null;
+        aplica: boolean;
+        niveles: string[];
+        nivel_plan: string;
         estado: string;
         observaciones: string | null;
         responsable: string | null;
@@ -60,7 +65,12 @@ export default function PesvPaso({ needsClient, paso, insumos = [], estados = []
 
     if (needsClient || !paso) {
         return (
-            <AppLayout breadcrumbs={[{ title: 'Dashboard', href: '/dashboard' }, { title: 'PESV', href: '/pesv' }]}>
+            <AppLayout
+                breadcrumbs={[
+                    { title: 'Dashboard', href: '/dashboard' },
+                    { title: 'PESV', href: '/pesv' },
+                ]}
+            >
                 <Head title="PESV" />
                 <SinCliente titulo="PESV" descripcion="Plan Estratégico de Seguridad Vial (Resolución 40595 de 2022)." />
             </AppLayout>
@@ -91,6 +101,13 @@ export default function PesvPaso({ needsClient, paso, insumos = [], estados = []
                             {paso.numero}. {paso.titulo}
                         </h1>
                         {paso.descripcion && <p className="text-muted-foreground mt-1 max-w-3xl text-sm">{paso.descripcion}</p>}
+                        <p className="text-muted-foreground mt-1 text-xs">Exigible en nivel {paso.niveles.map((n) => NIVELES[n] ?? n).join(', ')}.</p>
+                        {!paso.aplica && (
+                            <p className="mt-2 max-w-3xl rounded-md border border-amber-600/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-800 dark:text-amber-300">
+                                La Res. 40595 no exige este paso en nivel {(NIVELES[paso.nivel_plan] ?? paso.nivel_plan).toLowerCase()}: no cuenta en
+                                el avance del plan. Puedes documentarlo igual si la empresa lo implementa.
+                            </p>
+                        )}
                     </div>
                     <div className="flex gap-2">
                         {vecinos?.anterior && (
@@ -119,8 +136,7 @@ export default function PesvPaso({ needsClient, paso, insumos = [], estados = []
                             <div>
                                 <h2 className="font-semibold">Lo que ya tiene la plataforma</h2>
                                 <p className="text-muted-foreground text-sm">
-                                    Información que la empresa ya cargó en otros módulos y que sustenta este paso. No hay que volver a
-                                    escribirla.
+                                    Información que la empresa ya cargó en otros módulos y que sustenta este paso. No hay que volver a escribirla.
                                 </p>
                             </div>
 

@@ -144,6 +144,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->whereNumber('numero')->name('pesv.paso.save');
         Route::post('pesv/comite', [PesvController::class, 'storeMiembro'])->name('pesv.comite.store');
         Route::delete('pesv/comite/{miembro}', [PesvController::class, 'destroyMiembro'])->name('pesv.comite.destroy');
+        Route::put('pesv/comite/{miembro}', [PesvController::class, 'updateMiembro'])->name('pesv.comite.update');
 
         Route::post('pesv/sedes', [PesvSedeController::class, 'store'])->name('pesv.sedes.store');
         Route::put('pesv/sedes/{sede}', [PesvSedeController::class, 'update'])->name('pesv.sedes.update');
