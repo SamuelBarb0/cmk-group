@@ -10,6 +10,7 @@ use App\Models\IndicatorGoal;
 use App\Models\IndicatorReading;
 use App\Models\IpercRow;
 use App\Models\ManagementProgram;
+use App\Models\PesvAutogestion;
 use App\Models\PesvContractor;
 use App\Models\PesvDriverCheck;
 use App\Models\PesvDriverTest;
@@ -124,6 +125,7 @@ class PesvFeed
 
         if ($numero === 20) {
             $insumos[] = $this->indicadoresConLectura();
+            $insumos[] = $this->reporteAutogestion();
         }
 
         return $insumos;
@@ -636,6 +638,28 @@ class PesvFeed
                 : "{$conLectura} de {$pesv->count()} indicadores PESV tienen mediciones este año. El reporte de autogestión se hace con corte al 31 de diciembre.",
             'url' => '/indicadores',
             'cantidad' => $conLectura,
+        ];
+    }
+
+    /**
+     * Paso 20: el reporte del año que cerró se radica a más tardar el 31 de
+     * enero. Mientras dure enero está «por radicar»; después, falta.
+     *
+     * @return array<string, mixed>
+     */
+    private function reporteAutogestion(): array
+    {
+        $anio = (int) now()->year - 1;
+        $reporte = PesvAutogestion::firstWhere('anio', $anio);
+
+        return [
+            'etiqueta' => "Reporte de autogestión {$anio}",
+            'estado' => $reporte?->reportado_at ? 'ok' : ((int) now()->month === 1 ? 'parcial' : 'falta'),
+            'detalle' => $reporte?->reportado_at
+                ? "Radicado el {$reporte->reportado_at->format('d/m/Y')}".($reporte->radicado ? " (radicado {$reporte->radicado})" : '').'.'
+                : "Sin constancia de radicación del reporte con corte al 31 de diciembre de {$anio} (plazo: 31 de enero).",
+            'url' => "/pesv/autogestion?anio={$anio}",
+            'cantidad' => null,
         ];
     }
 

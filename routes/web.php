@@ -27,6 +27,7 @@ use App\Http\Controllers\OrganizacionController;
 use App\Http\Controllers\PesvColaboradorController;
 use App\Http\Controllers\PesvConductorController;
 use App\Http\Controllers\PesvContractorController;
+use App\Http\Controllers\PesvAutogestionController;
 use App\Http\Controllers\PesvController;
 use App\Http\Controllers\PesvRutaPlanController;
 use App\Http\Controllers\PesvViaInternaController;
@@ -167,6 +168,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('pesv/vias-internas', [PesvViaInternaController::class, 'index'])->name('pesv.vias.index');
         Route::get('pesv/rutas/{ruta}/plan', [PesvRutaPlanController::class, 'show'])->name('pesv.rutas.plan');
         Route::get('pesv/infracciones', [PesvInfraccionController::class, 'index'])->name('pesv.infracciones.index');
+        // Paso 20: reporte de autogestión anual.
+        Route::get('pesv/autogestion', [PesvAutogestionController::class, 'index'])->name('pesv.autogestion.index');
+        Route::get('pesv/autogestion/descargar', [PesvAutogestionController::class, 'descargar'])->name('pesv.autogestion.descargar');
     });
 
     Route::middleware(['permission:pesv.manage', 'module:pesv'])->group(function () {
@@ -196,6 +200,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('pesv/riesgos-viales/{riesgo}', [PesvRiesgoVialController::class, 'update'])->name('pesv.riesgos.update');
         Route::delete('pesv/riesgos-viales/{riesgo}', [PesvRiesgoVialController::class, 'destroy'])->name('pesv.riesgos.destroy');
         Route::put('pesv/estadistica/km', [PesvEstadisticaController::class, 'guardarKm'])->name('pesv.estadistica.km');
+        Route::put('pesv/autogestion', [PesvAutogestionController::class, 'update'])->name('pesv.autogestion.update');
         Route::post('pesv/vias-internas', [PesvViaInternaController::class, 'store'])->name('pesv.vias.store');
         Route::put('pesv/vias-internas/{via}', [PesvViaInternaController::class, 'update'])->name('pesv.vias.update');
         Route::delete('pesv/vias-internas/{via}', [PesvViaInternaController::class, 'destroy'])->name('pesv.vias.destroy');

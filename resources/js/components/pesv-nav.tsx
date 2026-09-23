@@ -31,6 +31,7 @@ const CARACTERIZACION = [
     { title: 'Matriz de riesgos viales', url: '/pesv/riesgos-viales' },
     { title: 'Semáforo de documentos', url: '/pesv/documentos' },
     { title: 'Infracciones de tránsito', url: '/pesv/infracciones' },
+    { title: 'Reporte de autogestión', url: '/pesv/autogestion' },
 ];
 
 /**
