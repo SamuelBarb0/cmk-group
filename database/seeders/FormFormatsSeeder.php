@@ -33,11 +33,22 @@ class FormFormatsSeeder extends Seeder
 {
     public function run(): void
     {
+        $respetados = [];
         foreach ($this->formatos() as $f) {
+            // Un formato que CMK editó desde la plataforma no se pisa: este
+            // seeder se corre en los despliegues y borraría sus cambios.
+            if (FormFormat::where('codigo', $f['codigo'])->whereNotNull('editado_at')->exists()) {
+                $respetados[] = $f['codigo'];
+
+                continue;
+            }
             FormFormat::updateOrCreate(['codigo' => $f['codigo']], $f);
         }
 
-        $this->command?->info('Formatos: '.count($this->formatos()).' cargados.');
+        $this->command?->info('Formatos: '.(count($this->formatos()) - count($respetados)).' cargados.');
+        if ($respetados) {
+            $this->command?->warn('Editados en la plataforma, no se tocaron: '.implode(', ', $respetados));
+        }
     }
 
     private function formatos(): array

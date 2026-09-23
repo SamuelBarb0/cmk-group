@@ -22,6 +22,8 @@ class FormFormat extends Model
         'schema',
         'orden',
         'activo',
+        'editado_at',
+        'editado_por',
     ];
 
     protected function casts(): array
@@ -30,8 +32,23 @@ class FormFormat extends Model
             'schema' => 'array',
             'orden' => 'integer',
             'activo' => 'boolean',
+            'editado_at' => 'datetime',
         ];
     }
+
+    public const TIPOS_CAMPO = [
+        'text' => 'Texto corto',
+        'textarea' => 'Texto largo',
+        'date' => 'Fecha',
+        'number' => 'Número',
+        'select' => 'Lista de opciones',
+        'checklist' => 'Lista de chequeo (cumple / no cumple / N/A)',
+        'firma' => 'Firma (nombre y cédula)',
+    ];
+
+    public const GRUPOS = ['inspeccion' => 'Inspección', 'lista' => 'Lista de chequeo', 'acta' => 'Acta', 'general' => 'Otro'];
+
+    public const CATEGORIAS = ['SST', 'PESV', 'HSEQ'];
 
     /** @return HasMany<FormRecord, $this> */
     public function records(): HasMany
