@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AcpmAction;
 use App\Models\Employee;
 use App\Models\PesvSiniestro;
 use App\Models\PesvVehicle;
@@ -42,10 +43,20 @@ class PesvSiniestroController extends Controller
         $siniestros = PesvSiniestro::with(['vehiculo:id,placa', 'conductor:id,nombres,apellidos'])
             ->orderByDesc('fecha')
             ->get();
+        // Acciones correctivas nacidas de cada siniestro (plan de acción del paso 13).
+        $acciones = AcpmAction::where('origen_tipo', 'siniestro_vial')->whereIn('origen_id', $siniestros->pluck('id'))
+            ->get(['id', 'codigo', 'origen_id', 'estado'])->groupBy('origen_id');
 
         return Inertia::render('pesv/siniestros', [
             'needsClient' => false,
-            'siniestros' => $siniestros,
+            'siniestros' => $siniestros->map(fn (PesvSiniestro $s) => [
+                ...$s->toArray(),
+                'nivel' => $s->nivel(),
+                'nivel_sugerido' => $s->nivelSugerido(),
+                'acciones_acpm' => $acciones->get($s->id, collect())->map->only(['id', 'codigo', 'estado'])->values(),
+            ]),
+            'desplazamientos' => PesvSiniestro::DESPLAZAMIENTOS,
+            'nivelesPerdida' => PesvSiniestro::NIVELES_PERDIDA,
             'stats' => [
                 'total' => $siniestros->count(),
                 'sin_investigar' => $siniestros->where('investigado', false)->count(),
@@ -83,6 +94,34 @@ class PesvSiniestroController extends Controller
         return back()->with('success', 'Siniestro actualizado.');
     }
 
+    /**
+     * Plan de acción del paso 13: cada acción es una ACPM correctiva que
+     * nace del siniestro, con su responsable y fecha, y se sigue en ACPM.
+     */
+    public function crearAccion(Request $request, PesvSiniestro $siniestro): RedirectResponse
+    {
+        $datos = $request->validate([
+            'accion' => ['required', 'string', 'max:2000'],
+            'responsable' => ['required', 'string', 'max:255'],
+            'fecha_limite' => ['required', 'date', 'after_or_equal:today'],
+        ]);
+
+        $acpm = AcpmAction::create([
+            'tipo' => 'correctiva',
+            'origen_tipo' => 'siniestro_vial',
+            'origen_id' => $siniestro->id,
+            'hallazgo' => 'Siniestro vial del '.$siniestro->fecha->format('d/m/Y').': '.($siniestro->descripcion ?: $siniestro->tipo),
+            'causa' => $siniestro->causas_basicas ?: $siniestro->causa_probable,
+            'accion' => $datos['accion'],
+            'responsable' => $datos['responsable'],
+            'fecha_deteccion' => now()->toDateString(),
+            'fecha_limite' => $datos['fecha_limite'],
+            'estado' => 'abierta',
+        ]);
+
+        return back()->with('success', "Acción {$acpm->codigo} creada en ACPM.");
+    }
+
     public function destroy(PesvSiniestro $siniestro): RedirectResponse
     {
         $siniestro->delete();
@@ -113,6 +152,8 @@ class PesvSiniestroController extends Controller
     /** @return array<string, mixed> */
     private function validated(Request $request): array
     {
+        $request->mergeIfMissing(['tipo_desplazamiento' => 'laboral']);
+
         return $request->validate([
             'fecha' => ['required', 'date'],
             'hora' => ['nullable', 'date_format:H:i'],
@@ -129,6 +170,16 @@ class PesvSiniestroController extends Controller
             'dias_incapacidad' => ['nullable', 'integer', 'min:0'],
             'costo' => ['nullable', 'numeric', 'min:0'],
             'investigado' => ['boolean'],
+            'tipo_desplazamiento' => ['required', Rule::in(array_keys(PesvSiniestro::DESPLAZAMIENTOS))],
+            'nivel_perdida' => ['nullable', 'integer', Rule::in(array_keys(PesvSiniestro::NIVELES_PERDIDA))],
+            'costo_directo' => ['nullable', 'numeric', 'min:0'],
+            'costo_indirecto' => ['nullable', 'numeric', 'min:0'],
+            'fecha_investigacion' => ['nullable', 'date', 'after_or_equal:fecha', 'before_or_equal:today'],
+            'equipo_investigador' => ['nullable', 'string', 'max:2000'],
+            'causas_inmediatas' => ['nullable', 'string', 'max:5000'],
+            'causas_basicas' => ['nullable', 'string', 'max:5000'],
+            'leccion_aprendida' => ['nullable', 'string', 'max:5000'],
+            'leccion_divulgada' => ['boolean'],
             'acciones' => ['nullable', 'string'],
         ]);
     }

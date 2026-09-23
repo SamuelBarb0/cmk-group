@@ -60,6 +60,7 @@ const CLS_ESTADO: Record<Estado, string> = {
 const ETIQUETA_ORIGEN: Record<string, string> = {
     manual: 'Registro manual',
     accidente: 'Accidente de trabajo',
+    siniestro_vial: 'Siniestro vial (PESV)',
     reporte: 'Reporte de acto o condición',
     auditoria: 'Auditoría',
     inspeccion: 'Inspección',
@@ -153,20 +154,13 @@ export default function AcpmIndex({ acciones, stats, catalogos, needsClient }: P
                 <StatCard label="Pendientes" value={stats.pendientes} icon={ClipboardList} />
                 <StatCard label="Vencidas" value={stats.vencidas} icon={CircleAlert} alerta={stats.vencidas > 0} />
                 {/* Cerrar no es resolver: esta cifra son las acciones que nadie verificó. */}
-                <StatCard
-                    label="Cerradas sin verificar"
-                    value={stats.sin_verificar}
-                    icon={ShieldQuestion}
-                    alerta={stats.sin_verificar > 0}
-                />
+                <StatCard label="Cerradas sin verificar" value={stats.sin_verificar} icon={ShieldQuestion} alerta={stats.sin_verificar > 0} />
             </div>
 
             <Card>
                 <CardContent className="p-0">
                     {acciones.length === 0 ? (
-                        <p className="text-muted-foreground p-8 text-center text-sm">
-                            Todavía no hay acciones registradas.
-                        </p>
+                        <p className="text-muted-foreground p-8 text-center text-sm">Todavía no hay acciones registradas.</p>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm">
@@ -188,12 +182,10 @@ export default function AcpmIndex({ acciones, stats, catalogos, needsClient }: P
                                             <td className="px-4 py-2.5 capitalize">{a.tipo}</td>
                                             <td className="max-w-md px-4 py-2.5">
                                                 <div className="truncate">{a.hallazgo}</div>
-                                                <div className="text-muted-foreground text-xs">
-                                                    {ETIQUETA_ORIGEN[a.origen_tipo] ?? a.origen_tipo}
-                                                </div>
+                                                <div className="text-muted-foreground text-xs">{ETIQUETA_ORIGEN[a.origen_tipo] ?? a.origen_tipo}</div>
                                             </td>
                                             <td className="px-4 py-2.5">{a.responsable}</td>
-                                            <td className="px-4 py-2.5 tabular-nums whitespace-nowrap">
+                                            <td className="px-4 py-2.5 whitespace-nowrap tabular-nums">
                                                 {a.fecha_limite}
                                                 {/* El plazo solo se muestra mientras signifique algo: una
                                                     acción cerrada ya no tiene cuenta atrás. */}
@@ -208,15 +200,11 @@ export default function AcpmIndex({ acciones, stats, catalogos, needsClient }: P
                                                 ) : null}
                                             </td>
                                             <td className="px-4 py-2.5">
-                                                <Badge className={cn('font-normal', CLS_ESTADO[a.estado])}>
-                                                    {ETIQUETA_ESTADO[a.estado]}
-                                                </Badge>
+                                                <Badge className={cn('font-normal', CLS_ESTADO[a.estado])}>{ETIQUETA_ESTADO[a.estado]}</Badge>
                                                 {a.estado === 'cerrada' && a.eficaz === null && (
                                                     <span className="text-muted-foreground block text-xs">sin verificar</span>
                                                 )}
-                                                {a.eficaz === false && (
-                                                    <span className="text-destructive block text-xs">no fue eficaz</span>
-                                                )}
+                                                {a.eficaz === false && <span className="text-destructive block text-xs">no fue eficaz</span>}
                                             </td>
                                             {canManage && (
                                                 <td className="px-4 py-2.5">
@@ -243,9 +231,7 @@ export default function AcpmIndex({ acciones, stats, catalogos, needsClient }: P
                 <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
                     <DialogHeader>
                         <DialogTitle>{editing ? `Acción ${editing.codigo}` : 'Nueva acción'}</DialogTitle>
-                        <DialogDescription>
-                            El código se asigna solo, consecutivo por empresa.
-                        </DialogDescription>
+                        <DialogDescription>El código se asigna solo, consecutivo por empresa.</DialogDescription>
                     </DialogHeader>
 
                     <form onSubmit={submit} className="space-y-4">
