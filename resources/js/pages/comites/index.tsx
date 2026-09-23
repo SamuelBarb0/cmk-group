@@ -1,6 +1,5 @@
 import InputError from '@/components/input-error';
 import { ModuloPage, StatCard } from '@/components/modulo-page';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -8,7 +7,6 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
-import { cn } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
 import { CalendarX, Percent, Pencil, Plus, Scale, Trash2, UsersRound } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
