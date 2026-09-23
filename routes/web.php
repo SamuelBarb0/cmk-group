@@ -14,6 +14,7 @@ use App\Http\Controllers\DocumentoEmpresaController;
 use App\Http\Controllers\DocumentTemplateController;
 use App\Http\Controllers\EmergencyController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\EncuestaPublicaController;
 use App\Http\Controllers\FormatoController;
 use App\Http\Controllers\FormFormatController;
 use App\Http\Controllers\ImportacionController;
@@ -28,7 +29,9 @@ use App\Http\Controllers\PesvConductorController;
 use App\Http\Controllers\PesvContractorController;
 use App\Http\Controllers\PesvController;
 use App\Http\Controllers\PesvDocumentosController;
+use App\Http\Controllers\PesvEncuestaController;
 use App\Http\Controllers\PesvInfraccionController;
+use App\Http\Controllers\PesvRiesgoVialController;
 use App\Http\Controllers\PesvRouteController;
 use App\Http\Controllers\PesvSedeController;
 use App\Http\Controllers\PesvSiniestroController;
@@ -51,6 +54,13 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
+
+// Encuesta de movilidad del PESV respondida por el trabajador, sin cuenta: el
+// token del enlace identifica a la empresa (ver EncuestaPublicaController).
+Route::get('encuesta-movilidad/{token}', [EncuestaPublicaController::class, 'show'])
+    ->middleware('throttle:60,1')->name('encuesta.movilidad');
+Route::post('encuesta-movilidad/{token}', [EncuestaPublicaController::class, 'store'])
+    ->middleware('throttle:10,1')->name('encuesta.movilidad.store');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
@@ -146,6 +156,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('pesv/conductores/{empleado}', [PesvConductorController::class, 'show'])->name('pesv.conductores.show');
         Route::get('pesv/vehiculos/{vehiculo}', [PesvVehiculoFichaController::class, 'show'])->name('pesv.vehiculos.show');
         Route::get('pesv/documentos', [PesvDocumentosController::class, 'index'])->name('pesv.documentos.index');
+        // Pasos 5 y 6: encuesta de movilidad y matriz de riesgos viales.
+        Route::get('pesv/encuesta', [PesvEncuestaController::class, 'index'])->name('pesv.encuesta.index');
+        Route::get('pesv/riesgos-viales', [PesvRiesgoVialController::class, 'index'])->name('pesv.riesgos.index');
         Route::get('pesv/infracciones', [PesvInfraccionController::class, 'index'])->name('pesv.infracciones.index');
     });
 
@@ -167,6 +180,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('pesv/infracciones', [PesvInfraccionController::class, 'store'])->name('pesv.infracciones.store');
         Route::put('pesv/infracciones/{infraccion}', [PesvInfraccionController::class, 'update'])->name('pesv.infracciones.update');
         Route::delete('pesv/infracciones/{infraccion}', [PesvInfraccionController::class, 'destroy'])->name('pesv.infracciones.destroy');
+        Route::post('pesv/encuesta/enlace', [PesvEncuestaController::class, 'enlace'])->name('pesv.encuesta.enlace');
+        Route::patch('pesv/encuesta/enlace', [PesvEncuestaController::class, 'alternarEnlace'])->name('pesv.encuesta.alternar');
+        Route::post('pesv/encuesta/respuestas', [PesvEncuestaController::class, 'responder'])->name('pesv.encuesta.responder');
+        Route::delete('pesv/encuesta/respuestas/{respuesta}', [PesvEncuestaController::class, 'borrar'])->name('pesv.encuesta.borrar');
+        Route::put('pesv/encuesta/analisis', [PesvEncuestaController::class, 'analisis'])->name('pesv.encuesta.analisis');
+        Route::post('pesv/riesgos-viales', [PesvRiesgoVialController::class, 'store'])->name('pesv.riesgos.store');
+        Route::put('pesv/riesgos-viales/{riesgo}', [PesvRiesgoVialController::class, 'update'])->name('pesv.riesgos.update');
+        Route::delete('pesv/riesgos-viales/{riesgo}', [PesvRiesgoVialController::class, 'destroy'])->name('pesv.riesgos.destroy');
 
         Route::post('pesv/sedes', [PesvSedeController::class, 'store'])->name('pesv.sedes.store');
         Route::put('pesv/sedes/{sede}', [PesvSedeController::class, 'update'])->name('pesv.sedes.update');

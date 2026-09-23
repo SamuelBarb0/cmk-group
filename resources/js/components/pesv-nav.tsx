@@ -25,6 +25,8 @@ const CARACTERIZACION = [
     { title: 'Vehículos', url: '/pesv/vehiculos' },
     { title: 'Rutas', url: '/pesv/rutas' },
     { title: 'Siniestros viales', url: '/pesv/siniestros' },
+    { title: 'Encuesta de movilidad', url: '/pesv/encuesta' },
+    { title: 'Matriz de riesgos viales', url: '/pesv/riesgos-viales' },
     { title: 'Semáforo de documentos', url: '/pesv/documentos' },
     { title: 'Infracciones de tránsito', url: '/pesv/infracciones' },
 ];
