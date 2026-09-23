@@ -17,6 +17,7 @@ use App\Http\Controllers\FormatoController;
 use App\Http\Controllers\IndicatorController;
 use App\Http\Controllers\IpercController;
 use App\Http\Controllers\LegalRequirementController;
+use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\OccupationalHealthController;
 use App\Http\Controllers\OrganizacionController;
 use App\Http\Controllers\PesvColaboradorController;
@@ -305,6 +306,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.manage', 'module:programas'])->name('programas.destroy');
     Route::post('programas/{programa}/renovar', [ProgramaGestionController::class, 'renovar'])
         ->middleware(['permission:sst.manage', 'module:programas'])->name('programas.renovar');
+
+    /*
+    | Mantenimiento de activos: inventario, plan por activo (cada N dias, km u
+    | horas) y registro de lo realizado (PASO 17 del PESV, estandar 4.2.5). Los
+    | items del plan cuelgan del activo y no tienen rutas propias.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::get('mantenimiento', [MaintenanceController::class, 'index'])
+        ->middleware(['permission:sst.view', 'module:mantenimiento'])->name('mantenimiento.index');
+    // Antes que la ruta con {activo}: si no, «importar-vehiculos» se tomaria por un id.
+    Route::post('mantenimiento/activos/importar-vehiculos', [MaintenanceController::class, 'importarVehiculos'])
+        ->middleware(['permission:sst.manage', 'module:mantenimiento'])->name('mantenimiento.activos.importar');
+    Route::post('mantenimiento/activos', [MaintenanceController::class, 'storeAsset'])
+        ->middleware(['permission:sst.manage', 'module:mantenimiento'])->name('mantenimiento.activos.store');
+    Route::put('mantenimiento/activos/{activo}', [MaintenanceController::class, 'updateAsset'])
+        ->middleware(['permission:sst.manage', 'module:mantenimiento'])->name('mantenimiento.activos.update');
+    Route::delete('mantenimiento/activos/{activo}', [MaintenanceController::class, 'destroyAsset'])
+        ->middleware(['permission:sst.manage', 'module:mantenimiento'])->name('mantenimiento.activos.destroy');
+    Route::post('mantenimiento/registros', [MaintenanceController::class, 'storeRecord'])
+        ->middleware(['permission:sst.manage', 'module:mantenimiento'])->name('mantenimiento.registros.store');
+    Route::put('mantenimiento/registros/{registro}', [MaintenanceController::class, 'updateRecord'])
+        ->middleware(['permission:sst.manage', 'module:mantenimiento'])->name('mantenimiento.registros.update');
+    Route::delete('mantenimiento/registros/{registro}', [MaintenanceController::class, 'destroyRecord'])
+        ->middleware(['permission:sst.manage', 'module:mantenimiento'])->name('mantenimiento.registros.destroy');
 
     /*
     | Gestion del cambio (estandar 2.11.1, ISO 45001 8.1.3): solicitud, doble

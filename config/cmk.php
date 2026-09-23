@@ -113,6 +113,7 @@ return [
         'emergencias' => 'Plan de emergencias y brigada',
         'salud-ocupacional' => 'Salud ocupacional (profesiograma y exámenes médicos)',
         'programas' => 'Programas de gestión (PVE, alcohol, fatiga, seguridad vial, ambiental)',
+        'mantenimiento' => 'Mantenimiento de activos (máquinas, equipos, instalaciones y vehículos)',
         'gestion-cambio' => 'Gestión del cambio',
     ],
 ];

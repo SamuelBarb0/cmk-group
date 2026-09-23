@@ -74,7 +74,7 @@ class ProgramasGestionTest extends TestCase
 
     public function test_el_catalogo_sembrado_es_coherente(): void
     {
-        $this->assertSame(8, ManagementProgram::count());
+        $this->assertSame(9, ManagementProgram::count());
 
         foreach (ManagementProgram::all() as $p) {
             $this->assertNotEmpty($p->actividades, $p->codigo);
@@ -95,7 +95,7 @@ class ProgramasGestionTest extends TestCase
 
         // Idempotente: volver a sembrar no duplica.
         $this->seed(ManagementProgramsSeeder::class);
-        $this->assertSame(8, ManagementProgram::count());
+        $this->assertSame(9, ManagementProgram::count());
     }
 
     public function test_la_pantalla_carga_con_y_sin_cliente(): void
@@ -103,7 +103,7 @@ class ProgramasGestionTest extends TestCase
         $this->comoConsultor()->get('/programas?anio=2026')->assertOk()
             ->assertInertia(fn ($p) => $p->component('programas/index')
                 ->where('needsClient', false)
-                ->has('catalogo', 8)
+                ->has('catalogo', 9)
                 ->has('programas', 0));
 
         $this->flushSession();
