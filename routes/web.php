@@ -35,6 +35,7 @@ use App\Http\Controllers\ProgramaGestionController;
 use App\Http\Controllers\SafetyReportController;
 use App\Http\Controllers\SstDiagnosticController;
 use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\TrainingTopicController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\WorkAccidentController;
 use App\Http\Controllers\WorkPlanController;
@@ -512,6 +513,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.view', 'module:capacitaciones'])->name('capacitaciones.index');
     Route::get('capacitaciones/tema/{tema}/material', [TrainingController::class, 'material'])
         ->middleware(['permission:sst.view', 'module:capacitaciones'])->name('capacitaciones.material');
+    // Biblioteca global de temas y su material (solo el administrador de CMK;
+    // el rol se valida en el controlador). ANTES de capacitaciones/{capacitacion}.
+    Route::prefix('capacitaciones/temas')->name('capacitaciones.temas.')
+        ->middleware('permission:sst.view')
+        ->controller(TrainingTopicController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::post('{tema}', 'update')->name('update');
+            Route::patch('{tema}/activo', 'toggle')->name('toggle');
+        });
     Route::get('capacitaciones/{capacitacion}', [TrainingController::class, 'show'])
         ->middleware(['permission:sst.view', 'module:capacitaciones'])->name('capacitaciones.show');
     Route::post('capacitaciones', [TrainingController::class, 'store'])

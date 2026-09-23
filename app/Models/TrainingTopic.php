@@ -19,7 +19,14 @@ class TrainingTopic extends Model
         'duracion_sugerida',
         'orden',
         'activo',
+        'editado_at',
+        'editado_por',
     ];
+
+    public const CATEGORIAS = ['SST', 'PESV', 'HSEQ'];
+
+    /** Formatos de material aceptados al cargar desde la plataforma. */
+    public const EXTENSIONES = ['pptx', 'ppt', 'pdf', 'docx', 'doc', 'xlsx', 'mp4'];
 
     protected function casts(): array
     {
@@ -27,6 +34,7 @@ class TrainingTopic extends Model
             'duracion_sugerida' => 'integer',
             'orden' => 'integer',
             'activo' => 'boolean',
+            'editado_at' => 'datetime',
         ];
     }
 
