@@ -15,6 +15,7 @@ use App\Http\Controllers\DocumentTemplateController;
 use App\Http\Controllers\EmergencyController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\FormatoController;
+use App\Http\Controllers\ImportacionController;
 use App\Http\Controllers\IndicatorController;
 use App\Http\Controllers\IpercController;
 use App\Http\Controllers\LegalRequirementController;
@@ -354,6 +355,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.manage', 'module:contratistas'])->name('contratistas.destroy');
     Route::post('contratistas/{contratista}/evaluaciones', [ContratistaController::class, 'storeEvaluacion'])
         ->middleware(['permission:sst.manage', 'module:contratistas'])->name('contratistas.evaluaciones.store');
+
+    /*
+    | Importacion asistida por IA: un Excel del cliente a un modulo. La IA
+    | propone el mapeo de columnas; los datos los transforma y valida el
+    | Aplicador con las reglas de cada modulo. Todo es carga masiva: sst.manage.
+    */
+    Route::get('importar', [ImportacionController::class, 'index'])
+        ->middleware(['permission:sst.manage', 'module:importar'])->name('importar.index');
+    Route::post('importar', [ImportacionController::class, 'store'])
+        ->middleware(['permission:sst.manage', 'module:importar'])->name('importar.store');
+    Route::get('importar/{importacion}', [ImportacionController::class, 'show'])
+        ->middleware(['permission:sst.manage', 'module:importar'])->name('importar.show');
+    Route::post('importar/{importacion}/mapear', [ImportacionController::class, 'mapear'])
+        ->middleware(['permission:sst.manage', 'module:importar'])->name('importar.mapear');
+    Route::put('importar/{importacion}/mapeo', [ImportacionController::class, 'actualizar'])
+        ->middleware(['permission:sst.manage', 'module:importar'])->name('importar.mapeo');
+    Route::post('importar/{importacion}/aplicar', [ImportacionController::class, 'aplicar'])
+        ->middleware(['permission:sst.manage', 'module:importar'])->name('importar.aplicar');
+    Route::post('importar/{importacion}/deshacer', [ImportacionController::class, 'deshacer'])
+        ->middleware(['permission:sst.manage', 'module:importar'])->name('importar.deshacer');
+    Route::delete('importar/{importacion}', [ImportacionController::class, 'destroy'])
+        ->middleware(['permission:sst.manage', 'module:importar'])->name('importar.destroy');
 
     /*
     | Gestion del cambio (estandar 2.11.1, ISO 45001 8.1.3): solicitud, doble

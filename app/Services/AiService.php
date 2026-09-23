@@ -72,6 +72,50 @@ class AiService
     }
 
     /**
+     * Obliga a Claude a responder llamando a UNA herramienta y devuelve su
+     * `input` ya decodificado: la forma de pedir datos estructurados en vez de
+     * prosa. Con tool_choice forzado la API no admite thinking, así que no se
+     * pide; la profundidad va por `effort`.
+     *
+     * @param  array<string,mixed>  $herramienta  Definición (name, description, input_schema, strict?).
+     * @return array<string,mixed>
+     */
+    public function herramienta(string $system, string $prompt, array $herramienta, int $maxTokens = 8000, string $effort = 'medium'): array
+    {
+        $response = $this->request()->post($this->endpoint(), [
+            'model' => config('ai.anthropic.model'),
+            'max_tokens' => $maxTokens,
+            'system' => $system,
+            'output_config' => ['effort' => $effort],
+            'tools' => [$herramienta],
+            'tool_choice' => ['type' => 'tool', 'name' => $herramienta['name']],
+            'messages' => [['role' => 'user', 'content' => $prompt]],
+        ]);
+
+        if ($response->failed()) {
+            throw new RuntimeException($this->mensajeDeError(
+                $response->status(),
+                $response->json('error.message') ?? $response->body()
+            ));
+        }
+
+        $data = $response->json();
+        if (($data['stop_reason'] ?? null) === 'refusal') {
+            throw new RuntimeException('Claude rechazó la solicitud por políticas de seguridad.');
+        }
+        if (($data['stop_reason'] ?? null) === 'max_tokens') {
+            throw new RuntimeException('La respuesta de Claude se cortó por longitud (max_tokens).');
+        }
+
+        $bloque = collect($data['content'] ?? [])->firstWhere('type', 'tool_use');
+        if (! is_array($bloque) || ! is_array($bloque['input'] ?? null)) {
+            throw new RuntimeException('Claude no devolvió la herramienta pedida.');
+        }
+
+        return $bloque['input'];
+    }
+
+    /**
      * Llamada en STREAMING a la Messages API.
      *
      * Invoca $onEvent con cada evento SSE ya decodificado (para ir empujando

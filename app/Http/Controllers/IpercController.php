@@ -80,7 +80,18 @@ class IpercController extends Controller
 
     private function validated(Request $request): array
     {
-        return $request->validate([
+        return $request->validate(self::reglas());
+    }
+
+    /**
+     * Reglas del formulario. Públicas y estáticas porque la importación
+     * asistida valida cada fila con ESTAS mismas reglas.
+     *
+     * @return array<string, mixed>
+     */
+    public static function reglas(): array
+    {
+        return [
             'proceso' => ['required', 'string', 'max:255'],
             'zona' => ['nullable', 'string', 'max:255'],
             'actividad' => ['required', 'string', 'max:255'],
@@ -110,6 +121,6 @@ class IpercController extends Controller
             // no perder lo que los consultores ya escribieron ahí.
             'medidas' => ['nullable', 'string', 'max:1000'],
             'expuestos' => ['nullable', 'integer', 'min:0'],
-        ]);
+        ];
     }
 }

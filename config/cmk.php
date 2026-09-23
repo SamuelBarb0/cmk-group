@@ -115,6 +115,7 @@ return [
         'programas' => 'Programas de gestión (PVE, alcohol, fatiga, seguridad vial, ambiental)',
         'mantenimiento' => 'Mantenimiento de activos (máquinas, equipos, instalaciones y vehículos)',
         'contratistas' => 'Contratistas y proveedores (selección, requisitos SST y evaluación)',
+        'importar' => 'Importación asistida por IA (Excel del cliente a los módulos)',
         'gestion-cambio' => 'Gestión del cambio',
     ],
 ];
