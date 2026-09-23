@@ -161,7 +161,13 @@ export default function PesvColaboradores({ needsClient, colaboradores, stats, c
                                         {lista.map((c) => (
                                             <tr key={c.id}>
                                                 <td className="p-3">
-                                                    <div className="font-medium">{c.nombre_completo}</div>
+                                                    {c.es_conductor ? (
+                                                        <Link href={`/pesv/conductores/${c.id}`} className="font-medium hover:underline">
+                                                            {c.nombre_completo}
+                                                        </Link>
+                                                    ) : (
+                                                        <div className="font-medium">{c.nombre_completo}</div>
+                                                    )}
                                                     <div className="text-muted-foreground text-xs">C.C. {c.numero_documento}</div>
                                                 </td>
                                                 <td className="p-3">
@@ -203,9 +209,7 @@ export default function PesvColaboradores({ needsClient, colaboradores, stats, c
                                                                     key={a.documento}
                                                                     variant="secondary"
                                                                     className={cn(
-                                                                        a.dias < 0
-                                                                            ? 'bg-red-600/15 text-red-700'
-                                                                            : 'bg-amber-500/15 text-amber-700',
+                                                                        a.dias < 0 ? 'bg-red-600/15 text-red-700' : 'bg-amber-500/15 text-amber-700',
                                                                     )}
                                                                 >
                                                                     {a.documento} {textoVencimiento(a.dias)}
@@ -240,10 +244,7 @@ export default function PesvColaboradores({ needsClient, colaboradores, stats, c
 
                         <div className="grid gap-4 py-4">
                             <label className="flex items-center gap-2 text-sm">
-                                <Checkbox
-                                    checked={data.es_conductor}
-                                    onCheckedChange={(v) => setData('es_conductor', v === true)}
-                                />
+                                <Checkbox checked={data.es_conductor} onCheckedChange={(v) => setData('es_conductor', v === true)} />
                                 Este colaborador conduce vehículos de la empresa
                             </label>
 

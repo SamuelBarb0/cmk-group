@@ -15,6 +15,7 @@ use App\Models\IpercRow;
 use App\Models\LegalRequirement;
 use App\Models\MaintenanceRecord;
 use App\Models\MedicalExam;
+use App\Models\PesvInfraction;
 use App\Models\PesvSiniestro;
 use App\Models\PesvVehicle;
 use App\Models\PpeDelivery;
@@ -326,6 +327,18 @@ class Exportaciones
                     'Lesionados' => fn ($s) => $s->lesionados, 'Fallecidos' => fn ($s) => $s->fallecidos,
                     'Días de incapacidad' => fn ($s) => $s->dias_incapacidad, 'Costo' => fn ($s) => $s->costo !== null ? (float) $s->costo : null,
                     'Causa probable' => fn ($s) => $s->causa_probable, 'Investigado' => fn ($s) => $s->investigado,
+                ],
+            ],
+            [
+                'clave' => 'infracciones', 'titulo' => 'Infracciones de tránsito', 'grupo' => 'Seguridad vial',
+                'descripcion' => 'Comparendos de los conductores, con código, valor y estado.',
+                'modulo' => 'pesv', 'permiso' => 'pesv.view', 'fecha' => 'fecha',
+                'consulta' => fn () => PesvInfraction::with([$empleado, 'vehiculo:id,placa'])->orderBy('fecha'),
+                'columnas' => [
+                    'Fecha' => fn ($i) => $i->fecha, 'Conductor' => $persona, 'Documento' => $documento,
+                    'Código' => fn ($i) => $i->codigo, 'Descripción' => fn ($i) => $i->descripcion, 'Vehículo' => fn ($i) => $i->vehiculo?->placa,
+                    'Valor' => fn ($i) => $i->valor !== null ? (float) $i->valor : null, 'Estado' => fn ($i) => $i->estado,
+                    'Registrada en SIMIT' => fn ($i) => $i->registrada_simit, 'Acciones' => fn ($i) => $i->acciones,
                 ],
             ],
             [

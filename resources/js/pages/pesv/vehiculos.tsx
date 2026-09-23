@@ -11,7 +11,7 @@ import { usePermissions } from '@/hooks/use-permissions';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Head, router, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { Car, Pencil, Plus, Trash2, TriangleAlert } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
 
@@ -181,11 +181,13 @@ export default function PesvVehiculos({ needsClient, vehiculos, stats, tipos, pr
                                     <tbody className="divide-border divide-y">
                                         {vehiculos.map((v) => (
                                             <tr key={v.id} className={cn(!v.is_active && 'opacity-50')}>
-                                                <td className="p-3 font-medium tabular-nums">{v.placa}</td>
-                                                <td className="p-3 capitalize">{v.tipo}</td>
-                                                <td className="p-3">
-                                                    {[v.marca, v.linea, v.modelo].filter(Boolean).join(' ') || '—'}
+                                                <td className="p-3 font-medium tabular-nums">
+                                                    <Link href={`/pesv/vehiculos/${v.id}`} className="hover:underline">
+                                                        {v.placa}
+                                                    </Link>
                                                 </td>
+                                                <td className="p-3 capitalize">{v.tipo}</td>
+                                                <td className="p-3">{[v.marca, v.linea, v.modelo].filter(Boolean).join(' ') || '—'}</td>
                                                 <td className="p-3 capitalize">{v.propiedad}</td>
                                                 <td className="p-3">
                                                     {v.alertas.length === 0 ? (
@@ -197,9 +199,7 @@ export default function PesvVehiculos({ needsClient, vehiculos, stats, tipos, pr
                                                                     key={a.documento}
                                                                     variant="secondary"
                                                                     className={cn(
-                                                                        a.dias < 0
-                                                                            ? 'bg-red-600/15 text-red-700'
-                                                                            : 'bg-amber-500/15 text-amber-700',
+                                                                        a.dias < 0 ? 'bg-red-600/15 text-red-700' : 'bg-amber-500/15 text-amber-700',
                                                                     )}
                                                                 >
                                                                     {a.documento} {textoVencimiento(a.dias)}
@@ -216,9 +216,7 @@ export default function PesvVehiculos({ needsClient, vehiculos, stats, tipos, pr
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            onClick={() =>
-                                                                router.delete(`/pesv/vehiculos/${v.id}`, { preserveScroll: true })
-                                                            }
+                                                            onClick={() => router.delete(`/pesv/vehiculos/${v.id}`, { preserveScroll: true })}
                                                         >
                                                             <Trash2 className="size-4 text-red-600" />
                                                         </Button>
@@ -288,22 +286,13 @@ export default function PesvVehiculos({ needsClient, vehiculos, stats, tipos, pr
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="modelo">Modelo (año)</Label>
-                                <Input
-                                    id="modelo"
-                                    type="number"
-                                    value={data.modelo}
-                                    onChange={(e) => setData('modelo', e.target.value)}
-                                />
+                                <Input id="modelo" type="number" value={data.modelo} onChange={(e) => setData('modelo', e.target.value)} />
                                 <InputError message={errors.modelo} />
                             </div>
 
                             <div className="grid gap-2 md:col-span-2">
                                 <Label htmlFor="propietario">Propietario</Label>
-                                <Input
-                                    id="propietario"
-                                    value={data.propietario}
-                                    onChange={(e) => setData('propietario', e.target.value)}
-                                />
+                                <Input id="propietario" value={data.propietario} onChange={(e) => setData('propietario', e.target.value)} />
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="kilometraje">Kilometraje</Label>
@@ -317,12 +306,7 @@ export default function PesvVehiculos({ needsClient, vehiculos, stats, tipos, pr
 
                             <div className="grid gap-2">
                                 <Label htmlFor="soat_vence">SOAT vence</Label>
-                                <Input
-                                    id="soat_vence"
-                                    type="date"
-                                    value={data.soat_vence}
-                                    onChange={(e) => setData('soat_vence', e.target.value)}
-                                />
+                                <Input id="soat_vence" type="date" value={data.soat_vence} onChange={(e) => setData('soat_vence', e.target.value)} />
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="tecnomecanica_vence">Tecnomecánica vence</Label>
