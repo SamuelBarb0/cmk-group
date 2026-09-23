@@ -27,6 +27,7 @@ use App\Http\Controllers\PesvSedeController;
 use App\Http\Controllers\PesvSiniestroController;
 use App\Http\Controllers\PesvVehicleController;
 use App\Http\Controllers\PpeController;
+use App\Http\Controllers\ProgramaGestionController;
 use App\Http\Controllers\SafetyReportController;
 use App\Http\Controllers\SstDiagnosticController;
 use App\Http\Controllers\TrainingController;
@@ -285,6 +286,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.manage', 'module:salud-ocupacional'])->name('salud-ocupacional.perfiles.update');
     Route::delete('salud-ocupacional/profesiograma/{perfil}', [OccupationalHealthController::class, 'destroyPerfil'])
         ->middleware(['permission:sst.manage', 'module:salud-ocupacional'])->name('salud-ocupacional.perfiles.destroy');
+    | Programas de gestion: PVE, alcohol y SPA, fatiga, velocidad, distraccion,
+    | actores viales y ambiental (estandar 4.2.1 de la Res. 0312). Las
+    | actividades e indicadores cuelgan del programa y no tienen rutas propias.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::get('programas', [ProgramaGestionController::class, 'index'])
+        ->middleware(['permission:sst.view', 'module:programas'])->name('programas.index');
+    Route::post('programas', [ProgramaGestionController::class, 'store'])
+        ->middleware(['permission:sst.manage', 'module:programas'])->name('programas.store');
+    Route::get('programas/{programa}', [ProgramaGestionController::class, 'show'])
+        ->middleware(['permission:sst.view', 'module:programas'])->name('programas.show');
+    Route::put('programas/{programa}', [ProgramaGestionController::class, 'update'])
+        ->middleware(['permission:sst.manage', 'module:programas'])->name('programas.update');
+    Route::delete('programas/{programa}', [ProgramaGestionController::class, 'destroy'])
+        ->middleware(['permission:sst.manage', 'module:programas'])->name('programas.destroy');
+    Route::post('programas/{programa}/renovar', [ProgramaGestionController::class, 'renovar'])
+        ->middleware(['permission:sst.manage', 'module:programas'])->name('programas.renovar');
     | Gestion del cambio (estandar 2.11.1, ISO 45001 8.1.3): solicitud, doble
     | aprobacion (Gerencia y SG-SST), plan de accion y cierre.
     | Ver -> sst.view | Gestionar -> sst.manage

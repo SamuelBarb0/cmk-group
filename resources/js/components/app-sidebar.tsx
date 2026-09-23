@@ -36,6 +36,7 @@ import {
     Siren,
     Sparkles,
     Stethoscope,
+    Target,
     TriangleAlert,
     Users,
     UsersRound,
@@ -78,6 +79,7 @@ const navGroups: { label: string; items: NavEntry[] }[] = [
             { title: 'EPP', url: '/epp', icon: HardHat, permission: 'sst.view', module: 'epp' },
             { title: 'Emergencias', url: '/emergencias', icon: Flame, permission: 'sst.view', module: 'emergencias' },
             { title: 'Salud ocupacional', url: '/salud-ocupacional', icon: Stethoscope, permission: 'sst.view', module: 'salud-ocupacional' },
+            { title: 'Programas de gestión', url: '/programas', icon: Target, permission: 'sst.view', module: 'programas' },
         ],
     },
     {
