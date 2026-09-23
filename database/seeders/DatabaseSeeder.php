@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
         $this->call(FormFormatsSeeder::class);           // motor de formatos (inspecciones/actas)
         $this->call(TrainingTopicsSeeder::class);        // biblioteca de capacitaciones
         $this->call(PesvStepsSeeder::class);             // 24 pasos del PESV Res. 40595
+        $this->call(ManagementProgramsSeeder::class);    // programas de gestión (PVE, fatiga, velocidad…)
 
         // --- Personal de CMK GROUP (sin tenant, acceso multi-cliente) ---
         $admin = User::factory()->create([
