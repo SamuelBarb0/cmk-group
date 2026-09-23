@@ -11,7 +11,7 @@ import { usePermissions } from '@/hooks/use-permissions';
 import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Head, router, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { Milestone, Pencil, Plus, Route, Trash2, TriangleAlert } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
 
@@ -177,24 +177,20 @@ export default function PesvRutas({ needsClient, rutas, stats, nivelesRiesgo, ti
                                             <tr key={r.id} className={cn(!r.is_active && 'opacity-50')}>
                                                 <td className="p-3">
                                                     <div className="font-medium">{r.nombre}</div>
-                                                    {r.peligros && (
-                                                        <div className="text-muted-foreground line-clamp-1 text-xs">{r.peligros}</div>
-                                                    )}
+                                                    <Link href={`/pesv/rutas/${r.id}/plan`} className="text-primary text-xs hover:underline">
+                                                        Plan de desplazamiento
+                                                    </Link>
+                                                    {r.peligros && <div className="text-muted-foreground line-clamp-1 text-xs">{r.peligros}</div>}
                                                 </td>
                                                 <td className="p-3">
                                                     {r.origen && r.destino ? `${r.origen} → ${r.destino}` : '—'}
-                                                    {r.distancia_km && (
-                                                        <div className="text-muted-foreground text-xs">{r.distancia_km} km</div>
-                                                    )}
+                                                    {r.distancia_km && <div className="text-muted-foreground text-xs">{r.distancia_km} km</div>}
                                                 </td>
                                                 <td className="p-3 capitalize">{r.tipo_via ?? '—'}</td>
                                                 <td className="p-3 capitalize">{r.frecuencia ?? '—'}</td>
                                                 <td className="p-3">
                                                     {r.nivel_riesgo ? (
-                                                        <Badge
-                                                            variant="secondary"
-                                                            className={cn('capitalize', RIESGO_CLASS[r.nivel_riesgo])}
-                                                        >
+                                                        <Badge variant="secondary" className={cn('capitalize', RIESGO_CLASS[r.nivel_riesgo])}>
                                                             {r.nivel_riesgo}
                                                         </Badge>
                                                     ) : (

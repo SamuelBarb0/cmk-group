@@ -14,6 +14,8 @@ use App\Models\PesvContractor;
 use App\Models\PesvDriverCheck;
 use App\Models\PesvDriverTest;
 use App\Models\PesvInfraction;
+use App\Models\PesvInternalRoad;
+use App\Models\PesvKmPeriodo;
 use App\Models\PesvMobilitySurvey;
 use App\Models\PesvRoadRisk;
 use App\Models\PesvRoute;
@@ -25,6 +27,7 @@ use App\Models\ProgramPlan;
 use App\Models\Tenant;
 use App\Models\Training;
 use App\Models\WorkPlan;
+use App\Support\Pesv\PlanDesplazamiento;
 use App\Support\Pesv\SemaforoDocumentos;
 
 /**
@@ -80,9 +83,10 @@ class PesvFeed
             8 => $this->programasCriticos(),
             9 => $this->planAnual(),
             10 => $this->formacion(),
-            14, 15 => $this->rutas(),
+            14 => [$this->viasInternas()],
+            15 => [...$this->rutas(), $this->planesDeDesplazamiento()],
             16 => $this->preoperacional(),
-            21 => $this->siniestralidad(),
+            21 => [...$this->siniestralidad(), $this->kilometrosRecorridos()],
             default => [],
         };
 
@@ -107,6 +111,7 @@ class PesvFeed
 
         if ($numero === 13) {
             $insumos[] = $this->siniestrosSinInvestigar();
+            $insumos[] = $this->leccionesDivulgadas();
         }
 
         if ($numero === 17) {
@@ -491,6 +496,91 @@ class PesvFeed
                 : "{$pendientes} siniestros registrados sin investigación cerrada.",
             'url' => '/pesv/siniestros',
             'cantidad' => $pendientes,
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function leccionesDivulgadas(): array
+    {
+        $investigados = PesvSiniestro::where('investigado', true)->count();
+        $divulgadas = PesvSiniestro::where('investigado', true)->where('leccion_divulgada', true)->count();
+
+        return [
+            'etiqueta' => 'Lecciones aprendidas divulgadas',
+            'estado' => $investigados === 0 ? 'falta' : ($divulgadas === $investigados ? 'ok' : 'parcial'),
+            'detalle' => $investigados === 0
+                ? 'Aún no hay siniestros investigados de los que sacar lecciones.'
+                : "{$divulgadas} de {$investigados} investigaciones con la lección aprendida divulgada.",
+            'url' => '/pesv/siniestros',
+            'cantidad' => $divulgadas,
+        ];
+    }
+
+    /**
+     * Paso 14: vías internas con su cronograma de mantenimiento al día.
+     *
+     * @return array<string, mixed>
+     */
+    private function viasInternas(): array
+    {
+        $anio = (int) now()->year;
+        $vias = PesvInternalRoad::where('activa', true)->get();
+        $programados = 0;
+        $ejecutados = 0;
+        foreach ($vias->where('anio_cronograma', $anio) as $via) {
+            $c = $via->cumplimiento((int) now()->month);
+            $programados += $c['programados'];
+            $ejecutados += $c['ejecutados'];
+        }
+        $inspecciones = FormRecord::where('codigo', 'FT-INS-VIAS')->whereYear('fecha', $anio)->count();
+
+        return [
+            'etiqueta' => 'Vías internas y su mantenimiento',
+            'estado' => $vias->isEmpty() ? 'falta' : ($programados > 0 && $ejecutados === $programados ? 'ok' : 'parcial'),
+            'detalle' => $vias->isEmpty()
+                ? 'Sin vías internas registradas. Si la empresa no las administra, el paso no aplica.'
+                : "{$vias->count()} vías activas; cronograma {$anio}: {$ejecutados} de {$programados} actividades ejecutadas a la fecha; {$inspecciones} inspecciones FT-INS-VIAS.",
+            'url' => '/pesv/vias-internas',
+            'cantidad' => $vias->count(),
+        ];
+    }
+
+    /**
+     * Paso 15: rutas activas con su plan de desplazamiento (RE-SST-69).
+     *
+     * @return array<string, mixed>
+     */
+    private function planesDeDesplazamiento(): array
+    {
+        $rutas = PesvRoute::where('is_active', true)->get(['id', 'plan']);
+        $completos = $rutas->filter(fn ($r) => PlanDesplazamiento::completo($r->plan))->count();
+
+        return [
+            'etiqueta' => 'Planes de desplazamiento',
+            'estado' => $completos === 0 ? 'falta' : ($completos === $rutas->count() ? 'ok' : 'parcial'),
+            'detalle' => "{$completos} de {$rutas->count()} rutas activas con horario, límites de velocidad y apoyo de emergencia.",
+            'url' => '/pesv/rutas',
+            'cantidad' => $completos,
+        ];
+    }
+
+    /**
+     * Paso 21: sin kilómetros de la flota no hay TSV.
+     *
+     * @return array<string, mixed>
+     */
+    private function kilometrosRecorridos(): array
+    {
+        $anio = (int) now()->year;
+        $trimestres = PesvKmPeriodo::where('anio', $anio)->where('km', '>', 0)->count();
+        $cerrados = intdiv((int) now()->month - 1, 3);
+
+        return [
+            'etiqueta' => 'Kilómetros de la flota por trimestre',
+            'estado' => $trimestres === 0 ? 'falta' : ($trimestres >= $cerrados ? 'ok' : 'parcial'),
+            'detalle' => "{$trimestres} trimestre(s) de {$anio} con kilómetros cargados; son la base de la tasa TSV (indicador 1).",
+            'url' => '/pesv/estadistica',
+            'cantidad' => $trimestres,
         ];
     }
 
