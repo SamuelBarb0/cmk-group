@@ -24,6 +24,9 @@ interface Paso {
     responsable: string | null;
     /** false = la norma no lo exige en el nivel del plan (no cuenta en el avance). */
     aplica: boolean;
+    /** Preguntas de la lista de verificación que aplican al nivel, y cuántas cumplen. */
+    criterios: number;
+    criterios_cumple: number;
 }
 
 interface Fase {
@@ -237,7 +240,8 @@ export default function PesvIndex({
                                 />
                             </div>
                             <p className="text-muted-foreground mt-2 text-xs">
-                                {resumen.cumple} de {resumen.total - resumen.no_aplica} pasos aplicables cumplidos
+                                {resumen.cumple} de {resumen.total - resumen.no_aplica} pasos aplicables cumplidos · el avance se mide sobre las
+                                preguntas de la lista de verificación
                                 {resumen.no_aplica > 0 ? ` · ${resumen.no_aplica} marcados como no aplica` : ''}
                                 {resumen.no_exigidos > 0 ? ` · ${resumen.no_exigidos} no exigidos en nivel ${nivelTexto.toLowerCase()}` : ''}
                             </p>
@@ -420,6 +424,11 @@ export default function PesvIndex({
                                             <div className="font-medium">
                                                 {paso.numero}. {paso.titulo}
                                             </div>
+                                            {paso.aplica && paso.criterios > 0 && (
+                                                <div className="text-muted-foreground text-xs">
+                                                    {paso.criterios_cumple} de {paso.criterios} preguntas cumplen
+                                                </div>
+                                            )}
                                             {paso.responsable && <div className="text-muted-foreground text-xs">{paso.responsable}</div>}
                                         </div>
                                         {paso.aplica ? (

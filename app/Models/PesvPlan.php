@@ -111,23 +111,67 @@ class PesvPlan extends Model
     }
 
     /**
-     * Cumplidos sobre los pasos que aplican.
+     * Preguntas de la lista de verificación (Tabla 16) en «cumple» sobre las
+     * que exige el nivel del plan, sin las «no aplica».
      *
-     * El denominador son los pasos del CATÁLOGO que la norma exige para el
-     * nivel del plan, no las filas guardadas: antes se dividía por las filas,
-     * y un plan recién creado con un solo paso en «cumple» marcaba 100 %.
+     * Se mide por PREGUNTA y no por paso: un paso con 5 preguntas y 4
+     * cumplidas no está en cero. El denominador son las preguntas del
+     * catálogo que aplican al nivel, no las respondidas: si no, un plan con
+     * una sola respuesta daría 100 %.
      */
     public function calcularAvance(): float
     {
-        $estados = $this->pasos()->pluck('estado', 'pesv_step_id');
-        $aplican = PesvStep::all()
-            ->filter(fn (PesvStep $s) => $s->aplicaA($this->nivel))
-            ->reject(fn (PesvStep $s) => ($estados[$s->id] ?? null) === 'no_aplica');
+        $estados = $this->criterios()->pluck('estado', 'pesv_criterion_id');
+        $aplican = PesvCriterion::all()
+            ->filter(fn (PesvCriterion $c) => $c->aplicaA($this->nivel))
+            ->reject(fn (PesvCriterion $c) => ($estados[$c->id] ?? null) === 'no_aplica');
 
         if ($aplican->isEmpty()) {
             return 0;
         }
 
-        return round($aplican->filter(fn (PesvStep $s) => ($estados[$s->id] ?? null) === 'cumple')->count() * 100 / $aplican->count(), 2);
+        return round($aplican->filter(fn (PesvCriterion $c) => ($estados[$c->id] ?? null) === 'cumple')->count() * 100 / $aplican->count(), 2);
+    }
+
+    /**
+     * Estado de un paso a partir de sus preguntas que aplican al nivel:
+     * ninguna verificada → pendiente; todas «no aplica» → no aplica; alguna
+     * «no cumple» → no cumple; todas cumplidas → cumple; si no, en proceso.
+     *
+     * @param  iterable<string>  $estados  estados de las preguntas que aplican
+     */
+    public static function estadoDelPaso(iterable $estados): string
+    {
+        $e = collect($estados);
+        $verificadas = $e->reject(fn ($x) => $x === 'no_verificado');
+
+        return match (true) {
+            $verificadas->isEmpty() => 'pendiente',
+            $e->every(fn ($x) => $x === 'no_aplica') => 'no_aplica',
+            $e->contains('no_cumple') => 'no_cumple',
+            $e->every(fn ($x) => in_array($x, ['cumple', 'no_aplica'], true)) => 'cumple',
+            default => 'en_proceso',
+        };
+    }
+
+    /** Recalcula y guarda el estado de un paso tras responder una de sus preguntas. */
+    public function sincronizarPaso(PesvStep $paso): string
+    {
+        $respuestas = $this->criterios()->pluck('estado', 'pesv_criterion_id');
+        $estado = self::estadoDelPaso(
+            PesvCriterion::where('pesv_step_id', $paso->id)->get()
+                ->filter(fn (PesvCriterion $c) => $c->aplicaA($this->nivel))
+                ->map(fn (PesvCriterion $c) => $respuestas[$c->id] ?? 'no_verificado'),
+        );
+
+        $this->pasos()->updateOrCreate(['pesv_step_id' => $paso->id], ['estado' => $estado]);
+
+        return $estado;
+    }
+
+    /** @return HasMany<PesvPlanCriterion, $this> */
+    public function criterios(): HasMany
+    {
+        return $this->hasMany(PesvPlanCriterion::class, 'pesv_plan_id');
     }
 }
