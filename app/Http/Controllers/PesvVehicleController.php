@@ -82,13 +82,24 @@ class PesvVehicleController extends Controller
     /** @return array<string, mixed> */
     private function validated(Request $request, ?int $ignorar = null): array
     {
-        return $request->validate([
+        return $request->validate(self::reglas($this->context->id(), $ignorar));
+    }
+
+    /**
+     * Reglas del formulario. Públicas y estáticas porque la importación
+     * asistida valida cada fila con ESTAS mismas reglas.
+     *
+     * @return array<string, mixed>
+     */
+    public static function reglas(?int $tenantId, ?int $ignorar = null): array
+    {
+        return [
             'placa' => [
                 'required', 'string', 'max:10',
                 // La placa es única dentro de la empresa, no globalmente: dos
                 // clientes distintos pueden tener el mismo vehículo tercerizado.
                 Rule::unique('pesv_vehicles')
-                    ->where('tenant_id', $this->context->id())
+                    ->where('tenant_id', $tenantId)
                     ->ignore($ignorar),
             ],
             'tipo' => ['required', Rule::in(PesvVehicle::TIPOS)],
@@ -105,6 +116,6 @@ class PesvVehicleController extends Controller
             'proximo_mantenimiento' => ['nullable', 'date'],
             'observaciones' => ['nullable', 'string'],
             'is_active' => ['boolean'],
-        ]);
+        ];
     }
 }

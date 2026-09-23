@@ -88,9 +88,20 @@ class AbsenceController extends Controller
 
     private function validated(Request $request): array
     {
-        return $request->validate([
+        return $request->validate(self::reglas($this->context->id()));
+    }
+
+    /**
+     * Reglas del formulario. Públicas y estáticas porque la importación
+     * asistida valida cada fila con ESTAS mismas reglas.
+     *
+     * @return array<string, mixed>
+     */
+    public static function reglas(?int $tenantId): array
+    {
+        return [
             'employee_id' => ['required', 'integer', Rule::exists('employees', 'id')
-                ->where('tenant_id', $this->context->id())],
+                ->where('tenant_id', $tenantId)],
             'fecha_inicio' => ['required', 'date'],
             'fecha_fin' => ['required', 'date', 'after_or_equal:fecha_inicio'],
             // Opcional: si no viene, el modelo lo calcula con las fechas. Se
@@ -103,6 +114,6 @@ class AbsenceController extends Controller
             'incapacidad_numero' => ['nullable', 'string', 'max:60'],
             'prorroga' => ['boolean'],
             'observaciones' => ['nullable', 'string', 'max:2000'],
-        ]);
+        ];
     }
 }

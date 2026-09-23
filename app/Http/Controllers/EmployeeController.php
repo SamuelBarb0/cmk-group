@@ -88,7 +88,19 @@ class EmployeeController extends Controller
      */
     private function validated(Request $request, ?Employee $empleado = null): array
     {
-        return $request->validate([
+        return $request->validate(self::reglas($this->context->id(), $empleado?->id));
+    }
+
+    /**
+     * Reglas del formulario de empleado. Públicas y estáticas porque la
+     * importación asistida valida cada fila con ESTAS mismas reglas: una
+     * copia se desincronizaría el día que cambie el formulario.
+     *
+     * @return array<string, mixed>
+     */
+    public static function reglas(?int $tenantId, ?int $ignorarId = null): array
+    {
+        return [
             'nombres' => ['required', 'string', 'max:255'],
             'apellidos' => ['required', 'string', 'max:255'],
             'tipo_documento' => ['required', 'string', 'max:5'],
@@ -96,8 +108,8 @@ class EmployeeController extends Controller
                 'required', 'string', 'max:30',
                 // Único por cliente (tenant activo).
                 Rule::unique('employees', 'numero_documento')
-                    ->where('tenant_id', $this->context->id())
-                    ->ignore($empleado?->id),
+                    ->where('tenant_id', $tenantId)
+                    ->ignore($ignorarId),
             ],
             'fecha_nacimiento' => ['nullable', 'date'],
             'genero' => ['nullable', 'string', 'max:20'],
@@ -121,6 +133,6 @@ class EmployeeController extends Controller
             // Perfil sociodemográfico. Las opciones y sus reglas viven en un
             // solo sitio para que el formulario y la validación no se separen.
             ...PerfilSociodemografico::reglas(),
-        ]);
+        ];
     }
 }

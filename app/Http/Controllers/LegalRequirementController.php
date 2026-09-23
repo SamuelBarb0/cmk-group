@@ -83,7 +83,18 @@ class LegalRequirementController extends Controller
 
     private function validated(Request $request): array
     {
-        return $request->validate([
+        return $request->validate(self::reglas());
+    }
+
+    /**
+     * Reglas del formulario. Públicas y estáticas porque la importación
+     * asistida valida cada fila con ESTAS mismas reglas.
+     *
+     * @return array<string, mixed>
+     */
+    public static function reglas(): array
+    {
+        return [
             'norma' => ['required', 'string', 'max:255'],
             'anio' => ['nullable', 'integer', 'min:1900', 'max:2100'],
             'articulo' => ['nullable', 'string', 'max:120'],
@@ -100,6 +111,6 @@ class LegalRequirementController extends Controller
             'responsable' => ['nullable', 'string', 'max:255'],
             'fecha_verificacion' => ['nullable', 'date'],
             'observaciones' => ['nullable', 'string', 'max:2000'],
-        ]);
+        ];
     }
 }
