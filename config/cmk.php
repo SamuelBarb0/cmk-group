@@ -112,5 +112,6 @@ return [
         'epp' => 'EPP (matriz por cargo y entregas)',
         'emergencias' => 'Plan de emergencias y brigada',
         'salud-ocupacional' => 'Salud ocupacional (profesiograma y exámenes médicos)',
+        'gestion-cambio' => 'Gestión del cambio',
     ],
 ];
