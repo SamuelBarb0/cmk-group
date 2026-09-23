@@ -6,12 +6,16 @@ use App\Models\Employee;
 use App\Models\FormRecord;
 use App\Models\GeneratedDocument;
 use App\Models\Indicator;
+use App\Models\IndicatorGoal;
+use App\Models\IndicatorReading;
 use App\Models\IpercRow;
+use App\Models\ManagementProgram;
 use App\Models\PesvContractor;
 use App\Models\PesvRoute;
 use App\Models\PesvSede;
 use App\Models\PesvSiniestro;
 use App\Models\PesvVehicle;
+use App\Models\ProgramPlan;
 use App\Models\Tenant;
 use App\Models\Training;
 use App\Models\WorkPlan;
@@ -66,6 +70,7 @@ class PesvFeed
             5 => $this->caracterizacion(),
             6 => $this->riesgosViales(),
             7 => $this->objetivos(),
+            8 => $this->programasCriticos(),
             9 => $this->planAnual(),
             10 => $this->formacion(),
             14, 15 => $this->rutas(),
@@ -216,16 +221,48 @@ class PesvFeed
     /** @return array<int, array<string, mixed>> */
     private function objetivos(): array
     {
-        $indicadores = Indicator::where('categoria', 'PESV')->count();
+        // Los mínimos de la Res. 40595 ya vienen cargados como indicadores
+        // PESV; lo que el paso 7 pide es que la empresa FIJE sus metas.
+        $pesv = Indicator::where('categoria', 'PESV')->pluck('id');
+        $metasPropias = IndicatorGoal::whereIn('indicator_id', $pesv)->count();
 
         return [[
-            'etiqueta' => 'Indicadores PESV definidos',
-            'estado' => $indicadores > 0 ? 'ok' : 'falta',
-            'detalle' => $indicadores > 0
-                ? "{$indicadores} indicadores de categoría PESV, con sus metas."
-                : 'No hay indicadores de categoría PESV. Los objetivos del paso 7 se miden con ellos.',
+            'etiqueta' => 'Metas propias de los indicadores PESV',
+            'estado' => $pesv->isEmpty() ? 'falta' : ($metasPropias > 0 ? 'ok' : 'parcial'),
+            'detalle' => $pesv->isEmpty()
+                ? 'No hay indicadores PESV cargados.'
+                : ($metasPropias > 0
+                    ? "La empresa fijó meta propia en {$metasPropias} de {$pesv->count()} indicadores PESV."
+                    : "Hay {$pesv->count()} indicadores PESV (los mínimos de la Res. 40595), todos con la meta por defecto. Fija las metas de la empresa."),
             'url' => '/indicadores',
-            'cantidad' => $indicadores,
+            'cantidad' => $metasPropias,
+        ]];
+    }
+
+    /**
+     * Programas de los riesgos críticos (alcohol, fatiga, velocidad,
+     * distracción, actores viales): viven en Programas de gestión.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function programasCriticos(): array
+    {
+        $catalogo = ManagementProgram::where('categoria', 'pesv')->orderBy('orden')->get(['id', 'nombre']);
+        $anio = (int) now()->year;
+        $planes = ProgramPlan::with('activities')->where('anio', $anio)->whereIn('management_program_id', $catalogo->pluck('id'))->get();
+        $faltan = $catalogo->reject(fn ($p) => $planes->contains('management_program_id', $p->id))->pluck('nombre');
+        $cumplimiento = $planes->map(fn (ProgramPlan $p) => $p->cumplimiento())->filter(fn ($v) => $v !== null);
+
+        return [[
+            'etiqueta' => "Programas de riesgos críticos {$anio}",
+            'estado' => $planes->isEmpty() ? 'falta' : ($faltan->isEmpty() ? 'ok' : 'parcial'),
+            'detalle' => ($planes->isEmpty()
+                ? "Ninguno de los {$catalogo->count()} programas PESV está activado para {$anio}."
+                : "{$planes->count()} de {$catalogo->count()} programas activados"
+                    .($cumplimiento->isNotEmpty() ? ', cumplimiento promedio '.round($cumplimiento->avg(), 1).' %' : '').'.')
+                .($faltan->isNotEmpty() ? ' Faltan: '.$faltan->implode('; ').'.' : ''),
+            'url' => '/programas',
+            'cantidad' => $planes->count(),
         ]];
     }
 
@@ -383,15 +420,16 @@ class PesvFeed
     /** @return array<string, mixed> */
     private function indicadoresConLectura(): array
     {
-        $conLectura = Indicator::where('categoria', 'PESV')->has('readings')->count();
-        $total = Indicator::where('categoria', 'PESV')->count();
+        $pesv = Indicator::where('categoria', 'PESV')->pluck('id');
+        $anio = (int) now()->year;
+        $conLectura = IndicatorReading::where('anio', $anio)->whereIn('indicator_id', $pesv)->distinct()->count('indicator_id');
 
         return [
-            'etiqueta' => 'Indicadores PESV con mediciones',
-            'estado' => $total === 0 ? 'falta' : ($conLectura === 0 ? 'parcial' : 'ok'),
-            'detalle' => $total === 0
-                ? 'No hay indicadores PESV definidos.'
-                : "{$conLectura} de {$total} indicadores PESV tienen mediciones cargadas.",
+            'etiqueta' => "Indicadores PESV medidos en {$anio}",
+            'estado' => $pesv->isEmpty() ? 'falta' : ($conLectura === 0 ? 'falta' : ($conLectura < $pesv->count() ? 'parcial' : 'ok')),
+            'detalle' => $pesv->isEmpty()
+                ? 'No hay indicadores PESV cargados.'
+                : "{$conLectura} de {$pesv->count()} indicadores PESV tienen mediciones este año. El reporte de autogestión se hace con corte al 31 de diciembre.",
             'url' => '/indicadores',
             'cantidad' => $conLectura,
         ];

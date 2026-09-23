@@ -7,6 +7,7 @@ use App\Support\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -73,7 +74,7 @@ class PesvColaboradorController extends Controller
         $datos = $request->validate([
             'es_conductor' => ['required', 'boolean'],
             'licencia_numero' => ['nullable', 'string', 'max:30'],
-            'licencia_categoria' => ['nullable', 'string', 'max:10'],
+            'licencia_categoria' => ['nullable', Rule::in(self::CATEGORIAS)],
             'licencia_vence' => ['nullable', 'date'],
             'examen_psicosensometrico_vence' => ['nullable', 'date'],
             'curso_manejo_defensivo' => ['nullable', 'date'],

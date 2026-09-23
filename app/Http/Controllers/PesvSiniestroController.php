@@ -119,8 +119,9 @@ class PesvSiniestroController extends Controller
             'lugar' => ['nullable', 'string', 'max:255'],
             'tipo' => ['required', Rule::in(PesvSiniestro::TIPOS)],
             'gravedad' => ['required', Rule::in(PesvSiniestro::GRAVEDADES)],
-            'pesv_vehicle_id' => ['nullable', 'integer', 'exists:pesv_vehicles,id'],
-            'employee_id' => ['nullable', 'integer', 'exists:employees,id'],
+            // Del cliente activo: un `exists` pelado aceptaba ids de otra empresa.
+            'pesv_vehicle_id' => ['nullable', 'integer', Rule::exists('pesv_vehicles', 'id')->where('tenant_id', $this->context->id())],
+            'employee_id' => ['nullable', 'integer', Rule::exists('employees', 'id')->where('tenant_id', $this->context->id())],
             'descripcion' => ['nullable', 'string'],
             'causa_probable' => ['nullable', 'string'],
             'lesionados' => ['nullable', 'integer', 'min:0'],

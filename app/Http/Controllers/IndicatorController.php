@@ -40,6 +40,8 @@ class IndicatorController extends Controller
 
         $indicators = Indicator::query()
             ->where(fn ($q) => $q->whereNull('tenant_id')->orWhere('tenant_id', $tenantId))
+            // Los mínimos del PESV solo le sirven a quien tiene PESV contratado.
+            ->when(! $this->context->get()?->moduloHabilitado('pesv'), fn ($q) => $q->where('categoria', '!=', 'PESV'))
             ->orderBy('orden')->orderBy('id')->get();
 
         $readings = IndicatorReading::where('anio', $anio)->get()

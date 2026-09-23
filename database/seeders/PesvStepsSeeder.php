@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Cache;
 
 /**
  * Los 24 pasos del PESV (Resolución 40595 de 2022), agrupados en sus 4 fases.
+ * Títulos y fases con el nombre OFICIAL del anexo (docs/normativa); en qué
+ * nivel aplica cada paso lo define PesvStep::NIVELES_POR_PASO.
  *
  * Catálogo GLOBAL: es el mismo para todas las empresas cliente, igual que los
  * 60 estándares de la Res. 0312. Lo que cambia por empresa es el estado de
@@ -18,59 +20,59 @@ class PesvStepsSeeder extends Seeder
     /** @var array<int, array{0:int, 1:string, 2:string}> [fase, título, descripción] por número de paso */
     private const PASOS = [
         // ---- Fase 1 · Planificación ----------------------------------------
-        1 => [1, 'Líder del PESV',
+        1 => [1, 'Líder del diseño e implementación del PESV',
             'Designación del responsable del diseño e implementación del PESV, con acto de designación, funciones y competencias definidas.'],
         2 => [1, 'Comité de Seguridad Vial',
             'Conformación del comité, integrantes, roles y periodicidad de las reuniones. Se soporta con actas.'],
-        3 => [1, 'Política de Seguridad Vial',
+        3 => [1, 'Política de seguridad vial de la organización',
             'Política suscrita por la alta dirección, divulgada a todos los niveles y revisada periódicamente.'],
-        4 => [1, 'Liderazgo y corresponsabilidad directiva',
+        4 => [1, 'Liderazgo, compromiso y corresponsabilidad del nivel directivo',
             'Compromiso demostrable de la alta dirección: recursos, participación en el comité y rendición de cuentas.'],
-        5 => [1, 'Diagnóstico del PESV',
+        5 => [1, 'Diagnóstico',
             'Caracterización de la organización: sedes, colaboradores y conductores, contratistas y terceros, flota de vehículos y rutas.'],
-        6 => [1, 'Evaluación y control de riesgos viales',
+        6 => [1, 'Caracterización, evaluación y control de riesgos',
             'Identificación de peligros y valoración de los riesgos viales, con sus controles. Se articula con la matriz IPERC.'],
         7 => [1, 'Objetivos y metas del PESV',
             'Objetivos medibles con sus metas e indicadores, coherentes con los riesgos identificados.'],
-        8 => [1, 'Programas de gestión de riesgos críticos',
+        8 => [1, 'Programas de gestión de riesgos críticos y factores de desempeño',
             'Programas para los riesgos críticos priorizados (velocidad, alcohol y drogas, distracción, fatiga, cinturón y casco).'],
 
         // ---- Fase 2 · Implementación y ejecución ---------------------------
         9 => [2, 'Plan anual de trabajo',
             'Cronograma anual con actividades, responsables, recursos y presupuesto asignado al PESV.'],
-        10 => [2, 'Competencia y plan de formación',
+        10 => [2, 'Competencia y plan anual de formación',
             'Plan de capacitación en seguridad vial por rol, con cobertura y evaluación de la eficacia.'],
         11 => [2, 'Responsabilidad y comportamiento seguro',
             'Selección y evaluación de conductores y terceros, pruebas de idoneidad y control a infractores de tránsito.'],
-        12 => [2, 'Plan de preparación ante emergencias viales',
+        12 => [2, 'Plan de preparación y respuesta ante emergencias viales',
             'Protocolo de atención de emergencias viales, con roles, cadena de llamadas y simulacros.'],
         13 => [2, 'Investigación interna de siniestros viales',
             'Procedimiento de investigación de siniestros, con causas raíz y acciones derivadas.'],
-        14 => [2, 'Vías seguras administradas',
+        14 => [2, 'Vías seguras administradas por la organización',
             'Condiciones de seguridad de las vías e infraestructura bajo administración de la organización.'],
         15 => [2, 'Planificación de desplazamientos laborales',
             'Planificación de viajes y rutas: jornadas, descansos, condiciones de la vía y autorización de desplazamientos.'],
-        16 => [2, 'Inspección preoperacional de vehículos',
+        16 => [2, 'Inspección de vehículos y equipos',
             'Inspección documentada antes de operar el vehículo, con registro y tratamiento de los hallazgos.'],
-        17 => [2, 'Mantenimiento de vehículos',
+        17 => [2, 'Mantenimiento y control de vehículos seguros y equipos',
             'Programa de mantenimiento preventivo y correctivo de la flota, con hojas de vida y trazabilidad.'],
-        18 => [2, 'Gestión del cambio y contratistas',
+        18 => [2, 'Gestión del cambio y gestión de contratistas',
             'Control de los cambios que afectan el PESV y requisitos de seguridad vial exigidos a contratistas y terceros.'],
         19 => [2, 'Archivo y retención documental',
             'Control de documentos y registros del PESV: identificación, vigencia, custodia y tiempos de retención.'],
 
         // ---- Fase 3 · Seguimiento y evaluación -----------------------------
-        20 => [3, 'Indicadores de gestión y reporte de autogestión',
+        20 => [3, 'Indicadores y reporte de autogestión PESV',
             'Medición de los indicadores del PESV y elaboración del reporte anual de autogestión.'],
-        21 => [3, 'Análisis estadístico de siniestros viales',
+        21 => [3, 'Registro y análisis estadístico de siniestros viales',
             'Análisis de la siniestralidad: frecuencia, severidad y tendencia, como insumo de las decisiones.'],
-        22 => [3, 'Auditoría anual del PESV',
+        22 => [3, 'Auditoría anual',
             'Auditoría interna anual del PESV, con programa, criterios, hallazgos e informe.'],
 
         // ---- Fase 4 · Mejora continua --------------------------------------
-        23 => [4, 'Mejora continua y acciones correctivas',
+        23 => [4, 'Mejora continua, acciones preventivas y correctivas',
             'Tratamiento de no conformidades, acciones correctivas y preventivas, y verificación de su eficacia.'],
-        24 => [4, 'Comunicación y participación',
+        24 => [4, 'Mecanismos de comunicación y participación',
             'Mecanismos de participación, consulta y comunicación con trabajadores, contratistas y partes interesadas.'],
     ];
 
@@ -78,7 +80,7 @@ class PesvStepsSeeder extends Seeder
     public const FASES = [
         1 => 'Planificación',
         2 => 'Implementación y ejecución',
-        3 => 'Seguimiento y evaluación',
+        3 => 'Seguimiento por la organización',
         4 => 'Mejora continua',
     ];
 
@@ -92,6 +94,7 @@ class PesvStepsSeeder extends Seeder
                     'fase_nombre' => self::FASES[$fase],
                     'titulo' => $titulo,
                     'descripcion' => $descripcion,
+                    'niveles' => PesvStep::nivelesDe($numero),
                     'orden' => $numero,
                 ],
             );

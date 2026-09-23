@@ -10,12 +10,15 @@ use Illuminate\Database\Seeder;
  * clientes). Las metas son valores por defecto, editables por el consultor.
  * Fórmula: (num/den) × constante.
  *
- * Dos bloques:
+ * Tres bloques:
  *
  *  1. LEGALES — Resolución 0312 de 2019 / Decreto 1072 de 2015, art. 2.2.4.6.22.
  *     Son los que pide una visita del Ministerio y NO se tocan.
  *
- *  2. CMK — las 29 fichas del libro «DASHBOARD Indicadores para el SGI 2024 v3».
+ *  2. PESV — los mínimos de la Tabla 10 de la Res. 40595. Solo los ven las
+ *     empresas con el módulo PESV contratado.
+ *
+ *  3. CMK — las 29 fichas del libro «DASHBOARD Indicadores para el SGI 2024 v3».
  *     Se cargaron todas las que no duplican a una legal.
  *
  * ⚠️ OJO CON LOS ÍNDICES DE ACCIDENTALIDAD. El dashboard de CMK calcula el
@@ -50,6 +53,47 @@ class IndicatorsSeeder extends Seeder
                 'N.° de trabajadores capacitados', 'N.° total de trabajadores', 100, '%', 'asc', 90],
             ['EJE-CAP', 'Ejecución del cronograma de capacitaciones', 'Proceso',
                 'N.° de capacitaciones realizadas', 'N.° de capacitaciones programadas', 100, '%', 'asc', 90],
+        ];
+
+        // Indicadores MÍNIMOS del PESV: Tabla 10 del anexo de la Res. 40595
+        // (texto en docs/normativa). La TSV se mide por nivel de pérdida, así
+        // que son cuatro. K = 1.000.000 km: las copias en línea de la norma
+        // dicen «5000.000», un error de transcripción; la guía de la ANSV y el
+        // procedimiento del PASO 20 de CMK usan 1.000.000.
+        // Quedan fuera los que NO son un cociente num/den y no caben en este
+        // modelo: $SV (costos = suma de directos e indirectos) y RSVI / GRV
+        // (diferencias de la matriz de riesgos viales). Llegan con esas piezas.
+        // Metas: la norma no las fija; se usan las del PASO 20 de CMK y el
+        // cliente las ajusta en su pantalla.
+        $pesv = [
+            ['PESV-TSV-FAT', 'Tasa de siniestros viales con fatalidades (TSV)', 'PESV',
+                'N.° de siniestros viales con fatalidades en el trimestre', 'Kilómetros recorridos por toda la flota en el trimestre', 1000000, 'tasa', 'desc', 0],
+            ['PESV-TSV-GRA', 'Tasa de siniestros viales con heridos graves (TSV)', 'PESV',
+                'N.° de siniestros con heridos de más de 30 días de incapacidad', 'Kilómetros recorridos por toda la flota en el trimestre', 1000000, 'tasa', 'desc', 0],
+            ['PESV-TSV-LEV', 'Tasa de siniestros viales con heridos leves (TSV)', 'PESV',
+                'N.° de siniestros con heridos de hasta 30 días de incapacidad', 'Kilómetros recorridos por toda la flota en el trimestre', 1000000, 'tasa', 'desc', 0],
+            ['PESV-TSV-CHS', 'Tasa de siniestros viales con choques simples (TSV)', 'PESV',
+                'N.° de choques simples en el trimestre', 'Kilómetros recorridos por toda la flota en el trimestre', 1000000, 'tasa', 'desc', 0],
+            ['PESV-CM', 'Cumplimiento de metas del PESV (CM PESV)', 'PESV',
+                'N.° de metas del PESV alcanzadas en el trimestre', 'N.° total de metas del PESV definidas', 100, '%', 'asc', 100],
+            ['PESV-CPLAN', 'Cumplimiento del plan anual de trabajo PESV', 'PESV',
+                'N.° de actividades del plan PESV ejecutadas en el trimestre', 'N.° de actividades del plan PESV programadas', 100, '%', 'asc', 90],
+            ['PESV-EJL', 'Exceso de jornada laboral de conductores (%EJL)', 'PESV',
+                'N.° de excesos de la jornada diaria de conductores en el mes', 'Días trabajados por todos los conductores en el mes', 100, '%', 'desc', 0],
+            ['PESV-GVE', 'Cobertura del programa de gestión de la velocidad (GVE) — estándar y avanzado', 'PESV',
+                'N.° de vehículos incluidos en el programa de velocidad', 'N.° de vehículos usados en desplazamientos laborales', 100, '%', 'asc', 100],
+            ['PESV-ELVL', 'Excesos del límite de velocidad laboral (ELVL) — avanzado', 'PESV',
+                'N.° de desplazamientos con exceso de velocidad en el mes', 'N.° total de desplazamientos laborales en el mes', 100, '%', 'desc', 0],
+            ['PESV-IDP', 'Inspecciones diarias preoperacionales (IDP)', 'PESV',
+                'N.° de vehículos inspeccionados diariamente', 'N.° de vehículos que trabajan diariamente', 100, '%', 'asc', 100],
+            ['PESV-CPMV', 'Cumplimiento del plan de mantenimiento preventivo de vehículos (CPMVh)', 'PESV',
+                'N.° de mantenimientos preventivos ejecutados en el trimestre', 'N.° de mantenimientos preventivos programados', 100, '%', 'asc', 90],
+            ['PESV-CPF', 'Cumplimiento del plan de formación en seguridad vial', 'PESV',
+                'N.° de capacitaciones en seguridad vial ejecutadas en el trimestre', 'N.° de capacitaciones en seguridad vial programadas', 100, '%', 'asc', 90],
+            ['PESV-COBF', 'Cobertura del plan de formación en seguridad vial', 'PESV',
+                'N.° de colaboradores capacitados en seguridad vial', 'N.° total de colaboradores', 100, '%', 'asc', 90],
+            ['PESV-NCAC', 'No conformidades de auditoría cerradas (NCAC)', 'PESV',
+                'N.° de no conformidades gestionadas y cerradas', 'N.° de no conformidades identificadas y analizadas', 100, '%', 'asc', 100],
         ];
 
         // Fichas del dashboard de CMK. El numerador y el denominador van
@@ -142,7 +186,7 @@ class IndicatorsSeeder extends Seeder
             ];
         }
 
-        $presets = [...$legales, ...$cmk];
+        $presets = [...$legales, ...$pesv, ...$cmk];
 
         foreach ($presets as $n => [$codigo, $nombre, $cat, $num, $den, $k, $unidad, $sentido, $meta]) {
             Indicator::updateOrCreate(
@@ -156,16 +200,16 @@ class IndicatorsSeeder extends Seeder
                     'unidad' => $unidad,
                     'sentido' => $sentido,
                     'meta' => $meta,
-                    // es_legal marca los exigidos por la Resolución 0312: son
-                    // los que no se pueden desactivar ni borrar.
-                    'es_legal' => $n < count($legales),
+                    // es_legal marca los exigidos por norma (Res. 0312 y los
+                    // mínimos del PESV de la Res. 40595): no se borran.
+                    'es_legal' => $n < count($legales) + count($pesv),
                     'orden' => $n + 1,
                 ],
             );
         }
 
         $this->command?->info(
-            'Indicadores: '.count($legales).' legales + '.count($cmk).' del dashboard de CMK = '
+            'Indicadores: '.count($legales).' legales + '.count($pesv).' mínimos del PESV + '.count($cmk).' del dashboard de CMK = '
             .count($presets).' cargados.',
         );
     }
