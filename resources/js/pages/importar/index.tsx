@@ -12,6 +12,7 @@ import { ESTADOS } from './estados';
 interface Destino {
     nombre: string;
     descripcion: string;
+    padre: string | null;
 }
 
 interface Importacion {
@@ -30,10 +31,13 @@ interface Props {
     importaciones: Importacion[];
     destinos: Record<string, Destino>;
     permitidos: string[];
+    padres: Record<string, { id: number; nombre: string }[]>;
 }
 
-export default function ImportarIndex({ needsClient, importaciones, destinos, permitidos }: Props) {
-    const form = useForm<{ destino: string; archivo: File | null }>({ destino: permitidos[0] ?? '', archivo: null });
+export default function ImportarIndex({ needsClient, importaciones, destinos, permitidos, padres }: Props) {
+    const form = useForm<{ destino: string; archivo: File | null; padre_id: string }>({ destino: permitidos[0] ?? '', archivo: null, padre_id: '' });
+    const padre = destinos[form.data.destino]?.padre ?? null;
+    const opcionesPadre = padres[form.data.destino] ?? [];
 
     const subir: FormEventHandler = (e) => {
         e.preventDefault();
@@ -65,19 +69,38 @@ export default function ImportarIndex({ needsClient, importaciones, destinos, pe
                             </select>
                             {form.data.destino && <p className="text-muted-foreground text-xs">{destinos[form.data.destino]?.descripcion}</p>}
                             <InputError message={form.errors.destino} />
+                            {padre && (
+                                <div className="space-y-1.5 pt-1">
+                                    <Label htmlFor="padre_id">{padre}</Label>
+                                    <select
+                                        id="padre_id"
+                                        value={form.data.padre_id}
+                                        onChange={(e) => form.setData('padre_id', e.target.value)}
+                                        className="border-input bg-background h-9 w-full rounded-md border px-2 text-sm"
+                                    >
+                                        <option value="">{opcionesPadre.length ? 'Elige…' : 'No hay ninguna todavía: créala en su módulo'}</option>
+                                        {opcionesPadre.map((o) => (
+                                            <option key={o.id} value={o.id}>
+                                                {o.nombre}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <InputError message={form.errors.padre_id} />
+                                </div>
+                            )}
                         </div>
                         <div className="space-y-1.5">
-                            <Label htmlFor="archivo">Archivo (.xlsx o .csv, hasta 10 MB)</Label>
+                            <Label htmlFor="archivo">Archivo (.xlsx, .xls, .ods o .csv, hasta 10 MB)</Label>
                             <input
                                 id="archivo"
                                 type="file"
-                                accept=".xlsx,.csv"
+                                accept=".xlsx,.xls,.ods,.csv"
                                 onChange={(e) => form.setData('archivo', e.target.files?.[0] ?? null)}
                                 className="border-input bg-background file:bg-muted block h-9 w-full rounded-md border text-sm file:mr-3 file:h-full file:border-0 file:px-3"
                             />
                             <InputError message={form.errors.archivo} />
                         </div>
-                        <Button type="submit" disabled={form.processing || !form.data.archivo} className="gap-2">
+                        <Button type="submit" disabled={form.processing || !form.data.archivo || (!!padre && !form.data.padre_id)} className="gap-2">
                             <Upload className="size-4" /> {form.processing ? 'Subiendo…' : 'Subir y analizar'}
                         </Button>
                     </form>

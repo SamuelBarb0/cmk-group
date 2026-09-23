@@ -50,6 +50,11 @@ class ImportacionController extends Controller
                 : [],
             'destinos' => Destinos::paraVista(),
             'permitidos' => Destinos::permitidos($this->context->get()),
+            // Registros dentro de los que se puede importar (las capacitaciones,
+            // para una lista de asistentes), por destino.
+            'padres' => $this->context->has()
+                ? collect(Destinos::todos())->filter(fn ($d) => isset($d['padre']))->map(fn ($d) => ($d['padre']['opciones'])())->all()
+                : [],
         ]);
     }
 
@@ -61,8 +66,17 @@ class ImportacionController extends Controller
             'destino' => ['required', Rule::in(Destinos::permitidos($this->context->get()))],
             // `extensions` y no `mimes`: un .xlsx sale como octet-stream en finfo
             // (el mismo tropiezo de la subida de plantillas del 3-sep).
-            'archivo' => ['required', 'file', 'max:10240', 'extensions:xlsx,csv'],
-        ], [], ['archivo' => 'archivo']);
+            // xlsb entra para que el lector dé el mensaje concreto («guárdalo como .xlsx»).
+            'archivo' => ['required', 'file', 'max:10240', 'extensions:xlsx,xls,ods,csv,xlsb'],
+            'padre_id' => ['nullable', 'integer'],
+        ], [], ['archivo' => 'archivo', 'padre_id' => 'capacitación']);
+
+        // Un destino con padre (asistentes -> capacitación) lo exige, y tiene que
+        // ser de ESTA empresa: `exists` no pasa por el TenantScope, `existe` sí.
+        $padre = Destinos::get($data['destino'])['padre'] ?? null;
+        if ($padre && (empty($data['padre_id']) || ! ($padre['existe'])((int) $data['padre_id']))) {
+            throw ValidationException::withMessages(['padre_id' => "Elige la {$padre['label']} en la que se importa."]);
+        }
 
         $archivo = $request->file('archivo');
         $ext = strtolower($archivo->getClientOriginalExtension());
@@ -79,6 +93,7 @@ class ImportacionController extends Controller
         $import = DataImport::create([
             'user_id' => $request->user()?->id,
             'destino' => $data['destino'],
+            'padre_id' => $padre ? (int) $data['padre_id'] : null,
             'archivo' => $ruta,
             'nombre_original' => $archivo->getClientOriginalName(),
             'hojas' => $resumen,
@@ -114,6 +129,9 @@ class ImportacionController extends Controller
                 'aplicado_at' => $importacion->aplicado_at?->format('Y-m-d H:i'),
             ],
             'destino' => Destinos::paraVista()[$importacion->destino],
+            'padre' => isset($destino['padre']) && $importacion->padre_id
+                ? collect(($destino['padre']['opciones'])())->firstWhere('id', $importacion->padre_id)['nombre'] ?? null
+                : null,
             'modulo' => $destino['modulo'],
             'encabezados' => $encabezados,
             'distintos' => $distintos,
@@ -187,18 +205,21 @@ class ImportacionController extends Controller
         abort_unless($importacion->estado === 'listo', 422, 'La importación aún no tiene un mapeo listo.');
 
         $destino = Destinos::get($importacion->destino);
-        $r = Aplicador::aplicar($destino, $importacion->filas(), $importacion->mapeo, $this->context->id(), $this->existentes($destino));
+        $r = $this->aplicarMapeo($importacion, $destino, $importacion->filas());
         $validas = array_values(array_filter($r['filas'], fn ($f) => $f['estado'] === 'valida'));
 
         if ($validas === []) {
             throw ValidationException::withMessages(['importacion' => 'No hay filas válidas para importar.']);
         }
 
-        $ids = DB::transaction(function () use ($validas, $destino): array {
+        // Los asistentes van DENTRO de su capacitación.
+        $delPadre = isset($destino['padre']) ? [$destino['padre']['campo'] => $importacion->padre_id] : [];
+
+        $ids = DB::transaction(function () use ($validas, $destino, $delPadre): array {
             $modelo = $destino['modelo'];
             $ids = [];
             foreach ($validas as $f) {
-                $ids[] = $modelo::create($f['datos'])->id;
+                $ids[] = $modelo::create($f['datos'] + $delPadre)->id;
             }
 
             return $ids;
@@ -220,10 +241,14 @@ class ImportacionController extends Controller
     public function deshacer(DataImport $importacion): RedirectResponse
     {
         abort_unless($importacion->estado === 'aplicado', 422, 'Solo se puede deshacer una importación aplicada.');
-        $modelo = Destinos::get($importacion->destino)['modelo'];
+        $destino = Destinos::get($importacion->destino);
         $ids = $importacion->resultado['creados'] ?? [];
 
-        $borrados = DB::transaction(fn () => $modelo::query()->whereKey($ids)->delete());
+        // Los asistentes no llevan tenant propio: además de los ids, se exige
+        // que sean de la capacitación de esta importación.
+        $borrados = DB::transaction(fn () => $destino['modelo']::query()->whereKey($ids)
+            ->when(isset($destino['padre']), fn ($q) => $q->where($destino['padre']['campo'], $importacion->padre_id))
+            ->delete());
 
         $importacion->update(['estado' => 'deshecho', 'resultado' => ['borrados' => $borrados] + ($importacion->resultado ?? [])]);
 
@@ -251,27 +276,52 @@ class ImportacionController extends Controller
         abort_if(in_array($import->estado, ['aplicado', 'deshecho'], true), 422, 'Esta importación ya se aplicó.');
     }
 
-    /** Claves que ya existen en la empresa (para marcar duplicados). @return list<string> */
-    private function existentes(array $destino): array
+    /**
+     * El mapeo aplicado a las filas, con lo que ya existe (duplicados) y la
+     * nómina (campos de empleado). Lo usan la vista previa y «Importar»: lo que
+     * se ve es exactamente lo que se guarda.
+     */
+    private function aplicarMapeo(DataImport $import, array $destino, array $filas): array
     {
-        if ($destino['clave'] === null) {
-            return [];
-        }
+        $existentes = match (true) {
+            isset($destino['existentes']) => ($destino['existentes'])($import->padre_id),
+            $destino['clave'] !== null => $destino['modelo']::query()->pluck($destino['clave'])->all(),
+            default => [],
+        };
+        $usaNomina = isset($destino['completar'])
+            || collect($destino['campos'])->contains(fn ($c) => $c['tipo'] === 'empleado');
 
-        return $destino['modelo']::query()->pluck($destino['clave'])->map(fn ($v) => (string) $v)->all();
+        return Aplicador::aplicar(
+            $destino, $filas, $import->mapeo, $this->context->id(),
+            array_map('strval', $existentes),
+            $usaNomina ? Aplicador::contextoEmpleados() : [],
+        );
     }
 
     private function previa(DataImport $import, array $destino, array $filas): array
     {
-        $r = Aplicador::aplicar($destino, $filas, $import->mapeo, $this->context->id(), $this->existentes($destino));
+        $r = $this->aplicarMapeo($import, $destino, $filas);
         $validas = array_filter($r['filas'], fn ($f) => $f['estado'] === 'valida');
         $otras = array_filter($r['filas'], fn ($f) => $f['estado'] !== 'valida');
+        // Todas las que tienen problema, y una muestra de las buenas.
+        $muestra = array_values([...$otras, ...array_slice($validas, 0, self::PREVIA_VALIDAS)]);
 
-        return [
-            'resumen' => $r['resumen'],
-            // Todas las que tienen problema, y una muestra de las buenas.
-            'filas' => array_values([...$otras, ...array_slice($validas, 0, self::PREVIA_VALIDAS)]),
-        ];
+        // Un campo de empleado guarda el id: para revisar hace falta el NOMBRE.
+        // Solo para mostrar; lo que se guarda sigue siendo el id.
+        $deEmpleado = array_keys(array_filter($destino['campos'], fn ($c) => $c['tipo'] === 'empleado'));
+        if ($deEmpleado) {
+            $nombres = collect(Aplicador::contextoEmpleados()['por_documento'])->mapWithKeys(fn ($e) => [$e['id'] => $e['nombre']]);
+            foreach ($muestra as &$f) {
+                foreach ($deEmpleado as $campo) {
+                    if (isset($f['datos'][$campo])) {
+                        $f['etiquetas'][$campo] = $nombres[$f['datos'][$campo]] ?? null;
+                    }
+                }
+            }
+            unset($f);
+        }
+
+        return ['resumen' => $r['resumen'], 'filas' => $muestra];
     }
 
     /**

@@ -20,6 +20,9 @@ return new class extends Migration
             $table->foreignId('tenant_id')->constrained('tenants')->cascadeOnDelete();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('destino', 30);                   // clave en Importacion\Destinos
+            // Registro dentro del que se importa (la capacitación de una lista de
+            // asistentes). Sin FK: depende del destino a qué tabla apunta.
+            $table->unsignedBigInteger('padre_id')->nullable();
             $table->string('archivo');                       // ruta en el disco local
             $table->string('nombre_original');
             $table->json('hojas');                           // [{nombre, filas}]

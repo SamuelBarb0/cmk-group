@@ -44,6 +44,14 @@ class MapeadorImportacion
 
     private function system(array $destino): string
     {
+        // La regla del nombre depende del módulo: en la nómina hay nombres y
+        // apellidos por separado; en otros (asistentes) el campo YA es el nombre
+        // completo. Con la regla general, la IA dejaba sin asignar la columna
+        // «NOMBRES Y APELLIDOS» de una lista de asistencia.
+        $reglaNombre = ! empty($destino['nombre_completo'])
+            ? 'Si los nombres y apellidos vienen juntos en una sola columna, NO la asignes a `nombres` ni a `apellidos`: usa `nombre_completo` e indica el orden según los ejemplos.'
+            : 'Este módulo no separa nombres de apellidos: una columna con el nombre completo va directo al campo de nombre. `nombre_completo` no aplica: déjalo en -1.';
+
         return <<<TXT
         Eres un analista de datos que ayuda a un consultor de seguridad y salud en el trabajo en Colombia
         a cargar un Excel de su cliente en el módulo «{$destino['nombre']}» de la plataforma.
@@ -56,8 +64,7 @@ class MapeadorImportacion
           `fila_inicio_datos` es la primera fila que ya es un registro, no un encabezado.
         - Asigna una columna a un campo solo si estás razonablemente seguro por el encabezado y los datos.
           Si no hay columna para un campo, usa -1. Nunca uses la misma columna para dos campos.
-        - Si los nombres y apellidos vienen juntos en una sola columna, NO la asignes a `nombres` ni a
-          `apellidos`: usa `nombre_completo` e indica el orden según los ejemplos.
+        - {$reglaNombre}
         - `valores`: para los campos de lista y de sí/no, traduce cada valor distinto que aparece en esa
           columna a una de las opciones permitidas. Si un valor no corresponde a ninguna, no lo traduzcas.
         - `fijos`: valor para un campo obligatorio que no tiene columna o viene vacío, SOLO si es evidente

@@ -2,6 +2,7 @@
 
 namespace App\Support\Importacion;
 
+use App\Models\Employee;
 use Illuminate\Support\Facades\Validator;
 
 /**
@@ -23,9 +24,10 @@ final class Aplicador
     /**
      * @param  list<list<string|null>>  $filas
      * @param  list<string>  $existentes  claves que ya están en la base (p. ej. documentos)
+     * @param  array<string, mixed>  $contexto  la nómina, para los campos de tipo empleado (ver contextoEmpleados())
      * @return array{filas: list<array<string, mixed>>, resumen: array<string, int>}
      */
-    public static function aplicar(array $destino, array $filas, array $mapeo, int $tenantId, array $existentes = []): array
+    public static function aplicar(array $destino, array $filas, array $mapeo, int $tenantId, array $existentes = [], array $contexto = []): array
     {
         $campos = $destino['campos'];
         $reglas = ($destino['reglas'])($tenantId);
@@ -47,12 +49,18 @@ final class Aplicador
                 continue;
             }
 
-            [$datos, $errores] = self::fila($fila, $campos, $mapeo);
+            [$datos, $errores] = self::fila($fila, $campos, $mapeo, $contexto);
+            if (isset($destino['completar'])) {
+                $datos = ($destino['completar'])($datos, $contexto);
+            }
             // Fijos del módulo (is_active, aplica). No con «+=»: todos los campos
             // ya existen en $datos, aunque sea en null, y += no pisa una clave existente.
             foreach ($destino['fijos'] as $k => $v) {
                 $datos[$k] ??= $v;
             }
+            // Lo vacío no se manda: así rige el valor por defecto del modelo o de
+            // la base (y un sí/no vacío no choca con la regla boolean).
+            $datos = array_filter($datos, fn ($v) => $v !== null);
 
             $k = ($clave !== null && ($datos[$clave] ?? null) !== null) ? self::normalizar((string) $datos[$clave]) : null;
 
@@ -99,7 +107,7 @@ final class Aplicador
     }
 
     /** @return array{0: array<string, mixed>, 1: array<string, string>} */
-    private static function fila(array $fila, array $campos, array $mapeo): array
+    private static function fila(array $fila, array $campos, array $mapeo, array $contexto): array
     {
         $datos = [];
         $errores = [];
@@ -110,12 +118,12 @@ final class Aplicador
 
             if ($crudo === null || $crudo === '') {
                 $fijo = $mapeo['fijos'][$campo] ?? null;
-                $datos[$campo] = ($fijo === null || $fijo === '') ? null : self::transformar($fijo, $def, $mapeo['valores'][$campo] ?? [], $campo, $errores);
+                $datos[$campo] = ($fijo === null || $fijo === '') ? null : self::transformar($fijo, $def, $mapeo['valores'][$campo] ?? [], $campo, $errores, $contexto);
 
                 continue;
             }
 
-            $datos[$campo] = self::transformar($crudo, $def, $mapeo['valores'][$campo] ?? [], $campo, $errores);
+            $datos[$campo] = self::transformar($crudo, $def, $mapeo['valores'][$campo] ?? [], $campo, $errores, $contexto);
         }
 
         // Una sola columna con el nombre completo -> nombres y apellidos.
@@ -127,11 +135,37 @@ final class Aplicador
         return [$datos, $errores];
     }
 
-    private static function transformar(string $crudo, array $def, array $valores, string $campo, array &$errores): mixed
+    private static function transformar(string $crudo, array $def, array $valores, string $campo, array &$errores, array $contexto = []): mixed
     {
         $v = trim($crudo);
 
         switch ($def['tipo']) {
+            case 'empleado':
+                // Por cédula (lo normal) o, si la celda no es un número, por nombre.
+                $doc = self::documento($v);
+                $emp = $contexto['por_documento'][$doc] ?? null;
+                if ($emp) {
+                    return $emp['id'];
+                }
+                if (! preg_match('/\d/', $v)) {
+                    $id = $contexto['por_nombre'][self::normalizar($v)] ?? null;
+                    if ($id === 'ambiguo') {
+                        $errores[$campo] = "Hay más de un trabajador llamado «{$v}»: usa la columna de la cédula.";
+
+                        return null;
+                    }
+                    if ($id !== null) {
+                        return $id;
+                    }
+                }
+                $errores[$campo] = "No hay un trabajador con «{$v}» en la nómina de la empresa.";
+
+                return null;
+
+            case 'placa':
+                // «abc-123», «ABC 123» -> «ABC123».
+                return mb_strtoupper(preg_replace('/[\s\-.]/', '', $v));
+
             case 'fecha':
                 $f = self::fecha($v);
                 if ($f === null) {
@@ -152,8 +186,7 @@ final class Aplicador
                 return $def['tipo'] === 'entero' ? (int) round($n) : $n;
 
             case 'documento':
-                // «1.098.765.432», «1098765432.0» o con espacios -> 1098765432.
-                return preg_replace('/\.0+$|[.\s]/', '', $v);
+                return self::documento($v);
 
             case 'booleano':
                 $traducido = $valores[self::normalizar($v)] ?? null;
@@ -190,6 +223,35 @@ final class Aplicador
             default:
                 return $v;
         }
+    }
+
+    /** «1.098.765.432», «1098765432.0» o con espacios -> «1098765432». */
+    public static function documento(string $v): string
+    {
+        return preg_replace('/\.0+$|[.\s]/', '', trim($v));
+    }
+
+    /**
+     * La nómina de la empresa activa, indexada para los campos de tipo
+     * empleado: por documento (normalizado igual que el campo documento) y por
+     * nombre en los dos órdenes. Dos personas con el mismo nombre quedan como
+     * «ambiguo»: se pide la cédula en vez de adivinar.
+     *
+     * @return array{por_documento: array<string, array{id: int, nombre: string, cargo: ?string}>, por_nombre: array<string, int|string>}
+     */
+    public static function contextoEmpleados(): array
+    {
+        $porDoc = [];
+        $porNombre = [];
+        foreach (Employee::query()->get(['id', 'nombres', 'apellidos', 'numero_documento', 'cargo']) as $e) {
+            $nombre = trim($e->nombres.' '.$e->apellidos);
+            $porDoc[self::documento((string) $e->numero_documento)] = ['id' => $e->id, 'nombre' => $nombre, 'cargo' => $e->cargo];
+            foreach (array_unique([self::normalizar($nombre), self::normalizar($e->apellidos.' '.$e->nombres)]) as $k) {
+                $porNombre[$k] = isset($porNombre[$k]) && $porNombre[$k] !== $e->id ? 'ambiguo' : $e->id;
+            }
+        }
+
+        return ['por_documento' => $porDoc, 'por_nombre' => $porNombre];
     }
 
     /** Día primero, como se escribe en Colombia. Acepta también el serial de Excel. */

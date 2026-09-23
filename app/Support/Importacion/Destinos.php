@@ -2,13 +2,20 @@
 
 namespace App\Support\Importacion;
 
+use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\IpercController;
 use App\Http\Controllers\LegalRequirementController;
+use App\Http\Controllers\PesvVehicleController;
+use App\Http\Controllers\TrainingController;
+use App\Models\Absence;
 use App\Models\Employee;
 use App\Models\IpercRow;
 use App\Models\LegalRequirement;
+use App\Models\PesvVehicle;
 use App\Models\Tenant;
+use App\Models\Training;
+use App\Models\TrainingAttendee;
 
 /**
  * A qué módulos se puede importar y qué campos tiene cada uno.
@@ -120,6 +127,95 @@ final class Destinos
                 'fijos' => ['aplica' => true],
                 'reglas' => fn (int $tenantId) => LegalRequirementController::reglas(),
             ],
+
+            'ausentismo' => [
+                'nombre' => 'Ausentismo (incapacidades y permisos)',
+                'descripcion' => 'Una fila por ausencia. El trabajador tiene que estar en la nómina: se busca por cédula o por nombre.',
+                'modulo' => 'ausentismo',
+                'modelo' => Absence::class,
+                'clave' => null,
+                'nombre_completo' => false,
+                'campos' => [
+                    'employee_id' => self::c('Trabajador (cédula o nombre)', 'empleado', true, null, 'La columna con la cédula; si no hay, la del nombre completo'),
+                    'fecha_inicio' => self::c('Fecha de inicio', 'fecha', true),
+                    'fecha_fin' => self::c('Fecha de fin', 'fecha', true),
+                    'dias' => self::c('Días', 'entero', false, null, 'Si no hay columna se calculan con las fechas'),
+                    'tipo' => self::c('Tipo de ausencia', 'lista', true, Absence::TIPOS, 'enfermedad_general (EG), accidente_trabajo (AT), enfermedad_laboral (EL), accidente_comun, licencia_maternidad (o paternidad), licencia_luto, permiso, otro'),
+                    'diagnostico' => self::c('Diagnóstico', 'texto'),
+                    'cie10' => self::c('Código CIE-10', 'texto'),
+                    'entidad' => self::c('Entidad (EPS o ARL)', 'texto'),
+                    'incapacidad_numero' => self::c('Número de incapacidad', 'texto'),
+                    'prorroga' => self::c('Prórroga', 'booleano'),
+                    'observaciones' => self::c('Observaciones', 'texto'),
+                ],
+                'fijos' => [],
+                'reglas' => fn (int $tenantId) => AbsenceController::reglas($tenantId),
+            ],
+
+            'vehiculos' => [
+                'nombre' => 'Vehículos del PESV',
+                'descripcion' => 'Una fila por vehículo (inventario de la flota).',
+                'modulo' => 'pesv',
+                'modelo' => PesvVehicle::class,
+                'clave' => 'placa',
+                'nombre_completo' => false,
+                'campos' => [
+                    'placa' => self::c('Placa', 'placa', true),
+                    'tipo' => self::c('Tipo de vehículo', 'lista', true, PesvVehicle::TIPOS, 'automovil, camioneta, campero, camion (también tractocamión, volqueta), bus (también buseta, microbús), motocicleta, maquinaria, otro'),
+                    'marca' => self::c('Marca', 'texto'),
+                    'linea' => self::c('Línea', 'texto'),
+                    'modelo' => self::c('Modelo (año)', 'entero'),
+                    'propiedad' => self::c('Propiedad', 'lista', true, PesvVehicle::PROPIEDADES, 'propio, arrendado, leasing, contratista (tercero), colaborador (del trabajador)'),
+                    'propietario' => self::c('Propietario', 'texto'),
+                    'soat_vence' => self::c('Vencimiento SOAT', 'fecha'),
+                    'tecnomecanica_vence' => self::c('Vencimiento revisión técnico-mecánica', 'fecha'),
+                    'poliza_vence' => self::c('Vencimiento póliza', 'fecha'),
+                    'kilometraje' => self::c('Kilometraje', 'entero'),
+                    'observaciones' => self::c('Observaciones', 'texto'),
+                ],
+                'fijos' => ['is_active' => true],
+                'reglas' => fn (int $tenantId) => PesvVehicleController::reglas($tenantId),
+            ],
+
+            'asistentes' => [
+                'nombre' => 'Asistentes a una capacitación',
+                'descripcion' => 'La lista de asistencia de una capacitación que ya existe. Si la cédula está en la nómina, el asistente queda enlazado al trabajador.',
+                'modulo' => 'capacitaciones',
+                'modelo' => TrainingAttendee::class,
+                'clave' => 'numero_documento',
+                'nombre_completo' => false,
+                // Se importa DENTRO de una capacitación, que se elige al subir.
+                'padre' => [
+                    'label' => 'Capacitación',
+                    'campo' => 'training_id',
+                    'opciones' => fn () => Training::query()->orderByDesc('fecha')->orderByDesc('id')->limit(200)->get(['id', 'titulo', 'fecha'])
+                        ->map(fn ($t) => ['id' => $t->id, 'nombre' => $t->titulo.($t->fecha ? ' · '.$t->fecha->format('Y-m-d') : '')])->all(),
+                    'existe' => fn (int $id) => Training::query()->whereKey($id)->exists(),
+                ],
+                'campos' => [
+                    'numero_documento' => self::c('Número de documento', 'documento'),
+                    'nombres' => self::c('Nombre completo', 'texto', true, null, 'Si la cédula está en la nómina y no hay nombre, se toma de ahí'),
+                    'cargo' => self::c('Cargo', 'texto'),
+                    'asistio' => self::c('Asistió', 'booleano', false, null, 'Si la lista es solo de asistentes, déjalo sin columna: se marcan todos como asistentes'),
+                    'nota' => self::c('Nota de la evaluación (0-100)', 'numero'),
+                ],
+                'fijos' => ['asistio' => true],
+                'reglas' => fn (int $tenantId) => TrainingController::reglasAsistente(),
+                // Ya inscritos en ESA capacitación (no en toda la empresa).
+                'existentes' => fn (?int $padreId) => TrainingAttendee::query()->where('training_id', $padreId)
+                    ->whereNotNull('numero_documento')->pluck('numero_documento')->all(),
+                // Con la cédula en la nómina: se enlaza y se completa lo que falte.
+                'completar' => function (array $datos, array $contexto): array {
+                    $emp = isset($datos['numero_documento']) ? ($contexto['por_documento'][$datos['numero_documento']] ?? null) : null;
+                    if ($emp) {
+                        $datos['employee_id'] = $emp['id'];
+                        $datos['nombres'] ??= $emp['nombre'];
+                        $datos['cargo'] ??= $emp['cargo'];
+                    }
+
+                    return $datos;
+                },
+            ],
         ];
     }
 
@@ -151,6 +247,7 @@ final class Destinos
             'nombre' => $d['nombre'],
             'descripcion' => $d['descripcion'],
             'nombre_completo' => $d['nombre_completo'],
+            'padre' => isset($d['padre']) ? $d['padre']['label'] : null,
             'campos' => $d['campos'],
         ])->all();
     }

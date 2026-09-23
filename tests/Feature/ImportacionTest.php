@@ -292,7 +292,7 @@ class ImportacionTest extends TestCase
     public function test_la_pantalla_carga(): void
     {
         $this->comoConsultor()->get('/importar')->assertOk()
-            ->assertInertia(fn ($p) => $p->component('importar/index')->where('permitidos', ['empleados', 'iperc', 'requisitos_legales']));
+            ->assertInertia(fn ($p) => $p->component('importar/index')->where('permitidos', ['empleados', 'iperc', 'requisitos_legales', 'ausentismo', 'vehiculos', 'asistentes']));
     }
 
     /** Destino sin reglas propias no existe: cada uno pide las de su controlador. */

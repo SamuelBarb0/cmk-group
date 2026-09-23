@@ -4,17 +4,23 @@ namespace App\Support\Importacion;
 
 use DOMDocument;
 use DOMXPath;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Reader\Ods;
+use PhpOffice\PhpSpreadsheet\Reader\Xls;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use RuntimeException;
 use ZipArchive;
 
 /**
- * Lee un .xlsx o un .csv a hojas de filas, sin dependencias nuevas.
+ * Lee un .xlsx, .xls, .ods o .csv a hojas de filas.
  *
- * Un .xlsx es un zip de XML, igual que el .docx que ya lee PlantillaImporter:
- * no hace falta PhpSpreadsheet (que además obligaría a un composer install en
- * el Hostinger, donde el despliegue es solo git pull).
+ * El .xlsx (lo más común) va con un lector propio: es un zip de XML, igual
+ * que el .docx que ya lee PlantillaImporter, y así no depende de nada. El
+ * .xls (Excel 97-2003) y el .ods son binario / otro XML y van con
+ * PhpSpreadsheet. El .xlsb no lo lee ninguna librería de PHP: se pide
+ * guardarlo como .xlsx con un mensaje claro.
  *
- * Lo que sí hay que hacer a mano, porque Excel no lo dice en la celda:
+ * Lo que el lector de .xlsx hace a mano, porque Excel no lo dice en la celda:
  * - Los textos van en sharedStrings.xml y la celda solo trae el índice.
  * - Una FECHA es un número de serie (45366 = 15/03/2024). Se sabe que es
  *   fecha por el formato de su estilo en styles.xml, y se devuelve como
@@ -42,9 +48,82 @@ final class LectorTabular
     {
         return match (strtolower($extension)) {
             'xlsx' => self::xlsx($ruta),
+            'xls', 'ods' => self::conPhpSpreadsheet($ruta, strtolower($extension)),
             'csv', 'txt' => ['CSV' => self::csv($ruta)],
-            default => throw new RuntimeException('Formato no soportado: sube un .xlsx o un .csv.'),
+            'xlsb' => throw new RuntimeException('Los .xlsb (Excel binario) no se pueden leer: ábrelo en Excel y guárdalo como .xlsx.'),
+            default => throw new RuntimeException('Formato no soportado: sube un .xlsx, .xls, .ods o .csv.'),
         };
+    }
+
+    /**
+     * .xls (Excel 97-2003) y .ods (LibreOffice) con PhpSpreadsheet. El .xlsx
+     * sigue con el lector propio: más liviano y ya probado con los libros de
+     * CMK. Se cargan los estilos (no «solo datos») porque es la única forma de
+     * saber qué números son fechas.
+     *
+     * @return array<string, list<list<string|null>>>
+     */
+    private static function conPhpSpreadsheet(string $ruta, string $ext): array
+    {
+        try {
+            $lector = $ext === 'xls' ? new Xls : new Ods;
+            $libro = $lector->load($ruta);
+        } catch (\Throwable) {
+            throw new RuntimeException("El archivo no es un .{$ext} válido o está dañado.");
+        }
+
+        $hojas = [];
+        foreach ($libro->getWorksheetIterator() as $hoja) {
+            $filas = [];
+            $maxFila = min($hoja->getHighestDataRow(), self::MAX_FILAS);
+            $maxCol = min(Coordinate::columnIndexFromString($hoja->getHighestDataColumn()), self::MAX_COLUMNAS);
+
+            for ($r = 1; $r <= $maxFila; $r++) {
+                $fila = [];
+                for ($c = 1; $c <= $maxCol; $c++) {
+                    $celda = $hoja->getCell([$c, $r]);
+                    $v = $celda->getValue();
+                    if ($v === null || $v === '') {
+                        $fila[] = null;
+
+                        continue;
+                    }
+                    if ($celda->isFormula()) {
+                        // El valor que Excel guardó al calcular; recalcular aquí
+                        // podría fallar con funciones o referencias externas.
+                        $v = $celda->getOldCalculatedValue() ?? $celda->getCalculatedValue();
+                    }
+                    if (is_numeric($v) && Date::isDateTime($celda)) {
+                        $v = Date::excelToDateTimeObject((float) $v)->format('Y-m-d');
+                    } elseif (is_bool($v)) {
+                        $v = $v ? 'TRUE' : 'FALSE';
+                    } elseif (is_float($v) && floor($v) === $v && abs($v) < 1e15) {
+                        $v = (string) (int) $v;   // 1098765432.0 -> «1098765432»
+                    }
+                    $v = trim(preg_replace('/\s+/u', ' ', (string) $v));
+                    // Un error de fórmula (#N/A, #REF!…) no es un dato.
+                    $esError = in_array($v, ['#N/A', '#VALUE!', '#REF!', '#DIV/0!', '#NAME?', '#NUM!', '#NULL!'], true);
+                    $fila[] = ($v === '' || $esError) ? null : $v;
+                }
+                while ($fila !== [] && end($fila) === null) {
+                    array_pop($fila);
+                }
+                $filas[] = $fila;
+            }
+            while ($filas !== [] && end($filas) === []) {
+                array_pop($filas);
+            }
+            if ($filas !== []) {
+                $hojas[$hoja->getTitle()] = $filas;
+            }
+        }
+        $libro->disconnectWorksheets();
+
+        if ($hojas === []) {
+            throw new RuntimeException('El archivo no tiene hojas con datos.');
+        }
+
+        return $hojas;
     }
 
     /** @return array<string, list<list<string|null>>> */
@@ -95,6 +174,13 @@ final class LectorTabular
         $filas = [];
 
         foreach ($x->query('//m:sheetData/m:row') as $row) {
+            // Excel NO escribe las filas vacías: la posición real sale de r="N".
+            // Sin esto, las filas se corrían y el número que ve el consultor
+            // («la fila 8 no tiene cédula») no era el del Excel.
+            $r = (int) $row->getAttribute('r');
+            while ($r > 0 && count($filas) < $r - 1 && count($filas) < self::MAX_FILAS) {
+                $filas[] = [];
+            }
             if (count($filas) >= self::MAX_FILAS) {
                 break;
             }

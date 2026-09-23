@@ -9,6 +9,8 @@ use App\Services\TrainingRosterExporter;
 use App\Support\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -161,13 +163,7 @@ class TrainingController extends Controller
             'vigencia_meses' => ['nullable', 'integer', 'min:1', 'max:120'],
             'observaciones' => ['nullable', 'string', 'max:2000'],
             'attendees' => ['nullable', 'array'],
-            'attendees.*.employee_id' => ['nullable', 'integer'],
-            'attendees.*.nombres' => ['required', 'string', 'max:255'],
-            'attendees.*.numero_documento' => ['nullable', 'string', 'max:40'],
-            'attendees.*.cargo' => ['nullable', 'string', 'max:120'],
-            'attendees.*.asistio' => ['boolean'],
-            // Sin nota = asistio pero no se le evaluo. No es un cero.
-            'attendees.*.nota' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            ...collect(self::reglasAsistente())->mapWithKeys(fn ($r, $k) => ["attendees.*.{$k}" => $r])->all(),
         ]);
 
         $capacitacion->update([
@@ -233,8 +229,27 @@ class TrainingController extends Controller
         $ext = pathinfo($tema->archivo, PATHINFO_EXTENSION);
 
         return response()->download(
-            \Illuminate\Support\Facades\Storage::disk('local')->path($tema->archivo),
-            \Illuminate\Support\Str::slug($tema->titulo).'.'.$ext,
+            Storage::disk('local')->path($tema->archivo),
+            Str::slug($tema->titulo).'.'.$ext,
         );
+    }
+
+    /**
+     * Reglas de UN asistente. Públicas y estáticas: las usa esta pantalla
+     * (con el prefijo attendees.*) y la importación asistida de asistentes.
+     *
+     * @return array<string, mixed>
+     */
+    public static function reglasAsistente(): array
+    {
+        return [
+            'employee_id' => ['nullable', 'integer'],
+            'nombres' => ['required', 'string', 'max:255'],
+            'numero_documento' => ['nullable', 'string', 'max:40'],
+            'cargo' => ['nullable', 'string', 'max:120'],
+            'asistio' => ['boolean'],
+            // Sin nota = asistio pero no se le evaluo. No es un cero.
+            'nota' => ['nullable', 'numeric', 'min:0', 'max:100'],
+        ];
     }
 }

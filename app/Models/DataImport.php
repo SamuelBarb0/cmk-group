@@ -14,7 +14,7 @@ class DataImport extends Model
     use BelongsToTenant;
 
     protected $fillable = [
-        'user_id', 'destino', 'archivo', 'nombre_original', 'hojas', 'hoja', 'estado',
+        'user_id', 'destino', 'padre_id', 'archivo', 'nombre_original', 'hojas', 'hoja', 'estado',
         'mapeo', 'mapeo_editado', 'error', 'resultado', 'aplicado_at',
     ];
 

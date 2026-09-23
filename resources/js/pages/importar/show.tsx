@@ -13,7 +13,7 @@ import { ESTADOS } from './estados';
 
 interface Campo {
     label: string;
-    tipo: 'texto' | 'fecha' | 'numero' | 'entero' | 'documento' | 'booleano' | 'lista';
+    tipo: 'texto' | 'fecha' | 'numero' | 'entero' | 'documento' | 'booleano' | 'lista' | 'empleado' | 'placa';
     requerido?: boolean;
     opciones?: string[];
     ayuda?: string;
@@ -34,6 +34,8 @@ interface Fila {
     estado: 'valida' | 'error' | 'duplicada';
     datos: Record<string, unknown>;
     errores: Record<string, string>;
+    /** Lo que se muestra en vez del dato (el nombre del trabajador, no su id). */
+    etiquetas?: Record<string, string | null>;
 }
 
 interface Props {
@@ -51,7 +53,8 @@ interface Props {
         resultado: { creados?: number[]; borrados?: number; validas?: number; errores?: number; duplicadas?: number } | null;
         aplicado_at: string | null;
     };
-    destino: { nombre: string; nombre_completo: boolean; campos: Record<string, Campo> };
+    destino: { nombre: string; nombre_completo: boolean; padre: string | null; campos: Record<string, Campo> };
+    padre: string | null;
     modulo: string;
     encabezados: { indice: number; letra: string; titulo: string }[];
     distintos: Record<string, string[]>;
@@ -67,7 +70,7 @@ export default function ImportarShow(props: Props) {
     return <Revision key={`${props.importacion.id}-${props.importacion.estado}`} {...props} />;
 }
 
-function Revision({ needsClient, importacion: imp, destino, modulo, encabezados, distintos, previa }: Props) {
+function Revision({ needsClient, importacion: imp, destino, padre, modulo, encabezados, distintos, previa }: Props) {
     const errors = usePage<SharedData & { errors: Record<string, string> }>().props.errors;
     const [mapeo, setMapeo] = useState<Mapeo | null>(imp.mapeo);
     const [sucio, setSucio] = useState(false);
@@ -136,7 +139,7 @@ function Revision({ needsClient, importacion: imp, destino, modulo, encabezados,
     return (
         <ModuloPage
             titulo={imp.nombre_original}
-            descripcion={`${destino.nombre}${imp.hoja ? ` · hoja «${imp.hoja}»` : ''}`}
+            descripcion={`${destino.nombre}${padre ? ` · ${destino.padre}: ${padre}` : ''}${imp.hoja ? ` · hoja «${imp.hoja}»` : ''}`}
             needsClient={needsClient}
             accion={
                 <Button variant="outline" asChild className="gap-2">
@@ -479,13 +482,15 @@ function Revision({ needsClient, importacion: imp, destino, modulo, encabezados,
                                                     key={k}
                                                     className={cn('max-w-56 truncate px-3 py-2', f.errores[k] && 'text-red-700 dark:text-red-400')}
                                                 >
-                                                    {f.datos[k] === null || f.datos[k] === undefined
-                                                        ? '—'
-                                                        : typeof f.datos[k] === 'boolean'
-                                                          ? f.datos[k]
-                                                              ? 'Sí'
-                                                              : 'No'
-                                                          : String(f.datos[k])}
+                                                    {f.etiquetas?.[k]
+                                                        ? f.etiquetas[k]
+                                                        : f.datos[k] === null || f.datos[k] === undefined
+                                                          ? '—'
+                                                          : typeof f.datos[k] === 'boolean'
+                                                            ? f.datos[k]
+                                                                ? 'Sí'
+                                                                : 'No'
+                                                            : String(f.datos[k])}
                                                 </td>
                                             ))}
                                             <td className="px-3 py-2 text-xs">
