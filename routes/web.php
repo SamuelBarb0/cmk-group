@@ -32,6 +32,7 @@ use App\Http\Controllers\PesvSiniestroController;
 use App\Http\Controllers\PesvVehicleController;
 use App\Http\Controllers\PpeController;
 use App\Http\Controllers\ProgramaGestionController;
+use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\SafetyReportController;
 use App\Http\Controllers\SstDiagnosticController;
 use App\Http\Controllers\TrainingController;
@@ -604,14 +605,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:documents.view', 'module:documentos-ia'])->name('asistente.clear');
 
     /*
+    | Reportes de la empresa activa: informe de gestión del SG-SST por periodo
+    | (Word y PDF) y exportaciones a Excel de cada módulo.
+    | Ver -> reports.view | Descargar -> reports.generate (y cada sección o
+    | exportación pide además el permiso de su propio módulo).
+    */
+    Route::get('reportes', [ReporteController::class, 'index'])
+        ->middleware(['permission:reports.view', 'module:reportes'])->name('reportes.index');
+    Route::post('reportes/informe', [ReporteController::class, 'informe'])
+        ->middleware(['permission:reports.generate', 'module:reportes'])->name('reportes.informe');
+    Route::get('reportes/exportar/{clave}', [ReporteController::class, 'exportar'])
+        ->middleware(['permission:reports.generate', 'module:reportes'])->name('reportes.exportar');
+
+    /*
     | Módulos de la plataforma (Fase 1: shells navegables protegidos por permiso).
     | El contenido de cada módulo se desarrolla en las fases F2–F5.
     */
     $modules = [
-        ['reportes', 'Reportes', 'Informes PDF auditables, indicadores y exportaciones.', 'reports.view'],
-        // 'auditoria' salio de aqui: ya tiene modulo real mas arriba. Ojo, este
-        // bucle se ejecuta DESPUES, y con la misma URI Laravel se queda con la
-        // ultima ruta registrada, asi que el shell tapaba al modulo entero.
+        // 'auditoria' y 'reportes' salieron de aqui: ya tienen modulo real mas
+        // arriba. Ojo, este bucle se ejecuta DESPUES, y con la misma URI Laravel
+        // se queda con la ultima ruta registrada: el shell tapaba al modulo.
     ];
 
     foreach ($modules as [$slug, $title, $desc, $permission]) {
