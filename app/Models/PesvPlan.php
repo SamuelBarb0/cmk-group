@@ -52,6 +52,9 @@ class PesvPlan extends Model
         'lider_documento',
         'lider_designacion_fecha',
         'avance',
+        'encuesta_token',
+        'encuesta_activa',
+        'diagnostico_analisis',
     ];
 
     protected function casts(): array
@@ -62,6 +65,7 @@ class PesvPlan extends Model
             'periodo_fin' => 'integer',
             'misionalidad' => 'integer',
             'avance' => 'decimal:2',
+            'encuesta_activa' => 'boolean',
         ];
     }
 

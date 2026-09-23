@@ -14,6 +14,8 @@ use App\Models\PesvContractor;
 use App\Models\PesvDriverCheck;
 use App\Models\PesvDriverTest;
 use App\Models\PesvInfraction;
+use App\Models\PesvMobilitySurvey;
+use App\Models\PesvRoadRisk;
 use App\Models\PesvRoute;
 use App\Models\PesvSede;
 use App\Models\PesvSiniestro;
@@ -90,6 +92,14 @@ class PesvFeed
         }
 
         // Casos donde el documento no basta y hay datos vivos que mirar.
+        if ($numero === 5) {
+            $insumos[] = $this->encuestaMovilidad();
+        }
+
+        if ($numero === 6) {
+            $insumos[] = $this->matrizRiesgosViales();
+        }
+
         if ($numero === 11) {
             $insumos[] = $this->conductores();
             array_push($insumos, ...$this->paso11());
@@ -367,6 +377,42 @@ class PesvFeed
                 : "{$conductores} conductores, {$sinLicencia} sin número de licencia.",
             'url' => '/pesv/colaboradores',
             'cantidad' => $conductores,
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function encuestaMovilidad(): array
+    {
+        $anio = (int) now()->year;
+        $respuestas = PesvMobilitySurvey::whereYear('fecha', $anio)->count();
+        $colaboradores = Employee::where('is_active', true)->count();
+        $cobertura = $colaboradores ? (int) round($respuestas * 100 / $colaboradores) : 0;
+
+        return [
+            'etiqueta' => "Encuesta de movilidad {$anio}",
+            'estado' => $respuestas === 0 ? 'falta' : ($cobertura >= 80 ? 'ok' : 'parcial'),
+            'detalle' => $respuestas === 0
+                ? 'Nadie ha respondido la encuesta de movilidad este año. Genera el enlace y compártelo.'
+                : "{$respuestas} respuesta(s) de {$colaboradores} colaboradores ({$cobertura} %).",
+            'url' => '/pesv/encuesta',
+            'cantidad' => $respuestas,
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function matrizRiesgosViales(): array
+    {
+        $abiertos = PesvRoadRisk::whereNull('fecha_cierre')->get(['id', 'nivel', 'eficaz']);
+        $criticos = $abiertos->where('nivel', 'critico')->count();
+
+        return [
+            'etiqueta' => 'Matriz de riesgos viales',
+            'estado' => $abiertos->isEmpty() ? 'falta' : ($criticos > 0 ? 'parcial' : 'ok'),
+            'detalle' => $abiertos->isEmpty()
+                ? 'La matriz de riesgos viales está vacía (RE-SST-45).'
+                : $abiertos->count().' riesgo(s) abierto(s), '.$criticos.' crítico(s).',
+            'url' => '/pesv/riesgos-viales',
+            'cantidad' => $abiertos->count(),
         ];
     }
 
