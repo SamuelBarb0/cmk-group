@@ -26,6 +26,7 @@ import {
     Flame,
     Gauge,
     GraduationCap,
+    Handshake,
     HardHat,
     LayoutGrid,
     ListChecks,
@@ -82,6 +83,7 @@ const navGroups: { label: string; items: NavEntry[] }[] = [
             { title: 'Salud ocupacional', url: '/salud-ocupacional', icon: Stethoscope, permission: 'sst.view', module: 'salud-ocupacional' },
             { title: 'Programas de gestión', url: '/programas', icon: Target, permission: 'sst.view', module: 'programas' },
             { title: 'Mantenimiento', url: '/mantenimiento', icon: Wrench, permission: 'sst.view', module: 'mantenimiento' },
+            { title: 'Contratistas', url: '/contratistas', icon: Handshake, permission: 'sst.view', module: 'contratistas' },
         ],
     },
     {
