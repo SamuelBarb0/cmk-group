@@ -14,8 +14,19 @@ class TrainingTopicsSeeder extends Seeder
 {
     public function run(): void
     {
+        $respetados = [];
         foreach ($this->temas() as $t) {
+            // Un tema editado desde la plataforma (o con material nuevo) no se
+            // pisa: este seeder se corre en los despliegues.
+            if (TrainingTopic::where('codigo', $t['codigo'])->whereNotNull('editado_at')->exists()) {
+                $respetados[] = $t['codigo'];
+
+                continue;
+            }
             TrainingTopic::updateOrCreate(['codigo' => $t['codigo']], $t);
+        }
+        if ($respetados) {
+            $this->command?->warn('Temas editados en la plataforma, no se tocaron: '.implode(', ', $respetados));
         }
     }
 

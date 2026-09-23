@@ -24,7 +24,7 @@ use Illuminate\Support\Carbon;
 class DocumentFiller
 {
     /** Mapa TOKEN => valor del cliente (fuente única de verdad). */
-    public function tokens(Tenant $tenant): array
+    public function tokens(Tenant $tenant, ?Carbon $fecha = null): array
     {
         return [
             'EMPRESA' => $tenant->name,
@@ -33,7 +33,7 @@ class DocumentFiller
             'REPRESENTANTE' => $tenant->representante_legal,
             'CIUDAD' => $tenant->city,
             'CC' => $tenant->representante_cc,
-            'FECHA' => $this->fechaLarga(),
+            'FECHA' => $this->fechaLarga($fecha),
             'NIVEL_RIESGO' => $tenant->nivel_riesgo,
             'ARL' => $tenant->arl,
             'RESPONSABLE_SGSST' => $tenant->responsable_sgsst,
@@ -45,9 +45,9 @@ class DocumentFiller
      * Rellena el contenido base del modelo con los datos del tenant y le
      * antepone un encabezado de identificación del cliente. Determinista.
      */
-    public function fill(string $base, Tenant $tenant): string
+    public function fill(string $base, Tenant $tenant, ?Carbon $fecha = null): string
     {
-        $tokens = $this->tokens($tenant);
+        $tokens = $this->tokens($tenant, $fecha);
 
         // 1) Tokens ${TOKEN} -> valor (o [PENDIENTE] si falta el dato).
         $out = preg_replace_callback('/\$\{([A-Z_]+)\}/', function (array $m) use ($tokens) {
@@ -60,11 +60,11 @@ class DocumentFiller
         $nombre = filled($tenant->name) ? $tenant->name : '[PENDIENTE]';
         $out = preg_replace_callback('/NOM+BRE\s+(?:DE\s+LA\s+)?EMPRESA/iu', fn () => $nombre, $out);
 
-        return $this->encabezado($tenant)."\n\n".$out;
+        return $this->encabezado($tenant, $fecha)."\n\n".$out;
     }
 
     /** Bloque de identificación del cliente al inicio del documento. */
-    private function encabezado(Tenant $tenant): string
+    private function encabezado(Tenant $tenant, ?Carbon $fecha = null): string
     {
         $v = fn ($x) => filled($x) ? $x : '[PENDIENTE]';
 
@@ -73,11 +73,15 @@ class DocumentFiller
             .'  ·  **Ciudad:** '.$v($tenant->city)."\n"
             .'> **Representante legal:** '.$v($tenant->representante_legal)
             .'  ·  **Responsable SG-SST:** '.$v($tenant->responsable_sgsst)
-            .'  ·  **Fecha:** '.$this->fechaLarga();
+            .'  ·  **Fecha:** '.$this->fechaLarga($fecha);
     }
 
-    private function fechaLarga(): string
+    /**
+     * Fecha de emisión en letras. Por defecto hoy; al regenerar un documento
+     * viejo se pasa la fecha en que se creó, para no cambiarle la emisión.
+     */
+    private function fechaLarga(?Carbon $fecha = null): string
     {
-        return Carbon::now()->locale('es')->translatedFormat('d \d\e F \d\e Y');
+        return ($fecha ?? Carbon::now())->copy()->locale('es')->translatedFormat('d \d\e F \d\e Y');
     }
 }

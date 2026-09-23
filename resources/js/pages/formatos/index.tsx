@@ -9,7 +9,7 @@ import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Building2, CheckCircle2, ClipboardCheck, Download, FileText, Plus, Save, Trash2 } from 'lucide-react';
+import { Building2, CheckCircle2, ClipboardCheck, Download, FileText, Plus, Save, Settings2, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 type Tipo = 'text' | 'textarea' | 'date' | 'number' | 'select' | 'checklist' | 'firma';
@@ -96,8 +96,16 @@ const CHECK = [
 ] as const;
 
 export default function FormatosIndex({ formats, records, needsClient, open }: Props) {
-    const { can } = usePermissions();
+    const { can, hasRole } = usePermissions();
     const canPerform = can('inspections.perform');
+    // El catálogo es compartido por todas las empresas: solo lo edita CMK.
+    const catalogo = hasRole('consultor_admin') && (
+        <Button asChild variant="outline" className="gap-2">
+            <Link href={route('formatos.catalogo.index')}>
+                <Settings2 className="size-4" /> Administrar catálogo
+            </Link>
+        </Button>
+    );
     const page = usePage<SharedData>();
     const flash = page.props.flash;
     const tenant = page.props.tenant as { id: number; name: string } | null;
@@ -130,9 +138,12 @@ export default function FormatosIndex({ formats, records, needsClient, open }: P
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Formatos" />
                 <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
-                    <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Formatos</h1>
-                        <p className="text-muted-foreground text-sm">Inspecciones, actas y listas de chequeo del SGI.</p>
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                            <h1 className="font-brand text-2xl font-bold tracking-tight">Formatos</h1>
+                            <p className="text-muted-foreground text-sm">Inspecciones, actas y listas de chequeo del SGI.</p>
+                        </div>
+                        {catalogo}
                     </div>
                     <Card>
                         <CardContent className="flex min-h-60 flex-col items-center justify-center gap-3 text-center">
@@ -156,11 +167,14 @@ export default function FormatosIndex({ formats, records, needsClient, open }: P
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Formatos" />
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
-                <div>
-                    <h1 className="font-brand text-2xl font-bold tracking-tight">Formatos</h1>
-                    <p className="text-muted-foreground text-sm">
-                        Inspecciones, actas y listas de chequeo de <span className="font-medium">{tenant?.name ?? 'la empresa'}</span>.
-                    </p>
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">Formatos</h1>
+                        <p className="text-muted-foreground text-sm">
+                            Inspecciones, actas y listas de chequeo de <span className="font-medium">{tenant?.name ?? 'la empresa'}</span>.
+                        </p>
+                    </div>
+                    {catalogo}
                 </div>
 
                 {notice && (

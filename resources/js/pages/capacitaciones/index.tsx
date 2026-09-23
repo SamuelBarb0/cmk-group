@@ -9,7 +9,7 @@ import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Building2, CheckCircle2, Download, FileText, GraduationCap, Plus, Save, Trash2, UserPlus, Users } from 'lucide-react';
+import { Building2, CheckCircle2, Download, FileText, GraduationCap, Library, Plus, Save, Trash2, UserPlus, Users } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 type Modalidad = 'presencial' | 'virtual';
@@ -93,8 +93,16 @@ const ESTADO: Record<Estado, { label: string; cls: string }> = {
 };
 
 export default function CapacitacionesIndex({ topics, trainings, employees, needsClient, open }: Props) {
-    const { can } = usePermissions();
+    const { can, hasRole } = usePermissions();
     const canManage = can('sst.manage');
+    // La biblioteca es compartida por todas las empresas: solo la edita CMK.
+    const biblioteca = hasRole('consultor_admin') && (
+        <Button asChild variant="outline" className="gap-2">
+            <Link href={route('capacitaciones.temas.index')}>
+                <Library className="size-4" /> Administrar biblioteca
+            </Link>
+        </Button>
+    );
     const page = usePage<SharedData>();
     const flash = page.props.flash;
     const tenant = page.props.tenant as { id: number; name: string } | null;
@@ -130,9 +138,12 @@ export default function CapacitacionesIndex({ topics, trainings, employees, need
             <AppLayout breadcrumbs={breadcrumbs}>
                 <Head title="Capacitaciones" />
                 <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
-                    <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Capacitaciones</h1>
-                        <p className="text-muted-foreground text-sm">Biblioteca de temas y registro de asistencia del SGI.</p>
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                            <h1 className="font-brand text-2xl font-bold tracking-tight">Capacitaciones</h1>
+                            <p className="text-muted-foreground text-sm">Biblioteca de temas y registro de asistencia del SGI.</p>
+                        </div>
+                        {biblioteca}
                     </div>
                     <Card>
                         <CardContent className="flex min-h-60 flex-col items-center justify-center gap-3 text-center">
@@ -163,11 +174,14 @@ export default function CapacitacionesIndex({ topics, trainings, employees, need
                             Biblioteca de temas y registro de asistencia de <span className="font-medium">{tenant?.name ?? 'la empresa'}</span>.
                         </p>
                     </div>
-                    {canManage && (
-                        <Button variant="outline" className="gap-2" disabled={creating !== null} onClick={() => programar(null)}>
-                            <Plus className="size-4" /> Capacitación libre
-                        </Button>
-                    )}
+                    <div className="flex flex-wrap gap-2">
+                        {biblioteca}
+                        {canManage && (
+                            <Button variant="outline" className="gap-2" disabled={creating !== null} onClick={() => programar(null)}>
+                                <Plus className="size-4" /> Capacitación libre
+                            </Button>
+                        )}
+                    </div>
                 </div>
 
                 {notice && (
@@ -320,7 +334,14 @@ function TrainingEditor({ training, employees, canManage }: { training: OpenTrai
     function agregarEmpleados(ids: number[]) {
         const nuevos = employees
             .filter((e) => ids.includes(e.id))
-            .map<Attendee>((e) => ({ employee_id: e.id, nombres: e.nombre, numero_documento: e.numero_documento, cargo: e.cargo, asistio: true, nota: null }));
+            .map<Attendee>((e) => ({
+                employee_id: e.id,
+                nombres: e.nombre,
+                numero_documento: e.numero_documento,
+                cargo: e.cargo,
+                asistio: true,
+                nota: null,
+            }));
         setAttendees((a) => [...a, ...nuevos]);
         setPicker(false);
     }
@@ -451,10 +472,12 @@ function TrainingEditor({ training, employees, canManage }: { training: OpenTrai
                             </p>
                         ) : (
                             <div className="divide-border overflow-hidden rounded-md border">
-                                <div className={cn(
+                                <div
+                                    className={cn(
                                         'text-muted-foreground bg-muted/40 grid gap-2 border-b px-2 py-1.5 text-[11px] font-semibold',
                                         evaluaEficacia ? 'grid-cols-[1fr_7rem_1fr_4rem_9rem_2rem]' : 'grid-cols-[1fr_7rem_1fr_4rem_2rem]',
-                                    )}>
+                                    )}
+                                >
                                     <span>Nombre</span>
                                     <span>Documento</span>
                                     <span>Cargo</span>
@@ -505,9 +528,7 @@ function TrainingEditor({ training, employees, canManage }: { training: OpenTrai
                                                     min={0}
                                                     max={100}
                                                     value={a.nota ?? ''}
-                                                    onChange={(e) =>
-                                                        setAtt(i, { nota: e.target.value === '' ? null : Number(e.target.value) })
-                                                    }
+                                                    onChange={(e) => setAtt(i, { nota: e.target.value === '' ? null : Number(e.target.value) })}
                                                     disabled={!canManage || !a.asistio}
                                                     placeholder="—"
                                                     className="h-8"
@@ -554,8 +575,7 @@ function TrainingEditor({ training, employees, canManage }: { training: OpenTrai
                                 <span>
                                     Se evalúa la eficacia
                                     <span className="text-muted-foreground block text-xs">
-                                        Habilita la nota por asistente. Es lo que alimenta el indicador de eficacia de
-                                        capacitaciones.
+                                        Habilita la nota por asistente. Es lo que alimenta el indicador de eficacia de capacitaciones.
                                     </span>
                                 </span>
                             </label>

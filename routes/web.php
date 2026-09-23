@@ -15,6 +15,7 @@ use App\Http\Controllers\DocumentTemplateController;
 use App\Http\Controllers\EmergencyController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\FormatoController;
+use App\Http\Controllers\FormFormatController;
 use App\Http\Controllers\ImportacionController;
 use App\Http\Controllers\IndicatorController;
 use App\Http\Controllers\IpercController;
@@ -34,6 +35,7 @@ use App\Http\Controllers\ProgramaGestionController;
 use App\Http\Controllers\SafetyReportController;
 use App\Http\Controllers\SstDiagnosticController;
 use App\Http\Controllers\TrainingController;
+use App\Http\Controllers\TrainingTopicController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\WorkAccidentController;
 use App\Http\Controllers\WorkPlanController;
@@ -511,6 +513,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.view', 'module:capacitaciones'])->name('capacitaciones.index');
     Route::get('capacitaciones/tema/{tema}/material', [TrainingController::class, 'material'])
         ->middleware(['permission:sst.view', 'module:capacitaciones'])->name('capacitaciones.material');
+    // Biblioteca global de temas y su material (solo el administrador de CMK;
+    // el rol se valida en el controlador). ANTES de capacitaciones/{capacitacion}.
+    Route::prefix('capacitaciones/temas')->name('capacitaciones.temas.')
+        ->middleware('permission:sst.view')
+        ->controller(TrainingTopicController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::post('{tema}', 'update')->name('update');
+            Route::patch('{tema}/activo', 'toggle')->name('toggle');
+        });
     Route::get('capacitaciones/{capacitacion}', [TrainingController::class, 'show'])
         ->middleware(['permission:sst.view', 'module:capacitaciones'])->name('capacitaciones.show');
     Route::post('capacitaciones', [TrainingController::class, 'store'])
@@ -527,6 +539,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     | cliente activo. Un solo módulo genérico para toda la cola larga de formatos.
     | Ver -> inspections.view | Diligenciar -> inspections.perform
     */
+    // Catálogo global de formatos (solo el administrador de CMK; el rol se
+    // valida en el controlador). ANTES de formatos/{formato}: si no, «catalogo»
+    // se leería como el id de un registro.
+    Route::prefix('formatos/catalogo')->name('formatos.catalogo.')
+        ->middleware('permission:inspections.view')
+        ->controller(FormFormatController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('nuevo', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('{formFormat}/editar', 'edit')->name('edit');
+            Route::put('{formFormat}', 'update')->name('update');
+            Route::patch('{formFormat}/activo', 'toggle')->name('toggle');
+            Route::delete('{formFormat}', 'destroy')->name('destroy');
+        });
     Route::get('formatos', [FormatoController::class, 'index'])
         ->middleware(['permission:inspections.view', 'module:inspecciones'])->name('formatos.index');
     Route::get('formatos/{formato}', [FormatoController::class, 'show'])
