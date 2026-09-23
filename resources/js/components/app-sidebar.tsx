@@ -35,6 +35,7 @@ import {
     ShieldCheck,
     Siren,
     Sparkles,
+    Target,
     TriangleAlert,
     Users,
     UsersRound,
@@ -76,6 +77,7 @@ const navGroups: { label: string; items: NavEntry[] }[] = [
             { title: 'Comités', url: '/comites', icon: UsersRound, permission: 'sst.view', module: 'comites' },
             { title: 'EPP', url: '/epp', icon: HardHat, permission: 'sst.view', module: 'epp' },
             { title: 'Emergencias', url: '/emergencias', icon: Flame, permission: 'sst.view', module: 'emergencias' },
+            { title: 'Programas de gestión', url: '/programas', icon: Target, permission: 'sst.view', module: 'programas' },
         ],
     },
     {
