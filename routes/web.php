@@ -30,6 +30,7 @@ use App\Http\Controllers\PesvRouteController;
 use App\Http\Controllers\PesvSedeController;
 use App\Http\Controllers\PesvSiniestroController;
 use App\Http\Controllers\PesvVehicleController;
+use App\Http\Controllers\PesvVerificacionController;
 use App\Http\Controllers\PpeController;
 use App\Http\Controllers\ProgramaGestionController;
 use App\Http\Controllers\ReporteController;
@@ -136,6 +137,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('pesv/vehiculos', [PesvVehicleController::class, 'index'])->name('pesv.vehiculos.index');
         Route::get('pesv/rutas', [PesvRouteController::class, 'index'])->name('pesv.rutas.index');
         Route::get('pesv/siniestros', [PesvSiniestroController::class, 'index'])->name('pesv.siniestros.index');
+        Route::get('pesv/evidencias/{evidencia}', [PesvVerificacionController::class, 'descargar'])->name('pesv.evidencias.descargar');
     });
 
     Route::middleware(['permission:pesv.manage', 'module:pesv'])->group(function () {
@@ -145,6 +147,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('pesv/comite', [PesvController::class, 'storeMiembro'])->name('pesv.comite.store');
         Route::delete('pesv/comite/{miembro}', [PesvController::class, 'destroyMiembro'])->name('pesv.comite.destroy');
         Route::put('pesv/comite/{miembro}', [PesvController::class, 'updateMiembro'])->name('pesv.comite.update');
+        // Lista de verificación (Tabla 16): respuesta y evidencias por pregunta.
+        Route::post('pesv/criterio/{criterio}', [PesvVerificacionController::class, 'responder'])->name('pesv.criterio.responder');
+        Route::post('pesv/criterio/{criterio}/evidencias', [PesvVerificacionController::class, 'subir'])->name('pesv.evidencias.subir');
+        Route::delete('pesv/evidencias/{evidencia}', [PesvVerificacionController::class, 'borrar'])->name('pesv.evidencias.borrar');
 
         Route::post('pesv/sedes', [PesvSedeController::class, 'store'])->name('pesv.sedes.store');
         Route::put('pesv/sedes/{sede}', [PesvSedeController::class, 'update'])->name('pesv.sedes.update');

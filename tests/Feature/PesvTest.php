@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Employee;
+use App\Models\PesvCriterion;
+use App\Models\PesvEvidence;
 use App\Models\PesvPlan;
 use App\Models\PesvStep;
 use App\Models\PesvVehicle;
@@ -11,9 +13,12 @@ use App\Models\User;
 use App\Services\PesvFeed;
 use App\Support\TenantContext;
 use Database\Seeders\IndicatorsSeeder;
+use Database\Seeders\PesvCriteriaSeeder;
 use Database\Seeders\PesvStepsSeeder;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
@@ -35,7 +40,7 @@ class PesvTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed(PesvStepsSeeder::class);
+        $this->seed([PesvStepsSeeder::class, PesvCriteriaSeeder::class]);
     }
 
     private function permisos(): void
@@ -79,39 +84,59 @@ class PesvTest extends TestCase
         $this->assertSame(2, (int) $porFase[4], 'Fase 4 Mejora continua va del 23 al 24.');
     }
 
-    private function marcar(PesvPlan $plan, array $numeros, string $estado): void
+    /** Responde preguntas de la lista de verificación por código («1.1»). */
+    private function responder(PesvPlan $plan, array $codigos, string $estado): void
     {
-        foreach ($numeros as $numero) {
-            $plan->pasos()->updateOrCreate(['pesv_step_id' => PesvStep::where('numero', $numero)->value('id')], ['estado' => $estado]);
+        foreach ($codigos as $codigo) {
+            $plan->criterios()->updateOrCreate(['pesv_criterion_id' => PesvCriterion::where('codigo', $codigo)->value('id')], ['estado' => $estado]);
         }
     }
 
     /**
-     * El bug que había: se dividía por las filas GUARDADAS, así que un plan
-     * nuevo con un solo paso en «cumple» marcaba 100 %. El denominador son los
-     * pasos que la norma exige al nivel del plan, menos los «no aplica».
+     * El avance es la proporción de preguntas de la Tabla 16 en «cumple»
+     * sobre las que exige el nivel, sin las «no aplica». El denominador es el
+     * catálogo, no lo respondido: con una sola respuesta no puede dar 100 %.
      */
-    public function test_el_avance_se_mide_sobre_los_pasos_que_exige_el_nivel(): void
+    public function test_el_avance_se_mide_sobre_las_preguntas_que_exige_el_nivel(): void
     {
         $tenant = $this->tenant();
         $this->activar($tenant);
         $plan = PesvPlan::create(['tenant_id' => $tenant->id, 'nivel' => 'basico']);
 
-        // Básico exige 18 pasos (sin 2, 11, 13, 18, 19 ni 21).
-        $this->marcar($plan, [1], 'cumple');
+        // Básico: 40 de las 60 preguntas (sin las de los pasos 2, 11, 13, 18, 19 y 21).
+        $this->responder($plan, ['1.1'], 'cumple');
         $plan->recalcular();
-        $this->assertSame('5.56', (string) $plan->fresh()->avance, '1 de 18, no 1 de 1.');
+        $this->assertSame('2.50', (string) $plan->fresh()->avance, '1 de 40.');
 
-        // Cumplir un paso que básico no exige no suma; «no aplica» sí sale del denominador.
-        $this->marcar($plan, [2], 'cumple');
-        $this->marcar($plan, [3, 4], 'no_aplica');
+        // Una pregunta que básico no exige no suma; «no aplica» sale del denominador.
+        $this->responder($plan, ['2.1'], 'cumple');
+        $this->responder($plan, ['3.1', '3.2'], 'no_aplica');
         $plan->recalcular();
-        $this->assertSame('6.25', (string) $plan->fresh()->avance, '1 de 16.');
+        $this->assertSame('2.63', (string) $plan->fresh()->avance, '1 de 38.');
 
-        // En avanzado cuentan los 24: el paso 2 ya suma.
+        // Avanzado: las 60; la 2.1 ya suma.
         $plan->update(['nivel' => 'avanzado']);
         $plan->recalcular();
-        $this->assertSame('9.09', (string) $plan->fresh()->avance, '2 de 22.');
+        $this->assertSame('3.45', (string) $plan->fresh()->avance, '2 de 58.');
+    }
+
+    public function test_la_lista_de_verificacion_es_la_tabla_16(): void
+    {
+        $this->assertSame(60, PesvCriterion::count());
+        $this->assertSame(24, PesvCriterion::distinct()->count('pesv_step_id'), 'Todo paso tiene al menos una pregunta.');
+        $this->assertSame(40, PesvCriterion::all()->filter(fn ($c) => $c->aplicaA('basico'))->count());
+        $this->assertSame(53, PesvCriterion::all()->filter(fn ($c) => $c->aplicaA('estandar'))->count());
+        $this->assertSame(['avanzado'], PesvCriterion::where('codigo', '21.3')->value('niveles'));
+        $this->assertSame(3, PesvCriterion::where('codigo', 'like', '19.%')->count(), 'La fuente repite 19.2; la tercera es la 19.3.');
+    }
+
+    public function test_el_estado_del_paso_sale_de_sus_preguntas(): void
+    {
+        $this->assertSame('pendiente', PesvPlan::estadoDelPaso(['no_verificado', 'no_verificado']));
+        $this->assertSame('en_proceso', PesvPlan::estadoDelPaso(['cumple', 'no_verificado']));
+        $this->assertSame('no_cumple', PesvPlan::estadoDelPaso(['cumple', 'no_cumple']));
+        $this->assertSame('cumple', PesvPlan::estadoDelPaso(['cumple', 'no_aplica']));
+        $this->assertSame('no_aplica', PesvPlan::estadoDelPaso(['no_aplica', 'no_aplica']));
     }
 
     public function test_los_pasos_que_aplican_por_nivel_son_los_del_anexo(): void
@@ -152,12 +177,13 @@ class PesvTest extends TestCase
         $user = $this->consultor();
         $web = fn () => $this->actingAs($user)->withSession(['active_tenant_id' => $tenant->id]);
 
-        $web()->post('/pesv/paso/2', ['estado' => 'cumple'])->assertRedirect();
+        $c21 = PesvCriterion::where('codigo', '2.1')->value('id');
+        $web()->post("/pesv/criterio/{$c21}", ['estado' => 'cumple'])->assertSessionHasNoErrors();
         $plan = PesvPlan::withoutTenantScope()->where('tenant_id', $tenant->id)->first();
-        $this->assertSame('0.00', (string) $plan->avance, 'Paso 2 no se exige en básico.');
+        $this->assertSame('0.00', (string) $plan->avance, 'La 2.1 no se exige en básico.');
 
         $web()->put('/pesv', ['nivel' => 'estandar', 'misionalidad' => 2])->assertSessionHasNoErrors();
-        $this->assertSame('4.55', (string) $plan->fresh()->avance, '1 de 22 en estándar.');
+        $this->assertSame('1.89', (string) $plan->fresh()->avance, '1 de 53 en estándar.');
 
         app()->forgetInstance(TenantContext::class);
         $this->activar($tenant);
@@ -234,33 +260,106 @@ class PesvTest extends TestCase
         $this->assertNotContains('PESV-TSV-FAT', $codigos($sinPesv));
     }
 
-    public function test_guardar_un_paso_recalcula_el_avance(): void
+    public function test_responder_una_pregunta_actualiza_el_paso_y_el_avance(): void
+    {
+        $tenant = $this->tenant();
+        $user = $this->consultor();
+        $web = fn () => $this->actingAs($user)->withSession(['active_tenant_id' => $tenant->id]);
+        $id = fn (string $codigo) => PesvCriterion::where('codigo', $codigo)->value('id');
+
+        $web()->post('/pesv/criterio/'.$id('1.1'), ['estado' => 'cumple', 'observaciones' => 'Acta de designación firmada'])->assertSessionHasNoErrors();
+        $plan = PesvPlan::withoutTenantScope()->where('tenant_id', $tenant->id)->firstOrFail();
+        $paso1 = $plan->pasos()->where('pesv_step_id', PesvStep::where('numero', 1)->value('id'))->first();
+        $this->assertSame('en_proceso', $paso1->estado, 'Falta la 1.2.');
+        $respuesta = $plan->criterios()->first();
+        $this->assertSame('Acta de designación firmada', $respuesta->observaciones);
+        $this->assertSame($user->name, $respuesta->verificado_por);
+
+        $web()->post('/pesv/criterio/'.$id('1.2'), ['estado' => 'cumple'])->assertSessionHasNoErrors();
+        $this->assertSame('cumple', $paso1->fresh()->estado);
+        $this->assertSame('5.00', (string) $plan->fresh()->avance, '2 de 40.');
+
+        // El estado del paso ya no se elige a mano: el formulario del paso lo ignora.
+        $web()->post('/pesv/paso/1', ['estado' => 'no_cumple', 'responsable' => 'Líder PESV'])->assertSessionHasNoErrors();
+        $this->assertSame('cumple', $paso1->fresh()->estado);
+        $this->assertSame('Líder PESV', $paso1->fresh()->responsable);
+
+        $web()->post('/pesv/criterio/'.$id('1.2'), ['estado' => 'quizas'])->assertSessionHasErrors('estado');
+    }
+
+    /** Al llegar la lista de verificación, lo que ya estaba marcado por paso no se pierde. */
+    public function test_la_migracion_trae_el_estado_que_tenian_los_pasos(): void
+    {
+        $this->artisan('migrate:rollback', ['--path' => 'database/migrations/2026_10_01_000001_create_pesv_verificacion_tables.php'])->assertSuccessful();
+
+        $tenant = $this->tenant();
+        $this->activar($tenant);
+        $plan = PesvPlan::create(['tenant_id' => $tenant->id, 'nivel' => 'basico']);
+        $plan->pasos()->create(['pesv_step_id' => PesvStep::where('numero', 1)->value('id'), 'estado' => 'cumple']);
+        $plan->pasos()->create(['pesv_step_id' => PesvStep::where('numero', 3)->value('id'), 'estado' => 'no_aplica']);
+        $plan->pasos()->create(['pesv_step_id' => PesvStep::where('numero', 4)->value('id'), 'estado' => 'en_proceso']);
+
+        $this->artisan('migrate', ['--path' => 'database/migrations/2026_10_01_000001_create_pesv_verificacion_tables.php'])->assertSuccessful();
+
+        $estados = $plan->criterios()->with('criterio')->get()->mapWithKeys(fn ($r) => [$r->criterio->codigo => $r->estado]);
+        $this->assertSame(['1.1' => 'cumple', '1.2' => 'cumple', '3.1' => 'no_aplica', '3.2' => 'no_aplica'], $estados->sortKeys()->all());
+        // «En proceso» no dice qué preguntas faltan: no se inventa ninguna respuesta.
+        $this->assertSame('en_proceso', $plan->pasos()->where('pesv_step_id', PesvStep::where('numero', 4)->value('id'))->value('estado'));
+        $this->assertSame('5.26', (string) $plan->fresh()->avance, '2 de 38 (40 menos las 2 no aplica).');
+    }
+
+    public function test_quien_solo_puede_ver_no_puede_responder(): void
+    {
+        $tenant = $this->tenant();
+        $auditor = $this->consultor('auditor');
+        $id = PesvCriterion::where('codigo', '1.1')->value('id');
+
+        $this->actingAs($auditor)->withSession(['active_tenant_id' => $tenant->id])
+            ->post("/pesv/criterio/{$id}", ['estado' => 'cumple'])->assertForbidden();
+    }
+
+    public function test_las_evidencias_se_suben_bajan_y_no_cruzan_empresas(): void
+    {
+        Storage::fake('local');
+        $mia = $this->tenant('Mía');
+        $otra = $this->tenant('Otra');
+        $user = $this->consultor();
+        $id = PesvCriterion::where('codigo', '3.1')->value('id');
+
+        $this->actingAs($user)->withSession(['active_tenant_id' => $mia->id])
+            ->post("/pesv/criterio/{$id}/evidencias", ['archivo' => UploadedFile::fake()->create('politica-firmada.pdf', 120)])
+            ->assertSessionHasNoErrors();
+        $ev = PesvEvidence::withoutTenantScope()->firstOrFail();
+        $this->assertSame($mia->id, $ev->tenant_id);
+        $this->assertSame('politica-firmada.pdf', $ev->nombre);
+        Storage::disk('local')->assertExists($ev->archivo);
+
+        $this->actingAs($user)->withSession(['active_tenant_id' => $mia->id])
+            ->get("/pesv/evidencias/{$ev->id}")->assertOk()->assertDownload('politica-firmada.pdf');
+        // Desde otra empresa, la evidencia no existe.
+        $this->actingAs($user)->withSession(['active_tenant_id' => $otra->id])->get("/pesv/evidencias/{$ev->id}")->assertNotFound();
+        $this->actingAs($user)->withSession(['active_tenant_id' => $otra->id])->delete("/pesv/evidencias/{$ev->id}")->assertNotFound();
+
+        $this->actingAs($user)->withSession(['active_tenant_id' => $mia->id])
+            ->post("/pesv/criterio/{$id}/evidencias", ['archivo' => UploadedFile::fake()->create('script.exe', 5)])
+            ->assertSessionHasErrors('archivo');
+
+        $this->actingAs($user)->withSession(['active_tenant_id' => $mia->id])->delete("/pesv/evidencias/{$ev->id}")->assertRedirect();
+        $this->assertSame(0, PesvEvidence::withoutTenantScope()->count());
+        Storage::disk('local')->assertMissing($ev->archivo);
+    }
+
+    public function test_la_pantalla_del_paso_trae_sus_preguntas(): void
     {
         $tenant = $this->tenant();
         $user = $this->consultor();
 
-        $respuesta = $this->actingAs($user)
-            ->withSession(['active_tenant_id' => $tenant->id])
-            ->post('/pesv/paso/1', ['estado' => 'cumple']);
-
-        $respuesta->assertRedirect();
-
-        $plan = PesvPlan::withoutTenantScope()->where('tenant_id', $tenant->id)->first();
-
-        $this->assertNotNull($plan, 'Entrar al PESV crea el plan de la empresa.');
-        $this->assertSame('cumple', $plan->pasos()->first()->estado);
-        $this->assertGreaterThan(0, (float) $plan->avance);
-    }
-
-    public function test_quien_solo_puede_ver_no_puede_guardar_un_paso(): void
-    {
-        $tenant = $this->tenant();
-        $auditor = $this->consultor('auditor');
-
-        $this->actingAs($auditor)
-            ->withSession(['active_tenant_id' => $tenant->id])
-            ->post('/pesv/paso/1', ['estado' => 'cumple'])
-            ->assertForbidden();
+        $this->actingAs($user)->withSession(['active_tenant_id' => $tenant->id])->get('/pesv/paso/18')->assertOk()
+            ->assertInertia(fn ($p) => $p->component('pesv/paso')
+                ->has('criterios', 5)
+                ->where('criterios.0.codigo', '18.1')
+                ->where('criterios.0.aplica', false)   // básico: el paso 18 no se exige
+                ->where('criterios.0.estado', 'no_verificado'));
     }
 
     public function test_la_caracterizacion_de_una_empresa_no_se_ve_desde_otra(): void

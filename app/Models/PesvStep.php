@@ -53,6 +53,12 @@ class PesvStep extends Model
         return in_array($nivel, $this->niveles ?? self::nivelesDe($this->numero), true);
     }
 
+    /** @return HasMany<PesvCriterion, $this> */
+    public function criterios(): HasMany
+    {
+        return $this->hasMany(PesvCriterion::class, 'pesv_step_id')->orderBy('orden');
+    }
+
     /** @return HasMany<PesvPlanStep, $this> */
     public function planSteps(): HasMany
     {

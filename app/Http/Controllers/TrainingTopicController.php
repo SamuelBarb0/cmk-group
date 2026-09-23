@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Training;
 use App\Models\TrainingTopic;
+use App\Support\LimiteSubida;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -48,7 +49,7 @@ class TrainingTopicController extends Controller
             ]),
             'categorias' => TrainingTopic::CATEGORIAS,
             'extensiones' => TrainingTopic::EXTENSIONES,
-            'maxBytes' => $this->maxBytes(),
+            'maxBytes' => LimiteSubida::bytes(),
         ]);
     }
 
@@ -134,7 +135,7 @@ class TrainingTopicController extends Controller
             'orden' => ['nullable', 'integer', 'min:0', 'max:9999'],
             // Por extensión y no por MIME: los .ppt viejos se detectan como
             // «CDFV2» y `mimes` los rechazaría siendo válidos.
-            'archivo' => ['nullable', 'file', 'extensions:'.implode(',', TrainingTopic::EXTENSIONES), 'max:'.intdiv($this->maxBytes(), 1024)],
+            'archivo' => ['nullable', 'file', 'extensions:'.implode(',', TrainingTopic::EXTENSIONES), 'max:'.LimiteSubida::kilobytes()],
         ], [
             'codigo.regex' => 'El código solo admite letras, números y guiones (ej. CAP-ALTURAS).',
             'archivo.extensions' => 'El material debe ser '.implode(', ', TrainingTopic::EXTENSIONES).'.',
@@ -148,26 +149,6 @@ class TrainingTopicController extends Controller
         $nombre = Str::slug($codigo).'-'.now()->format('YmdHis').'.'.Str::lower($archivo->getClientOriginalExtension());
 
         return $archivo->storeAs('capacitaciones', $nombre, 'local');
-    }
-
-    /** Lo que PHP deja subir de verdad: el menor entre archivo y POST completo. */
-    private function maxBytes(): int
-    {
-        $bytes = function (string $valor): int {
-            $valor = trim($valor);
-            $n = (int) $valor;
-
-            return match (Str::lower(substr($valor, -1))) {
-                'g' => $n * 1024 ** 3,
-                'm' => $n * 1024 ** 2,
-                'k' => $n * 1024,
-                default => $n,
-            };
-        };
-        $limites = array_filter([$bytes((string) ini_get('upload_max_filesize')), $bytes((string) ini_get('post_max_size'))]);
-
-        // Un poco por debajo del POST: el formulario también ocupa.
-        return (int) (($limites ? min($limites) : 8 * 1024 ** 2) * 0.98);
     }
 
     private function autorizar(Request $request): void

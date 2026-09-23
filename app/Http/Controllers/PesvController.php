@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use App\Models\PesvCommitteeMember;
 use App\Models\PesvContractor;
+use App\Models\PesvCriterion;
+use App\Models\PesvEvidence;
 use App\Models\PesvPlan;
+use App\Models\PesvPlanCriterion;
 use App\Models\PesvPlanStep;
 use App\Models\PesvRoute;
 use App\Models\PesvStep;
 use App\Models\PesvVehicle;
 use App\Services\PesvFeed;
+use App\Support\LimiteSubida;
 use App\Support\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -104,7 +108,9 @@ class PesvController extends Controller
                 'fecha_cumplimiento' => $planStep->fecha_cumplimiento?->toDateString(),
             ],
             'insumos' => $feed->paraPaso($numero),
-            'estados' => PesvPlanStep::ESTADOS,
+            'criterios' => $this->criteriosDelPaso($plan, $step),
+            'estadosCriterio' => PesvPlanCriterion::ESTADOS,
+            'evidencia' => ['extensiones' => PesvEvidence::EXTENSIONES, 'maxBytes' => LimiteSubida::bytes()],
             'vecinos' => [
                 'anterior' => $numero > 1 ? $numero - 1 : null,
                 'siguiente' => $numero < 24 ? $numero + 1 : null,
@@ -145,8 +151,9 @@ class PesvController extends Controller
             return back()->withErrors(['tenant' => 'Selecciona un cliente antes de editar el PESV.']);
         }
 
+        // El estado ya no se elige: sale de las preguntas del paso
+        // (PesvVerificacionController). Aquí van los datos generales.
         $datos = $request->validate([
-            'estado' => ['required', Rule::in(PesvPlanStep::ESTADOS)],
             'observaciones' => ['nullable', 'string'],
             'responsable' => ['nullable', 'string', 'max:255'],
             'fecha_cumplimiento' => ['nullable', 'date'],
@@ -159,8 +166,6 @@ class PesvController extends Controller
             ['pesv_plan_id' => $plan->id, 'pesv_step_id' => $step->id],
             $datos,
         );
-
-        $plan->recalcular();
 
         return back()->with('success', "Paso {$numero} actualizado.");
     }
@@ -221,6 +226,37 @@ class PesvController extends Controller
     }
 
     /**
+     * Preguntas del paso con la respuesta de la empresa y sus evidencias.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function criteriosDelPaso(PesvPlan $plan, PesvStep $step): array
+    {
+        $respuestas = $plan->criterios()->get()->keyBy('pesv_criterion_id');
+        $evidencias = PesvEvidence::whereIn('pesv_criterion_id', $step->criterios->pluck('id'))->latest('id')->get()->groupBy('pesv_criterion_id');
+
+        return $step->criterios->map(function (PesvCriterion $c) use ($plan, $respuestas, $evidencias) {
+            $r = $respuestas->get($c->id);
+
+            return [
+                'id' => $c->id,
+                'codigo' => $c->codigo,
+                'pregunta' => $c->pregunta,
+                'niveles' => $c->niveles,
+                'aplica' => $c->aplicaA($plan->nivel),
+                'estado' => $r->estado ?? 'no_verificado',
+                'observaciones' => $r?->observaciones,
+                'verificado_at' => $r?->verificado_at?->toDateString(),
+                'verificado_por' => $r?->verificado_por,
+                'evidencias' => $evidencias->get($c->id, collect())->map(fn (PesvEvidence $e) => [
+                    'id' => $e->id, 'nombre' => $e->nombre, 'bytes' => $e->bytes,
+                    'subido_por' => $e->subido_por, 'fecha' => $e->created_at?->toDateString(),
+                ])->values()->all(),
+            ];
+        })->values()->all();
+    }
+
+    /**
      * Los 24 pasos con el estado que tengan en este plan.
      *
      * Se hace con un left join en memoria en vez de crear las 24 filas al
@@ -231,10 +267,14 @@ class PesvController extends Controller
     private function pasosDelPlan(PesvPlan $plan): Collection
     {
         $estados = $plan->pasos()->get()->keyBy('pesv_step_id');
+        $respuestas = $plan->criterios()->pluck('estado', 'pesv_criterion_id');
+        $criterios = PesvCriterion::all()->filter(fn (PesvCriterion $c) => $c->aplicaA($plan->nivel))->groupBy('pesv_step_id');
 
         return PesvStep::orderBy('orden')->get()->map(fn (PesvStep $step) => [
             'numero' => $step->numero,
             'aplica' => $step->aplicaA($plan->nivel),
+            'criterios' => $criterios->get($step->id, collect())->count(),
+            'criterios_cumple' => $criterios->get($step->id, collect())->filter(fn ($c) => ($respuestas[$c->id] ?? null) === 'cumple')->count(),
             'fase' => $step->fase,
             'fase_nombre' => $step->fase_nombre,
             'titulo' => $step->titulo,

@@ -40,14 +40,24 @@ class Pesv extends Seccion
         $flota = PesvVehicle::where('is_active', true)->get();
         $vencidos = $flota->map(fn ($v) => ['v' => $v, 'a' => collect($v->alertas(0))->where('dias', '<', 0)])->filter(fn ($x) => $x['a']->isNotEmpty());
 
+        $noCumplen = $plan
+            ? $plan->criterios()->where('estado', 'no_cumple')->with('criterio')->get()
+                ->filter(fn ($r) => $r->criterio?->aplicaA($plan->nivel))->sortBy(fn ($r) => $r->criterio->orden)
+            : collect();
+
         $this->cifra('Nivel del PESV', $plan ? self::etiqueta($plan->nivel) : 'Sin plan');
-        $this->cifra('Avance de los pasos', $plan ? self::porcentaje((float) $plan->avance) : '—');
+        $this->cifra('Avance de la lista de verificación (Res. 40595)', $plan ? self::porcentaje((float) $plan->avance) : '—');
+        $this->cifra('Preguntas que no cumplen', $noCumplen->count(),
+            $noCumplen->isNotEmpty() ? $noCumplen->count().' pregunta(s) de la lista de verificación del PESV no se cumplen.' : null);
         $this->cifra('Siniestros viales', $siniestros->count());
         $this->cifra('Siniestros con heridos', $siniestros->where('gravedad', 'con_heridos')->count());
         $this->cifra('Siniestros fatales', $fatales, $fatales ? "{$fatales} siniestro(s) vial(es) fatal(es) en el periodo." : null);
         $this->cifra('Vehículos con documentos vencidos', $vencidos->count(),
             $vencidos->isNotEmpty() ? $vencidos->count().' vehículo(s) con SOAT, tecnomecánica o póliza vencidos.' : null);
 
+        $this->tabla('Preguntas de la lista de verificación que no se cumplen', ['Pregunta', 'Requisito', 'Observación'],
+            $noCumplen->map(fn ($r) => [$r->criterio->codigo, self::corto($r->criterio->pregunta, 110), self::corto($r->observaciones, 60)]),
+            'Ninguna pregunta aplicable está marcada como «no cumple».');
         $this->tabla('Siniestros del periodo', ['Fecha', 'Tipo', 'Gravedad', 'Vehículo', 'Días de incapacidad'],
             $siniestros->map(fn ($s) => [self::fecha($s->fecha), self::etiqueta($s->tipo), self::etiqueta($s->gravedad), $s->vehiculo?->placa ?? '—', $s->dias_incapacidad ?? '—']),
             'Sin siniestros viales en el periodo.');
