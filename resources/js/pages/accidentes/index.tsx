@@ -8,7 +8,6 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
-import { cn } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
 import { CalendarClock, Pencil, Plus, Search, Siren, Skull, Trash2 } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';

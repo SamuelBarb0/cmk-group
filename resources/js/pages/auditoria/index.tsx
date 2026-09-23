@@ -82,14 +82,6 @@ const ETIQUETA_HALLAZGO: Record<TipoHallazgo, string> = {
     fortaleza: 'Fortaleza',
 };
 
-const CLS_HALLAZGO: Record<TipoHallazgo, string> = {
-    no_conformidad_mayor: 'bg-destructive/15 text-destructive',
-    no_conformidad_menor: 'bg-orange-500/15 text-orange-700 dark:text-orange-400',
-    observacion: 'bg-amber-500/15 text-amber-700 dark:text-amber-400',
-    oportunidad: 'bg-blue-500/15 text-blue-700 dark:text-blue-400',
-    fortaleza: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
-};
-
 /** Las que son incumplimiento y exigen acción correctiva. */
 const NO_CONFORMIDADES: TipoHallazgo[] = ['no_conformidad_mayor', 'no_conformidad_menor'];
 
