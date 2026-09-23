@@ -2,6 +2,7 @@
 
 namespace App\Services\Reportes\Secciones;
 
+use App\Models\PesvInfraction;
 use App\Models\PesvPlan;
 use App\Models\PesvSiniestro;
 use App\Models\PesvVehicle;
@@ -49,6 +50,10 @@ class Pesv extends Seccion
         $this->cifra('Avance de la lista de verificación (Res. 40595)', $plan ? self::porcentaje((float) $plan->avance) : '—');
         $this->cifra('Preguntas que no cumplen', $noCumplen->count(),
             $noCumplen->isNotEmpty() ? $noCumplen->count().' pregunta(s) de la lista de verificación del PESV no se cumplen.' : null);
+        $infracciones = $periodo->filtrar(PesvInfraction::query(), 'fecha')->get(['id', 'codigo', 'descripcion', 'estado']);
+        $abiertas = $infracciones->whereNotIn('estado', PesvInfraction::CERRADAS)->count();
+        $this->cifra('Infracciones de tránsito en el periodo', $infracciones->count(),
+            $abiertas ? "{$abiertas} comparendo(s) del periodo sin cerrar." : null);
         $this->cifra('Siniestros viales', $siniestros->count());
         $this->cifra('Siniestros con heridos', $siniestros->where('gravedad', 'con_heridos')->count());
         $this->cifra('Siniestros fatales', $fatales, $fatales ? "{$fatales} siniestro(s) vial(es) fatal(es) en el periodo." : null);
@@ -58,6 +63,9 @@ class Pesv extends Seccion
         $this->tabla('Preguntas de la lista de verificación que no se cumplen', ['Pregunta', 'Requisito', 'Observación'],
             $noCumplen->map(fn ($r) => [$r->criterio->codigo, self::corto($r->criterio->pregunta, 110), self::corto($r->observaciones, 60)]),
             'Ninguna pregunta aplicable está marcada como «no cumple».');
+        $this->tabla('Infracciones por código', ['Código', 'Descripción', 'Cantidad'],
+            $infracciones->groupBy('codigo')->map(fn ($g, $codigo) => [$codigo, self::corto($g->first()->descripcion, 60), $g->count()])->sortByDesc(fn ($f) => $f[2]),
+            'Sin infracciones de tránsito en el periodo.');
         $this->tabla('Siniestros del periodo', ['Fecha', 'Tipo', 'Gravedad', 'Vehículo', 'Días de incapacidad'],
             $siniestros->map(fn ($s) => [self::fecha($s->fecha), self::etiqueta($s->tipo), self::etiqueta($s->gravedad), $s->vehiculo?->placa ?? '—', $s->dias_incapacidad ?? '—']),
             'Sin siniestros viales en el periodo.');

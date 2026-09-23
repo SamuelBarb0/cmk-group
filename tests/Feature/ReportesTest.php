@@ -22,6 +22,7 @@ use App\Models\MaintenanceRecord;
 use App\Models\ManagementProgram;
 use App\Models\MedicalExam;
 use App\Models\PesvContractor;
+use App\Models\PesvInfraction;
 use App\Models\PesvPlan;
 use App\Models\PesvSiniestro;
 use App\Models\PesvVehicle;
@@ -309,6 +310,7 @@ class ReportesTest extends TestCase
         $this->de($e, PesvPlan::class, ['nivel' => 'estandar', 'avance' => 40]);
         $carro = $this->de($e, PesvVehicle::class, ['placa' => 'ABC123', 'tipo' => 'camion', 'propiedad' => 'propio', 'soat_vence' => '2026-06-01', 'is_active' => true]);
         $this->de($e, PesvSiniestro::class, ['fecha' => '2026-04-04', 'tipo' => 'choque', 'gravedad' => 'con_heridos', 'pesv_vehicle_id' => $carro->id, 'descripcion' => 'Choque en patio']);
+        $this->de($e, PesvInfraction::class, ['employee_id' => $ana->id, 'pesv_vehicle_id' => $carro->id, 'fecha' => '2026-03-03', 'codigo' => 'C29', 'estado' => 'pendiente']);
 
         $i = $this->informe($this->consultor)['informe'];
         $this->assertCount(22, $i['secciones']);

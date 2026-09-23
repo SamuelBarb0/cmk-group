@@ -11,14 +11,19 @@ use App\Models\IndicatorReading;
 use App\Models\IpercRow;
 use App\Models\ManagementProgram;
 use App\Models\PesvContractor;
+use App\Models\PesvDriverCheck;
+use App\Models\PesvDriverTest;
+use App\Models\PesvInfraction;
 use App\Models\PesvRoute;
 use App\Models\PesvSede;
 use App\Models\PesvSiniestro;
 use App\Models\PesvVehicle;
+use App\Models\PesvVehicleCheck;
 use App\Models\ProgramPlan;
 use App\Models\Tenant;
 use App\Models\Training;
 use App\Models\WorkPlan;
+use App\Support\Pesv\SemaforoDocumentos;
 
 /**
  * Insumos que la plataforma YA tiene para cada paso del PESV.
@@ -87,6 +92,7 @@ class PesvFeed
         // Casos donde el documento no basta y hay datos vivos que mirar.
         if ($numero === 11) {
             $insumos[] = $this->conductores();
+            array_push($insumos, ...$this->paso11());
         }
 
         if ($numero === 13) {
@@ -361,6 +367,68 @@ class PesvFeed
                 : "{$conductores} conductores, {$sinLicencia} sin número de licencia.",
             'url' => '/pesv/colaboradores',
             'cantidad' => $conductores,
+        ];
+    }
+
+    /**
+     * Paso 11 con los registros propios del paso: requisitos del operador y
+     * del vehículo, pruebas de idoneidad, comparendos y el semáforo.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function paso11(): array
+    {
+        $conductores = Employee::where('is_active', true)->conductores()->pluck('id');
+        $total = $conductores->count();
+        $checks = PesvDriverCheck::whereIn('employee_id', $conductores)->pluck('resultado');
+        $aptos = PesvDriverTest::whereIn('employee_id', $conductores)->where('resultado', 'apto')
+            ->whereIn('tipo', ['teorica', 'practica'])->get(['employee_id', 'tipo'])
+            ->groupBy('employee_id')->filter(fn ($g) => $g->pluck('tipo')->unique()->count() === 2)->count();
+        $vehiculos = PesvVehicle::where('is_active', true)->count();
+        $vehiculosOk = PesvVehicleCheck::where('resultado', 'cumple')
+            ->whereIn('pesv_vehicle_id', PesvVehicle::where('is_active', true)->pluck('id'))->count();
+        $abiertas = PesvInfraction::whereNotIn('estado', PesvInfraction::CERRADAS)->count();
+        $semaforo = SemaforoDocumentos::resumen(SemaforoDocumentos::filas());
+
+        return [
+            [
+                'etiqueta' => 'Requisitos del operador',
+                'estado' => $total === 0 ? 'falta' : ($checks->filter(fn ($r) => $r === 'cumple')->count() === $total ? 'ok' : ($checks->isEmpty() ? 'falta' : 'parcial')),
+                'detalle' => $total === 0 ? 'No hay conductores activos.'
+                    : $checks->filter(fn ($r) => $r === 'cumple')->count()." de {$total} conductores cumplen la lista RE-SST-51"
+                        .($checks->contains('no_cumple') ? ' ('.$checks->filter(fn ($r) => $r === 'no_cumple')->count().' con requisitos sin cumplir)' : '').'.',
+                'url' => '/pesv/colaboradores',
+                'cantidad' => $checks->count(),
+            ],
+            [
+                'etiqueta' => 'Pruebas de idoneidad',
+                'estado' => $total === 0 ? 'falta' : ($aptos === $total ? 'ok' : ($aptos > 0 ? 'parcial' : 'falta')),
+                'detalle' => $total === 0 ? 'No hay conductores activos.' : "{$aptos} de {$total} conductores aprobaron la prueba teórica y la práctica.",
+                'url' => '/pesv/colaboradores',
+                'cantidad' => $aptos,
+            ],
+            [
+                'etiqueta' => 'Requisitos de los vehículos',
+                'estado' => $vehiculos === 0 ? 'falta' : ($vehiculosOk === $vehiculos ? 'ok' : ($vehiculosOk > 0 ? 'parcial' : 'falta')),
+                'detalle' => $vehiculos === 0 ? 'No hay vehículos activos.' : "{$vehiculosOk} de {$vehiculos} vehículos aprobados con la lista RE-SST-50.",
+                'url' => '/pesv/vehiculos',
+                'cantidad' => $vehiculosOk,
+            ],
+            [
+                'etiqueta' => 'Semáforo de documentos',
+                'estado' => $semaforo['cumplimiento'] === null ? 'falta' : ($semaforo['E'] === 0 ? 'ok' : 'parcial'),
+                'detalle' => $semaforo['cumplimiento'] === null ? 'No hay fechas de vencimiento registradas.'
+                    : "Cumplimiento {$semaforo['cumplimiento']} %: {$semaforo['E']} documento(s) vencido(s) o a menos de 8 días, {$semaforo['P']} por vencer.",
+                'url' => '/pesv/documentos',
+                'cantidad' => $semaforo['E'],
+            ],
+            [
+                'etiqueta' => 'Infracciones de tránsito sin cerrar',
+                'estado' => $abiertas === 0 ? 'ok' : 'parcial',
+                'detalle' => $abiertas === 0 ? 'Sin comparendos pendientes.' : "{$abiertas} comparendo(s) pendiente(s) de pago o de curso.",
+                'url' => '/pesv/infracciones',
+                'cantidad' => $abiertas,
+            ],
         ];
     }
 

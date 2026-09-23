@@ -24,12 +24,16 @@ use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\OccupationalHealthController;
 use App\Http\Controllers\OrganizacionController;
 use App\Http\Controllers\PesvColaboradorController;
+use App\Http\Controllers\PesvConductorController;
 use App\Http\Controllers\PesvContractorController;
 use App\Http\Controllers\PesvController;
+use App\Http\Controllers\PesvDocumentosController;
+use App\Http\Controllers\PesvInfraccionController;
 use App\Http\Controllers\PesvRouteController;
 use App\Http\Controllers\PesvSedeController;
 use App\Http\Controllers\PesvSiniestroController;
 use App\Http\Controllers\PesvVehicleController;
+use App\Http\Controllers\PesvVehiculoFichaController;
 use App\Http\Controllers\PesvVerificacionController;
 use App\Http\Controllers\PpeController;
 use App\Http\Controllers\ProgramaGestionController;
@@ -138,6 +142,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('pesv/rutas', [PesvRouteController::class, 'index'])->name('pesv.rutas.index');
         Route::get('pesv/siniestros', [PesvSiniestroController::class, 'index'])->name('pesv.siniestros.index');
         Route::get('pesv/evidencias/{evidencia}', [PesvVerificacionController::class, 'descargar'])->name('pesv.evidencias.descargar');
+        // Paso 11: fichas de conductor y vehículo, semáforo de documentos, comparendos.
+        Route::get('pesv/conductores/{empleado}', [PesvConductorController::class, 'show'])->name('pesv.conductores.show');
+        Route::get('pesv/vehiculos/{vehiculo}', [PesvVehiculoFichaController::class, 'show'])->name('pesv.vehiculos.show');
+        Route::get('pesv/documentos', [PesvDocumentosController::class, 'index'])->name('pesv.documentos.index');
+        Route::get('pesv/infracciones', [PesvInfraccionController::class, 'index'])->name('pesv.infracciones.index');
     });
 
     Route::middleware(['permission:pesv.manage', 'module:pesv'])->group(function () {
@@ -151,6 +160,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('pesv/criterio/{criterio}', [PesvVerificacionController::class, 'responder'])->name('pesv.criterio.responder');
         Route::post('pesv/criterio/{criterio}/evidencias', [PesvVerificacionController::class, 'subir'])->name('pesv.evidencias.subir');
         Route::delete('pesv/evidencias/{evidencia}', [PesvVerificacionController::class, 'borrar'])->name('pesv.evidencias.borrar');
+        Route::put('pesv/conductores/{empleado}/requisitos', [PesvConductorController::class, 'requisitos'])->name('pesv.conductores.requisitos');
+        Route::post('pesv/conductores/{empleado}/pruebas', [PesvConductorController::class, 'guardarPrueba'])->name('pesv.conductores.pruebas');
+        Route::delete('pesv/pruebas/{prueba}', [PesvConductorController::class, 'borrarPrueba'])->name('pesv.pruebas.destroy');
+        Route::put('pesv/vehiculos/{vehiculo}/requisitos', [PesvVehiculoFichaController::class, 'requisitos'])->name('pesv.vehiculos.requisitos');
+        Route::post('pesv/infracciones', [PesvInfraccionController::class, 'store'])->name('pesv.infracciones.store');
+        Route::put('pesv/infracciones/{infraccion}', [PesvInfraccionController::class, 'update'])->name('pesv.infracciones.update');
+        Route::delete('pesv/infracciones/{infraccion}', [PesvInfraccionController::class, 'destroy'])->name('pesv.infracciones.destroy');
 
         Route::post('pesv/sedes', [PesvSedeController::class, 'store'])->name('pesv.sedes.store');
         Route::put('pesv/sedes/{sede}', [PesvSedeController::class, 'update'])->name('pesv.sedes.update');
