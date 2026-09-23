@@ -111,6 +111,5 @@ return [
         'comites' => 'Comités (COPASST y convivencia laboral)',
         'epp' => 'EPP (matriz por cargo y entregas)',
         'emergencias' => 'Plan de emergencias y brigada',
-        'programas' => 'Programas de gestión (PVE, alcohol, fatiga, seguridad vial, ambiental)',
     ],
 ];
