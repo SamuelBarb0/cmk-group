@@ -1,5 +1,4 @@
 import { SidebarInset } from '@/components/ui/sidebar';
-import { cn } from '@/lib/utils';
 import * as React from 'react';
 
 interface AppContentProps extends React.ComponentProps<'div'> {
@@ -8,13 +7,7 @@ interface AppContentProps extends React.ComponentProps<'div'> {
 
 export function AppContent({ variant = 'header', children, ...props }: AppContentProps) {
     if (variant === 'sidebar') {
-        // min-w-0: <main> es un hijo flex y, sin esto, una tabla ancha estira la
-        // página entera en el móvil en vez de desplazarse dentro de su tarjeta.
-        return (
-            <SidebarInset {...props} className={cn('min-w-0', props.className)}>
-                {children}
-            </SidebarInset>
-        );
+        return <SidebarInset {...props}>{children}</SidebarInset>;
     }
 
     return (
