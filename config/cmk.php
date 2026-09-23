@@ -112,5 +112,6 @@ return [
         'epp' => 'EPP (matriz por cargo y entregas)',
         'emergencias' => 'Plan de emergencias y brigada',
         'programas' => 'Programas de gestión (PVE, alcohol, fatiga, seguridad vial, ambiental)',
+        'gestion-cambio' => 'Gestión del cambio',
     ],
 ];

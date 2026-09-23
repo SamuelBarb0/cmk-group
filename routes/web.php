@@ -5,6 +5,7 @@ use App\Http\Controllers\AcpmActionController;
 use App\Http\Controllers\AiDocumentController;
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AuditController;
+use App\Http\Controllers\ChangeRequestController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CommitteeController;
 use App\Http\Controllers\DashboardController;
@@ -280,6 +281,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.manage', 'module:programas'])->name('programas.destroy');
     Route::post('programas/{programa}/renovar', [ProgramaGestionController::class, 'renovar'])
         ->middleware(['permission:sst.manage', 'module:programas'])->name('programas.renovar');
+    | Gestion del cambio (estandar 2.11.1, ISO 45001 8.1.3): solicitud, doble
+    | aprobacion (Gerencia y SG-SST), plan de accion y cierre.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::get('gestion-cambio', [ChangeRequestController::class, 'index'])
+        ->middleware(['permission:sst.view', 'module:gestion-cambio'])->name('gestion-cambio.index');
+    Route::post('gestion-cambio', [ChangeRequestController::class, 'store'])
+        ->middleware(['permission:sst.manage', 'module:gestion-cambio'])->name('gestion-cambio.store');
+    Route::put('gestion-cambio/{cambio}', [ChangeRequestController::class, 'update'])
+        ->middleware(['permission:sst.manage', 'module:gestion-cambio'])->name('gestion-cambio.update');
+    Route::delete('gestion-cambio/{cambio}', [ChangeRequestController::class, 'destroy'])
+        ->middleware(['permission:sst.manage', 'module:gestion-cambio'])->name('gestion-cambio.destroy');
 
     /*
     | Requisitos legales (matriz) del cliente activo. Alimenta el indicador
