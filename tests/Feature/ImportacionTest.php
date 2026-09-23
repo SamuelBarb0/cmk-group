@@ -43,6 +43,9 @@ class ImportacionTest extends TestCase
         parent::setUp();
         $this->seed(RolesAndPermissionsSeeder::class);
         Storage::fake('local');
+        // Clave de mentira: sin ninguna, AiService falla ANTES de llegar a Http::fake
+        // (pasaba en local por la clave real del .env y fallaba en el CI).
+        config(['ai.anthropic.api_key' => 'sk-test']);
 
         $this->empresa = Tenant::create(['name' => 'Empresa Demo', 'nit' => '900123456-1']);
         $this->consultor = tap(User::factory()->create(['tenant_id' => null]))->assignRole('consultor_admin');
