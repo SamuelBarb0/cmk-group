@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PesvStepsSeeder::class);             // 24 pasos del PESV Res. 40595
         $this->call(PesvCriteriaSeeder::class);          // lista de verificación PESV (Tabla 16)
         $this->call(ManagementProgramsSeeder::class);    // programas de gestión (PVE, fatiga, velocidad…)
+        $this->call(SigCatalogSeeder::class);            // normas, requisitos y catálogo documental del SIG
 
         // --- Personal de CMK GROUP (sin tenant, acceso multi-cliente) ---
         $admin = User::factory()->create([

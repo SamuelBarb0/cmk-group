@@ -13,7 +13,7 @@ import { Building2, CheckCircle2, ClipboardCheck, Download, FileText, Plus, Save
 import { useEffect, useState } from 'react';
 
 type Tipo = 'text' | 'textarea' | 'date' | 'number' | 'select' | 'checklist' | 'firma';
-type Estado = 'borrador' | 'completado';
+type Estado = 'borrador' | 'completado' | 'anulado';
 
 interface Campo {
     key: string;
@@ -52,6 +52,9 @@ interface RecordRow {
     responsable: string | null;
     generado_por: string | null;
     updated_at: string;
+    consecutivo: string | null;
+    reemplaza_id: number | null;
+    motivo_anulacion: string | null;
 }
 interface OpenRecord {
     id: number;
@@ -63,6 +66,13 @@ interface OpenRecord {
     estado: Estado;
     fecha: string | null;
     responsable: string | null;
+    consecutivo: string | null;
+    completado_at: string | null;
+    completado_por: string | null;
+    anulado_at: string | null;
+    anulado_por: string | null;
+    motivo_anulacion: string | null;
+    reemplaza: { id: number; consecutivo: string | null } | null;
 }
 
 interface Props {
@@ -87,7 +97,11 @@ const GRUPO: Record<string, { label: string; cls: string }> = {
 const ESTADO: Record<Estado, { label: string; cls: string }> = {
     borrador: { label: 'Borrador', cls: 'bg-slate-500 text-white' },
     completado: { label: 'Completado', cls: 'bg-green-600 text-white' },
+    anulado: { label: 'Anulado', cls: 'bg-zinc-400 text-white line-through' },
 };
+
+const fechaHora = (iso: string | null) =>
+    iso ? new Date(iso).toLocaleString('es-CO', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
 
 const CHECK = [
     { v: 'cumple', label: 'Cumple', cls: 'bg-green-600 text-white' },
@@ -241,7 +255,9 @@ export default function FormatosIndex({ formats, records, needsClient, open }: P
                                                     <td className="px-5 py-3">
                                                         <div className="font-medium">{r.titulo}</div>
                                                         <div className="flex items-center gap-2">
-                                                            <span className="text-muted-foreground font-mono text-xs">{r.codigo}</span>
+                                                            <span className="text-muted-foreground font-mono text-xs">
+                                                                {r.consecutivo ?? r.codigo}
+                                                            </span>
                                                             <span className={cn('rounded px-1.5 py-0.5 text-[10px] font-medium', g.cls)}>
                                                                 {g.label}
                                                             </span>
@@ -251,6 +267,7 @@ export default function FormatosIndex({ formats, records, needsClient, open }: P
                                                     <td className="text-muted-foreground px-5 py-3">{r.responsable ?? '—'}</td>
                                                     <td className="px-5 py-3 text-center">
                                                         <Badge className={ESTADO[r.estado].cls}>{ESTADO[r.estado].label}</Badge>
+                                                        {r.reemplaza_id && <div className="text-muted-foreground mt-1 text-[11px]">reemplazo</div>}
                                                     </td>
                                                     <td className="px-5 py-3">
                                                         <div className="flex items-center justify-end gap-1">
@@ -267,7 +284,8 @@ export default function FormatosIndex({ formats, records, needsClient, open }: P
                                                             >
                                                                 <FileText className="size-4" />
                                                             </Button>
-                                                            {canPerform && (
+                                                            {/* Completados y anulados son evidencia: no se borran. */}
+                                                            {canPerform && r.estado === 'borrador' && (
                                                                 <Button
                                                                     variant="ghost"
                                                                     size="icon"
@@ -302,19 +320,25 @@ function RecordEditor({ record, canPerform }: { record: OpenRecord; canPerform: 
     const [titulo, setTitulo] = useState(record.titulo);
     const [fecha, setFecha] = useState(record.fecha ?? '');
     const [responsable, setResponsable] = useState(record.responsable ?? '');
-    const [estado] = useState<Estado>(record.estado);
     const [data, setData] = useState<Record<string, unknown>>(() => initData(record));
     const [saving, setSaving] = useState(false);
+    const [motivo, setMotivo] = useState('');
+    const [reemplazar, setReemplazar] = useState(true);
+    const errores = usePage<SharedData>().props.errors as Record<string, string | undefined>;
+    // Solo el borrador se diligencia. Completado o anulado, el registro es
+    // evidencia y se muestra tal cual quedó.
+    const editable = canPerform && record.estado === 'borrador';
 
     function setField(key: string, value: unknown) {
         setData((d) => ({ ...d, [key]: value }));
     }
 
-    function guardar(nuevoEstado?: Estado) {
+    function guardar(nuevoEstado: 'borrador' | 'completado') {
+        if (nuevoEstado === 'completado' && !confirm('Un registro completado ya no se puede editar: solo anular. ¿Completarlo?')) return;
         router.put(
             route('formatos.update', record.id),
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            { titulo, fecha: fecha || null, responsable: responsable || null, data: data as any, estado: nuevoEstado ?? estado },
+            { titulo, fecha: fecha || null, responsable: responsable || null, data: data as any, estado: nuevoEstado },
             {
                 preserveScroll: true,
                 onStart: () => setSaving(true),
@@ -322,6 +346,10 @@ function RecordEditor({ record, canPerform }: { record: OpenRecord; canPerform: 
                 onSuccess: () => close(),
             },
         );
+    }
+
+    function anular() {
+        router.post(route('formatos.anular', record.id), { motivo, reemplazar }, { preserveScroll: true });
     }
 
     function close() {
@@ -334,24 +362,45 @@ function RecordEditor({ record, canPerform }: { record: OpenRecord; canPerform: 
         <Dialog open={openState} onOpenChange={(o) => !o && close()}>
             <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-3xl">
                 <DialogHeader>
-                    <DialogTitle className="font-brand">{record.codigo}</DialogTitle>
-                    <DialogDescription>Diligencia el formato y márcalo como completado cuando esté listo.</DialogDescription>
+                    <DialogTitle className="font-brand">{record.consecutivo ?? record.codigo}</DialogTitle>
+                    <DialogDescription>
+                        {record.estado === 'borrador'
+                            ? 'Diligencia el formato y márcalo como completado cuando esté listo. Completado, ya no se edita.'
+                            : 'Registro cerrado: se consulta tal como quedó.'}
+                    </DialogDescription>
                 </DialogHeader>
+
+                {record.reemplaza && (
+                    <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm">
+                        Reemplaza al registro anulado {record.reemplaza.consecutivo}.
+                    </div>
+                )}
+                {record.estado === 'completado' && (
+                    <div className="rounded-md border border-green-600/30 bg-green-600/10 px-3 py-2 text-sm text-green-800 dark:text-green-300">
+                        Completado por {record.completado_por ?? '—'} el {fechaHora(record.completado_at)}.
+                    </div>
+                )}
+                {record.estado === 'anulado' && (
+                    <div className="border-destructive/40 bg-destructive/10 text-destructive rounded-md border px-3 py-2 text-sm">
+                        Anulado por {record.anulado_por ?? '—'} el {fechaHora(record.anulado_at)}. Motivo: {record.motivo_anulacion}
+                    </div>
+                )}
+                {errores.estado && <div className="text-destructive text-sm">{errores.estado}</div>}
 
                 <div className="space-y-5">
                     {/* Cabecera común */}
                     <div className="grid gap-3 sm:grid-cols-3">
                         <div className="sm:col-span-3">
                             <Label>Título</Label>
-                            <Input value={titulo} onChange={(e) => setTitulo(e.target.value)} disabled={!canPerform} />
+                            <Input value={titulo} onChange={(e) => setTitulo(e.target.value)} disabled={!editable} />
                         </div>
                         <div>
                             <Label>Fecha</Label>
-                            <Input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} disabled={!canPerform} />
+                            <Input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} disabled={!editable} />
                         </div>
                         <div className="sm:col-span-2">
                             <Label>Responsable</Label>
-                            <Input value={responsable} onChange={(e) => setResponsable(e.target.value)} disabled={!canPerform} />
+                            <Input value={responsable} onChange={(e) => setResponsable(e.target.value)} disabled={!editable} />
                         </div>
                     </div>
 
@@ -364,7 +413,7 @@ function RecordEditor({ record, canPerform }: { record: OpenRecord; canPerform: 
                                     key={campo.key}
                                     campo={campo}
                                     value={data[campo.key]}
-                                    disabled={!canPerform}
+                                    disabled={!editable}
                                     onChange={(v) => setField(campo.key, v)}
                                 />
                             ))}
@@ -372,7 +421,30 @@ function RecordEditor({ record, canPerform }: { record: OpenRecord; canPerform: 
                     ))}
                 </div>
 
-                {canPerform && (
+                {canPerform && record.estado === 'completado' && (
+                    <div className="bg-muted/40 space-y-2 rounded-md p-3">
+                        <Label htmlFor="motivo-anulacion">¿Hay que corregirlo? Anúlalo indicando el motivo</Label>
+                        <textarea
+                            id="motivo-anulacion"
+                            rows={2}
+                            value={motivo}
+                            onChange={(e) => setMotivo(e.target.value)}
+                            className="border-input bg-background w-full rounded-md border px-3 py-1.5 text-sm"
+                        />
+                        {errores.motivo && <div className="text-destructive text-xs">{errores.motivo}</div>}
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                            <label className="flex items-center gap-2 text-sm">
+                                <input type="checkbox" checked={reemplazar} onChange={(e) => setReemplazar(e.target.checked)} />
+                                Crear un borrador de reemplazo con los mismos datos
+                            </label>
+                            <Button variant="destructive" onClick={anular}>
+                                Anular registro
+                            </Button>
+                        </div>
+                    </div>
+                )}
+
+                {editable && (
                     <DialogFooter className="flex-wrap gap-2">
                         <Button variant="outline" onClick={close}>
                             Cerrar

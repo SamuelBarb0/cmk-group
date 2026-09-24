@@ -1,0 +1,3497 @@
+{
+ "modulos": {
+  "M01": "Control documental",
+  "M02": "Contexto y partes interesadas",
+  "M03": "Requisitos legales",
+  "M04": "Gestión de riesgos",
+  "M05": "Objetivos e indicadores",
+  "M06": "Plan de trabajo anual",
+  "M07": "Talento: cargos, competencias y formación",
+  "M08": "Comités y participación",
+  "M09": "Operación SST",
+  "M10": "Flota y conductores",
+  "M11": "Emergencias",
+  "M12": "Proveedores y contratistas",
+  "M13": "Incidentes y siniestros",
+  "M14": "Auditorías",
+  "M15": "Acciones correctivas y mejora (ACPM)",
+  "M16": "Revisión por la dirección",
+  "M17": "Calidad: cliente y servicio",
+  "M18": "Gestión ambiental",
+  "M19": "Comunicaciones",
+  "M20": "Gestión del cambio"
+ },
+ "procesos": {
+  "DIR": {
+   "n": "Direccionamiento estratégico",
+   "t": "Estratégico"
+  },
+  "GSI": {
+   "n": "Gestión del sistema integrado",
+   "t": "Estratégico"
+  },
+  "OPE": {
+   "n": "Operación y prestación del servicio",
+   "t": "Misional"
+  },
+  "SVL": {
+   "n": "Seguridad vial y gestión de flota",
+   "t": "Misional / apoyo"
+  },
+  "GTH": {
+   "n": "Gestión del talento humano",
+   "t": "Apoyo"
+  },
+  "SST": {
+   "n": "Seguridad y salud en el trabajo",
+   "t": "Apoyo"
+  },
+  "AMB": {
+   "n": "Gestión ambiental",
+   "t": "Apoyo"
+  },
+  "COM": {
+   "n": "Compras y proveedores",
+   "t": "Apoyo"
+  },
+  "EVA": {
+   "n": "Evaluación y mejora",
+   "t": "Evaluación"
+  }
+ },
+ "modulo_proceso": {
+  "M01": "GSI",
+  "M02": "DIR",
+  "M03": "GSI",
+  "M04": "GSI",
+  "M05": "DIR",
+  "M06": "DIR",
+  "M07": "GTH",
+  "M08": "GTH",
+  "M09": "SST",
+  "M10": "SVL",
+  "M11": "SST",
+  "M12": "COM",
+  "M13": "SST",
+  "M14": "EVA",
+  "M15": "EVA",
+  "M16": "DIR",
+  "M17": "OPE",
+  "M18": "AMB",
+  "M19": "GSI",
+  "M20": "GSI"
+ },
+ "etapas": [
+  {
+   "clave": "0",
+   "nombre": "Diagnóstico inicial",
+   "fase": "p",
+   "capitulo": "Línea base"
+  },
+  {
+   "clave": "4",
+   "nombre": "Contexto de la organización",
+   "fase": "p",
+   "capitulo": "Cap. 4"
+  },
+  {
+   "clave": "5",
+   "nombre": "Liderazgo y participación",
+   "fase": "p",
+   "capitulo": "Cap. 5"
+  },
+  {
+   "clave": "6",
+   "nombre": "Planificación",
+   "fase": "p",
+   "capitulo": "Cap. 6"
+  },
+  {
+   "clave": "7",
+   "nombre": "Apoyo",
+   "fase": "h",
+   "capitulo": "Cap. 7"
+  },
+  {
+   "clave": "8",
+   "nombre": "Operación",
+   "fase": "h",
+   "capitulo": "Cap. 8"
+  },
+  {
+   "clave": "9",
+   "nombre": "Evaluación del desempeño",
+   "fase": "v",
+   "capitulo": "Cap. 9"
+  },
+  {
+   "clave": "10",
+   "nombre": "Mejora",
+   "fase": "a",
+   "capitulo": "Cap. 10"
+  }
+ ],
+ "requisitos": [
+  {
+   "etapa": "0",
+   "titulo": "Evaluación inicial y autoevaluación de estándares mínimos",
+   "evidencia": "registro",
+   "modulo": "M05",
+   "nota": null,
+   "referencias": {
+    "sst": "Dec.1072 2.2.4.6.16 · Res.0312 art.27"
+   }
+  },
+  {
+   "etapa": "0",
+   "titulo": "Diagnóstico PESV: caracterización de la empresa, vehículos, conductores y nivel del plan",
+   "evidencia": "registro",
+   "modulo": "M10",
+   "nota": "Define si la organización aplica nivel básico, estándar o avanzado.",
+   "referencias": {
+    "pesv": "Paso 5"
+   }
+  },
+  {
+   "etapa": "0",
+   "titulo": "Análisis de brechas frente a las normas ISO (GAP)",
+   "evidencia": "registro",
+   "modulo": "M14",
+   "nota": "No es obligatorio, pero orienta el plan de implementación.",
+   "referencias": {
+    "i45": "recomendado",
+    "i9": "recomendado",
+    "i14": "recomendado"
+   }
+  },
+  {
+   "etapa": "4",
+   "titulo": "Análisis de contexto interno y externo (DOFA / PESTEL), incluye cambio climático",
+   "evidencia": "documento",
+   "modulo": "M02",
+   "nota": null,
+   "referencias": {
+    "i45": "4.1",
+    "i9": "4.1",
+    "i14": "4.1"
+   }
+  },
+  {
+   "etapa": "4",
+   "titulo": "Matriz de partes interesadas, necesidades y expectativas",
+   "evidencia": "documento",
+   "modulo": "M02",
+   "nota": null,
+   "referencias": {
+    "i45": "4.2",
+    "i9": "4.2",
+    "i14": "4.2"
+   }
+  },
+  {
+   "etapa": "4",
+   "titulo": "Alcance del sistema integrado",
+   "evidencia": "documento",
+   "modulo": "M02",
+   "nota": "En ISO es información documentada obligatoria. En SG-SST cubre a todos los trabajadores y contratistas.",
+   "referencias": {
+    "sst": "Dec.1072 2.2.4.6.1",
+    "pesv": "Paso 5 (nivel)",
+    "i45": "4.3",
+    "i9": "4.3",
+    "i14": "4.3"
+   }
+  },
+  {
+   "etapa": "4",
+   "titulo": "Mapa de procesos y caracterizaciones (entradas, salidas, responsables, indicadores)",
+   "evidencia": "documento",
+   "modulo": "M02",
+   "nota": null,
+   "referencias": {
+    "i45": "4.4",
+    "i9": "4.4",
+    "i14": "4.4"
+   }
+  },
+  {
+   "etapa": "5",
+   "titulo": "Política integrada (SST, seguridad vial, calidad y ambiental), firmada y divulgada",
+   "evidencia": "documento",
+   "modulo": "M01",
+   "nota": "Documento único de nivel 1. Debe revisarse al menos una vez al año.",
+   "referencias": {
+    "sst": "2.2.4.6.5–6 · Res.0312 2.1.1",
+    "pesv": "Paso 3",
+    "i45": "5.2",
+    "i9": "5.2",
+    "i14": "5.2"
+   }
+  },
+  {
+   "etapa": "5",
+   "titulo": "Compromiso de la alta dirección y rendición de cuentas",
+   "evidencia": "registro",
+   "modulo": "M16",
+   "nota": null,
+   "referencias": {
+    "sst": "2.2.4.6.8 · Res.0312 1.1.2",
+    "pesv": "Paso 4",
+    "i45": "5.1",
+    "i9": "5.1 (cultura y ética)",
+    "i14": "5.1"
+   }
+  },
+  {
+   "etapa": "5",
+   "titulo": "Designación del responsable del SG-SST y del líder del PESV",
+   "evidencia": "registro",
+   "modulo": "M08",
+   "nota": null,
+   "referencias": {
+    "sst": "Res.0312 1.1.1",
+    "pesv": "Paso 1",
+    "i45": "5.3",
+    "i9": "5.3",
+    "i14": "5.3"
+   }
+  },
+  {
+   "etapa": "5",
+   "titulo": "Roles, responsabilidades y autoridades del SIG (manual de funciones)",
+   "evidencia": "documento",
+   "modulo": "M07",
+   "nota": null,
+   "referencias": {
+    "sst": "2.2.4.6.8 · Res.0312 1.1.2",
+    "i45": "5.3",
+    "i9": "5.3",
+    "i14": "5.3"
+   }
+  },
+  {
+   "etapa": "5",
+   "titulo": "Asignación de recursos (presupuesto SIG)",
+   "evidencia": "registro",
+   "modulo": "M06",
+   "nota": null,
+   "referencias": {
+    "sst": "Res.0312 1.1.3",
+    "pesv": "Paso 4",
+    "i45": "7.1",
+    "i9": "7.1",
+    "i14": "7.1"
+   }
+  },
+  {
+   "etapa": "5",
+   "titulo": "COPASST o Vigía: elección, conformación y actas",
+   "evidencia": "registro",
+   "modulo": "M08",
+   "nota": null,
+   "referencias": {
+    "sst": "Res.2013/1986 · Res.0312 1.1.6–1.1.7",
+    "i45": "5.4"
+   }
+  },
+  {
+   "etapa": "5",
+   "titulo": "Comité de Convivencia Laboral: conformación y actas",
+   "evidencia": "registro",
+   "modulo": "M08",
+   "nota": null,
+   "referencias": {
+    "sst": "Res.0312 1.1.8 · Ley 1010/2006"
+   }
+  },
+  {
+   "etapa": "5",
+   "titulo": "Comité de Seguridad Vial: acta de conformación y reuniones",
+   "evidencia": "registro",
+   "modulo": "M08",
+   "nota": null,
+   "referencias": {
+    "pesv": "Paso 2"
+   }
+  },
+  {
+   "etapa": "5",
+   "titulo": "Consulta y participación de los trabajadores",
+   "evidencia": "registro",
+   "modulo": "M08",
+   "nota": null,
+   "referencias": {
+    "sst": "Dec.1072 2.2.4.6.8",
+    "pesv": "Paso 24",
+    "i45": "5.4"
+   }
+  },
+  {
+   "etapa": "6",
+   "titulo": "Matriz de requisitos legales y otros requisitos",
+   "evidencia": "documento",
+   "modulo": "M03",
+   "nota": "Una sola matriz con un campo que indique a qué sistema aplica cada norma.",
+   "referencias": {
+    "sst": "2.2.4.6.12 · Res.0312 2.7.1",
+    "pesv": "normas de tránsito",
+    "i45": "6.1.3",
+    "i9": "8.2.2",
+    "i14": "6.1.3"
+   }
+  },
+  {
+   "etapa": "6",
+   "titulo": "Metodología y matriz de identificación de peligros, evaluación y valoración de riesgos (IPEVR, GTC 45)",
+   "evidencia": "documento",
+   "modulo": "M04",
+   "nota": null,
+   "referencias": {
+    "sst": "2.2.4.6.15 · Res.0312 4.1.1–4.1.2",
+    "i45": "6.1.2"
+   }
+  },
+  {
+   "etapa": "6",
+   "titulo": "Caracterización, evaluación y control de riesgos viales",
+   "evidencia": "documento",
+   "modulo": "M04",
+   "nota": null,
+   "referencias": {
+    "pesv": "Paso 6"
+   }
+  },
+  {
+   "etapa": "6",
+   "titulo": "Matriz de aspectos e impactos ambientales con perspectiva de ciclo de vida",
+   "evidencia": "documento",
+   "modulo": "M04",
+   "nota": null,
+   "referencias": {
+    "i14": "6.1.2"
+   }
+  },
+  {
+   "etapa": "6",
+   "titulo": "Matriz de riesgos y oportunidades de los procesos",
+   "evidencia": "documento",
+   "modulo": "M04",
+   "nota": null,
+   "referencias": {
+    "i45": "6.1.1",
+    "i9": "6.1",
+    "i14": "6.1.1"
+   }
+  },
+  {
+   "etapa": "6",
+   "titulo": "Objetivos, metas y fichas técnicas de indicadores",
+   "evidencia": "documento",
+   "modulo": "M05",
+   "nota": null,
+   "referencias": {
+    "sst": "2.2.4.6.18–22 · Res.0312 2.2.1",
+    "pesv": "Paso 7",
+    "i45": "6.2",
+    "i9": "6.2",
+    "i14": "6.2"
+   }
+  },
+  {
+   "etapa": "6",
+   "titulo": "Plan de trabajo anual (actividades, responsables, recursos, fechas)",
+   "evidencia": "documento",
+   "modulo": "M06",
+   "nota": null,
+   "referencias": {
+    "sst": "Res.0312 2.4.1",
+    "pesv": "Paso 9",
+    "i45": "6.2.2",
+    "i9": "6.2.2",
+    "i14": "6.2.2"
+   }
+  },
+  {
+   "etapa": "6",
+   "titulo": "Programas de gestión de riesgos críticos y factores de desempeño vial",
+   "evidencia": "documento",
+   "modulo": "M10",
+   "nota": null,
+   "referencias": {
+    "pesv": "Paso 8"
+   }
+  },
+  {
+   "etapa": "6",
+   "titulo": "Programas de vigilancia epidemiológica y de gestión del riesgo (psicosocial, biomecánico, etc.)",
+   "evidencia": "documento",
+   "modulo": "M09",
+   "nota": null,
+   "referencias": {
+    "sst": "Res.0312 3.1.x · Res.2764/2022",
+    "i45": "6.1.4"
+   }
+  },
+  {
+   "etapa": "6",
+   "titulo": "Programas ambientales (residuos, agua, energía, emisiones)",
+   "evidencia": "documento",
+   "modulo": "M18",
+   "nota": null,
+   "referencias": {
+    "i14": "6.1.4 · 6.2"
+   }
+  },
+  {
+   "etapa": "6",
+   "titulo": "Planificación de los cambios del sistema",
+   "evidencia": "documento",
+   "modulo": "M20",
+   "nota": null,
+   "referencias": {
+    "i9": "6.3",
+    "i14": "6.3"
+   }
+  },
+  {
+   "etapa": "7",
+   "titulo": "Procedimiento de control de información documentada y listado maestro",
+   "evidencia": "documento",
+   "modulo": "M01",
+   "nota": "Base de todo el software: codificación, versiones, aprobación, distribución, retención y disposición final.",
+   "referencias": {
+    "sst": "2.2.4.6.12–13",
+    "pesv": "Paso 19",
+    "i45": "7.5",
+    "i9": "7.5",
+    "i14": "7.5"
+   }
+  },
+  {
+   "etapa": "7",
+   "titulo": "Perfiles de cargo y matriz de competencias",
+   "evidencia": "documento",
+   "modulo": "M07",
+   "nota": null,
+   "referencias": {
+    "sst": "2.2.4.6.11",
+    "pesv": "Paso 10",
+    "i45": "7.2",
+    "i9": "7.2",
+    "i14": "7.2"
+   }
+  },
+  {
+   "etapa": "7",
+   "titulo": "Plan anual de capacitación y registros de asistencia y eficacia",
+   "evidencia": "ambos",
+   "modulo": "M07",
+   "nota": null,
+   "referencias": {
+    "sst": "2.2.4.6.11 · Res.0312 1.2.1",
+    "pesv": "Paso 10",
+    "i45": "7.2–7.3",
+    "i9": "7.2–7.3",
+    "i14": "7.2–7.3"
+   }
+  },
+  {
+   "etapa": "7",
+   "titulo": "Inducción y reinducción",
+   "evidencia": "registro",
+   "modulo": "M07",
+   "nota": null,
+   "referencias": {
+    "sst": "Res.0312 1.2.2",
+    "pesv": "Paso 10",
+    "i45": "7.3",
+    "i9": "7.3",
+    "i14": "7.3"
+   }
+  },
+  {
+   "etapa": "7",
+   "titulo": "Curso virtual de 50 o 20 horas del SG-SST",
+   "evidencia": "registro",
+   "modulo": "M07",
+   "nota": null,
+   "referencias": {
+    "sst": "2.2.4.6.35 · Res.0312 1.2.3"
+   }
+  },
+  {
+   "etapa": "7",
+   "titulo": "Matriz de comunicaciones internas y externas",
+   "evidencia": "documento",
+   "modulo": "M19",
+   "nota": null,
+   "referencias": {
+    "sst": "2.2.4.6.14",
+    "pesv": "Paso 24",
+    "i45": "7.4",
+    "i9": "7.4",
+    "i14": "7.4"
+   }
+  },
+  {
+   "etapa": "7",
+   "titulo": "Conocimientos de la organización",
+   "evidencia": "documento",
+   "modulo": "M07",
+   "nota": null,
+   "referencias": {
+    "i9": "7.1.6"
+   }
+  },
+  {
+   "etapa": "7",
+   "titulo": "Control y calibración de equipos de seguimiento y medición",
+   "evidencia": "registro",
+   "modulo": "M09",
+   "nota": null,
+   "referencias": {
+    "i45": "9.1.1",
+    "i9": "7.1.5",
+    "i14": "9.1.1"
+   }
+  },
+  {
+   "etapa": "7",
+   "titulo": "Hoja de vida del conductor: licencia, comparendos, exámenes y pruebas",
+   "evidencia": "registro",
+   "modulo": "M10",
+   "nota": null,
+   "referencias": {
+    "pesv": "Pasos 10–11"
+   }
+  },
+  {
+   "etapa": "7",
+   "titulo": "Evaluaciones médicas ocupacionales y profesiograma",
+   "evidencia": "ambos",
+   "modulo": "M09",
+   "nota": "El software guarda el concepto de aptitud; la historia clínica la custodia el prestador de salud.",
+   "referencias": {
+    "sst": "Res.0312 3.1.x",
+    "pesv": "Paso 11"
+   }
+  },
+  {
+   "etapa": "8",
+   "titulo": "Controles operacionales: procedimientos, instructivos y estándares de trabajo seguro",
+   "evidencia": "documento",
+   "modulo": "M09",
+   "nota": null,
+   "referencias": {
+    "sst": "2.2.4.6.23–24",
+    "i45": "8.1.1–8.1.2",
+    "i9": "8.1",
+    "i14": "8.1"
+   }
+  },
+  {
+   "etapa": "8",
+   "titulo": "Permisos de trabajo de alto riesgo (alturas, espacios confinados, en caliente, eléctrico)",
+   "evidencia": "registro",
+   "modulo": "M09",
+   "nota": null,
+   "referencias": {
+    "sst": "Res.4272/2021 (alturas) · Res.0312 4.2.x",
+    "i45": "8.1.2"
+   }
+  },
+  {
+   "etapa": "8",
+   "titulo": "Entrega, reposición y control de EPP",
+   "evidencia": "registro",
+   "modulo": "M09",
+   "nota": null,
+   "referencias": {
+    "sst": "Res.0312 4.2.6",
+    "i45": "8.1.2"
+   }
+  },
+  {
+   "etapa": "8",
+   "titulo": "Inspecciones planeadas a instalaciones, equipos y herramientas",
+   "evidencia": "registro",
+   "modulo": "M09",
+   "nota": null,
+   "referencias": {
+    "sst": "Res.0312 4.2.4",
+    "i45": "9.1.1",
+    "i14": "8.1"
+   }
+  },
+  {
+   "etapa": "8",
+   "titulo": "Inspección preoperacional de vehículos",
+   "evidencia": "registro",
+   "modulo": "M10",
+   "nota": null,
+   "referencias": {
+    "pesv": "Paso 16"
+   }
+  },
+  {
+   "etapa": "8",
+   "titulo": "Plan de mantenimiento preventivo y correctivo, y hoja de vida del vehículo",
+   "evidencia": "ambos",
+   "modulo": "M10",
+   "nota": null,
+   "referencias": {
+    "pesv": "Paso 17"
+   }
+  },
+  {
+   "etapa": "8",
+   "titulo": "Planificación de desplazamientos laborales (rutas, jornadas, pausas, velocidad)",
+   "evidencia": "documento",
+   "modulo": "M10",
+   "nota": null,
+   "referencias": {
+    "pesv": "Paso 15"
+   }
+  },
+  {
+   "etapa": "8",
+   "titulo": "Vías seguras administradas por la organización (señalización y velocidades internas)",
+   "evidencia": "documento",
+   "modulo": "M10",
+   "nota": null,
+   "referencias": {
+    "pesv": "Paso 14"
+   }
+  },
+  {
+   "etapa": "8",
+   "titulo": "Gestión del cambio (evaluación de impactos antes de cambios)",
+   "evidencia": "ambos",
+   "modulo": "M20",
+   "nota": null,
+   "referencias": {
+    "sst": "2.2.4.6.26",
+    "pesv": "Paso 18",
+    "i45": "8.1.3",
+    "i9": "8.5.6",
+    "i14": "8.1"
+   }
+  },
+  {
+   "etapa": "8",
+   "titulo": "Compras, selección y evaluación de proveedores y contratistas",
+   "evidencia": "ambos",
+   "modulo": "M12",
+   "nota": null,
+   "referencias": {
+    "sst": "2.2.4.6.27–28",
+    "pesv": "Paso 18",
+    "i45": "8.1.4",
+    "i9": "8.4",
+    "i14": "8.1"
+   }
+  },
+  {
+   "etapa": "8",
+   "titulo": "Plan de prevención, preparación y respuesta ante emergencias (brigada, simulacros)",
+   "evidencia": "ambos",
+   "modulo": "M11",
+   "nota": null,
+   "referencias": {
+    "sst": "2.2.4.6.25 · Res.0312 5.1.1–5.1.2",
+    "pesv": "Paso 12",
+    "i45": "8.2",
+    "i14": "8.2"
+   }
+  },
+  {
+   "etapa": "8",
+   "titulo": "Requisitos del cliente, diseño y prestación del servicio",
+   "evidencia": "ambos",
+   "modulo": "M17",
+   "nota": null,
+   "referencias": {
+    "i9": "8.2–8.5"
+   }
+  },
+  {
+   "etapa": "8",
+   "titulo": "Liberación del servicio y control de salidas no conformes",
+   "evidencia": "registro",
+   "modulo": "M17",
+   "nota": null,
+   "referencias": {
+    "i9": "8.6–8.7"
+   }
+  },
+  {
+   "etapa": "8",
+   "titulo": "Gestión integral de residuos (incluye RESPEL) y control de consumos",
+   "evidencia": "ambos",
+   "modulo": "M18",
+   "nota": null,
+   "referencias": {
+    "i14": "8.1"
+   }
+  },
+  {
+   "etapa": "9",
+   "titulo": "Medición de indicadores (estructura, proceso, resultado; frecuencia, severidad, ausentismo)",
+   "evidencia": "registro",
+   "modulo": "M05",
+   "nota": null,
+   "referencias": {
+    "sst": "2.2.4.6.19–22 · Res.0312 art.30",
+    "pesv": "Paso 20",
+    "i45": "9.1.1",
+    "i9": "9.1.1",
+    "i14": "9.1.1"
+   }
+  },
+  {
+   "etapa": "9",
+   "titulo": "Reporte anual de autogestión del PESV ante la Supertransporte",
+   "evidencia": "registro",
+   "modulo": "M05",
+   "nota": null,
+   "referencias": {
+    "pesv": "Paso 20"
+   }
+  },
+  {
+   "etapa": "9",
+   "titulo": "Reporte e investigación de incidentes y accidentes de trabajo",
+   "evidencia": "registro",
+   "modulo": "M13",
+   "nota": null,
+   "referencias": {
+    "sst": "2.2.4.6.32 · Res.1401/2007",
+    "i45": "10.2"
+   }
+  },
+  {
+   "etapa": "9",
+   "titulo": "Investigación interna, registro y análisis estadístico de siniestros viales",
+   "evidencia": "registro",
+   "modulo": "M13",
+   "nota": null,
+   "referencias": {
+    "pesv": "Pasos 13 y 21"
+   }
+  },
+  {
+   "etapa": "9",
+   "titulo": "Medición de la satisfacción del cliente",
+   "evidencia": "registro",
+   "modulo": "M17",
+   "nota": null,
+   "referencias": {
+    "i9": "9.1.2"
+   }
+  },
+  {
+   "etapa": "9",
+   "titulo": "Evaluación del cumplimiento de requisitos legales",
+   "evidencia": "registro",
+   "modulo": "M03",
+   "nota": null,
+   "referencias": {
+    "sst": "Res.0312 2.7.1",
+    "i45": "9.1.2",
+    "i14": "9.1.2"
+   }
+  },
+  {
+   "etapa": "9",
+   "titulo": "Programa, plan e informe de auditoría interna",
+   "evidencia": "ambos",
+   "modulo": "M14",
+   "nota": "Una auditoría integrada puede cubrir los cinco sistemas; cada hallazgo se vincula al requisito incumplido.",
+   "referencias": {
+    "sst": "2.2.4.6.29–30 · Res.0312 6.1.2",
+    "pesv": "Paso 22",
+    "i45": "9.2",
+    "i9": "9.2",
+    "i14": "9.2"
+   }
+  },
+  {
+   "etapa": "9",
+   "titulo": "Revisión por la dirección (informe y acta)",
+   "evidencia": "registro",
+   "modulo": "M16",
+   "nota": null,
+   "referencias": {
+    "sst": "2.2.4.6.31 · Res.0312 6.1.3",
+    "i45": "9.3",
+    "i9": "9.3",
+    "i14": "9.3"
+   }
+  },
+  {
+   "etapa": "10",
+   "titulo": "Procedimiento de acciones correctivas, preventivas y de mejora (ACPM) y registro de no conformidades",
+   "evidencia": "ambos",
+   "modulo": "M15",
+   "nota": null,
+   "referencias": {
+    "sst": "2.2.4.6.33",
+    "pesv": "Paso 23",
+    "i45": "10.2",
+    "i9": "10.2",
+    "i14": "10.2"
+   }
+  },
+  {
+   "etapa": "10",
+   "titulo": "Plan de mejoramiento (autoevaluación, auditorías, ARL, entes de control)",
+   "evidencia": "registro",
+   "modulo": "M15",
+   "nota": null,
+   "referencias": {
+    "sst": "Res.0312 art.28",
+    "pesv": "Paso 23",
+    "i45": "10.3",
+    "i9": "10.3",
+    "i14": "10.3"
+   }
+  },
+  {
+   "etapa": "10",
+   "titulo": "Mejora continua y lecciones aprendidas",
+   "evidencia": "registro",
+   "modulo": "M15",
+   "nota": "Las salidas alimentan el plan de trabajo del siguiente periodo (regreso a la etapa 6).",
+   "referencias": {
+    "sst": "2.2.4.6.34",
+    "pesv": "Paso 23",
+    "i45": "10.3",
+    "i9": "10.3",
+    "i14": "10.3"
+   }
+  }
+ ],
+ "documentos": [
+  {
+   "modulo": "M01",
+   "tipo": "MAN",
+   "nombre": "Manual del Sistema Integrado de Gestión",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "SG-SST-001"
+  },
+  {
+   "modulo": "M01",
+   "tipo": "PLT",
+   "nombre": "Política integrada del SIG",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PLT-SST-001"
+  },
+  {
+   "modulo": "M01",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de control de documentos y registros",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-004"
+  },
+  {
+   "modulo": "M01",
+   "tipo": "INS",
+   "nombre": "Instructivo de elaboración, codificación y presentación de documentos",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M01",
+   "tipo": "FT",
+   "nombre": "Listado maestro de documentos y registros",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-034"
+  },
+  {
+   "modulo": "M01",
+   "tipo": "FT",
+   "nombre": "Tabla de retención documental",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M01",
+   "tipo": "FT",
+   "nombre": "Solicitud de creación, modificación y eliminación de documentos",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-033"
+  },
+  {
+   "modulo": "M01",
+   "tipo": "FT",
+   "nombre": "Control de distribución y divulgación de documentos",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M02",
+   "tipo": "MAN",
+   "nombre": "Documento de alcance y mapa de procesos",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M02",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de análisis de contexto y partes interesadas",
+   "sistemas": [
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M02",
+   "tipo": "MTZ",
+   "nombre": "Matriz DOFA / PESTEL (incluye cambio climático)",
+   "sistemas": [
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M02",
+   "tipo": "MTZ",
+   "nombre": "Matriz de partes interesadas, necesidades y expectativas",
+   "sistemas": [
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M02",
+   "tipo": "FT",
+   "nombre": "Caracterización de proceso",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M03",
+   "tipo": "PRC",
+   "nombre": "Procedimiento para la identificación de requisitos legales",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-006"
+  },
+  {
+   "modulo": "M03",
+   "tipo": "MTZ",
+   "nombre": "Matriz de requisitos legales",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-036"
+  },
+  {
+   "modulo": "M03",
+   "tipo": "FT",
+   "nombre": "Evaluación del cumplimiento legal",
+   "sistemas": [
+    "sst",
+    "i45",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M03",
+   "tipo": "FT",
+   "nombre": "Registro de actualización normativa",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M04",
+   "tipo": "PRC",
+   "nombre": "Procedimiento para la identificación de peligros y valoración de riesgos",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-010"
+  },
+  {
+   "modulo": "M04",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de reporte de actos y condiciones inseguras",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-017"
+  },
+  {
+   "modulo": "M04",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de identificación y evaluación de riesgos viales",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M04",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de identificación de aspectos e impactos ambientales",
+   "sistemas": [
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M04",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de gestión de riesgos y oportunidades",
+   "sistemas": [
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M04",
+   "tipo": "MTZ",
+   "nombre": "Matriz de identificación de peligros, valoración de riesgos y determinación de controles (GTC 45)",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-024"
+  },
+  {
+   "modulo": "M04",
+   "tipo": "MTZ",
+   "nombre": "Matriz de riesgos viales",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M04",
+   "tipo": "MTZ",
+   "nombre": "Matriz de aspectos e impactos ambientales",
+   "sistemas": [
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M04",
+   "tipo": "MTZ",
+   "nombre": "Matriz de riesgos y oportunidades por proceso",
+   "sistemas": [
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M04",
+   "tipo": "MTZ",
+   "nombre": "Matriz de seguimiento de actos y condiciones inseguras",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-032"
+  },
+  {
+   "modulo": "M04",
+   "tipo": "FT",
+   "nombre": "Reporte de actos y condiciones inseguras",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-031"
+  },
+  {
+   "modulo": "M04",
+   "tipo": "FT",
+   "nombre": "Medidas de prevención y control de riesgos",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-055"
+  },
+  {
+   "modulo": "M05",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de medición, análisis y seguimiento de indicadores",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M05",
+   "tipo": "MTZ",
+   "nombre": "Matriz de objetivos e indicadores",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-029"
+  },
+  {
+   "modulo": "M05",
+   "tipo": "FT",
+   "nombre": "Ficha técnica de indicador",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M05",
+   "tipo": "FT",
+   "nombre": "Indicadores del sistema (consolidado)",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-054"
+  },
+  {
+   "modulo": "M05",
+   "tipo": "FT",
+   "nombre": "Evaluación inicial del SG-SST",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-001"
+  },
+  {
+   "modulo": "M05",
+   "tipo": "FT",
+   "nombre": "Autoevaluación anual de estándares mínimos (Res. 0312)",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M05",
+   "tipo": "FT",
+   "nombre": "Seguimiento de morbimortalidad y ausentismo laboral",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-053"
+  },
+  {
+   "modulo": "M05",
+   "tipo": "FT",
+   "nombre": "Reporte anual de autogestión del PESV",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M06",
+   "tipo": "PLA",
+   "nombre": "Plan de trabajo anual",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-030"
+  },
+  {
+   "modulo": "M06",
+   "tipo": "FT",
+   "nombre": "Asignación de recursos financieros, humanos, técnicos y tecnológicos",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-003"
+  },
+  {
+   "modulo": "M06",
+   "tipo": "FT",
+   "nombre": "Presupuesto anual del SIG",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M06",
+   "tipo": "FT",
+   "nombre": "Seguimiento al cumplimiento del plan de trabajo",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M07",
+   "tipo": "MAN",
+   "nombre": "Manual de responsabilidades en SST",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "MAN-SST-001"
+  },
+  {
+   "modulo": "M07",
+   "tipo": "MAN",
+   "nombre": "Manual de funciones y perfiles de cargo",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M07",
+   "tipo": "REG",
+   "nombre": "Reglamento interno de trabajo",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "REG-SST-001"
+  },
+  {
+   "modulo": "M07",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de competencia, formación y toma de conciencia",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M07",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de gestión del conocimiento",
+   "sistemas": [
+    "i9"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M07",
+   "tipo": "PRG",
+   "nombre": "Programa de capacitación",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRG-SST-009"
+  },
+  {
+   "modulo": "M07",
+   "tipo": "PRG",
+   "nombre": "Programa de inducción y reinducción",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRG-SST-002"
+  },
+  {
+   "modulo": "M07",
+   "tipo": "MTZ",
+   "nombre": "Matriz de competencias por cargo",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M07",
+   "tipo": "FT",
+   "nombre": "Listado de trabajadores dependientes y contratistas",
+   "sistemas": [
+    "sst",
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-004"
+  },
+  {
+   "modulo": "M07",
+   "tipo": "FT",
+   "nombre": "Cronograma de capacitación y entrenamiento anual",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-023"
+  },
+  {
+   "modulo": "M07",
+   "tipo": "FT",
+   "nombre": "Registro de capacitación y entrenamiento",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-014"
+  },
+  {
+   "modulo": "M07",
+   "tipo": "FT",
+   "nombre": "Inducción y reinducción",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-025"
+  },
+  {
+   "modulo": "M07",
+   "tipo": "FT",
+   "nombre": "Evaluación de inducción y reinducción",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-026"
+  },
+  {
+   "modulo": "M07",
+   "tipo": "FT",
+   "nombre": "Evaluación de eficacia de la capacitación",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M07",
+   "tipo": "FT",
+   "nombre": "Registro de certificados del curso de 50 o 20 horas",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M08",
+   "tipo": "PLT",
+   "nombre": "Política de prevención del acoso laboral",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PLT-SST-004"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de comunicación, participación y consulta",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-003"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "PRC",
+   "nombre": "Procedimiento para elección y conformación del COPASST",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-001"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "PRC",
+   "nombre": "Procedimiento para elección y conformación del Comité de Convivencia",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-002"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Asignación del responsable del SG-SST",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-002"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Designación del líder del PESV",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Acta de nombramiento del Vigía en SST",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": true,
+   "codigo_referencia": "FT-SST-005"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Convocatoria elección del COPASST",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-006"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Inscripción de candidatos al COPASST",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-007"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Votación candidatos al COPASST",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-008"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Apertura elección del COPASST",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-009"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Registro de votantes elección del COPASST",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-010"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Cierre de las votaciones elección del COPASST",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-011"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Acta de conformación del COPASST",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-012"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Acta de reunión del COPASST",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-013"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Convocatoria elección del Comité de Convivencia Laboral",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-015"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Inscripción de candidatos al Comité de Convivencia",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-016"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Votación candidatos al Comité de Convivencia",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-017"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Acta de escrutinio y votación del Comité de Convivencia",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-018"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Acta de constitución del Comité de Convivencia",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-019"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Presentación de quejas por situaciones de conflicto (confidencial)",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "-SST-020"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Seguimiento de quejas por situaciones de conflicto",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-021"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Acta de compromisos",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-022"
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Acta de conformación del Comité de Seguridad Vial",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M08",
+   "tipo": "FT",
+   "nombre": "Buzón de sugerencias y participación",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PLT",
+   "nombre": "Política de elementos y equipos de protección personal",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PLT-SST-005"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "REG",
+   "nombre": "Reglamento de higiene y seguridad industrial",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "REG-SST-002"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PRC",
+   "nombre": "Procedimiento para la realización de exámenes médicos ocupacionales",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-012"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PRC",
+   "nombre": "Procedimiento para elección, inspección, reposición, uso y cuidado de EPP",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-014"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de permisos de trabajo de alto riesgo",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": true,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de trabajo seguro en alturas",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": true,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de control de equipos de seguimiento y medición",
+   "sistemas": [
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PRG",
+   "nombre": "Programa de medicina preventiva y del trabajo",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRG-SST-004"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PRG",
+   "nombre": "Programa de higiene industrial",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": true,
+   "codigo_referencia": "PRG-SST-005"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PRG",
+   "nombre": "Programa de seguridad industrial",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRG-SST-006"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PRG",
+   "nombre": "Programa de inspecciones",
+   "sistemas": [
+    "sst",
+    "i45",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRG-SST-003"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PRG",
+   "nombre": "Programa de orden y aseo",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRG-SST-008"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PRG",
+   "nombre": "Programa de señalización de seguridad",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRG-SST-010"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PRG",
+   "nombre": "Programa de vigilancia epidemiológica de riesgo psicosocial",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PRG",
+   "nombre": "Programa de vigilancia epidemiológica osteomuscular (biomecánico)",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": true,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PRG",
+   "nombre": "Programa de protección contra caídas",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": true,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PRG",
+   "nombre": "Programa de mantenimiento de instalaciones, máquinas y equipos",
+   "sistemas": [
+    "sst",
+    "i45",
+    "i9"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M09",
+   "tipo": "PRG",
+   "nombre": "Programa de estilos de vida y entorno saludable",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M09",
+   "tipo": "MTZ",
+   "nombre": "Profesiograma",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-047"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "MTZ",
+   "nombre": "Matriz de elementos de protección personal",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-069"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "INS",
+   "nombre": "Estándares de tarea segura por actividad crítica",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Encuesta de perfil sociodemográfico",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-042"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Autorreporte de condiciones de salud",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-043"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Diagnóstico de condiciones de salud",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-044"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Solicitud de examen médico",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-045"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Solicitud de exámenes paraclínicos",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-046"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Seguimiento de exámenes médicos ocupacionales",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-048"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Reporte de restricciones médicas laborales",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-090"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Entrega de EPP y dotación",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-070"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Inspección de elementos de protección personal",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-061"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Cronograma de inspecciones",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-062"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Inspección locativa",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-056"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Inspección de herramientas",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-057"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Mantenimiento preventivo y correctivo de instalaciones y equipos",
+   "sistemas": [
+    "sst",
+    "i45",
+    "i9"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-063"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Registro de visitantes",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-037"
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Permiso de trabajo en alturas / alto riesgo",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": true,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Análisis de trabajo seguro (ATS)",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M09",
+   "tipo": "FT",
+   "nombre": "Hoja de vida y calibración de equipos de medición",
+   "sistemas": [
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "PLT",
+   "nombre": "Política de prevención del consumo de alcohol, tabaco y otras sustancias psicoactivas",
+   "sistemas": [
+    "sst",
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PLT-SST-002"
+  },
+  {
+   "modulo": "M10",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de selección y evaluación de conductores",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de inspección preoperacional de vehículos",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de mantenimiento preventivo y correctivo de vehículos",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de planificación de desplazamientos laborales",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "PRG",
+   "nombre": "Programa de prevención del consumo de alcohol, tabaco y otras SPA",
+   "sistemas": [
+    "sst",
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRG-SST-001"
+  },
+  {
+   "modulo": "M10",
+   "tipo": "PRG",
+   "nombre": "Programa de gestión de la velocidad",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "PRG",
+   "nombre": "Programa de prevención de la fatiga",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "PRG",
+   "nombre": "Programa de gestión de distractores (uso del celular)",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "PRG",
+   "nombre": "Programa de protección de actores vulnerables (peatones, ciclistas, motociclistas)",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": true,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "PLA",
+   "nombre": "Plan anual de mantenimiento preventivo de la flota",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "INS",
+   "nombre": "Estándar de jornada de conducción, pausas y descanso",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "INS",
+   "nombre": "Estándar de vías internas, señalización y velocidades",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": true,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "FT",
+   "nombre": "Hoja de vida del conductor",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "FT",
+   "nombre": "Consulta de licencia (RUNT) y comparendos (SIMIT)",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "FT",
+   "nombre": "Prueba teórica y práctica de conducción",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "FT",
+   "nombre": "Hoja de vida del vehículo",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "FT",
+   "nombre": "Inspección preoperacional diaria",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "FT",
+   "nombre": "Orden de trabajo de mantenimiento vehicular",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "FT",
+   "nombre": "Registro de pruebas de alcoholimetría",
+   "sistemas": [
+    "sst",
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M10",
+   "tipo": "FT",
+   "nombre": "Planilla de rutas y desplazamientos",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M11",
+   "tipo": "PLT",
+   "nombre": "Política de preparación, prevención y respuesta ante emergencias",
+   "sistemas": [
+    "sst",
+    "i45",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PLT-SST-003"
+  },
+  {
+   "modulo": "M11",
+   "tipo": "PLA",
+   "nombre": "Plan de preparación, prevención y respuesta ante emergencias",
+   "sistemas": [
+    "sst",
+    "i45",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PLA-SST-001"
+  },
+  {
+   "modulo": "M11",
+   "tipo": "PLA",
+   "nombre": "Plan de respuesta ante emergencias viales",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M11",
+   "tipo": "PRC",
+   "nombre": "Procedimientos operativos normalizados (PON) por amenaza",
+   "sistemas": [
+    "sst",
+    "i45",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M11",
+   "tipo": "MTZ",
+   "nombre": "Análisis de amenazas y vulnerabilidad",
+   "sistemas": [
+    "sst",
+    "i45",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-073"
+  },
+  {
+   "modulo": "M11",
+   "tipo": "FT",
+   "nombre": "Verificación de emergencias",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-058"
+  },
+  {
+   "modulo": "M11",
+   "tipo": "FT",
+   "nombre": "Inspección y control de botiquines y elementos de primeros auxilios",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-059"
+  },
+  {
+   "modulo": "M11",
+   "tipo": "FT",
+   "nombre": "Inspección y control de extintores",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-060"
+  },
+  {
+   "modulo": "M11",
+   "tipo": "FT",
+   "nombre": "Inventario de equipos contraincendios y primeros auxilios",
+   "sistemas": [
+    "sst",
+    "i45",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-072"
+  },
+  {
+   "modulo": "M11",
+   "tipo": "FT",
+   "nombre": "Conformación de brigada de primeros auxilios",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-079"
+  },
+  {
+   "modulo": "M11",
+   "tipo": "FT",
+   "nombre": "Conformación de brigada contra incendios",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-080"
+  },
+  {
+   "modulo": "M11",
+   "tipo": "FT",
+   "nombre": "Conformación de brigada de evacuación, búsqueda y rescate",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-081"
+  },
+  {
+   "modulo": "M11",
+   "tipo": "FT",
+   "nombre": "Hoja de vida de brigadistas",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-071"
+  },
+  {
+   "modulo": "M11",
+   "tipo": "FT",
+   "nombre": "Entrega de dotación a brigadistas",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-082"
+  },
+  {
+   "modulo": "M11",
+   "tipo": "FT",
+   "nombre": "Información personal a considerar en emergencias",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-083"
+  },
+  {
+   "modulo": "M11",
+   "tipo": "FT",
+   "nombre": "Guion y evaluación de simulacro",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M11",
+   "tipo": "FT",
+   "nombre": "Inspección de kit de derrames",
+   "sistemas": [
+    "sst",
+    "i14"
+   ],
+   "condicional": true,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M12",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de adquisiciones y compras",
+   "sistemas": [
+    "sst",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-008"
+  },
+  {
+   "modulo": "M12",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de SST para contratistas",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-009"
+  },
+  {
+   "modulo": "M12",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de selección, evaluación y reevaluación de proveedores",
+   "sistemas": [
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M12",
+   "tipo": "MAN",
+   "nombre": "Manual de requisitos SST, viales y ambientales para contratistas",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M12",
+   "tipo": "MTZ",
+   "nombre": "Matriz de gestión de proveedores y contratistas",
+   "sistemas": [
+    "sst",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-039"
+  },
+  {
+   "modulo": "M12",
+   "tipo": "FT",
+   "nombre": "Evaluación de proveedores y contratistas",
+   "sistemas": [
+    "sst",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-038"
+  },
+  {
+   "modulo": "M12",
+   "tipo": "FT",
+   "nombre": "Verificación de contratistas",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-040"
+  },
+  {
+   "modulo": "M12",
+   "tipo": "FT",
+   "nombre": "Ficha de especificaciones de compra",
+   "sistemas": [
+    "sst",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M13",
+   "tipo": "PRC",
+   "nombre": "Procedimiento para la investigación de incidentes, accidentes y enfermedades laborales",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-013"
+  },
+  {
+   "modulo": "M13",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de reporte e investigación de siniestros viales",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M13",
+   "tipo": "FT",
+   "nombre": "Reporte de incidentes y accidentes",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-049"
+  },
+  {
+   "modulo": "M13",
+   "tipo": "FT",
+   "nombre": "FURAT (reporte de accidente de trabajo a la ARL)",
+   "sistemas": [
+    "sst"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M13",
+   "tipo": "FT",
+   "nombre": "Investigación de accidentes",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-050"
+  },
+  {
+   "modulo": "M13",
+   "tipo": "FT",
+   "nombre": "Análisis de accidentes",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-051"
+  },
+  {
+   "modulo": "M13",
+   "tipo": "FT",
+   "nombre": "Registro de testigos de accidentes",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-052"
+  },
+  {
+   "modulo": "M13",
+   "tipo": "FT",
+   "nombre": "Registro estadístico de accidentalidad laboral",
+   "sistemas": [
+    "sst",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M13",
+   "tipo": "FT",
+   "nombre": "Reporte interno de siniestro vial",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M13",
+   "tipo": "FT",
+   "nombre": "Informe de investigación de siniestro vial",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M13",
+   "tipo": "FT",
+   "nombre": "Registro estadístico de siniestros viales",
+   "sistemas": [
+    "pesv"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M13",
+   "tipo": "FT",
+   "nombre": "Reporte de incidente ambiental",
+   "sistemas": [
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M14",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de auditorías internas",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-015"
+  },
+  {
+   "modulo": "M14",
+   "tipo": "PRG",
+   "nombre": "Programa anual de auditorías",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M14",
+   "tipo": "FT",
+   "nombre": "Plan de auditorías",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-085"
+  },
+  {
+   "modulo": "M14",
+   "tipo": "FT",
+   "nombre": "Auditoría interna (lista de verificación)",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-084"
+  },
+  {
+   "modulo": "M14",
+   "tipo": "FT",
+   "nombre": "Informe de auditoría",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-086"
+  },
+  {
+   "modulo": "M14",
+   "tipo": "FT",
+   "nombre": "Evaluación de auditores",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M14",
+   "tipo": "FT",
+   "nombre": "Diagnóstico inicial / análisis de brechas ISO",
+   "sistemas": [
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M15",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de acción correctiva, preventiva y de mejora",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-018"
+  },
+  {
+   "modulo": "M15",
+   "tipo": "PLA",
+   "nombre": "Plan de mejoramiento",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M15",
+   "tipo": "FT",
+   "nombre": "Reporte y seguimiento de acciones correctivas, preventivas y de mejora",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-089"
+  },
+  {
+   "modulo": "M15",
+   "tipo": "FT",
+   "nombre": "Análisis de causas (5 porqués / espina de pescado)",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M15",
+   "tipo": "FT",
+   "nombre": "Verificación de eficacia y cierre",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M15",
+   "tipo": "FT",
+   "nombre": "Registro de lecciones aprendidas",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M16",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de revisión por la alta dirección",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-016"
+  },
+  {
+   "modulo": "M16",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de rendición de cuentas",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-005"
+  },
+  {
+   "modulo": "M16",
+   "tipo": "FT",
+   "nombre": "Informe de revisión por la alta dirección",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-087"
+  },
+  {
+   "modulo": "M16",
+   "tipo": "FT",
+   "nombre": "Acta de revisión por la alta dirección",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-035"
+  },
+  {
+   "modulo": "M16",
+   "tipo": "FT",
+   "nombre": "Rendición de cuentas",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M17",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de determinación y revisión de requisitos del cliente",
+   "sistemas": [
+    "i9"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M17",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de diseño y desarrollo",
+   "sistemas": [
+    "i9"
+   ],
+   "condicional": true,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M17",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de prestación del servicio o producción",
+   "sistemas": [
+    "i9"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M17",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de control de salidas no conformes",
+   "sistemas": [
+    "i9"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M17",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de atención de PQRS",
+   "sistemas": [
+    "i9"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M17",
+   "tipo": "FT",
+   "nombre": "Revisión de requisitos / cotización",
+   "sistemas": [
+    "i9"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M17",
+   "tipo": "FT",
+   "nombre": "Liberación del producto o servicio",
+   "sistemas": [
+    "i9"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M17",
+   "tipo": "FT",
+   "nombre": "Registro de salidas no conformes",
+   "sistemas": [
+    "i9"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M17",
+   "tipo": "FT",
+   "nombre": "Registro y respuesta de PQRS",
+   "sistemas": [
+    "i9"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M17",
+   "tipo": "FT",
+   "nombre": "Encuesta de satisfacción del cliente",
+   "sistemas": [
+    "i9"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M18",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de control operacional ambiental",
+   "sistemas": [
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M18",
+   "tipo": "PRG",
+   "nombre": "Programa de manejo de productos químicos",
+   "sistemas": [
+    "sst",
+    "i45",
+    "i14"
+   ],
+   "condicional": true,
+   "codigo_referencia": "PRG-SST-007"
+  },
+  {
+   "modulo": "M18",
+   "tipo": "PRG",
+   "nombre": "Programa de gestión integral de residuos sólidos",
+   "sistemas": [
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M18",
+   "tipo": "PLA",
+   "nombre": "Plan de gestión integral de residuos peligrosos (RESPEL)",
+   "sistemas": [
+    "i14"
+   ],
+   "condicional": true,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M18",
+   "tipo": "PRG",
+   "nombre": "Programa de uso eficiente y ahorro del agua",
+   "sistemas": [
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M18",
+   "tipo": "PRG",
+   "nombre": "Programa de uso eficiente de la energía",
+   "sistemas": [
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M18",
+   "tipo": "PRG",
+   "nombre": "Programa de control de emisiones atmosféricas",
+   "sistemas": [
+    "i14"
+   ],
+   "condicional": true,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M18",
+   "tipo": "MTZ",
+   "nombre": "Matriz de compatibilidad química (SGA)",
+   "sistemas": [
+    "sst",
+    "i45",
+    "i14"
+   ],
+   "condicional": true,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M18",
+   "tipo": "FT",
+   "nombre": "Hoja de datos de seguridad de los productos",
+   "sistemas": [
+    "sst",
+    "i45",
+    "i14"
+   ],
+   "condicional": true,
+   "codigo_referencia": "FT-SST-091"
+  },
+  {
+   "modulo": "M18",
+   "tipo": "FT",
+   "nombre": "Registro de generación de residuos",
+   "sistemas": [
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M18",
+   "tipo": "FT",
+   "nombre": "Registro de certificados de disposición final",
+   "sistemas": [
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M18",
+   "tipo": "FT",
+   "nombre": "Registro de consumos de agua y energía",
+   "sistemas": [
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M19",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de comunicación interna y externa",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-007"
+  },
+  {
+   "modulo": "M19",
+   "tipo": "MTZ",
+   "nombre": "Matriz de comunicaciones (qué, cuándo, a quién, cómo, quién)",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M19",
+   "tipo": "FT",
+   "nombre": "Acta de reunión",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-028"
+  },
+  {
+   "modulo": "M19",
+   "tipo": "FT",
+   "nombre": "Registro de asistencia",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-027"
+  },
+  {
+   "modulo": "M19",
+   "tipo": "FT",
+   "nombre": "Registro de comunicaciones externas",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M19",
+   "tipo": "FT",
+   "nombre": "Registro de divulgación y socialización",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M20",
+   "tipo": "PRC",
+   "nombre": "Procedimiento de gestión del cambio",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "PRC-SST-011"
+  },
+  {
+   "modulo": "M20",
+   "tipo": "FT",
+   "nombre": "Solicitud y autorización del cambio",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": "FT-SST-041"
+  },
+  {
+   "modulo": "M20",
+   "tipo": "FT",
+   "nombre": "Análisis de riesgos e impactos del cambio",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  },
+  {
+   "modulo": "M20",
+   "tipo": "FT",
+   "nombre": "Seguimiento a la implementación del cambio",
+   "sistemas": [
+    "sst",
+    "pesv",
+    "i45",
+    "i9",
+    "i14"
+   ],
+   "condicional": false,
+   "codigo_referencia": null
+  }
+ ]
+}

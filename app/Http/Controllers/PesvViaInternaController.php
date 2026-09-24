@@ -38,7 +38,7 @@ class PesvViaInternaController extends Controller
                 'cumplimiento' => $v->cumplimiento($v->anio_cronograma === $anio ? (int) now()->month : null),
             ]),
             'actividades' => PesvInternalRoad::ACTIVIDADES,
-            'inspecciones' => FormRecord::where('codigo', 'FT-INS-VIAS')->whereYear('fecha', $anio)->count(),
+            'inspecciones' => FormRecord::validos()->where('codigo', 'FT-INS-VIAS')->whereYear('fecha', $anio)->count(),
         ]);
     }
 

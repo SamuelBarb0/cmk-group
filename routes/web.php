@@ -9,6 +9,8 @@ use App\Http\Controllers\ChangeRequestController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CommitteeController;
 use App\Http\Controllers\ContratistaController;
+use App\Http\Controllers\ControlDocumentalController;
+use App\Http\Controllers\ControlDocumentalVersionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentoEmpresaController;
 use App\Http\Controllers\DocumentTemplateController;
@@ -24,25 +26,26 @@ use App\Http\Controllers\LegalRequirementController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\OccupationalHealthController;
 use App\Http\Controllers\OrganizacionController;
+use App\Http\Controllers\PesvAutogestionController;
 use App\Http\Controllers\PesvColaboradorController;
 use App\Http\Controllers\PesvConductorController;
 use App\Http\Controllers\PesvContractorController;
-use App\Http\Controllers\PesvAutogestionController;
 use App\Http\Controllers\PesvController;
-use App\Http\Controllers\PesvRutaPlanController;
-use App\Http\Controllers\PesvViaInternaController;
-use App\Http\Controllers\PesvEstadisticaController;
 use App\Http\Controllers\PesvDocumentosController;
 use App\Http\Controllers\PesvEncuestaController;
+use App\Http\Controllers\PesvEstadisticaController;
 use App\Http\Controllers\PesvInfraccionController;
 use App\Http\Controllers\PesvRiesgoVialController;
 use App\Http\Controllers\PesvRouteController;
+use App\Http\Controllers\PesvRutaPlanController;
 use App\Http\Controllers\PesvSedeController;
 use App\Http\Controllers\PesvSiniestroController;
 use App\Http\Controllers\PesvVehicleController;
 use App\Http\Controllers\PesvVehiculoFichaController;
 use App\Http\Controllers\PesvVerificacionController;
+use App\Http\Controllers\PesvViaInternaController;
 use App\Http\Controllers\PpeController;
+use App\Http\Controllers\ProcesoController;
 use App\Http\Controllers\ProgramaGestionController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\SafetyReportController;
@@ -267,6 +270,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:audit.view', 'module:auditoria'])->name('auditoria.index');
     Route::post('auditoria', [AuditController::class, 'store'])
         ->middleware(['permission:sst.manage', 'module:auditoria'])->name('auditoria.store');
+    Route::get('auditoria/{auditoria}', [AuditController::class, 'show'])
+        ->middleware(['permission:audit.view', 'module:auditoria'])->name('auditoria.show');
+    Route::put('auditoria/{auditoria}/verificacion', [AuditController::class, 'verificacion'])
+        ->middleware(['permission:sst.manage', 'module:auditoria'])->name('auditoria.verificacion');
+    Route::post('auditoria/{auditoria}/hallazgos', [AuditController::class, 'hallazgo'])
+        ->middleware(['permission:sst.manage', 'module:auditoria'])->name('auditoria.hallazgo');
     Route::put('auditoria/{auditoria}', [AuditController::class, 'update'])
         ->middleware(['permission:sst.manage', 'module:auditoria'])->name('auditoria.update');
     Route::delete('auditoria/{auditoria}', [AuditController::class, 'destroy'])
@@ -471,6 +480,49 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.manage', 'module:requisitos-legales'])->name('requisitos-legales.destroy');
 
     /*
+    | M01 — Control documental: listado maestro, ciclo de vida de versiones,
+    | mapa de procesos y cobertura de requisitos por norma.
+    | Ver -> documents.view | Gestionar -> documents.manage
+    */
+    Route::middleware('module:control-documental')->prefix('control-documental')->name('control-documental.')->group(function () {
+        Route::get('/', [ControlDocumentalController::class, 'index'])
+            ->middleware('permission:documents.view')->name('index');
+        Route::get('requisitos', [ControlDocumentalController::class, 'cobertura'])
+            ->middleware('permission:documents.view')->name('requisitos');
+
+        Route::middleware('permission:documents.manage')->group(function () {
+            Route::post('/', [ControlDocumentalController::class, 'store'])->name('store');
+            Route::post('catalogo', [ControlDocumentalController::class, 'inicializar'])->name('catalogo');
+            Route::post('desde-ia/{generado}', [ControlDocumentalController::class, 'desdeIa'])->whereNumber('generado')->name('desde-ia');
+            Route::post('procesos', [ProcesoController::class, 'store'])->name('procesos.store');
+            Route::put('procesos/{proceso}', [ProcesoController::class, 'update'])->name('procesos.update');
+            Route::delete('procesos/{proceso}', [ProcesoController::class, 'destroy'])->name('procesos.destroy');
+        });
+
+        Route::whereNumber(['documento', 'version'])->group(function () {
+            Route::get('{documento}', [ControlDocumentalController::class, 'show'])
+                ->middleware('permission:documents.view')->name('show');
+            Route::post('{documento}/leido', [ControlDocumentalController::class, 'leido'])
+                ->middleware('permission:documents.view')->name('leido');
+            Route::get('{documento}/versiones/{version}/archivo', [ControlDocumentalVersionController::class, 'archivo'])
+                ->middleware('permission:documents.view')->scopeBindings()->name('versiones.archivo');
+
+            Route::middleware('permission:documents.manage')->group(function () {
+                Route::put('{documento}', [ControlDocumentalController::class, 'update'])->name('update');
+                Route::delete('{documento}', [ControlDocumentalController::class, 'destroy'])->name('destroy');
+                Route::post('{documento}/retirar', [ControlDocumentalController::class, 'retirar'])->name('retirar');
+                Route::put('{documento}/requisitos', [ControlDocumentalController::class, 'requisitos'])->name('vincular');
+                Route::post('{documento}/versiones', [ControlDocumentalVersionController::class, 'store'])->name('versiones.store');
+                Route::scopeBindings()->group(function () {
+                    Route::post('{documento}/versiones/{version}', [ControlDocumentalVersionController::class, 'update'])->name('versiones.update');
+                    Route::delete('{documento}/versiones/{version}', [ControlDocumentalVersionController::class, 'destroy'])->name('versiones.destroy');
+                    Route::post('{documento}/versiones/{version}/transicion', [ControlDocumentalVersionController::class, 'transicion'])->name('versiones.transicion');
+                });
+            });
+        });
+    });
+
+    /*
     | ACPM: acciones correctivas, preventivas y de mejora. Registro común al que
     | llegan los hallazgos de todos los módulos. Alimenta GEST-PA.
     | Ver -> sst.view | Gestionar -> sst.manage
@@ -626,6 +678,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:inspections.perform', 'module:inspecciones'])->name('formatos.update');
     Route::delete('formatos/{formato}', [FormatoController::class, 'destroy'])
         ->middleware(['permission:inspections.perform', 'module:inspecciones'])->name('formatos.destroy');
+    Route::post('formatos/{formato}/anular', [FormatoController::class, 'anular'])
+        ->middleware(['permission:inspections.perform', 'module:inspecciones'])->name('formatos.anular');
     Route::get('formatos/{formato}/export', [FormatoController::class, 'export'])
         ->middleware(['permission:inspections.view', 'module:inspecciones'])->name('formatos.export');
 

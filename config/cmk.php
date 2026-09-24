@@ -96,6 +96,7 @@ return [
         'plan-trabajo' => 'Plan de Trabajo Anual',
         'indicadores' => 'Indicadores',
         'capacitaciones' => 'Capacitaciones',
+        'control-documental' => 'Control documental (listado maestro, versiones y normas del SIG)',
         'documentos' => 'Documentos de la empresa',
         'documentos-ia' => 'Documentos IA',
         'inspecciones' => 'Formatos (inspecciones y actas)',
