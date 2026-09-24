@@ -30,7 +30,9 @@ interface Props {
     stats: { total: number; pendientes: number; vencidas: number };
 }
 
-const hoy = () => new Date().toISOString().slice(0, 10);
+// Fecha LOCAL: toISOString() da la de UTC, que en Colombia pasa al día
+// siguiente desde las 7 p. m.
+const hoy = () => new Date().toLocaleDateString('en-CA');
 const inicioDeAnio = () => `${new Date().getFullYear()}-01-01`;
 
 export default function RevisionDireccionIndex({ needsClient, revisiones, stats }: Props) {

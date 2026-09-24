@@ -8,6 +8,7 @@ use App\Models\Audit;
 use App\Models\BrigadeMember;
 use App\Models\ChangeRequest;
 use App\Models\Committee;
+use App\Models\CommunicationLog;
 use App\Models\ContractorEvaluation;
 use App\Models\EmergencyDrill;
 use App\Models\EmergencyEquipment;
@@ -312,13 +313,16 @@ class ReportesTest extends TestCase
         $this->de($e, PesvSiniestro::class, ['fecha' => '2026-04-04', 'tipo' => 'choque', 'gravedad' => 'con_heridos', 'pesv_vehicle_id' => $carro->id, 'descripcion' => 'Choque en patio']);
         $this->de($e, PesvInfraction::class, ['employee_id' => $ana->id, 'pesv_vehicle_id' => $carro->id, 'fecha' => '2026-03-03', 'codigo' => 'C29', 'estado' => 'pendiente']);
 
+        $this->de($e, CommunicationLog::class, ['fecha' => '2026-03-10', 'tipo' => 'externa', 'direccion' => 'entrante', 'parte_interesada' => 'ARL', 'asunto' => 'Solicitud de soportes', 'requiere_respuesta' => true, 'fecha_limite_respuesta' => '2026-03-20']);
+
         $i = $this->informe($this->consultor)['informe'];
-        $this->assertCount(22, $i['secciones']);
+        $this->assertCount(23, $i['secciones']);
         foreach ($i['secciones'] as $s) {
             $this->assertNotEmpty($s['cifras'] ?: $s['notas'], "La sección {$s['clave']} salió vacía");
         }
         $this->assertSame('1', self::cifra($i, 'mantenimiento', 'Mantenimientos vencidos'));
         $this->assertSame('1', self::cifra($i, 'contratistas', 'No confiables'));
+        $this->assertSame('1', self::cifra($i, 'comunicaciones', 'Respuestas vencidas'));
         $this->assertSame('1', self::cifra($i, 'inspecciones', 'Ítems «no cumple» encontrados'));
         $this->assertSame('1', self::cifra($i, 'salud-ocupacional', 'Trabajadores con examen vencido'));
         $this->assertSame('1', self::cifra($i, 'pesv', 'Vehículos con documentos vencidos'));

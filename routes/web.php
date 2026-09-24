@@ -8,6 +8,7 @@ use App\Http\Controllers\AuditController;
 use App\Http\Controllers\ChangeRequestController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CommitteeController;
+use App\Http\Controllers\ComunicacionController;
 use App\Http\Controllers\ContratistaController;
 use App\Http\Controllers\ControlDocumentalController;
 use App\Http\Controllers\ControlDocumentalVersionController;
@@ -520,6 +521,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
                     Route::post('{documento}/versiones/{version}/transicion', [ControlDocumentalVersionController::class, 'transicion'])->name('versiones.transicion');
                 });
             });
+        });
+    });
+
+    /*
+    | M19 — Comunicaciones: matriz (qué, cuándo, a quién, cómo, quién) y
+    | registro de comunicaciones enviadas y recibidas.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::middleware('module:comunicaciones')->prefix('comunicaciones')->name('comunicaciones.')->group(function () {
+        Route::get('/', [ComunicacionController::class, 'index'])->middleware('permission:sst.view')->name('index');
+        Route::middleware('permission:sst.manage')->group(function () {
+            Route::post('matriz/base', [ComunicacionController::class, 'base'])->name('base');
+            Route::post('matriz', [ComunicacionController::class, 'storeItem'])->name('matriz.store');
+            Route::put('matriz/{item}', [ComunicacionController::class, 'updateItem'])->name('matriz.update');
+            Route::delete('matriz/{item}', [ComunicacionController::class, 'destroyItem'])->name('matriz.destroy');
+            Route::post('registro', [ComunicacionController::class, 'storeLog'])->name('registro.store');
+            Route::put('registro/{registro}', [ComunicacionController::class, 'updateLog'])->name('registro.update');
+            Route::delete('registro/{registro}', [ComunicacionController::class, 'destroyLog'])->name('registro.destroy');
         });
     });
 
