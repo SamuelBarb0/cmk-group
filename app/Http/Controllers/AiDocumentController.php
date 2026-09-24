@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\GenerateAiDocumentJob;
+use App\Models\ControlledDocumentVersion;
 use App\Models\DocumentTemplate;
 use App\Models\GeneratedDocument;
 use App\Models\Tenant;
@@ -56,7 +57,15 @@ class AiDocumentController extends Controller
                 'descripcion' => $t->descripcion,
                 'tiene_base' => $t->tieneBase(),
             ]),
-            'documents' => GeneratedDocument::latest()->get(['id', 'document_template_id', 'titulo', 'estado', 'version', 'generado_por', 'updated_at', 'contenido']),
+            'documents' => GeneratedDocument::latest()->get(['id', 'document_template_id', 'titulo', 'estado', 'version', 'generado_por', 'updated_at', 'contenido'])
+                ->map(fn (GeneratedDocument $d) => $d->toArray() + [
+                    // Documento del listado maestro al que ya se envió este texto.
+                    'controlado' => ControlledDocumentVersion::query()
+                        ->where('generated_document_id', $d->id)
+                        ->with('document:id,codigo')
+                        ->latest('id')
+                        ->first()?->document?->only(['id', 'codigo']),
+                ]),
         ]);
     }
 

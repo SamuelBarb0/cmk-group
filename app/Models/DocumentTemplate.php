@@ -65,6 +65,16 @@ class DocumentTemplate extends Model
         });
     }
 
+    /**
+     * Documento del catálogo del SIG que esta plantilla redacta (si lo hay).
+     *
+     * @return BelongsTo<DocumentCatalogEntry, $this>
+     */
+    public function catalogEntry(): BelongsTo
+    {
+        return $this->belongsTo(DocumentCatalogEntry::class, 'document_catalog_id');
+    }
+
     /** @return BelongsTo<Tenant, $this> */
     public function tenant(): BelongsTo
     {

@@ -10,7 +10,7 @@ import AppLayout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import { Building2, CheckCircle2, Download, FileText, Loader2, Pencil, Sparkles, Trash2, Upload } from 'lucide-react';
+import { Building2, CheckCircle2, Download, FileText, Library, Loader2, Pencil, Sparkles, Trash2, Upload } from 'lucide-react';
 import { FormEventHandler, useEffect, useState } from 'react';
 
 interface Template {
@@ -33,6 +33,8 @@ interface GenDoc {
     generado_por: string | null;
     updated_at: string;
     contenido: string;
+    /** Documento del listado maestro al que ya se envió este texto. */
+    controlado: { id: number; codigo: string } | null;
 }
 
 interface Props {
@@ -60,6 +62,9 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
     const page = usePage<SharedData>();
     const flash = page.props.flash;
     const tenant = page.props.tenant as { id: number; name: string } | null;
+    // Enviar al control documental solo si la empresa contrató ese módulo (null = todos).
+    const modulos = (page.props as { modulos_contratados?: string[] | null }).modulos_contratados ?? null;
+    const conControlDocumental = modulos === null || modulos.includes('control-documental');
 
     const [notice, setNotice] = useState<string | null>(null);
     const [generatingId, setGeneratingId] = useState<number | null>(null);
@@ -104,6 +109,13 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
         if (!editing) return;
         put(route('documentos-ia.update', editing.id), { preserveScroll: true, onSuccess: () => setEditing(null) });
     };
+
+    function enviarAControl(doc: GenDoc) {
+        const destino = doc.controlado ? `al borrador de ${doc.controlado.codigo}` : 'al listado maestro';
+        if (confirm(`¿Enviar «${doc.titulo}» ${destino}? Allí pasa por revisión y aprobación.`)) {
+            router.post(`/control-documental/desde-ia/${doc.id}`);
+        }
+    }
 
     function destroy(doc: GenDoc) {
         if (confirm(`¿Eliminar «${doc.titulo}»?`)) {
@@ -243,7 +255,17 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
                                     <tbody className="divide-border divide-y">
                                         {documents.map((d) => (
                                             <tr key={d.id} className="hover:bg-muted/40 transition-colors">
-                                                <td className="px-5 py-3 font-medium">{d.titulo}</td>
+                                                <td className="px-5 py-3 font-medium">
+                                                    {d.titulo}
+                                                    {d.controlado && (
+                                                        <Link
+                                                            href={`/control-documental/${d.controlado.id}`}
+                                                            className="text-primary block text-xs font-normal hover:underline"
+                                                        >
+                                                            En el listado maestro como {d.controlado.codigo}
+                                                        </Link>
+                                                    )}
+                                                </td>
                                                 <td className="px-5 py-3 text-center tabular-nums">v{d.version}</td>
                                                 <td className="text-muted-foreground px-5 py-3">{d.generado_por ?? '—'}</td>
                                                 <td className="px-5 py-3 text-center">
@@ -264,6 +286,17 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
                                                         {d.estado !== 'generando' && (
                                                             <Button variant="ghost" size="icon" onClick={() => openEdit(d)} aria-label="Ver / editar">
                                                                 <Pencil className="size-4" />
+                                                            </Button>
+                                                        )}
+                                                        {canManage && conControlDocumental && d.estado !== 'generando' && d.estado !== 'error' && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                onClick={() => enviarAControl(d)}
+                                                                aria-label="Enviar a control documental"
+                                                                title="Enviar a control documental"
+                                                            >
+                                                                <Library className="size-4" />
                                                             </Button>
                                                         )}
                                                         {canManage && (
