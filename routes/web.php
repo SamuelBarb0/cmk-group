@@ -8,6 +8,7 @@ use App\Http\Controllers\AuditController;
 use App\Http\Controllers\ChangeRequestController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CommitteeController;
+use App\Http\Controllers\ComunicacionController;
 use App\Http\Controllers\ContratistaController;
 use App\Http\Controllers\ControlDocumentalController;
 use App\Http\Controllers\ControlDocumentalVersionController;
@@ -48,6 +49,7 @@ use App\Http\Controllers\PpeController;
 use App\Http\Controllers\ProcesoController;
 use App\Http\Controllers\ProgramaGestionController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\RevisionDireccionController;
 use App\Http\Controllers\SafetyReportController;
 use App\Http\Controllers\SstDiagnosticController;
 use App\Http\Controllers\TrainingController;
@@ -521,6 +523,50 @@ Route::middleware(['auth', 'verified'])->group(function () {
             });
         });
     });
+
+    /*
+    | M19 — Comunicaciones: matriz (qué, cuándo, a quién, cómo, quién) y
+    | registro de comunicaciones enviadas y recibidas.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::middleware('module:comunicaciones')->prefix('comunicaciones')->name('comunicaciones.')->group(function () {
+        Route::get('/', [ComunicacionController::class, 'index'])->middleware('permission:sst.view')->name('index');
+        Route::middleware('permission:sst.manage')->group(function () {
+            Route::post('matriz/base', [ComunicacionController::class, 'base'])->name('base');
+            Route::post('matriz', [ComunicacionController::class, 'storeItem'])->name('matriz.store');
+            Route::put('matriz/{item}', [ComunicacionController::class, 'updateItem'])->name('matriz.update');
+            Route::delete('matriz/{item}', [ComunicacionController::class, 'destroyItem'])->name('matriz.destroy');
+            Route::post('registro', [ComunicacionController::class, 'storeLog'])->name('registro.store');
+            Route::put('registro/{registro}', [ComunicacionController::class, 'updateLog'])->name('registro.update');
+            Route::delete('registro/{registro}', [ComunicacionController::class, 'destroyLog'])->name('registro.destroy');
+        });
+    });
+
+    /*
+    | M16 — Revisión por la dirección: entradas recopiladas de los módulos,
+    | análisis, conclusiones sobre el sistema y decisiones con seguimiento.
+    | Ver -> reports.view | Gestionar -> reports.generate
+    */
+    Route::middleware('module:revision-direccion')->prefix('revision-direccion')->name('revision-direccion.')
+        ->whereNumber(['revision', 'decision'])->group(function () {
+            Route::get('/', [RevisionDireccionController::class, 'index'])->middleware('permission:reports.view')->name('index');
+            Route::get('{revision}', [RevisionDireccionController::class, 'show'])->middleware('permission:reports.view')->name('show');
+            Route::get('{revision}/word', [RevisionDireccionController::class, 'export'])->middleware('permission:reports.view')->name('export');
+
+            Route::middleware('permission:reports.generate')->group(function () {
+                Route::post('/', [RevisionDireccionController::class, 'store'])->name('store');
+                Route::put('{revision}', [RevisionDireccionController::class, 'update'])->name('update');
+                Route::delete('{revision}', [RevisionDireccionController::class, 'destroy'])->name('destroy');
+                Route::post('{revision}/recopilar', [RevisionDireccionController::class, 'recopilar'])->name('recopilar');
+                Route::post('{revision}/cerrar', [RevisionDireccionController::class, 'cerrar'])->name('cerrar');
+                Route::scopeBindings()->group(function () {
+                    Route::post('{revision}/decisiones', [RevisionDireccionController::class, 'storeDecision'])->name('decisiones.store');
+                    Route::put('{revision}/decisiones/{decision}', [RevisionDireccionController::class, 'updateDecision'])->name('decisiones.update');
+                    Route::delete('{revision}/decisiones/{decision}', [RevisionDireccionController::class, 'destroyDecision'])->name('decisiones.destroy');
+                    Route::post('{revision}/decisiones/{decision}/acpm', [RevisionDireccionController::class, 'acpm'])->name('decisiones.acpm');
+                });
+            });
+        });
 
     /*
     | ACPM: acciones correctivas, preventivas y de mejora. Registro común al que

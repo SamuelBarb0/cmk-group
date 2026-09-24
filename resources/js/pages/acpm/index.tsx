@@ -65,6 +65,7 @@ const ETIQUETA_ORIGEN: Record<string, string> = {
     auditoria: 'Auditoría',
     inspeccion: 'Inspección',
     iperc: 'Matriz IPERC',
+    revision_direccion: 'Revisión por la dirección',
 };
 
 const hoy = () => new Date().toISOString().slice(0, 10);

@@ -118,5 +118,7 @@ return [
         'contratistas' => 'Contratistas y proveedores (selección, requisitos SST y evaluación)',
         'importar' => 'Importación asistida por IA (Excel del cliente a los módulos)',
         'gestion-cambio' => 'Gestión del cambio',
+        'revision-direccion' => 'Revisión por la dirección',
+        'comunicaciones' => 'Comunicaciones (matriz y registro)',
     ],
 ];

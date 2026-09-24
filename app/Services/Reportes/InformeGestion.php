@@ -36,6 +36,7 @@ class InformeGestion
         S\Iperc::class,
         S\Emergencias::class,
         S\Comites::class,
+        S\Comunicaciones::class,
         S\Epp::class,
         S\Mantenimiento::class,
         S\Contratistas::class,
