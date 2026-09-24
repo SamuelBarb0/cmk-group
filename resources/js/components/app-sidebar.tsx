@@ -33,6 +33,7 @@ import {
     Library,
     ListChecks,
     MessageSquareWarning,
+    Presentation,
     Scale,
     Settings,
     ShieldCheck,
@@ -102,6 +103,7 @@ const navGroups: { label: string; items: NavEntry[] }[] = [
             { title: 'Ausentismo', url: '/ausentismo', icon: CalendarX, permission: 'sst.view', module: 'ausentismo' },
             { title: 'ACPM', url: '/acpm', icon: ListChecks, permission: 'sst.view', module: 'acpm' },
             { title: 'Gestión del cambio', url: '/gestion-cambio', icon: ArrowLeftRight, permission: 'sst.view', module: 'gestion-cambio' },
+            { title: 'Revisión por la dirección', url: '/revision-direccion', icon: Presentation, permission: 'reports.view', module: 'revision-direccion' },
         ],
     },
     {
