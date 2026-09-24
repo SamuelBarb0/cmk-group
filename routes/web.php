@@ -270,6 +270,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:audit.view', 'module:auditoria'])->name('auditoria.index');
     Route::post('auditoria', [AuditController::class, 'store'])
         ->middleware(['permission:sst.manage', 'module:auditoria'])->name('auditoria.store');
+    Route::get('auditoria/{auditoria}', [AuditController::class, 'show'])
+        ->middleware(['permission:audit.view', 'module:auditoria'])->name('auditoria.show');
+    Route::put('auditoria/{auditoria}/verificacion', [AuditController::class, 'verificacion'])
+        ->middleware(['permission:sst.manage', 'module:auditoria'])->name('auditoria.verificacion');
+    Route::post('auditoria/{auditoria}/hallazgos', [AuditController::class, 'hallazgo'])
+        ->middleware(['permission:sst.manage', 'module:auditoria'])->name('auditoria.hallazgo');
     Route::put('auditoria/{auditoria}', [AuditController::class, 'update'])
         ->middleware(['permission:sst.manage', 'module:auditoria'])->name('auditoria.update');
     Route::delete('auditoria/{auditoria}', [AuditController::class, 'destroy'])

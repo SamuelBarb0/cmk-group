@@ -51,5 +51,17 @@ class Auditoria extends Seccion
                 $a->findings->whereIn('tipo', self::NC)->count(), $a->findings->where('tipo', 'observacion')->count(),
             ]),
             'Sin auditorías programadas en el periodo.');
+
+        // Solo las auditorías que se hicieron contra la tabla de requisitos
+        // tienen cumplimiento por norma; las anteriores no traen normas.
+        $conAlcance = $auditorias->filter(fn ($a) => ! empty($a->sistemas));
+        if ($conAlcance->isNotEmpty()) {
+            $this->tabla('Cumplimiento por norma', ['Auditoría', 'Norma', 'Cumplimiento', 'Conformes', 'No conformes', 'Pendientes'],
+                $conAlcance->flatMap(fn ($a) => collect($a->cumplimientoPorNorma())->map(fn ($n) => [
+                    $a->codigo, $n['nombre'], $n['cumplimiento'] === null ? 'Sin evaluar' : $n['cumplimiento'].' %',
+                    $n['conformes'], $n['no_conformes'], $n['pendientes'],
+                ])),
+                'Sin auditorías con normas definidas.');
+        }
     }
 }

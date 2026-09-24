@@ -1,3 +1,4 @@
+import { NOMBRE_SISTEMA, SistemaChips, SistemasPicker, type Sistema } from '@/components/control-documental/etiquetas';
 import InputError from '@/components/input-error';
 import { ModuloPage, StatCard } from '@/components/modulo-page';
 import { Badge } from '@/components/ui/badge';
@@ -8,8 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
 import { cn } from '@/lib/utils';
-import { router, useForm } from '@inertiajs/react';
-import { CircleAlert, ClipboardCheck, Pencil, Plus, ShieldCheck, Trash2, TriangleAlert } from 'lucide-react';
+import { Link, router, useForm } from '@inertiajs/react';
+import { CircleAlert, ClipboardCheck, ListChecks, Pencil, Plus, ShieldCheck, Trash2, TriangleAlert, X } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
 
 type Tipo = 'interna' | 'externa' | 'contratistas' | 'terceros';
@@ -18,13 +19,21 @@ type TipoHallazgo = 'no_conformidad_mayor' | 'no_conformidad_menor' | 'observaci
 
 interface Hallazgo {
     /** Exigida por useForm de Inertia para los objetos anidados. */
-    [key: string]: string | number | null | undefined;
+    [key: string]: string | number | string[] | null | undefined;
     tipo: TipoHallazgo;
     proceso: string | null;
     requisito: string | null;
     descripcion: string;
     evidencia: string | null;
     acpm_action_id: number | null;
+    /** Requisitos comunes (SIG-01…) que incumple; se expanden a las normas del alcance. */
+    claves: string[];
+}
+
+interface RequisitoComun {
+    clave_comun: string;
+    titulo: string;
+    referencias: { norma: Sistema; referencia: string }[];
 }
 
 interface Auditoria {
@@ -34,6 +43,7 @@ interface Auditoria {
     objetivo: string;
     alcance: string | null;
     criterios: string | null;
+    sistemas: Sistema[] | null;
     procesos: string | null;
     fecha_programada: string;
     fecha_inicio: string | null;
@@ -57,6 +67,7 @@ interface AccionRow {
 interface Props {
     auditorias: Auditoria[];
     acciones: AccionRow[];
+    requisitos: RequisitoComun[];
     stats: { total: number; programadas: number; no_conformidades: number; sin_accion: number };
     catalogos: { tipos: Tipo[]; estados: Estado[]; tipos_hallazgo: TipoHallazgo[] };
     needsClient: boolean;
@@ -94,6 +105,7 @@ const hallazgoVacio: Hallazgo = {
     descripcion: '',
     evidencia: '',
     acpm_action_id: null,
+    claves: [],
 };
 
 const emptyForm = {
@@ -101,6 +113,7 @@ const emptyForm = {
     objetivo: '',
     alcance: '',
     criterios: '',
+    sistemas: [] as Sistema[],
     procesos: '',
     fecha_programada: hoy(),
     fecha_inicio: '',
@@ -113,7 +126,7 @@ const emptyForm = {
     findings: [] as Hallazgo[],
 };
 
-export default function AuditoriaIndex({ auditorias, acciones, stats, catalogos, needsClient }: Props) {
+export default function AuditoriaIndex({ auditorias, acciones, requisitos, stats, catalogos, needsClient }: Props) {
     const { can } = usePermissions();
     const canManage = can('sst.manage');
     const [open, setOpen] = useState(false);
@@ -136,6 +149,7 @@ export default function AuditoriaIndex({ auditorias, acciones, stats, catalogos,
             objetivo: a.objetivo,
             alcance: a.alcance ?? '',
             criterios: a.criterios ?? '',
+            sistemas: a.sistemas ?? [],
             procesos: a.procesos ?? '',
             fecha_programada: a.fecha_programada,
             fecha_inicio: a.fecha_inicio ?? '',
@@ -145,7 +159,7 @@ export default function AuditoriaIndex({ auditorias, acciones, stats, catalogos,
             estado: a.estado,
             conclusiones: a.conclusiones ?? '',
             observaciones: a.observaciones ?? '',
-            findings: a.findings.map((f) => ({ ...f })),
+            findings: a.findings.map((f) => ({ ...f, claves: f.claves ?? [] })),
         });
         setOpen(true);
     }
@@ -188,20 +202,13 @@ export default function AuditoriaIndex({ auditorias, acciones, stats, catalogos,
                 <StatCard label="Programadas" value={stats.programadas} icon={ClipboardCheck} />
                 <StatCard label="No conformidades" value={stats.no_conformidades} icon={TriangleAlert} />
                 {/* El hueco que un auditor externo encuentra primero. */}
-                <StatCard
-                    label="Sin acción correctiva"
-                    value={stats.sin_accion}
-                    icon={CircleAlert}
-                    alerta={stats.sin_accion > 0}
-                />
+                <StatCard label="Sin acción correctiva" value={stats.sin_accion} icon={CircleAlert} alerta={stats.sin_accion > 0} />
             </div>
 
             <Card>
                 <CardContent className="p-0">
                     {auditorias.length === 0 ? (
-                        <p className="text-muted-foreground p-8 text-center text-sm">
-                            Todavía no hay auditorías programadas.
-                        </p>
+                        <p className="text-muted-foreground p-8 text-center text-sm">Todavía no hay auditorías programadas.</p>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm">
@@ -222,28 +229,30 @@ export default function AuditoriaIndex({ auditorias, acciones, stats, catalogos,
                                             <td className="px-4 py-2.5 font-medium tabular-nums">{a.codigo}</td>
                                             <td className="px-4 py-2.5 capitalize">{a.tipo}</td>
                                             <td className="max-w-md px-4 py-2.5">
-                                                <div className="truncate">{a.objetivo}</div>
-                                                {a.auditor_lider && (
-                                                    <div className="text-muted-foreground text-xs">{a.auditor_lider}</div>
-                                                )}
+                                                <Link href={`/auditoria/${a.id}`} className="block truncate hover:underline">
+                                                    {a.objetivo}
+                                                </Link>
+                                                {a.sistemas && a.sistemas.length > 0 && <SistemaChips sistemas={a.sistemas} className="mt-1" />}
+                                                {a.auditor_lider && <div className="text-muted-foreground text-xs">{a.auditor_lider}</div>}
                                             </td>
-                                            <td className="px-4 py-2.5 tabular-nums whitespace-nowrap">{a.fecha_programada}</td>
+                                            <td className="px-4 py-2.5 whitespace-nowrap tabular-nums">{a.fecha_programada}</td>
                                             <td className="px-4 py-2.5">
                                                 {a.findings.length}
                                                 {a.no_conformidades > 0 && (
-                                                    <span className="text-destructive block text-xs">
-                                                        {a.no_conformidades} no conformidad(es)
-                                                    </span>
+                                                    <span className="text-destructive block text-xs">{a.no_conformidades} no conformidad(es)</span>
                                                 )}
                                             </td>
                                             <td className="px-4 py-2.5">
-                                                <Badge className={cn('font-normal', CLS_ESTADO[a.estado])}>
-                                                    {ETIQUETA_ESTADO[a.estado]}
-                                                </Badge>
+                                                <Badge className={cn('font-normal', CLS_ESTADO[a.estado])}>{ETIQUETA_ESTADO[a.estado]}</Badge>
                                             </td>
                                             {canManage && (
                                                 <td className="px-4 py-2.5">
                                                     <div className="flex justify-end gap-1">
+                                                        <Button size="icon" variant="ghost" asChild aria-label="Lista de verificación">
+                                                            <Link href={`/auditoria/${a.id}`}>
+                                                                <ListChecks className="size-4" />
+                                                            </Link>
+                                                        </Button>
                                                         <Button size="icon" variant="ghost" onClick={() => openEdit(a)} aria-label="Editar">
                                                             <Pencil className="size-4" />
                                                         </Button>
@@ -267,7 +276,8 @@ export default function AuditoriaIndex({ auditorias, acciones, stats, catalogos,
                     <DialogHeader>
                         <DialogTitle>{editing ? `Auditoría ${editing.codigo}` : 'Nueva auditoría'}</DialogTitle>
                         <DialogDescription>
-                            La lista de chequeo y las actas de apertura y cierre se diligencian en Formatos.
+                            Elige las normas del alcance: la lista de verificación y el informe por norma salen de la tabla de requisitos. Las actas
+                            de apertura y cierre se diligencian en Formatos.
                         </DialogDescription>
                     </DialogHeader>
 
@@ -345,6 +355,14 @@ export default function AuditoriaIndex({ auditorias, acciones, stats, catalogos,
                             </div>
                         </div>
 
+                        <div className="grid gap-2">
+                            <Label>Normas del alcance</Label>
+                            <SistemasPicker value={data.sistemas} onChange={(v) => setData('sistemas', v)} />
+                            <p className="text-muted-foreground text-xs">
+                                Integrada o de una sola norma. Si solo se audita el PESV, la lista solo trae los requisitos del PESV.
+                            </p>
+                        </div>
+
                         <div className="grid gap-4 sm:grid-cols-4">
                             <div className="grid gap-2">
                                 <Label htmlFor="fecha_inicio">Inicio</Label>
@@ -357,21 +375,12 @@ export default function AuditoriaIndex({ auditorias, acciones, stats, catalogos,
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="fecha_fin">Fin</Label>
-                                <Input
-                                    id="fecha_fin"
-                                    type="date"
-                                    value={data.fecha_fin}
-                                    onChange={(e) => setData('fecha_fin', e.target.value)}
-                                />
+                                <Input id="fecha_fin" type="date" value={data.fecha_fin} onChange={(e) => setData('fecha_fin', e.target.value)} />
                                 <InputError message={errors.fecha_fin} />
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="auditor_lider">Auditor líder</Label>
-                                <Input
-                                    id="auditor_lider"
-                                    value={data.auditor_lider}
-                                    onChange={(e) => setData('auditor_lider', e.target.value)}
-                                />
+                                <Input id="auditor_lider" value={data.auditor_lider} onChange={(e) => setData('auditor_lider', e.target.value)} />
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="procesos">Procesos auditados</Label>
@@ -395,8 +404,8 @@ export default function AuditoriaIndex({ auditorias, acciones, stats, catalogos,
 
                             {data.findings.length === 0 ? (
                                 <p className="text-muted-foreground px-4 py-4 text-xs">
-                                    Registra también las fortalezas: un informe que solo lista fallos hace que el auditado deje de
-                                    colaborar en la siguiente.
+                                    Registra también las fortalezas: un informe que solo lista fallos hace que el auditado deje de colaborar en la
+                                    siguiente.
                                 </p>
                             ) : (
                                 <div className="divide-y">
@@ -430,12 +439,23 @@ export default function AuditoriaIndex({ auditorias, acciones, stats, catalogos,
                                                     type="button"
                                                     size="icon"
                                                     variant="ghost"
-                                                    onClick={() => setData('findings', data.findings.filter((_, j) => j !== i))}
+                                                    onClick={() =>
+                                                        setData(
+                                                            'findings',
+                                                            data.findings.filter((_, j) => j !== i),
+                                                        )
+                                                    }
                                                     aria-label="Quitar hallazgo"
                                                 >
                                                     <Trash2 className="size-4" />
                                                 </Button>
                                             </div>
+                                            <RequisitosHallazgo
+                                                claves={f.claves ?? []}
+                                                requisitos={requisitos}
+                                                sistemas={data.sistemas}
+                                                onChange={(claves) => setHallazgo(i, { claves })}
+                                            />
                                             <textarea
                                                 value={f.descripcion}
                                                 onChange={(e) => setHallazgo(i, { descripcion: e.target.value })}
@@ -467,8 +487,8 @@ export default function AuditoriaIndex({ auditorias, acciones, stats, catalogos,
                                                     </select>
                                                     {!f.acpm_action_id && (
                                                         <p className="text-xs text-amber-600 dark:text-amber-500">
-                                                            Una no conformidad sin acción correctiva es la observación que levanta
-                                                            el siguiente auditor.
+                                                            Una no conformidad sin acción correctiva es la observación que levanta el siguiente
+                                                            auditor.
                                                         </p>
                                                     )}
                                                 </div>
@@ -502,5 +522,64 @@ export default function AuditoriaIndex({ auditorias, acciones, stats, catalogos,
                 </DialogContent>
             </Dialog>
         </ModuloPage>
+    );
+}
+
+/**
+ * Requisitos que incumple un hallazgo. Se elige el requisito común una vez y
+ * queda vinculado en cada norma del alcance, con su referencia exacta.
+ */
+function RequisitosHallazgo({
+    claves,
+    requisitos,
+    sistemas,
+    onChange,
+}: {
+    claves: string[];
+    requisitos: RequisitoComun[];
+    sistemas: Sistema[];
+    onChange: (claves: string[]) => void;
+}) {
+    const enAlcance = (r: RequisitoComun) => sistemas.length === 0 || r.referencias.some((ref) => sistemas.includes(ref.norma));
+    const refsVisibles = (r: RequisitoComun) => r.referencias.filter((ref) => sistemas.length === 0 || sistemas.includes(ref.norma));
+    const porClave = new Map(requisitos.map((r) => [r.clave_comun, r]));
+
+    return (
+        <div className="space-y-1.5">
+            {claves.map((c) => {
+                const r = porClave.get(c);
+                if (!r) return null;
+                return (
+                    <div key={c} className="bg-muted/50 flex items-start justify-between gap-2 rounded px-2 py-1 text-xs">
+                        <span>
+                            {r.titulo}
+                            <span className="text-muted-foreground block">
+                                {refsVisibles(r)
+                                    .map((ref) => `${NOMBRE_SISTEMA[ref.norma]} ${ref.referencia}`)
+                                    .join(' · ')}
+                            </span>
+                        </span>
+                        <button type="button" onClick={() => onChange(claves.filter((x) => x !== c))} aria-label="Quitar requisito">
+                            <X className="size-3.5" />
+                        </button>
+                    </div>
+                );
+            })}
+            <select
+                value=""
+                onChange={(e) => e.target.value && onChange([...claves, e.target.value])}
+                className="border-input bg-background h-8 w-full rounded-md border px-2 text-xs"
+                aria-label="Vincular requisito incumplido"
+            >
+                <option value="">Vincular requisito de la tabla…</option>
+                {requisitos
+                    .filter((r) => enAlcance(r) && !claves.includes(r.clave_comun))
+                    .map((r) => (
+                        <option key={r.clave_comun} value={r.clave_comun}>
+                            {r.titulo}
+                        </option>
+                    ))}
+            </select>
+        </div>
     );
 }
