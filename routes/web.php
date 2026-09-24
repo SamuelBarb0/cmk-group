@@ -672,6 +672,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:inspections.perform', 'module:inspecciones'])->name('formatos.update');
     Route::delete('formatos/{formato}', [FormatoController::class, 'destroy'])
         ->middleware(['permission:inspections.perform', 'module:inspecciones'])->name('formatos.destroy');
+    Route::post('formatos/{formato}/anular', [FormatoController::class, 'anular'])
+        ->middleware(['permission:inspections.perform', 'module:inspecciones'])->name('formatos.anular');
     Route::get('formatos/{formato}/export', [FormatoController::class, 'export'])
         ->middleware(['permission:inspections.view', 'module:inspecciones'])->name('formatos.export');
 

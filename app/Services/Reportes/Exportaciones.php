@@ -188,7 +188,7 @@ class Exportaciones
                 'modulo' => 'inspecciones', 'permiso' => 'inspections.view', 'fecha' => 'fecha',
                 'consulta' => fn () => FormRecord::query()->orderBy('fecha'),
                 'columnas' => [
-                    'Fecha' => fn ($r) => $r->fecha, 'Código' => fn ($r) => $r->codigo, 'Formato' => fn ($r) => $r->titulo,
+                    'Fecha' => fn ($r) => $r->fecha, 'Código' => fn ($r) => $r->codigo, 'Consecutivo' => fn ($r) => $r->consecutivo, 'Formato' => fn ($r) => $r->titulo,
                     'Tipo' => fn ($r) => $r->grupo, 'Estado' => fn ($r) => $r->estado, 'Responsable' => fn ($r) => $r->responsable,
                     'Diligenciado por' => fn ($r) => $r->generado_por,
                 ],

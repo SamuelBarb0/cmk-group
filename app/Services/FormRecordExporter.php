@@ -26,7 +26,7 @@ class FormRecordExporter
         $company = config('cmk.company');
         $data = $record->data ?? [];
 
-        $phpWord = new PhpWord();
+        $phpWord = new PhpWord;
         $phpWord->setDefaultFontName('Calibri');
         $phpWord->setDefaultFontSize(11);
 
@@ -48,7 +48,17 @@ class FormRecordExporter
 
         // Título + metadatos del registro.
         $section->addText($record->titulo, ['bold' => true, 'size' => 16, 'color' => self::NAVY], ['spaceAfter' => 40]);
-        $meta = 'Código: '.$record->codigo
+        // Un registro anulado se puede descargar (es evidencia de la
+        // corrección), pero no puede pasar por vigente al imprimirlo.
+        if ($record->estado === 'anulado') {
+            $section->addText(
+                'REGISTRO ANULADO el '.$record->anulado_at?->format('d/m/Y').' por '.$record->anulado_por.'. Motivo: '.$record->motivo_anulacion,
+                ['bold' => true, 'size' => 10, 'color' => 'C0392B'],
+                ['spaceAfter' => 80],
+            );
+        }
+
+        $meta = ($record->consecutivo ? 'Registro: '.$record->consecutivo.'   |   ' : '').'Código: '.$record->codigo
             .'   |   Empresa: '.($record->tenant->name ?? '—')
             .'   |   Fecha: '.($record->fecha?->format('d/m/Y') ?? '—');
         if ($record->responsable) {

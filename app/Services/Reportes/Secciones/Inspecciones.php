@@ -33,7 +33,8 @@ class Inspecciones extends Seccion
 
     protected function construir(Periodo $periodo): void
     {
-        $registros = $periodo->filtrar(FormRecord::query(), 'fecha')->get(['id', 'codigo', 'titulo', 'grupo', 'estado', 'data']);
+        // Los anulados no cuentan: su reemplazo ya está en la lista.
+        $registros = $periodo->filtrar(FormRecord::validos(), 'fecha')->get(['id', 'codigo', 'titulo', 'grupo', 'estado', 'data']);
         $borradores = $registros->where('estado', 'borrador')->count();
 
         // Ítems de listas de chequeo marcados «no cumple»: el hallazgo que

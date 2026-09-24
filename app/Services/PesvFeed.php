@@ -339,7 +339,7 @@ class PesvFeed
     /** @return array<int, array<string, mixed>> */
     private function preoperacional(): array
     {
-        $registros = FormRecord::where('categoria', 'PESV')->count();
+        $registros = FormRecord::validos()->where('categoria', 'PESV')->count();
 
         return [[
             'etiqueta' => 'Inspecciones registradas en Formatos',
@@ -534,7 +534,7 @@ class PesvFeed
             $programados += $c['programados'];
             $ejecutados += $c['ejecutados'];
         }
-        $inspecciones = FormRecord::where('codigo', 'FT-INS-VIAS')->whereYear('fecha', $anio)->count();
+        $inspecciones = FormRecord::validos()->where('codigo', 'FT-INS-VIAS')->whereYear('fecha', $anio)->count();
 
         return [
             'etiqueta' => 'Vías internas y su mantenimiento',
