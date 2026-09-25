@@ -6,6 +6,7 @@ use App\Http\Controllers\AiDocumentController;
 use App\Http\Controllers\AspectoAmbientalController;
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AuditController;
+use App\Http\Controllers\CargoController;
 use App\Http\Controllers\ChangeRequestController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CommitteeController;
@@ -577,6 +578,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('{aspecto}', [AspectoAmbientalController::class, 'update'])->name('update');
             Route::delete('{aspecto}', [AspectoAmbientalController::class, 'destroy'])->name('destroy');
             Route::post('{aspecto}/accion', [AspectoAmbientalController::class, 'crearAccion'])->name('accion');
+        });
+    });
+
+    /*
+    | M07 — Perfiles de cargo y matriz de competencias (ISO 5.3 y 7.2,
+    | Dec. 1072 2.2.4.6.8 y 2.2.4.6.11). Las brechas de formación se programan
+    | como capacitaciones.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::middleware('module:cargos')->prefix('cargos')->name('cargos.')->group(function () {
+        Route::get('/', [CargoController::class, 'index'])->middleware('permission:sst.view')->name('index');
+        Route::middleware('permission:sst.manage')->group(function () {
+            Route::post('/', [CargoController::class, 'store'])->name('store');
+            Route::post('desde-nomina', [CargoController::class, 'desdeNomina'])->name('desde-nomina');
+            Route::post('enviar', [CargoController::class, 'enviar'])->name('enviar');
+            Route::put('{cargo}', [CargoController::class, 'update'])->name('update');
+            Route::delete('{cargo}', [CargoController::class, 'destroy'])->name('destroy');
+            Route::post('{cargo}/evaluar', [CargoController::class, 'evaluar'])->name('evaluar');
+            Route::post('{cargo}/requisitos', [CargoController::class, 'storeRequisito'])->name('requisitos.store');
+            Route::put('{cargo}/requisitos/{requisito}', [CargoController::class, 'updateRequisito'])->name('requisitos.update');
+            Route::delete('{cargo}/requisitos/{requisito}', [CargoController::class, 'destroyRequisito'])->name('requisitos.destroy');
+            Route::post('{cargo}/requisitos/{requisito}/programar', [CargoController::class, 'programar'])->name('requisitos.programar');
         });
     });
 

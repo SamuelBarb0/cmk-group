@@ -95,7 +95,7 @@ class ManagementReview extends Model
         'participacion' => [
             'titulo' => 'Consulta y participación de los trabajadores, competencia y formación',
             'referencias' => 'ISO 45001 9.3 · Dec. 1072 2.2.4.6.31',
-            'secciones' => ['comites', 'comunicaciones', 'capacitaciones'],
+            'secciones' => ['comites', 'comunicaciones', 'capacitaciones', 'cargos'],
             'sistemas' => ['sst', 'pesv', 'iso45001'],
         ],
         'proveedores' => [

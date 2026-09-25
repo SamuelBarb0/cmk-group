@@ -16,6 +16,7 @@ import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import {
     ArrowLeftRight,
+    BriefcaseBusiness,
     Building2,
     CalendarRange,
     CalendarX,
@@ -85,6 +86,7 @@ const navGroups: { label: string; items: NavEntry[] }[] = [
             { title: 'Plan de Trabajo', url: '/plan-trabajo', icon: CalendarRange, permission: 'sst.view', module: 'plan-trabajo' },
             { title: 'Indicadores', url: '/indicadores', icon: FileBarChart, permission: 'sst.view', module: 'indicadores' },
             { title: 'Capacitaciones', url: '/capacitaciones', icon: GraduationCap, permission: 'sst.view', module: 'capacitaciones' },
+            { title: 'Cargos y competencias', url: '/cargos', icon: BriefcaseBusiness, permission: 'sst.view', module: 'cargos' },
             { title: 'Control documental', url: '/control-documental', icon: Library, permission: 'documents.view', module: 'control-documental' },
             { title: 'Documentos', url: '/documentos', icon: FileText, permission: 'documents.view', module: 'documentos' },
             { title: 'Documentos IA', url: '/documentos-ia', icon: Sparkles, permission: 'documents.view', module: 'documentos-ia' },
