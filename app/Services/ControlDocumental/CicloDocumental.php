@@ -8,6 +8,7 @@ use App\Models\ControlledDocumentVersion;
 use App\Models\DocumentCatalogEntry;
 use App\Models\DocumentTemplate;
 use App\Models\GeneratedDocument;
+use App\Models\NormRequirement;
 use App\Models\Process;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -163,6 +164,66 @@ class CicloDocumental
                 // La v1 recién creada trae «Creación del documento.»; se deja.
                 'descripcion_cambio' => $version->version === 1 ? $version->descripcion_cambio : ($version->descripcion_cambio ?: $descripcion),
             ]);
+
+            return $doc;
+        });
+    }
+
+    /**
+     * Lleva al listado maestro un documento que arma un módulo con sus propios
+     * datos (la matriz DOFA del M02, por ejemplo). Mismas reglas que con
+     * Documentos IA: cae como borrador en el documento del catálogo; si está
+     * vigente se abre la versión siguiente; si hay una versión en revisión o
+     * aprobación no se toca. Además deja el documento vinculado a los
+     * requisitos que evidencia (por su clave común), en las normas que tiene.
+     *
+     * @param  list<string>  $clavesComunes  SIG-04, SIG-05…
+     */
+    public function recibirDeModulo(int $tenantId, DocumentCatalogEntry $entrada, string $contenido, string $descripcion, User $user, array $clavesComunes = []): ControlledDocument
+    {
+        return DB::transaction(function () use ($tenantId, $entrada, $contenido, $descripcion, $user, $clavesComunes) {
+            $doc = ControlledDocument::withoutTenantScope()
+                ->where('tenant_id', $tenantId)
+                ->where('document_catalog_id', $entrada->id)
+                ->first();
+
+            if ($doc === null) {
+                Process::asegurarBase($tenantId);
+                $procesos = Process::withoutTenantScope()->where('tenant_id', $tenantId);
+                $proceso = (clone $procesos)->where('sigla', $entrada->proceso)->first() ?? (clone $procesos)->orderBy('orden')->first();
+                if (! $proceso) {
+                    $this->fallar('proceso', 'La empresa no tiene procesos: crea al menos uno en el mapa de procesos.');
+                }
+
+                $doc = $this->crear([
+                    'tipo' => $entrada->tipo,
+                    'titulo' => $entrada->nombre,
+                    'sistemas' => $entrada->sistemas,
+                    'condicional' => $entrada->condicional,
+                    'document_catalog_id' => $entrada->id,
+                    'codigo_historico' => $entrada->codigo_referencia,
+                ], $proceso, $user);
+            }
+
+            $abierta = $doc->versions()->whereIn('estado', ControlledDocumentVersion::EN_CURSO)->first();
+            if ($abierta && $abierta->estado !== 'borrador') {
+                $this->fallar('estado', "{$doc->codigo} tiene la versión {$abierta->version} ".str_replace('_', ' ', $abierta->estado)
+                    .'. Termina ese trámite o devuélvelo a borrador antes de volver a enviarlo.');
+            }
+
+            $version = $abierta ?? $this->nuevaVersion($doc, $user, $descripcion);
+            $version->update([
+                'contenido' => $contenido,
+                'descripcion_cambio' => $version->version === 1 ? $version->descripcion_cambio : ($version->descripcion_cambio ?: $descripcion),
+            ]);
+
+            if ($clavesComunes) {
+                $ids = NormRequirement::query()
+                    ->whereIn('clave_comun', $clavesComunes)
+                    ->whereHas('norm', fn ($q) => $q->whereIn('clave', $doc->sistemas))
+                    ->pluck('id');
+                $doc->requirements()->syncWithoutDetaching($ids);
+            }
 
             return $doc;
         });

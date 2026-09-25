@@ -20,6 +20,7 @@ import {
     CalendarRange,
     CalendarX,
     ClipboardCheck,
+    Compass,
     Contact,
     FileBarChart,
     FileSpreadsheet,
@@ -72,6 +73,7 @@ const navGroups: { label: string; items: NavEntry[] }[] = [
         label: 'Módulos',
         items: [
             { title: 'Organización', url: '/organizacion', icon: Building2, permission: 'sst.view' },
+            { title: 'Contexto', url: '/contexto', icon: Compass, permission: 'sst.view', module: 'contexto' },
             { title: 'Empleados', url: '/empleados', icon: Contact, permission: 'sst.view' },
             { title: 'Diagnóstico SG-SST', url: '/diagnostico', icon: Gauge, permission: 'sst.view', module: 'diagnostico' },
             { title: 'PESV', url: '/pesv', permission: 'pesv.view', module: 'pesv', tree: 'pesv' },

@@ -17,9 +17,42 @@ class Process extends Model
 {
     use BelongsToTenant;
 
-    protected $fillable = ['sigla', 'nombre', 'tipo', 'orden'];
+    protected $fillable = ['sigla', 'nombre', 'tipo', 'orden', 'objetivo', 'lider', 'caracterizacion'];
+
+    protected function casts(): array
+    {
+        return ['caracterizacion' => 'array'];
+    }
 
     public const TIPOS = ['estrategico', 'misional', 'apoyo', 'evaluacion'];
+
+    /**
+     * Campos de la caracterización (ISO 4.4, FT-DIR-001): lo que entra, lo que
+     * se hace en cada fase del PHVA, lo que sale y cómo se mide. Todos texto
+     * libre: cada empresa escribe su proceso con sus palabras.
+     */
+    public const CARACTERIZACION = [
+        'proveedores' => 'Proveedores',
+        'entradas' => 'Entradas',
+        'planear' => 'Planear',
+        'hacer' => 'Hacer',
+        'verificar' => 'Verificar',
+        'actuar' => 'Actuar',
+        'salidas' => 'Salidas',
+        'clientes' => 'Clientes',
+        'recursos' => 'Recursos',
+        'indicadores' => 'Indicadores',
+        'riesgos' => 'Riesgos',
+    ];
+
+    /** Caracterizado = tiene objetivo, líder, y entradas, salidas y actividades. */
+    public function caracterizado(): bool
+    {
+        $c = $this->caracterizacion ?? [];
+
+        return filled($this->objetivo) && filled($this->lider)
+            && filled($c['entradas'] ?? null) && filled($c['salidas'] ?? null) && filled($c['hacer'] ?? null);
+    }
 
     /** Mapa de procesos base del informe (sección 5.3). Cada empresa lo ajusta. */
     public const BASE = [
