@@ -43,6 +43,7 @@ class InformeGestion
         S\Comunicaciones::class,
         S\Epp::class,
         S\Mantenimiento::class,
+        S\EquiposMedicion::class,
         S\Contratistas::class,
         S\GestionCambio::class,
         S\Programas::class,

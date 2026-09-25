@@ -124,5 +124,6 @@ return [
         'riesgos-oportunidades' => 'Riesgos y oportunidades de los procesos',
         'aspectos-ambientales' => 'Aspectos e impactos ambientales (ISO 14001)',
         'cargos' => 'Perfiles de cargo y matriz de competencias',
+        'equipos-medicion' => 'Equipos de medición (calibración y verificación)',
     ],
 ];
