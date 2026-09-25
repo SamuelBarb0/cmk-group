@@ -121,5 +121,7 @@ return [
         'revision-direccion' => 'Revisión por la dirección',
         'comunicaciones' => 'Comunicaciones (matriz y registro)',
         'contexto' => 'Contexto de la organización (DOFA / PESTEL, partes interesadas, alcance y procesos)',
+        'riesgos-oportunidades' => 'Riesgos y oportunidades de los procesos',
+        'aspectos-ambientales' => 'Aspectos e impactos ambientales (ISO 14001)',
     ],
 ];

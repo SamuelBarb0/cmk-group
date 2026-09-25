@@ -35,6 +35,8 @@ class InformeGestion
         S\SaludOcupacional::class,
         S\RequisitosLegales::class,
         S\Iperc::class,
+        S\RiesgosOportunidades::class,
+        S\AspectosAmbientales::class,
         S\Emergencias::class,
         S\Comites::class,
         S\Comunicaciones::class,

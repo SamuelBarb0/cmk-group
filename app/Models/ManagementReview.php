@@ -71,6 +71,12 @@ class ManagementReview extends Model
             'secciones' => ['accidentes', 'ausentismo', 'reportes-ac', 'iperc', 'salud-ocupacional', 'programas', 'epp', 'inspecciones', 'emergencias', 'mantenimiento'],
             'sistemas' => ['sst', 'pesv', 'iso45001', 'iso14001'],
         ],
+        'riesgos_oportunidades' => [
+            'titulo' => 'Eficacia de las acciones para abordar riesgos y oportunidades, y aspectos ambientales significativos',
+            'referencias' => 'ISO 9001 9.3.2 e · ISO 45001/14001 9.3',
+            'secciones' => ['riesgos-oportunidades', 'aspectos-ambientales'],
+            'sistemas' => ['iso45001', 'iso9001', 'iso14001'],
+        ],
         'acpm' => [
             'titulo' => 'No conformidades y acciones correctivas, preventivas y de mejora',
             'referencias' => 'ISO 9001 9.3.2 c · ISO 45001/14001 9.3 · Dec. 1072 2.2.4.6.31',
