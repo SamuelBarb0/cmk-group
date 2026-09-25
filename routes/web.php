@@ -3,6 +3,7 @@
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AcpmActionController;
 use App\Http\Controllers\AiDocumentController;
+use App\Http\Controllers\AspectoAmbientalController;
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AuditController;
 use App\Http\Controllers\ChangeRequestController;
@@ -51,6 +52,7 @@ use App\Http\Controllers\ProcesoController;
 use App\Http\Controllers\ProgramaGestionController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\RevisionDireccionController;
+use App\Http\Controllers\RiesgoOportunidadController;
 use App\Http\Controllers\SafetyReportController;
 use App\Http\Controllers\SstDiagnosticController;
 use App\Http\Controllers\TrainingController;
@@ -545,6 +547,36 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('partes/{parte}', [ContextoController::class, 'destroyParte'])->name('partes.destroy');
             Route::put('procesos/{proceso}', [ContextoController::class, 'updateProceso'])->name('procesos.update');
             Route::post('enviar', [ContextoController::class, 'enviar'])->name('enviar');
+        });
+    });
+
+    /*
+    | M04 — Riesgos y oportunidades de los procesos (se alimenta de la DOFA
+    | del contexto) y matriz de aspectos e impactos ambientales. Lo que sale
+    | alto o significativo se trata con acciones en ACPM.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::middleware('module:riesgos-oportunidades')->prefix('riesgos-oportunidades')->name('riesgos-oportunidades.')->group(function () {
+        Route::get('/', [RiesgoOportunidadController::class, 'index'])->middleware('permission:sst.view')->name('index');
+        Route::middleware('permission:sst.manage')->group(function () {
+            Route::post('/', [RiesgoOportunidadController::class, 'store'])->name('store');
+            Route::post('desde-dofa', [RiesgoOportunidadController::class, 'desdeDofa'])->name('desde-dofa');
+            Route::post('enviar', [RiesgoOportunidadController::class, 'enviar'])->name('enviar');
+            Route::put('{fila}', [RiesgoOportunidadController::class, 'update'])->name('update');
+            Route::delete('{fila}', [RiesgoOportunidadController::class, 'destroy'])->name('destroy');
+            Route::post('{fila}/accion', [RiesgoOportunidadController::class, 'crearAccion'])->name('accion');
+        });
+    });
+
+    Route::middleware('module:aspectos-ambientales')->prefix('aspectos-ambientales')->name('aspectos-ambientales.')->group(function () {
+        Route::get('/', [AspectoAmbientalController::class, 'index'])->middleware('permission:sst.view')->name('index');
+        Route::middleware('permission:sst.manage')->group(function () {
+            Route::post('/', [AspectoAmbientalController::class, 'store'])->name('store');
+            Route::post('base', [AspectoAmbientalController::class, 'base'])->name('base');
+            Route::post('enviar', [AspectoAmbientalController::class, 'enviar'])->name('enviar');
+            Route::put('{aspecto}', [AspectoAmbientalController::class, 'update'])->name('update');
+            Route::delete('{aspecto}', [AspectoAmbientalController::class, 'destroy'])->name('destroy');
+            Route::post('{aspecto}/accion', [AspectoAmbientalController::class, 'crearAccion'])->name('accion');
         });
     });
 
