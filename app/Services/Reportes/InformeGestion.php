@@ -23,6 +23,7 @@ class InformeGestion
     public const SECCIONES = [
         S\Empresa::class,
         S\Diagnostico::class,
+        S\Contexto::class,
         S\PlanTrabajo::class,
         S\Indicadores::class,
         S\Accidentes::class,

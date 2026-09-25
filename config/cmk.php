@@ -120,5 +120,6 @@ return [
         'gestion-cambio' => 'Gestión del cambio',
         'revision-direccion' => 'Revisión por la dirección',
         'comunicaciones' => 'Comunicaciones (matriz y registro)',
+        'contexto' => 'Contexto de la organización (DOFA / PESTEL, partes interesadas, alcance y procesos)',
     ],
 ];

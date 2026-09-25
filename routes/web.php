@@ -9,6 +9,7 @@ use App\Http\Controllers\ChangeRequestController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CommitteeController;
 use App\Http\Controllers\ComunicacionController;
+use App\Http\Controllers\ContextoController;
 use App\Http\Controllers\ContratistaController;
 use App\Http\Controllers\ControlDocumentalController;
 use App\Http\Controllers\ControlDocumentalVersionController;
@@ -521,6 +522,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
                     Route::post('{documento}/versiones/{version}/transicion', [ControlDocumentalVersionController::class, 'transicion'])->name('versiones.transicion');
                 });
             });
+        });
+    });
+
+    /*
+    | M02 — Contexto de la organización: alcance y cambio climático, DOFA /
+    | PESTEL, partes interesadas y caracterización de procesos; lo trabajado
+    | se manda al control documental como borrador.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::middleware('module:contexto')->prefix('contexto')->name('contexto.')->group(function () {
+        Route::get('/', [ContextoController::class, 'index'])->middleware('permission:sst.view')->name('index');
+        Route::middleware('permission:sst.manage')->group(function () {
+            Route::put('perfil', [ContextoController::class, 'updatePerfil'])->name('perfil');
+            Route::post('revisado', [ContextoController::class, 'revisado'])->name('revisado');
+            Route::post('cuestiones', [ContextoController::class, 'storeCuestion'])->name('cuestiones.store');
+            Route::put('cuestiones/{cuestion}', [ContextoController::class, 'updateCuestion'])->name('cuestiones.update');
+            Route::delete('cuestiones/{cuestion}', [ContextoController::class, 'destroyCuestion'])->name('cuestiones.destroy');
+            Route::post('partes/base', [ContextoController::class, 'baseParts'])->name('partes.base');
+            Route::post('partes', [ContextoController::class, 'storeParte'])->name('partes.store');
+            Route::put('partes/{parte}', [ContextoController::class, 'updateParte'])->name('partes.update');
+            Route::delete('partes/{parte}', [ContextoController::class, 'destroyParte'])->name('partes.destroy');
+            Route::put('procesos/{proceso}', [ContextoController::class, 'updateProceso'])->name('procesos.update');
+            Route::post('enviar', [ContextoController::class, 'enviar'])->name('enviar');
         });
     });
 

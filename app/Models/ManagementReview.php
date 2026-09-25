@@ -58,7 +58,7 @@ class ManagementReview extends Model
         'contexto' => [
             'titulo' => 'Cambios en el contexto, las partes interesadas y los procesos',
             'referencias' => 'ISO 9001 9.3.2 b · ISO 45001/14001 9.3 b',
-            'secciones' => ['gestion-cambio'],
+            'secciones' => ['contexto', 'gestion-cambio'],
         ],
         'objetivos' => [
             'titulo' => 'Cumplimiento de la política, los objetivos, el plan de trabajo y los indicadores',
