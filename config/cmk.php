@@ -123,5 +123,6 @@ return [
         'contexto' => 'Contexto de la organización (DOFA / PESTEL, partes interesadas, alcance y procesos)',
         'riesgos-oportunidades' => 'Riesgos y oportunidades de los procesos',
         'aspectos-ambientales' => 'Aspectos e impactos ambientales (ISO 14001)',
+        'cargos' => 'Perfiles de cargo y matriz de competencias',
     ],
 ];

@@ -31,6 +31,7 @@ class InformeGestion
         S\ActosCondiciones::class,
         S\Acpm::class,
         S\Capacitaciones::class,
+        S\Cargos::class,
         S\Inspecciones::class,
         S\SaludOcupacional::class,
         S\RequisitosLegales::class,
