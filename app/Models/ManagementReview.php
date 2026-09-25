@@ -112,7 +112,7 @@ class ManagementReview extends Model
         'recursos' => [
             'titulo' => 'Adecuación de los recursos (financieros, humanos, técnicos y tecnológicos)',
             'referencias' => 'ISO 9001 9.3.2 d · ISO 45001/14001 9.3 · Dec. 1072 2.2.4.6.31',
-            'secciones' => [],
+            'secciones' => ['equipos-medicion'],
         ],
         'mejora' => [
             'titulo' => 'Oportunidades de mejora continua',

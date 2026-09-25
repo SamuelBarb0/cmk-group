@@ -21,6 +21,7 @@ use App\Http\Controllers\DocumentTemplateController;
 use App\Http\Controllers\EmergencyController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EncuestaPublicaController;
+use App\Http\Controllers\EquipoMedicionController;
 use App\Http\Controllers\FormatoController;
 use App\Http\Controllers\FormFormatController;
 use App\Http\Controllers\ImportacionController;
@@ -600,6 +601,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('{cargo}/requisitos/{requisito}', [CargoController::class, 'updateRequisito'])->name('requisitos.update');
             Route::delete('{cargo}/requisitos/{requisito}', [CargoController::class, 'destroyRequisito'])->name('requisitos.destroy');
             Route::post('{cargo}/requisitos/{requisito}/programar', [CargoController::class, 'programar'])->name('requisitos.programar');
+        });
+    });
+
+    /*
+    | M09 — Equipos de seguimiento y medición (ISO 9001 7.1.5, ISO 45001/14001
+    | 9.1.1): hoja de vida, calibraciones con certificado y equipos no conformes.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::middleware('module:equipos-medicion')->prefix('equipos-medicion')->name('equipos-medicion.')->group(function () {
+        Route::middleware('permission:sst.view')->group(function () {
+            Route::get('/', [EquipoMedicionController::class, 'index'])->name('index');
+            Route::get('{equipo}/calibraciones/{calibracion}/certificado', [EquipoMedicionController::class, 'certificado'])->name('certificado');
+        });
+        Route::middleware('permission:sst.manage')->group(function () {
+            Route::post('/', [EquipoMedicionController::class, 'store'])->name('store');
+            Route::post('enviar', [EquipoMedicionController::class, 'enviar'])->name('enviar');
+            Route::put('{equipo}', [EquipoMedicionController::class, 'update'])->name('update');
+            Route::delete('{equipo}', [EquipoMedicionController::class, 'destroy'])->name('destroy');
+            Route::post('{equipo}/calibraciones', [EquipoMedicionController::class, 'storeCalibracion'])->name('calibraciones.store');
+            Route::delete('{equipo}/calibraciones/{calibracion}', [EquipoMedicionController::class, 'destroyCalibracion'])->name('calibraciones.destroy');
+            Route::post('{equipo}/calibraciones/{calibracion}/accion', [EquipoMedicionController::class, 'crearAccion'])->name('calibraciones.accion');
         });
     });
 
