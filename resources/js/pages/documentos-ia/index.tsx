@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -129,7 +130,10 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
                 <Head title="Documentos IA" />
                 <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Generación de Documentos con IA</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Generación de Documentos con IA
+                        </h1>
                         <p className="text-muted-foreground text-sm">Genera documentos del SGI con Claude a partir del contexto del cliente.</p>
                     </div>
                     <Card>
@@ -156,7 +160,10 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Generación de Documentos con IA</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Generación de Documentos con IA
+                        </h1>
                         <p className="text-muted-foreground text-sm">
                             Claude redacta documentos del SGI usando el contexto de{' '}
                             <span className="font-medium">{tenant?.name ?? 'la empresa'}</span>. Revísalos y apruébalos.

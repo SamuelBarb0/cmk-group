@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -264,7 +265,10 @@ export default function EmpleadosIndex({ employees, stats, opcionesPerfil, needs
                 <Head title="Empleados" />
                 <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Empleados</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Empleados
+                        </h1>
                         <p className="text-muted-foreground text-sm">Nómina base del SGI de cada cliente.</p>
                     </div>
                     <Card>
@@ -295,7 +299,10 @@ export default function EmpleadosIndex({ employees, stats, opcionesPerfil, needs
                 {/* Encabezado */}
                 <div className="flex flex-wrap items-end justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Empleados</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Empleados
+                        </h1>
                         <p className="text-muted-foreground text-sm">
                             {tenant ? (
                                 <>
@@ -641,8 +648,8 @@ export default function EmpleadosIndex({ employees, stats, opcionesPerfil, needs
 
                             <div className="space-y-4 border-t px-4 py-4">
                                 <p className="text-muted-foreground text-xs">
-                                    La edad, el género, la antigüedad en la empresa y el tipo de contrato no se
-                                    preguntan aquí: ya salen de los datos de arriba.
+                                    La edad, el género, la antigüedad en la empresa y el tipo de contrato no se preguntan aquí: ya salen de los datos
+                                    de arriba.
                                 </p>
 
                                 <div className="grid gap-4 sm:grid-cols-2">
@@ -699,9 +706,7 @@ export default function EmpleadosIndex({ employees, stats, opcionesPerfil, needs
                                             <select
                                                 id={campo}
                                                 value={data[campo] === null ? '' : data[campo] ? 'si' : 'no'}
-                                                onChange={(ev) =>
-                                                    setData(campo, ev.target.value === '' ? null : ev.target.value === 'si')
-                                                }
+                                                onChange={(ev) => setData(campo, ev.target.value === '' ? null : ev.target.value === 'si')}
                                                 className="border-input bg-background h-9 w-full rounded-md border px-3 text-sm"
                                             >
                                                 <option value="">Sin responder</option>

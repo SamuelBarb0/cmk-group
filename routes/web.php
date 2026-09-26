@@ -52,6 +52,7 @@ use App\Http\Controllers\PesvVehiculoFichaController;
 use App\Http\Controllers\PesvVerificacionController;
 use App\Http\Controllers\PesvViaInternaController;
 use App\Http\Controllers\PpeController;
+use App\Http\Controllers\PresentacionController;
 use App\Http\Controllers\ProcesoController;
 use App\Http\Controllers\ProgramaGestionController;
 use App\Http\Controllers\ReporteController;
@@ -655,6 +656,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     | y energía, e inventario de productos químicos.
     | Ver -> sst.view | Gestionar -> sst.manage
     */
+    /*
+    | Presentaciones (.pptx) generadas por la IA con el contexto del cliente,
+    | de cualquier módulo del mapa documental. Sin módulo contratable: están
+    | para todos. Ver -> documents.view | Generar -> documents.manage
+    */
+    Route::prefix('presentaciones')->name('presentaciones.')->group(function () {
+        Route::middleware('permission:documents.view')->group(function () {
+            Route::get('/', [PresentacionController::class, 'index'])->name('index');
+            Route::get('{presentacion}/descargar', [PresentacionController::class, 'descargar'])->name('descargar');
+        });
+        Route::middleware('permission:documents.manage')->group(function () {
+            Route::post('/', [PresentacionController::class, 'store'])->name('store');
+            Route::delete('{presentacion}', [PresentacionController::class, 'destroy'])->name('destroy');
+        });
+    });
+
     Route::middleware('module:ambiental')->prefix('ambiental')->name('ambiental.')->group(function () {
         Route::middleware('permission:sst.view')->group(function () {
             Route::get('/', [AmbientalController::class, 'index'])->name('index');

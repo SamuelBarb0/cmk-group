@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { ChipDocumento, ListaRequisitos, RESULTADO, type Catalogo } from '@/components/pesv/requisitos';
 import { Notice, useNotice } from '@/components/pesv/shared';
@@ -97,7 +98,10 @@ export default function PesvConductor({
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                         <p className="text-muted-foreground text-sm">PESV · Paso 11 · Responsabilidad y comportamiento seguro</p>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">{nombre}</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            {nombre}
+                        </h1>
                         <p className="text-muted-foreground text-sm">
                             {conductor.numero_documento ? `C.C. ${conductor.numero_documento} · ` : ''}
                             {conductor.cargo ?? 'Sin cargo'}

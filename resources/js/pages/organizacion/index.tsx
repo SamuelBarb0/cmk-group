@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -89,7 +90,10 @@ export default function OrganizacionIndex({ organizacion, needsClient, empleados
                 <Head title="Organización" />
                 <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Información de la Organización</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Información de la Organización
+                        </h1>
                         <p className="text-muted-foreground text-sm">Contexto SGI de la empresa cliente.</p>
                     </div>
                     <Card>
@@ -129,7 +133,10 @@ export default function OrganizacionIndex({ organizacion, needsClient, empleados
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 {/* Encabezado */}
                 <div>
-                    <h1 className="font-brand text-2xl font-bold tracking-tight">Información de la Organización</h1>
+                    <h1 className="font-brand text-2xl font-bold tracking-tight">
+                        <CodigoSig className="mr-2" />
+                        Información de la Organización
+                    </h1>
                     <p className="text-muted-foreground text-sm">
                         Contexto SGI de <span className="font-medium">{organizacion.name}</span>.
                     </p>

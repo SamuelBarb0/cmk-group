@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -141,7 +142,10 @@ export default function Plantillas({ plantillas, puedeGestionar, puedeSubirGloba
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Plantillas de documentos</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Plantillas de documentos
+                        </h1>
                         <p className="text-muted-foreground max-w-2xl text-sm">
                             Sube un documento modelo y la IA generará los documentos a partir de él, con los datos de la empresa. Acepta{' '}
                             {extensiones.map((e) => `.${e}`).join(', ')}.
@@ -401,7 +405,10 @@ function Seccion({
                                     )}
 
                                     {p.conserva_formato && (
-                                        <Etiqueta icono={<FileText className="size-3" />} clase="bg-violet-500/10 text-violet-700 dark:text-violet-400">
+                                        <Etiqueta
+                                            icono={<FileText className="size-3" />}
+                                            clase="bg-violet-500/10 text-violet-700 dark:text-violet-400"
+                                        >
                                             Conserva formato
                                         </Etiqueta>
                                     )}

@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { Notice, SinCliente, useNotice } from '@/components/pesv/shared';
 import { Badge } from '@/components/ui/badge';
@@ -122,7 +123,10 @@ export default function PesvSedes({ needsClient, sedes, sugerencias, empresa }: 
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div className="flex flex-wrap items-end justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Sedes</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Sedes
+                        </h1>
                         <p className="text-muted-foreground text-sm">Centros de trabajo · caracterización del Paso 5 del PESV.</p>
                     </div>
                     {canManage && (
@@ -138,9 +142,7 @@ export default function PesvSedes({ needsClient, sedes, sugerencias, empresa }: 
                     <Card>
                         <CardContent className="space-y-2 p-4">
                             <p className="text-sm font-medium">Sedes que ya aparecen en la ficha de los empleados</p>
-                            <p className="text-muted-foreground text-sm">
-                                Están escritas en Empleados pero no registradas aquí. Un clic las agrega.
-                            </p>
+                            <p className="text-muted-foreground text-sm">Están escritas en Empleados pero no registradas aquí. Un clic las agrega.</p>
                             <div className="flex flex-wrap gap-2 pt-1">
                                 {pendientes.map((s) => (
                                     <Button key={s} variant="outline" size="sm" className="gap-1" onClick={() => abrirNuevo(s)}>
@@ -182,9 +184,7 @@ export default function PesvSedes({ needsClient, sedes, sugerencias, empresa }: 
                                                         </Badge>
                                                     )}
                                                 </td>
-                                                <td className="p-3">
-                                                    {[s.direccion, s.ciudad, s.departamento].filter(Boolean).join(', ') || '—'}
-                                                </td>
+                                                <td className="p-3">{[s.direccion, s.ciudad, s.departamento].filter(Boolean).join(', ') || '—'}</td>
                                                 <td className="p-3">{s.responsable ?? '—'}</td>
                                                 <td className="p-3 tabular-nums">{s.num_trabajadores ?? '—'}</td>
                                                 {canManage && (
@@ -235,21 +235,13 @@ export default function PesvSedes({ needsClient, sedes, sugerencias, empresa }: 
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="departamento">Departamento</Label>
-                                    <Input
-                                        id="departamento"
-                                        value={data.departamento}
-                                        onChange={(e) => setData('departamento', e.target.value)}
-                                    />
+                                    <Input id="departamento" value={data.departamento} onChange={(e) => setData('departamento', e.target.value)} />
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="grid gap-2">
                                     <Label htmlFor="responsable">Responsable</Label>
-                                    <Input
-                                        id="responsable"
-                                        value={data.responsable}
-                                        onChange={(e) => setData('responsable', e.target.value)}
-                                    />
+                                    <Input id="responsable" value={data.responsable} onChange={(e) => setData('responsable', e.target.value)} />
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="telefono">Teléfono</Label>
