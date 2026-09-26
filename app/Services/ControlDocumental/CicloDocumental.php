@@ -10,6 +10,7 @@ use App\Models\DocumentTemplate;
 use App\Models\GeneratedDocument;
 use App\Models\NormRequirement;
 use App\Models\Process;
+use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -84,8 +85,12 @@ class CicloDocumental
             ->pluck('document_catalog_id')
             ->flip();
 
+        // Solo lo que CMK contrató para la empresa en el mapa documental (null = todo).
+        $contratados = Tenant::query()->find($tenantId)?->documentos_sig;
+
         $entradas = DocumentCatalogEntry::query()
             ->whereIn('modulo', $modulos)
+            ->when(is_array($contratados), fn ($q) => $q->whereIn('id', $contratados))
             ->when(! $incluirCondicionales, fn ($q) => $q->where('condicional', false))
             ->orderBy('orden')
             ->get();

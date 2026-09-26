@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { usePartes } from '@/hooks/use-partes';
 import { usePermissions } from '@/hooks/use-permissions';
 import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
@@ -149,7 +150,8 @@ export default function ContextoIndex({
     const { can } = usePermissions();
     const canManage = can('sst.manage');
     const errores = usePage<SharedData>().props.errors as Record<string, string | undefined>;
-    const [pestana, setPestana] = useState<Pestana>('alcance');
+    const { tiene, primera } = usePartes('contexto');
+    const [pestana, setPestana] = useState<Pestana>(() => primera(PESTANAS.map(([p]) => p)));
     const [cuestion, setCuestion] = useState<Cuestion | { nuevo: Dofa } | null>(null);
     const [parte, setParte] = useState<Parte | 'nuevo' | null>(null);
     const [proceso, setProceso] = useState<Proceso | null>(null);
@@ -254,7 +256,7 @@ export default function ContextoIndex({
             </div>
 
             <div className="flex gap-1 overflow-x-auto border-b">
-                {PESTANAS.map(([p, label]) => (
+                {PESTANAS.filter(([p]) => tiene(p)).map(([p, label]) => (
                     <button
                         key={p}
                         type="button"

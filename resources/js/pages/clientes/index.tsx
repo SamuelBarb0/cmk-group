@@ -1,3 +1,4 @@
+import { AlcanceSig, type ModuloSig, type ReglasAlcance } from '@/components/clientes/alcance-sig';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -26,6 +27,10 @@ interface Client {
     users_count: number;
     /** Módulos contratados (null = todos). */
     modulos: string[] | null;
+    /** Partes contratadas de los módulos con partes (módulo ausente = todas). */
+    submodulos: Record<string, string[]> | null;
+    /** Documentos del mapa del SIG contratados (ids del catálogo; null = todos). */
+    documentos_sig: number[] | null;
 }
 
 interface Props {
@@ -33,6 +38,14 @@ interface Props {
     stats: { total: number; active: number; users: number };
     /** Catálogo de módulos contratables: clave => etiqueta. */
     modulosCatalogo: Record<string, string>;
+    /** Partes de cada módulo que se contratan por separado: módulo => parte => nombre. */
+    submodulosCatalogo: Record<string, Record<string, string>>;
+    /** Mapa documental del SIG: M01–M20 con sus documentos y códigos. */
+    catalogoSig: ModuloSig[];
+    /** Qué documentos encienden cada pantalla y cada parte. */
+    reglasAlcance: ReglasAlcance;
+    /** Herramientas que no salen del mapa: clave => nombre. */
+    herramientas: Record<string, string>;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -67,8 +80,11 @@ function StatCard({ label, value, icon: Icon }: { label: string; value: number; 
     );
 }
 
-export default function ClientesIndex({ clients, stats, modulosCatalogo }: Props) {
-    const todasLasClaves = Object.keys(modulosCatalogo);
+export default function ClientesIndex({ clients, stats, modulosCatalogo, submodulosCatalogo, catalogoSig, reglasAlcance, herramientas }: Props) {
+    const todosLosDocs = catalogoSig.flatMap((m) => m.documentos.map((d) => d.id));
+    const todasLasHerramientas = Object.keys(herramientas);
+    /** Herramientas de un cliente: null en `modulos` = todas. */
+    const herramientasDe = (c: Client) => (c.modulos === null ? todasLasHerramientas : todasLasHerramientas.filter((h) => c.modulos!.includes(h)));
     const { can } = usePermissions();
     const canManage = can('clients.manage');
     const page = usePage<SharedData>();
@@ -82,7 +98,8 @@ export default function ClientesIndex({ clients, stats, modulosCatalogo }: Props
 
     const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
         ...emptyForm,
-        modulos: todasLasClaves as string[],
+        documentos_sig: todosLosDocs,
+        herramientas: todasLasHerramientas,
     });
 
     // Muestra la confirmación flash del backend unos segundos.
@@ -98,7 +115,7 @@ export default function ClientesIndex({ clients, stats, modulosCatalogo }: Props
         setEditing(null);
         clearErrors();
         reset();
-        setData({ ...emptyForm, modulos: todasLasClaves });
+        setData({ ...emptyForm, documentos_sig: todosLosDocs, herramientas: todasLasHerramientas });
         setOpen(true);
     }
 
@@ -114,14 +131,11 @@ export default function ClientesIndex({ clients, stats, modulosCatalogo }: Props
             city: client.city ?? '',
             address: client.address ?? '',
             is_active: client.is_active,
-            // null en BD = todos los módulos contratados.
-            modulos: client.modulos ?? todasLasClaves,
+            // null en BD = todo el mapa.
+            documentos_sig: client.documentos_sig ?? todosLosDocs,
+            herramientas: herramientasDe(client),
         });
         setOpen(true);
-    }
-
-    function toggleModulo(clave: string) {
-        setData('modulos', data.modulos.includes(clave) ? data.modulos.filter((m) => m !== clave) : [...data.modulos, clave]);
     }
 
     const submit: FormEventHandler = (e) => {
@@ -283,7 +297,7 @@ export default function ClientesIndex({ clients, stats, modulosCatalogo }: Props
 
             {/* Diálogo crear / editar */}
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-3xl">
                     <DialogHeader>
                         <DialogTitle className="font-brand">{editing ? 'Editar cliente' : 'Nuevo cliente'}</DialogTitle>
                         <DialogDescription>
@@ -336,30 +350,20 @@ export default function ClientesIndex({ clients, stats, modulosCatalogo }: Props
                             <InputError message={errors.address} />
                         </div>
 
-                        {/* Módulos contratados por la empresa */}
+                        {/* Lo que CMK contrató: documentos del mapa del SIG y herramientas */}
                         <div className="space-y-2 pt-1">
-                            <div className="flex items-center justify-between">
-                                <Label>Módulos contratados</Label>
-                                <button
-                                    type="button"
-                                    className="text-primary text-xs font-medium hover:underline"
-                                    onClick={() => setData('modulos', data.modulos.length === todasLasClaves.length ? [] : todasLasClaves)}
-                                >
-                                    {data.modulos.length === todasLasClaves.length ? 'Quitar todos' : 'Seleccionar todos'}
-                                </button>
-                            </div>
-                            <div className="grid grid-cols-1 gap-1.5 rounded-lg border p-3 sm:grid-cols-2">
-                                {todasLasClaves.map((clave) => (
-                                    <label key={clave} className="flex cursor-pointer items-center gap-2 text-sm">
-                                        <Checkbox checked={data.modulos.includes(clave)} onCheckedChange={() => toggleModulo(clave)} />
-                                        <span>{modulosCatalogo[clave]}</span>
-                                    </label>
-                                ))}
-                            </div>
-                            <p className="text-muted-foreground text-xs">
-                                La plataforma solo mostrará a esta empresa los módulos contratados. Organización y Empleados siempre están incluidos.
-                            </p>
-                            <InputError message={errors.modulos} />
+                            <AlcanceSig
+                                catalogo={catalogoSig}
+                                reglas={reglasAlcance}
+                                herramientas={herramientas}
+                                modulosCatalogo={modulosCatalogo}
+                                submodulosCatalogo={submodulosCatalogo}
+                                documentos={data.documentos_sig}
+                                herramientasElegidas={data.herramientas}
+                                onDocumentos={(ids) => setData('documentos_sig', ids)}
+                                onHerramientas={(h) => setData('herramientas', h)}
+                            />
+                            <InputError message={(errors as Record<string, string | undefined>).documentos_sig} />
                         </div>
 
                         <label className="flex cursor-pointer items-center gap-3 pt-1">

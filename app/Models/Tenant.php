@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 /**
  * Un Tenant representa una empresa CLIENTE gestionada por CMK GROUP.
@@ -29,6 +30,10 @@ class Tenant extends Model
         'is_active',
         // Módulos contratados por la empresa (null = todos).
         'modulos',
+        // Partes contratadas de cada módulo ({modulo: [partes]}; ausente = todas).
+        'submodulos',
+        // Documentos del mapa del SIG contratados (ids del catálogo; null = todos).
+        'documentos_sig',
         // Información de la Organización (contexto SGI)
         'actividad_economica',
         'codigo_ciiu',
@@ -52,6 +57,8 @@ class Tenant extends Model
             'is_active' => 'boolean',
             'num_trabajadores' => 'integer',
             'modulos' => 'array',
+            'submodulos' => 'array',
+            'documentos_sig' => 'array',
             'licencia_sgsst_vence' => 'date:Y-m-d',
             'curso_sst_fecha' => 'date:Y-m-d',
         ];
@@ -64,6 +71,52 @@ class Tenant extends Model
     public function moduloHabilitado(string $modulo): bool
     {
         return $this->modulos === null || in_array($modulo, $this->modulos, true);
+    }
+
+    /**
+     * ¿La empresa tiene la parte `$parte` del módulo? Exige el módulo; si el
+     * módulo no tiene selección de partes, las tiene todas.
+     */
+    public function submoduloHabilitado(string $modulo, string $parte): bool
+    {
+        if (! $this->moduloHabilitado($modulo)) {
+            return false;
+        }
+        $partes = $this->submodulos[$modulo] ?? null;
+
+        return $partes === null || in_array($parte, $partes, true);
+    }
+
+    /**
+     * Partes contratadas de cada módulo con partes, ya resueltas (sin nulos):
+     * lo que necesita la interfaz para ocultar pestañas.
+     *
+     * @return array<string, list<string>>
+     */
+    public function partesContratadas(): array
+    {
+        return collect(config('cmk.submodulos'))
+            ->map(fn (array $partes, string $modulo) => collect(array_keys($partes))
+                ->filter(fn (string $p) => $this->submoduloHabilitado($modulo, $p))->values()->all())
+            ->all();
+    }
+
+    /**
+     * La parte de un módulo a la que pertenece una ruta, según los patrones
+     * del catálogo (null si la ruta es común al módulo).
+     */
+    public static function parteDeRuta(string $modulo, ?string $ruta): ?string
+    {
+        if ($ruta === null) {
+            return null;
+        }
+        foreach (config("cmk.submodulos.{$modulo}", []) as $parte => $def) {
+            if ($def['rutas'] !== [] && Str::is($def['rutas'], $ruta)) {
+                return $parte;
+            }
+        }
+
+        return null;
     }
 
     /**

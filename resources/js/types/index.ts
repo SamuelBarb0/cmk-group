@@ -51,6 +51,8 @@ export interface SharedData {
     tenant: Tenant | null;
     /** Módulos contratados por la empresa activa (null = todos / sin cliente activo). */
     modulos_contratados: string[] | null;
+    /** Partes contratadas de los módulos con partes (null = todas / sin cliente activo). */
+    partes_contratadas?: Record<string, string[]> | null;
     /** Catálogo de los 24 pasos del PESV, para el árbol del sidebar. */
     pesv_pasos?: { numero: number; fase: number; fase_nombre: string; titulo: string }[];
     company: Company;

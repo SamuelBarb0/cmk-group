@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { usePartes } from '@/hooks/use-partes';
 import { usePermissions } from '@/hooks/use-permissions';
 import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
@@ -74,6 +75,16 @@ interface Props {
 
 type Pestana = 'residuos' | 'consumos' | 'quimicos';
 
+/** Parte del módulo a la que pertenece cada documento. */
+const PARTE_DOC: Record<string, Pestana> = {
+    residuos: 'residuos',
+    certificados: 'residuos',
+    respel: 'residuos',
+    consumos: 'consumos',
+    compatibilidad: 'quimicos',
+    hds: 'quimicos',
+};
+
 const hoy = () => {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -100,7 +111,8 @@ export default function Ambiental(props: Props) {
     const { can } = usePermissions();
     const canManage = can('sst.manage');
     const errores = usePage<SharedData>().props.errors as Record<string, string | undefined>;
-    const [pestana, setPestana] = useState<Pestana>('residuos');
+    const { tiene, primera } = usePartes('ambiental');
+    const [pestana, setPestana] = useState<Pestana>(() => primera(['residuos', 'consumos', 'quimicos'] as const));
     const [residuoDlg, setResiduoDlg] = useState<Residuo | 'nuevo' | null>(null);
     const [lecturaDlg, setLecturaDlg] = useState<boolean>(false);
     const [quimicoDlg, setQuimicoDlg] = useState<Quimico | 'nuevo' | null>(null);
@@ -140,18 +152,31 @@ export default function Ambiental(props: Props) {
         >
             {!needsClient && (
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                    <StatCard
-                        label={`Residuos 12 meses (kg) · ${total12 > 0 ? Math.round((100 * aprov12) / total12) : 0} % aprovechado`}
-                        value={num(total12)}
-                        icon={Recycle}
-                    />
-                    <StatCard label="Entregas sin certificado de disposición" value={pendientes} icon={TriangleAlert} alerta={pendientes > 0} />
-                    <StatCard label="Productos químicos activos" value={activos.length} icon={FlaskConical} />
-                    <StatCard label="Sin HDS vigente" value={sinHds} icon={Droplets} alerta={sinHds > 0} />
+                    {tiene('residuos') && (
+                        <>
+                            <StatCard
+                                label={`Residuos 12 meses (kg) · ${total12 > 0 ? Math.round((100 * aprov12) / total12) : 0} % aprovechado`}
+                                value={num(total12)}
+                                icon={Recycle}
+                            />
+                            <StatCard
+                                label="Entregas sin certificado de disposición"
+                                value={pendientes}
+                                icon={TriangleAlert}
+                                alerta={pendientes > 0}
+                            />
+                        </>
+                    )}
+                    {tiene('quimicos') && (
+                        <>
+                            <StatCard label="Productos químicos activos" value={activos.length} icon={FlaskConical} />
+                            <StatCard label="Sin HDS vigente" value={sinHds} icon={Droplets} alerta={sinHds > 0} />
+                        </>
+                    )}
                 </div>
             )}
 
-            {respel && (
+            {respel && tiene('residuos') && (
                 <Card>
                     <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4 text-sm">
                         <div>
@@ -183,19 +208,21 @@ export default function Ambiental(props: Props) {
                         ['consumos', 'Consumos'],
                         ['quimicos', `Productos químicos (${quimicos.length})`],
                     ] as const
-                ).map(([k, label]) => (
-                    <button
-                        key={k}
-                        type="button"
-                        onClick={() => setPestana(k)}
-                        className={cn(
-                            '-mb-px border-b-2 px-4 py-2 text-sm',
-                            pestana === k ? 'border-primary font-medium' : 'text-muted-foreground border-transparent',
-                        )}
-                    >
-                        {label}
-                    </button>
-                ))}
+                )
+                    .filter(([k]) => tiene(k))
+                    .map(([k, label]) => (
+                        <button
+                            key={k}
+                            type="button"
+                            onClick={() => setPestana(k)}
+                            className={cn(
+                                '-mb-px border-b-2 px-4 py-2 text-sm',
+                                pestana === k ? 'border-primary font-medium' : 'text-muted-foreground border-transparent',
+                            )}
+                        >
+                            {label}
+                        </button>
+                    ))}
             </div>
 
             {pestana === 'residuos' && (
@@ -331,36 +358,38 @@ export default function Ambiental(props: Props) {
                     {documentos.length === 0 && (
                         <p className="text-muted-foreground text-xs">El catálogo del SIG no está cargado en esta instalación.</p>
                     )}
-                    {documentos.map((d) => (
-                        <div key={d.clave} className="flex items-center justify-between gap-3">
-                            <div className="min-w-0">
-                                <div className="truncate" title={d.titulo}>
-                                    {d.titulo}
+                    {documentos
+                        .filter((d) => tiene(PARTE_DOC[d.clave]))
+                        .map((d) => (
+                            <div key={d.clave} className="flex items-center justify-between gap-3">
+                                <div className="min-w-0">
+                                    <div className="truncate" title={d.titulo}>
+                                        {d.titulo}
+                                    </div>
+                                    <div className="text-muted-foreground text-xs">
+                                        {d.codigo ? (
+                                            <Link href={`/control-documental/${d.id}`} className="underline underline-offset-2">
+                                                {d.codigo} · {d.estado?.replace('_', ' ')}
+                                            </Link>
+                                        ) : (
+                                            'Aún no está en el control documental'
+                                        )}
+                                    </div>
                                 </div>
-                                <div className="text-muted-foreground text-xs">
-                                    {d.codigo ? (
-                                        <Link href={`/control-documental/${d.id}`} className="underline underline-offset-2">
-                                            {d.codigo} · {d.estado?.replace('_', ' ')}
-                                        </Link>
-                                    ) : (
-                                        'Aún no está en el control documental'
-                                    )}
-                                </div>
+                                {canManage && (
+                                    <Button
+                                        size="icon"
+                                        variant="outline"
+                                        className="shrink-0"
+                                        title="Enviar como borrador al control documental"
+                                        aria-label={`Enviar ${d.titulo}`}
+                                        onClick={() => router.post('/ambiental/enviar', { documento: d.clave }, { preserveScroll: true })}
+                                    >
+                                        <FileOutput className="size-4" />
+                                    </Button>
+                                )}
                             </div>
-                            {canManage && (
-                                <Button
-                                    size="icon"
-                                    variant="outline"
-                                    className="shrink-0"
-                                    title="Enviar como borrador al control documental"
-                                    aria-label={`Enviar ${d.titulo}`}
-                                    onClick={() => router.post('/ambiental/enviar', { documento: d.clave }, { preserveScroll: true })}
-                                >
-                                    <FileOutput className="size-4" />
-                                </Button>
-                            )}
-                        </div>
-                    ))}
+                        ))}
                     {errores.documento && <p className="text-destructive text-xs">{errores.documento}</p>}
                 </CardContent>
             </Card>

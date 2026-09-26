@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { usePartes } from '@/hooks/use-partes';
 import { usePermissions } from '@/hooks/use-permissions';
 import { cn } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
@@ -174,6 +175,7 @@ export default function SaludOcupacionalIndex({
 }: Props) {
     const { can } = usePermissions();
     const canManage = can('sst.manage');
+    const { tiene } = usePartes('salud-ocupacional');
     const [pestana, setPestana] = useState<Pestana>('trabajadores');
     const [filtro, setFiltro] = useState<'todos' | Trabajador['estado']>('todos');
 
@@ -278,11 +280,13 @@ export default function SaludOcupacionalIndex({
 
     const eliminar = (ruta: string, id: number, pregunta: string) => confirm(pregunta) && router.delete(route(ruta, id), { preserveScroll: true });
 
-    const PESTANAS: { key: Pestana; label: string; n: number }[] = [
-        { key: 'trabajadores', label: 'Estado por trabajador', n: trabajadores.length },
-        { key: 'examenes', label: 'Exámenes', n: examenes.length },
-        { key: 'profesiograma', label: 'Profesiograma', n: perfiles.length },
-    ];
+    const PESTANAS = (
+        [
+            { key: 'trabajadores', label: 'Estado por trabajador', n: trabajadores.length },
+            { key: 'examenes', label: 'Exámenes', n: examenes.length },
+            { key: 'profesiograma', label: 'Profesiograma', n: perfiles.length },
+        ] as { key: Pestana; label: string; n: number }[]
+    ).filter((p) => p.key === 'trabajadores' || tiene(p.key));
 
     const visibles = filtro === 'todos' ? trabajadores : trabajadores.filter((t) => t.estado === filtro);
 

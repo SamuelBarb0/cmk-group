@@ -63,6 +63,9 @@ class HandleInertiaRequests extends Middleware
             // Prop de nivel superior: los controladores pisan 'tenant' con su propia
             // versión por página y se perdería si viajara dentro de 'tenant'.
             'modulos_contratados' => $context->get()?->modulos,
+            // Partes contratadas de los módulos que tienen partes, ya resueltas
+            // (null sin cliente activo = todo visible).
+            'partes_contratadas' => $context->get()?->partesContratadas(),
             // Los 24 pasos del PESV para armar el árbol del sidebar. Es un
             // catálogo global e inmutable, así que se cachea y no se vuelve a
             // consultar; se comparte aquí para no duplicar los títulos en el

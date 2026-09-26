@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { usePartes } from '@/hooks/use-partes';
 import { usePermissions } from '@/hooks/use-permissions';
 import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
@@ -62,7 +63,8 @@ export default function ComunicacionesIndex({ needsClient, matriz, registro, sta
     const { can } = usePermissions();
     const canManage = can('sst.manage');
     const errores = usePage<SharedData>().props.errors as Record<string, string | undefined>;
-    const [pestana, setPestana] = useState<'matriz' | 'registro'>('matriz');
+    const { tiene, primera } = usePartes('comunicaciones');
+    const [pestana, setPestana] = useState<'matriz' | 'registro'>(() => primera(['matriz', 'registro'] as const));
     const [item, setItem] = useState<Item | 'nuevo' | null>(null);
     const [log, setLog] = useState<Registro | 'nuevo' | null>(null);
 
@@ -100,19 +102,21 @@ export default function ComunicacionesIndex({ needsClient, matriz, registro, sta
             {errores.matriz && <p className="text-destructive text-sm">{errores.matriz}</p>}
 
             <div className="flex gap-1 border-b">
-                {(['matriz', 'registro'] as const).map((p) => (
-                    <button
-                        key={p}
-                        type="button"
-                        onClick={() => setPestana(p)}
-                        className={cn(
-                            '-mb-px border-b-2 px-4 py-2 text-sm',
-                            pestana === p ? 'border-primary font-medium' : 'text-muted-foreground border-transparent',
-                        )}
-                    >
-                        {p === 'matriz' ? 'Matriz de comunicaciones' : 'Registro'}
-                    </button>
-                ))}
+                {(['matriz', 'registro'] as const)
+                    .filter((p) => tiene(p))
+                    .map((p) => (
+                        <button
+                            key={p}
+                            type="button"
+                            onClick={() => setPestana(p)}
+                            className={cn(
+                                '-mb-px border-b-2 px-4 py-2 text-sm',
+                                pestana === p ? 'border-primary font-medium' : 'text-muted-foreground border-transparent',
+                            )}
+                        >
+                            {p === 'matriz' ? 'Matriz de comunicaciones' : 'Registro'}
+                        </button>
+                    ))}
             </div>
 
             {pestana === 'matriz' ? (
