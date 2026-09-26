@@ -69,6 +69,8 @@ const ETIQUETA_ORIGEN: Record<string, string> = {
     riesgo_oportunidad: 'Riesgos y oportunidades',
     aspecto_ambiental: 'Aspecto ambiental',
     calibracion: 'Calibración de equipos',
+    pqrs: 'PQRS de un cliente',
+    salida_no_conforme: 'Salida no conforme',
 };
 
 const hoy = () => new Date().toISOString().slice(0, 10);

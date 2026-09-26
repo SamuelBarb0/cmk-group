@@ -16,6 +16,7 @@ import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import {
     ArrowLeftRight,
+    BadgeCheck,
     BriefcaseBusiness,
     Building2,
     CalendarRange,
@@ -98,6 +99,7 @@ const navGroups: { label: string; items: NavEntry[] }[] = [
             { title: 'Salud ocupacional', url: '/salud-ocupacional', icon: Stethoscope, permission: 'sst.view', module: 'salud-ocupacional' },
             { title: 'Programas de gestión', url: '/programas', icon: Target, permission: 'sst.view', module: 'programas' },
             { title: 'Mantenimiento', url: '/mantenimiento', icon: Wrench, permission: 'sst.view', module: 'mantenimiento' },
+            { title: 'Calidad', url: '/calidad', icon: BadgeCheck, permission: 'sst.view', module: 'calidad' },
             { title: 'Equipos de medición', url: '/equipos-medicion', icon: Ruler, permission: 'sst.view', module: 'equipos-medicion' },
             { title: 'Contratistas', url: '/contratistas', icon: Handshake, permission: 'sst.view', module: 'contratistas' },
         ],

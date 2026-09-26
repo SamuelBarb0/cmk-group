@@ -30,6 +30,7 @@ class InformeGestion
         S\Ausentismo::class,
         S\ActosCondiciones::class,
         S\Acpm::class,
+        S\Calidad::class,
         S\Capacitaciones::class,
         S\Cargos::class,
         S\Inspecciones::class,
