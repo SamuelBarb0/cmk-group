@@ -66,6 +66,10 @@ class HandleInertiaRequests extends Middleware
             // Partes contratadas de los módulos que tienen partes, ya resueltas
             // (null sin cliente activo = todo visible).
             'partes_contratadas' => $context->get()?->partesContratadas(),
+            // Código del mapa documental del SIG de cada pantalla (M01–M20), para
+            // nombrar los módulos igual que el mapa. El primero es el principal.
+            'codigos_sig' => collect(config('cmk.alcance_documental.pantallas'))
+                ->map(fn (array $reglas) => array_values(array_unique(array_column($reglas, 0))))->all(),
             // Los 24 pasos del PESV para armar el árbol del sidebar. Es un
             // catálogo global e inmutable, así que se cachea y no se vuelve a
             // consultar; se comparte aquí para no duplicar los títulos en el

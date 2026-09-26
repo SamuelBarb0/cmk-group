@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import { ChipDocumento, ListaRequisitos, RESULTADO } from '@/components/pesv/requisitos';
 import { Notice, useNotice } from '@/components/pesv/shared';
 import { Button } from '@/components/ui/button';
@@ -59,7 +60,10 @@ export default function PesvVehiculo({ vehiculo, documentos, requisitos, histori
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                         <p className="text-muted-foreground text-sm">PESV · Hoja de vida del vehículo</p>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">{vehiculo.placa}</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            {vehiculo.placa}
+                        </h1>
                         <p className="text-muted-foreground text-sm capitalize">
                             {[vehiculo.tipo, vehiculo.marca, vehiculo.linea, vehiculo.modelo].filter(Boolean).join(' · ')} · {vehiculo.propiedad}
                             {vehiculo.propietario ? ` (${vehiculo.propietario})` : ''}

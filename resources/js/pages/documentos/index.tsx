@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -89,7 +90,10 @@ export default function DocumentosIndex({ documents, categorias, needsClient }: 
                 <Head title="Documentos" />
                 <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Documentos de la empresa</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Documentos de la empresa
+                        </h1>
                         <p className="text-muted-foreground text-sm">Repositorio documental por cliente.</p>
                     </div>
                     <Card>
@@ -120,7 +124,10 @@ export default function DocumentosIndex({ documents, categorias, needsClient }: 
                 {/* Encabezado */}
                 <div className="flex flex-wrap items-end justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Documentos de la empresa</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Documentos de la empresa
+                        </h1>
                         <p className="text-muted-foreground text-sm">
                             Repositorio documental de <span className="font-medium">{tenant?.name}</span>: exports de Documentos IA y archivos
                             subidos.

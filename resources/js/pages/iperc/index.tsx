@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -183,9 +184,7 @@ export default function IpercIndex({ rows, stats, needsClient }: Props) {
 
     // Mismo criterio que `solo_epp` en el modelo, calculado aquí en vivo para
     // avisar mientras se escribe y no después de guardar.
-    const avisoSoloEpp =
-        data.med_epp.trim() !== '' &&
-        JERARQUIA.slice(0, -1).every(({ key }) => data[key].trim() === '');
+    const avisoSoloEpp = data.med_epp.trim() !== '' && JERARQUIA.slice(0, -1).every(({ key }) => data[key].trim() === '');
 
     function openCreate() {
         setEditing(null);
@@ -247,7 +246,10 @@ export default function IpercIndex({ rows, stats, needsClient }: Props) {
                 <Head title="Matriz IPERC" />
                 <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Matriz IPERC</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Matriz IPERC
+                        </h1>
                         <p className="text-muted-foreground text-sm">Identificación de peligros y valoración de riesgos (GTC 45).</p>
                     </div>
                     <Card>
@@ -274,7 +276,10 @@ export default function IpercIndex({ rows, stats, needsClient }: Props) {
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div className="flex flex-wrap items-end justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Matriz IPERC</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Matriz IPERC
+                        </h1>
                         <p className="text-muted-foreground text-sm">
                             Identificación de peligros y valoración de riesgos (GTC 45)
                             {tenant ? (
@@ -544,9 +549,9 @@ export default function IpercIndex({ rows, stats, needsClient }: Props) {
                             ))}
 
                             {avisoSoloEpp && (
-                                <p className="text-amber-600 dark:text-amber-500 text-xs">
-                                    El EPP es el único control propuesto. Si de verdad no hay una medida de orden superior
-                                    viable, déjalo justificado en el criterio.
+                                <p className="text-xs text-amber-600 dark:text-amber-500">
+                                    El EPP es el único control propuesto. Si de verdad no hay una medida de orden superior viable, déjalo justificado
+                                    en el criterio.
                                 </p>
                             )}
                         </div>

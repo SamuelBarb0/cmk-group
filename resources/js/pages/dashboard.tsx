@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { usePermissions } from '@/hooks/use-permissions';
@@ -54,6 +55,8 @@ export default function Dashboard() {
                 <div className="flex flex-wrap items-end justify-between gap-2">
                     <div>
                         <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+
                             {isMaster ? 'Panel de consultoría' : (props.tenant?.name ?? 'Mi empresa')}
                         </h1>
                         <p className="text-muted-foreground text-sm">

@@ -46,6 +46,7 @@ export function PesvNav() {
     const { url, props } = usePage<SharedData>();
     const pasos = (props.pesv_pasos ?? []) as PesvPaso[];
     const { tiene } = usePartes('pesv');
+    const codigoPesv = props.codigos_sig?.pesv?.[0];
     const herramientas = CARACTERIZACION.filter((c) => !c.parte || tiene(c.parte));
 
     const enPesv = url.startsWith('/pesv');
@@ -70,7 +71,10 @@ export function PesvNav() {
                 <CollapsibleTrigger asChild>
                     <SidebarMenuButton isActive={enPesv} tooltip={{ children: 'PESV' }}>
                         <TrafficCone />
-                        <span>PESV</span>
+                        <span>
+                            {codigoPesv && <span className="text-sidebar-foreground/50 mr-1.5 font-mono text-[10px]">{codigoPesv}</span>}
+                            PESV
+                        </span>
                         <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/pesv:rotate-90" />
                     </SidebarMenuButton>
                 </CollapsibleTrigger>

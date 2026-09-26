@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
@@ -21,7 +22,10 @@ export default function ModulePlaceholder({ title, description }: Props) {
             <Head title={title} />
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div>
-                    <h1 className="font-brand text-2xl font-bold tracking-tight">{title}</h1>
+                    <h1 className="font-brand text-2xl font-bold tracking-tight">
+                        <CodigoSig className="mr-2" />
+                        {title}
+                    </h1>
                     <p className="text-muted-foreground text-sm">{description}</p>
                 </div>
 

@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import { EncuestaForm, type Respuestas, type Seccion } from '@/components/pesv/encuesta-form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -41,7 +42,10 @@ export default function EncuestaMovilidad({ empresa, abierta, secciones, token, 
                         <TrafficCone className="size-6" />
                     </div>
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Encuesta de movilidad</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Encuesta de movilidad
+                        </h1>
                         <p className="text-muted-foreground text-sm">Plan Estratégico de Seguridad Vial{empresa ? ` · ${empresa}` : ''}</p>
                     </div>
                 </div>

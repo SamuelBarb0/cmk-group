@@ -94,6 +94,7 @@ const navGroups: { label: string; items: NavEntry[] }[] = [
             { title: 'Control documental', url: '/control-documental', icon: Library, permission: 'documents.view', module: 'control-documental' },
             { title: 'Documentos', url: '/documentos', icon: FileText, permission: 'documents.view', module: 'documentos' },
             { title: 'Documentos IA', url: '/documentos-ia', icon: Sparkles, permission: 'documents.view', module: 'documentos-ia' },
+            { title: 'Presentaciones', url: '/presentaciones', icon: Presentation, permission: 'documents.view' },
             { title: 'Importar Excel', url: '/importar', icon: FileSpreadsheet, permission: 'sst.manage', module: 'importar' },
             { title: 'Comités', url: '/comites', icon: UsersRound, permission: 'sst.view', module: 'comites' },
             { title: 'EPP', url: '/epp', icon: HardHat, permission: 'sst.view', module: 'epp' },
@@ -142,6 +143,9 @@ const navGroups: { label: string; items: NavEntry[] }[] = [
     },
 ];
 
+/** Entradas base del grupo Módulos: alimentan al resto y van primero. */
+const BASE = ['/organizacion', '/empleados'];
+
 export function AppSidebar() {
     const { can } = usePermissions();
     const { url, props } = usePage<SharedData>();
@@ -149,6 +153,12 @@ export function AppSidebar() {
     const modulosContratados = props.modulos_contratados ?? null;
 
     const moduloHabilitado = (item: NavEntry) => !item.module || modulosContratados === null || modulosContratados.includes(item.module);
+    // Código del mapa documental del SIG de cada módulo (M01–M20).
+    const codigo = (item: NavEntry) => (item.module ? props.codigos_sig?.[item.module]?.[0] : undefined);
+    // En cada grupo, los módulos van en el orden del mapa: primero los base
+    // (Organización, Empleados), luego M01…M20 y al final lo que no tiene
+    // código (herramientas). El sort es estable: los grupos sin códigos no cambian.
+    const orden = (item: NavEntry) => codigo(item) ?? (BASE.includes(item.url) ? '0' : 'Z');
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -166,7 +176,9 @@ export function AppSidebar() {
 
             <SidebarContent>
                 {navGroups.map((group) => {
-                    const visible = group.items.filter((item) => (!item.permission || can(item.permission)) && moduloHabilitado(item));
+                    const visible = group.items
+                        .filter((item) => (!item.permission || can(item.permission)) && moduloHabilitado(item))
+                        .sort((a, b) => orden(a).localeCompare(orden(b)));
                     if (visible.length === 0) return null;
 
                     return (
@@ -181,7 +193,14 @@ export function AppSidebar() {
                                             <SidebarMenuButton asChild isActive={url.startsWith(item.url)} tooltip={{ children: item.title }}>
                                                 <Link href={item.url} prefetch>
                                                     {item.icon && <item.icon />}
-                                                    <span>{item.title}</span>
+                                                    <span>
+                                                        {codigo(item) && (
+                                                            <span className="text-sidebar-foreground/50 mr-1.5 font-mono text-[10px]">
+                                                                {codigo(item)}
+                                                            </span>
+                                                        )}
+                                                        {item.title}
+                                                    </span>
                                                 </Link>
                                             </SidebarMenuButton>
                                         </SidebarMenuItem>

@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { EstadoBadge, Notice, SinCliente, useNotice } from '@/components/pesv/shared';
 import { Button } from '@/components/ui/button';
@@ -129,6 +130,7 @@ export default function PesvPaso({ needsClient, paso, insumos = [], criterios = 
                             Fase {paso.fase} · {paso.fase_nombre}
                         </p>
                         <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
                             {paso.numero}. {paso.titulo}
                         </h1>
                         {paso.descripcion && <p className="text-muted-foreground mt-1 max-w-3xl text-sm">{paso.descripcion}</p>}

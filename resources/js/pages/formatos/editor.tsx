@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -158,7 +159,10 @@ export default function EditorFormato({ formato, registros, tipos, grupos, categ
                                 <ArrowLeft className="size-4" />
                             </Link>
                         </Button>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">{esNuevo ? 'Nuevo formato' : 'Editar formato'}</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            {esNuevo ? 'Nuevo formato' : 'Editar formato'}
+                        </h1>
                     </div>
                     <Button onClick={guardar} disabled={guardando} className="gap-2">
                         <Save className="size-4" /> {guardando ? 'Guardando…' : 'Guardar'}

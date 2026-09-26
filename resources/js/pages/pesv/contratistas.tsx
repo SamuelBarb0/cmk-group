@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { Notice, SinCliente, StatCard, useNotice } from '@/components/pesv/shared';
 import { Badge } from '@/components/ui/badge';
@@ -127,7 +128,10 @@ export default function PesvContratistas({ needsClient, contratistas, stats, tip
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div className="flex flex-wrap items-end justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Contratistas y terceros</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Contratistas y terceros
+                        </h1>
                         <p className="text-muted-foreground text-sm">
                             Con impacto en el PESV · alimenta los pasos 11 (evaluación de terceros) y 18 (gestión del cambio).
                         </p>
@@ -211,9 +215,7 @@ export default function PesvContratistas({ needsClient, contratistas, stats, tip
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            onClick={() =>
-                                                                router.delete(`/pesv/contratistas/${c.id}`, { preserveScroll: true })
-                                                            }
+                                                            onClick={() => router.delete(`/pesv/contratistas/${c.id}`, { preserveScroll: true })}
                                                         >
                                                             <Trash2 className="size-4 text-red-600" />
                                                         </Button>

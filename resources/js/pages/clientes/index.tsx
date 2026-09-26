@@ -1,4 +1,5 @@
 import { AlcanceSig, type ModuloSig, type ReglasAlcance } from '@/components/clientes/alcance-sig';
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -172,7 +173,10 @@ export default function ClientesIndex({ clients, stats, modulosCatalogo, submodu
                 {/* Encabezado */}
                 <div className="flex flex-wrap items-end justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Clientes</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Clientes
+                        </h1>
                         <p className="text-muted-foreground text-sm">Empresas cliente gestionadas por CMK GROUP.</p>
                     </div>
                     {canManage && (

@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import { EncuestaForm, type Respuestas, type Seccion } from '@/components/pesv/encuesta-form';
 import { Notice, SinCliente, StatCard, useNotice } from '@/components/pesv/shared';
 import { Button } from '@/components/ui/button';
@@ -73,7 +74,10 @@ export default function PesvEncuesta(props: Props) {
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Encuesta de movilidad</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Encuesta de movilidad
+                        </h1>
                         <p className="text-muted-foreground text-sm">
                             Paso 5 · Caracterización de movilidad (RE-SST-36) y su tabulación (RE-SST-37).
                         </p>

@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import { Notice, useNotice } from '@/components/pesv/shared';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -70,7 +71,10 @@ export default function PesvRutaPlan({ ruta, plan, campos, tablas, completo }: P
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                         <p className="text-muted-foreground text-sm">PESV · Paso 15 · Planificación de desplazamientos laborales (RE-SST-69)</p>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">{ruta.nombre}</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            {ruta.nombre}
+                        </h1>
                         <p className="text-muted-foreground text-sm">
                             {[
                                 ruta.origen && ruta.destino ? `${ruta.origen} → ${ruta.destino}` : null,

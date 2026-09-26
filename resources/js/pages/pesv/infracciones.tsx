@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { Notice, SinCliente, StatCard, useNotice } from '@/components/pesv/shared';
 import { Button } from '@/components/ui/button';
@@ -104,7 +105,10 @@ export default function PesvInfracciones(props: Props) {
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Infracciones de tránsito</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Infracciones de tránsito
+                        </h1>
                         <p className="text-muted-foreground text-sm">
                             Seguimiento a comparendos (RE-SST-52). El reporte de autogestión pide el número por código de infracción.
                         </p>

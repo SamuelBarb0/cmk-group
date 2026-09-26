@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import { Notice, SinCliente, useNotice } from '@/components/pesv/shared';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -63,7 +64,10 @@ export default function PesvEstadistica(props: Props) {
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Análisis estadístico de siniestros viales</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Análisis estadístico de siniestros viales
+                        </h1>
                         <p className="text-muted-foreground text-sm">
                             Paso 21 · Indicadores 1 (TSV) y 2 ($SV) de la Res. 40595 por nivel de pérdida, con la línea base del año anterior.
                         </p>

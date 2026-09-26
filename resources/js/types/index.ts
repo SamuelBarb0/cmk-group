@@ -53,6 +53,8 @@ export interface SharedData {
     modulos_contratados: string[] | null;
     /** Partes contratadas de los módulos con partes (null = todas / sin cliente activo). */
     partes_contratadas?: Record<string, string[]> | null;
+    /** Códigos del mapa documental del SIG por pantalla (el primero es el principal). */
+    codigos_sig?: Record<string, string[]>;
     /** Catálogo de los 24 pasos del PESV, para el árbol del sidebar. */
     pesv_pasos?: { numero: number; fase: number; fase_nombre: string; titulo: string }[];
     company: Company;

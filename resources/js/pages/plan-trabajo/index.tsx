@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { usePermissions } from '@/hooks/use-permissions';
@@ -178,7 +179,10 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                 <Head title="Plan de Trabajo" />
                 <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Plan de Trabajo Anual del SGI</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Plan de Trabajo Anual del SGI
+                        </h1>
                         <p className="text-muted-foreground text-sm">Cronograma de actividades por cláusulas ISO 4→10.</p>
                     </div>
                     <Card>
@@ -208,7 +212,10 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                 {/* Encabezado */}
                 <div className="flex flex-wrap items-end justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Plan de Trabajo Anual del SGI</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Plan de Trabajo Anual del SGI
+                        </h1>
                         <p className="text-muted-foreground text-sm">
                             Cronograma {plan?.anio}
                             {tenant ? (

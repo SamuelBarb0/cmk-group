@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -150,7 +151,10 @@ export default function UsuariosIndex({ users, roles, tenants, stats }: Props) {
                 {/* Encabezado */}
                 <div className="flex flex-wrap items-end justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Usuarios</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Usuarios
+                        </h1>
                         <p className="text-muted-foreground text-sm">Equipo de CMK y usuarios de las empresas cliente.</p>
                     </div>
                     {canManage && (

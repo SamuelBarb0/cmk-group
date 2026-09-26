@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import { SeccionCard, type Informe } from '@/components/reportes/seccion-card';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -64,7 +65,10 @@ export default function Reportes(props: Props) {
                 <Head title="Reportes" />
                 <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Reportes</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Reportes
+                        </h1>
                         <p className="text-muted-foreground text-sm">Informe de gestión del SG-SST y exportaciones a Excel.</p>
                     </div>
                     <Card>
@@ -153,7 +157,10 @@ function ReportesCliente({ periodo, secciones, seleccion, informe, exportaciones
             <Head title="Reportes" />
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div>
-                    <h1 className="font-brand text-2xl font-bold tracking-tight">Reportes</h1>
+                    <h1 className="font-brand text-2xl font-bold tracking-tight">
+                        <CodigoSig className="mr-2" />
+                        Reportes
+                    </h1>
                     <p className="text-muted-foreground text-sm">
                         Informe de gestión del SG-SST y exportaciones de <span className="font-medium">{informe.empresa.nombre}</span>
                         {informe.empresa.nombre.endsWith('.') ? '' : '.'}

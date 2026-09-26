@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -154,7 +155,10 @@ export default function FormatosIndex({ formats, records, needsClient, open }: P
                 <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
-                            <h1 className="font-brand text-2xl font-bold tracking-tight">Formatos</h1>
+                            <h1 className="font-brand text-2xl font-bold tracking-tight">
+                                <CodigoSig className="mr-2" />
+                                Formatos
+                            </h1>
                             <p className="text-muted-foreground text-sm">Inspecciones, actas y listas de chequeo del SGI.</p>
                         </div>
                         {catalogo}
@@ -183,7 +187,10 @@ export default function FormatosIndex({ formats, records, needsClient, open }: P
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Formatos</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Formatos
+                        </h1>
                         <p className="text-muted-foreground text-sm">
                             Inspecciones, actas y listas de chequeo de <span className="font-medium">{tenant?.name ?? 'la empresa'}</span>.
                         </p>

@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -142,7 +143,10 @@ export default function IndicadoresIndex({ indicators, anio, needsClient }: Prop
                 <Head title="Indicadores" />
                 <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Dashboard de Indicadores</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Dashboard de Indicadores
+                        </h1>
                         <p className="text-muted-foreground text-sm">Indicadores del SG-SST (Resolución 0312 / Decreto 1072).</p>
                     </div>
                     <Card>
@@ -170,7 +174,10 @@ export default function IndicadoresIndex({ indicators, anio, needsClient }: Prop
                 {/* Encabezado */}
                 <div className="flex flex-wrap items-end justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Dashboard de Indicadores</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Dashboard de Indicadores
+                        </h1>
                         <p className="text-muted-foreground text-sm">
                             SG-SST · {anio}
                             {tenant ? (

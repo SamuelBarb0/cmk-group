@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { Notice, SinCliente, StatCard, textoVencimiento, useNotice } from '@/components/pesv/shared';
 import { Badge } from '@/components/ui/badge';
@@ -108,7 +109,10 @@ export default function PesvColaboradores({ needsClient, colaboradores, stats, c
             <Head title="Colaboradores PESV" />
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div>
-                    <h1 className="font-brand text-2xl font-bold tracking-tight">Colaboradores y conductores</h1>
+                    <h1 className="font-brand text-2xl font-bold tracking-tight">
+                        <CodigoSig className="mr-2" />
+                        Colaboradores y conductores
+                    </h1>
                     <p className="text-muted-foreground text-sm">
                         Sale de los empleados que ya cargaste. Aquí solo marcas quién conduce y completas su ficha.
                     </p>

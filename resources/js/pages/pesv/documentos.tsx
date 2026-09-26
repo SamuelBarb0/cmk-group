@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import { ChipDocumento } from '@/components/pesv/requisitos';
 import { SinCliente, StatCard } from '@/components/pesv/shared';
 import { Card } from '@/components/ui/card';
@@ -45,7 +46,10 @@ export default function PesvDocumentos(props: Props) {
             <Head title="Semáforo de documentos" />
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div>
-                    <h1 className="font-brand text-2xl font-bold tracking-tight">Semáforo de documentos</h1>
+                    <h1 className="font-brand text-2xl font-bold tracking-tight">
+                        <CodigoSig className="mr-2" />
+                        Semáforo de documentos
+                    </h1>
                     <p className="text-muted-foreground text-sm">
                         Seguimiento a documentos de conductores y vehículos (RE-SST-54). E: vence en menos de {reglas.no_cumple} días o ya venció · P:
                         vence en menos de {reglas.por_vencer} días · V: vigente.

@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { EstadoBadge, Notice, SinCliente, StatCard, useNotice } from '@/components/pesv/shared';
 import { Button } from '@/components/ui/button';
@@ -202,7 +203,10 @@ export default function PesvIndex({
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div className="flex flex-wrap items-end justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Plan Estratégico de Seguridad Vial</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Plan Estratégico de Seguridad Vial
+                        </h1>
                         <p className="text-muted-foreground text-sm">
                             Resolución 40595 de 2022 · 24 pasos en 4 fases
                             {tenant ? (

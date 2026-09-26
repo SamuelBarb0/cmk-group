@@ -1,3 +1,4 @@
+import { CodigoSig } from '@/components/codigo-sig';
 import InputError from '@/components/input-error';
 import { Notice, SinCliente, StatCard, textoVencimiento, useNotice } from '@/components/pesv/shared';
 import { Badge } from '@/components/ui/badge';
@@ -141,7 +142,10 @@ export default function PesvVehiculos({ needsClient, vehiculos, stats, tipos, pr
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div className="flex flex-wrap items-end justify-between gap-3">
                     <div>
-                        <h1 className="font-brand text-2xl font-bold tracking-tight">Vehículos</h1>
+                        <h1 className="font-brand text-2xl font-bold tracking-tight">
+                            <CodigoSig className="mr-2" />
+                            Vehículos
+                        </h1>
                         <p className="text-muted-foreground text-sm">Flota de la empresa · caracterización del Paso 5 del PESV.</p>
                     </div>
                     {canManage && (
