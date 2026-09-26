@@ -10,11 +10,18 @@ const ALIAS: Record<string, string> = { formatos: 'inspecciones' };
  * toma la pantalla de la URL actual.
  */
 export function useCodigosSig(modulo?: string): string[] {
-    const { url, props } = usePage<SharedData>();
-    const segmento = url.split(/[/?#]/)[1] ?? '';
-    const clave = modulo ?? ALIAS[segmento] ?? segmento;
+    const { props } = usePage<SharedData>();
+    const actual = usePantallaActual();
 
-    return props.codigos_sig?.[clave] ?? [];
+    return props.codigos_sig?.[modulo ?? actual] ?? [];
+}
+
+/** Clave de la pantalla de la URL actual («epp», «calidad», «inspecciones»…). */
+export function usePantallaActual(): string {
+    const { url } = usePage<SharedData>();
+    const segmento = url.split(/[/?#]/)[1] ?? '';
+
+    return ALIAS[segmento] ?? segmento;
 }
 
 /** Etiqueta con el código del mapa (M03), para los encabezados de las pantallas. */

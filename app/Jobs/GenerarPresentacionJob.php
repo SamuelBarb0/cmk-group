@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Models\DocumentCatalogEntry;
 use App\Models\Presentation;
 use App\Models\Tenant;
 use App\Models\TenantDocument;
@@ -46,7 +45,7 @@ class GenerarPresentacionJob implements ShouldQueue
         $user = User::find($p->user_id) ?? throw new \RuntimeException('El usuario que pidió la presentación ya no existe.');
 
         $periodo = Periodo::desde($p->desde->toDateString(), $p->hasta->toDateString());
-        $texto = $contexto->texto($tenant, $user, $p->modulo, $periodo);
+        $texto = $contexto->texto($tenant, $user, $p->seleccion ?? [], $periodo);
 
         // Una presentación larga puede tardar más que el timeout general de la API.
         config(['ai.anthropic.timeout' => max((int) config('ai.anthropic.timeout'), 300)]);
@@ -96,7 +95,12 @@ class GenerarPresentacionJob implements ShouldQueue
     private function prompt(Presentation $p, string $contexto): string
     {
         [$proposito, $guia] = Presentation::PROPOSITOS[$p->proposito];
-        $tema = $p->modulo ? "el módulo {$p->modulo} · ".(DocumentCatalogEntry::MODULOS[$p->modulo] ?? $p->modulo) : 'el sistema de gestión completo';
+        $piezas = $p->seleccion ?? [];
+        $tema = match (true) {
+            $piezas === [] => 'el sistema de gestión completo',
+            count($piezas) === 1 => ContextoCliente::nombrePieza($piezas[0]),
+            default => 'estas piezas del sistema, conectándolas entre sí: '.implode('; ', array_map(ContextoCliente::nombrePieza(...), $piezas)),
+        };
 
         return "Prepara una presentación sobre {$tema} para la empresa del contexto.\n\n"
             ."Propósito: {$proposito}. {$guia}\n"

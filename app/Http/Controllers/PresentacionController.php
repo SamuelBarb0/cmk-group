@@ -6,6 +6,7 @@ use App\Jobs\GenerarPresentacionJob;
 use App\Models\DocumentCatalogEntry;
 use App\Models\Presentation;
 use App\Models\TenantDocument;
+use App\Services\Ai\ContextoCliente;
 use App\Support\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -33,6 +34,12 @@ class PresentacionController extends Controller
         $contratados = $tenant?->documentos_sig === null ? null
             : DocumentCatalogEntry::query()->whereIn('id', $tenant->documentos_sig)->distinct()->pluck('modulo')->all();
 
+        // Si viene de la pantalla de un módulo, el formulario arranca con esa pieza elegida.
+        $inicial = collect([
+            $request->query('modulo').($request->query('submodulo') ? ':'.$request->query('submodulo') : ''),
+            (string) $request->query('modulo'),
+        ])->first(fn (string $p) => ContextoCliente::piezaValida($p));
+
         return Inertia::render('presentaciones/index', [
             'needsClient' => ! $tenant,
             'presentaciones' => $tenant ? Presentation::query()->with('user:id,name')->latest()->limit(50)->get() : [],
@@ -40,7 +47,9 @@ class PresentacionController extends Controller
                 ->map(fn (string $nombre, string $m) => ['codigo' => $m, 'nombre' => $nombre, 'contratado' => $contratados === null || in_array($m, $contratados, true)])
                 ->values(),
             'propositos' => collect(Presentation::PROPOSITOS)->map(fn (array $p) => $p[0]),
-            'moduloInicial' => array_key_exists((string) $request->query('modulo'), DocumentCatalogEntry::MODULOS) ? $request->query('modulo') : null,
+            // Partes de cada módulo del mapa: pantallas y partes de pantalla.
+            'submodulos' => collect(DocumentCatalogEntry::MODULOS)->map(fn ($n, string $m) => ContextoCliente::submodulosDe($m)),
+            'seleccionInicial' => $inicial ? [$inicial] : [],
             'periodo' => ['desde' => Carbon::today()->subYear()->addDay()->toDateString(), 'hasta' => Carbon::today()->toDateString()],
         ]);
     }
@@ -52,7 +61,13 @@ class PresentacionController extends Controller
         }
 
         $datos = $request->validate([
-            'modulo' => ['nullable', Rule::in(array_keys(DocumentCatalogEntry::MODULOS))],
+            // Piezas de cualquier módulo: «M11», «M09:epp», «M09:epp.matriz». Vacío = todo el sistema.
+            'seleccion' => ['present', 'array', 'max:15'],
+            'seleccion.*' => ['string', 'distinct', function (string $atributo, mixed $valor, \Closure $falla) {
+                if (! is_string($valor) || ! ContextoCliente::piezaValida($valor)) {
+                    $falla('Hay una pieza que no existe en el mapa documental.');
+                }
+            }],
             'proposito' => ['required', Rule::in(array_keys(Presentation::PROPOSITOS))],
             'instrucciones' => ['nullable', 'required_if:proposito,otro', 'string', 'max:2000'],
             'diapositivas' => ['required', 'integer', 'between:4,20'],
@@ -61,6 +76,10 @@ class PresentacionController extends Controller
         ], [
             'instrucciones.required_if' => 'Cuenta qué presentación necesitas.',
         ]);
+
+        // Si todas las piezas son de un mismo módulo, queda como su módulo.
+        $modulos = collect($datos['seleccion'])->map(fn (string $p) => explode(':', $p)[0])->unique();
+        $datos['modulo'] = $modulos->count() === 1 ? $modulos->first() : null;
 
         $p = new Presentation($datos);
         $p->forceFill(['user_id' => $request->user()->id, 'estado' => 'generando']);
