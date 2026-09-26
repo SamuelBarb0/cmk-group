@@ -34,6 +34,7 @@ class CommitteeController extends Controller
         }
 
         $comites = Committee::query()
+            ->whereIn('tipo', $this->tiposContratados())
             ->with(['members', 'activities'])
             ->orderByDesc('periodo')
             ->orderBy('tipo')
@@ -83,6 +84,7 @@ class CommitteeController extends Controller
 
     public function update(Request $request, Committee $comite): RedirectResponse
     {
+        $this->exigirContratado($comite);
         $datos = $this->validated($request, $comite);
         $detalle = $this->validatedDetalle($request);
 
@@ -96,6 +98,7 @@ class CommitteeController extends Controller
 
     public function destroy(Committee $comite): RedirectResponse
     {
+        $this->exigirContratado($comite);
         $comite->delete();
 
         return back()->with('success', 'Comité eliminado.');
@@ -142,10 +145,28 @@ class CommitteeController extends Controller
         }
     }
 
+    /**
+     * Comités que la empresa contrató: los dos van por las mismas rutas, así
+     * que la parte del módulo (config('cmk.submodulos.comites')) se controla aquí.
+     *
+     * @return list<string>
+     */
+    private function tiposContratados(): array
+    {
+        $tenant = $this->context->has() ? $this->context->get() : null;
+
+        return array_values(array_filter(Committee::TIPOS, fn (string $t) => ! $tenant || $tenant->submoduloHabilitado('comites', $t)));
+    }
+
+    private function exigirContratado(Committee $comite): void
+    {
+        abort_unless(in_array($comite->tipo, $this->tiposContratados(), true), 403, 'La empresa no tiene contratado este comité.');
+    }
+
     private function catalogos(): array
     {
         return [
-            'tipos' => Committee::TIPOS,
+            'tipos' => $this->tiposContratados(),
             'roles' => \App\Models\CommitteeMember::ROLES,
             'representa' => \App\Models\CommitteeMember::REPRESENTA,
         ];
@@ -154,7 +175,7 @@ class CommitteeController extends Controller
     private function validated(Request $request, ?Committee $comite = null): array
     {
         return $request->validate([
-            'tipo' => ['required', Rule::in(Committee::TIPOS)],
+            'tipo' => ['required', Rule::in($this->tiposContratados())],
             'periodo' => [
                 'required', 'integer', 'min:2000', 'max:2100',
                 // Un solo comité de cada tipo por periodo: dos COPASST del

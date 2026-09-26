@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { usePartes } from '@/hooks/use-partes';
 import { usePermissions } from '@/hooks/use-permissions';
 import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
@@ -94,6 +95,9 @@ interface Props {
 }
 
 type Pestana = 'pqrs' | 'salidas' | 'satisfaccion';
+
+/** Parte del módulo a la que pertenece cada documento. */
+const PARTE_DOC: Record<string, Pestana> = { pqrs_prc: 'pqrs', pqrs_ft: 'pqrs', snc_prc: 'salidas', snc_ft: 'salidas', encuesta: 'satisfaccion' };
 type Accion = { url: string; titulo: string } | null;
 
 const hoy = () => {
@@ -108,7 +112,8 @@ export default function Calidad(props: Props) {
     const { can } = usePermissions();
     const canManage = can('sst.manage');
     const errores = usePage<SharedData>().props.errors as Record<string, string | undefined>;
-    const [pestana, setPestana] = useState<Pestana>('pqrs');
+    const { tiene, primera } = usePartes('calidad');
+    const [pestana, setPestana] = useState<Pestana>(() => primera(['pqrs', 'salidas', 'satisfaccion'] as const));
     const [pqrsDlg, setPqrsDlg] = useState<Pqrs | 'nuevo' | null>(null);
     const [salidaDlg, setSalidaDlg] = useState<Salida | 'nuevo' | null>(null);
     const [encuestaDlg, setEncuestaDlg] = useState<Encuesta | 'nuevo' | null>(null);
@@ -137,20 +142,26 @@ export default function Calidad(props: Props) {
         >
             {resumen && (
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                    <StatCard label="PQRS abiertas" value={resumen.pqrs_abiertas} icon={MessageSquareWarning} />
-                    <StatCard
-                        label={`PQRS vencidas · ${resumen.a_tiempo === null ? '—' : `${resumen.a_tiempo} %`} a tiempo`}
-                        value={resumen.pqrs_vencidas}
-                        icon={ClockAlert}
-                        alerta={resumen.pqrs_vencidas > 0}
-                    />
-                    <StatCard label="Salidas no conformes abiertas" value={resumen.salidas_abiertas} icon={PackageX} />
-                    <StatCard
-                        label={`Satisfacción (12 meses, ${resumen.satisfaccion.n} encuestas)`}
-                        value={resumen.satisfaccion.indice === null ? '—' : `${resumen.satisfaccion.indice} %`}
-                        icon={Smile}
-                        alerta={resumen.satisfaccion.indice !== null && resumen.satisfaccion.indice < props.meta}
-                    />
+                    {tiene('pqrs') && (
+                        <>
+                            <StatCard label="PQRS abiertas" value={resumen.pqrs_abiertas} icon={MessageSquareWarning} />
+                            <StatCard
+                                label={`PQRS vencidas · ${resumen.a_tiempo === null ? '—' : `${resumen.a_tiempo} %`} a tiempo`}
+                                value={resumen.pqrs_vencidas}
+                                icon={ClockAlert}
+                                alerta={resumen.pqrs_vencidas > 0}
+                            />
+                        </>
+                    )}
+                    {tiene('salidas') && <StatCard label="Salidas no conformes abiertas" value={resumen.salidas_abiertas} icon={PackageX} />}
+                    {tiene('satisfaccion') && (
+                        <StatCard
+                            label={`Satisfacción (12 meses, ${resumen.satisfaccion.n} encuestas)`}
+                            value={resumen.satisfaccion.indice === null ? '—' : `${resumen.satisfaccion.indice} %`}
+                            icon={Smile}
+                            alerta={resumen.satisfaccion.indice !== null && resumen.satisfaccion.indice < props.meta}
+                        />
+                    )}
                 </div>
             )}
 
@@ -161,19 +172,21 @@ export default function Calidad(props: Props) {
                         ['salidas', `Salidas no conformes (${salidas.length})`],
                         ['satisfaccion', `Satisfacción (${encuestas.length})`],
                     ] as const
-                ).map(([k, label]) => (
-                    <button
-                        key={k}
-                        type="button"
-                        onClick={() => setPestana(k)}
-                        className={cn(
-                            '-mb-px border-b-2 px-4 py-2 text-sm',
-                            pestana === k ? 'border-primary font-medium' : 'text-muted-foreground border-transparent',
-                        )}
-                    >
-                        {label}
-                    </button>
-                ))}
+                )
+                    .filter(([k]) => tiene(k))
+                    .map(([k, label]) => (
+                        <button
+                            key={k}
+                            type="button"
+                            onClick={() => setPestana(k)}
+                            className={cn(
+                                '-mb-px border-b-2 px-4 py-2 text-sm',
+                                pestana === k ? 'border-primary font-medium' : 'text-muted-foreground border-transparent',
+                            )}
+                        >
+                            {label}
+                        </button>
+                    ))}
             </div>
             {errores.acpm && <p className="text-destructive text-sm">{errores.acpm}</p>}
 
@@ -376,36 +389,38 @@ export default function Calidad(props: Props) {
                     {documentos.length === 0 && (
                         <p className="text-muted-foreground text-xs">El catálogo del SIG no está cargado en esta instalación.</p>
                     )}
-                    {documentos.map((d) => (
-                        <div key={d.clave} className="flex items-center justify-between gap-3">
-                            <div className="min-w-0">
-                                <div className="truncate" title={d.titulo}>
-                                    {d.titulo}
+                    {documentos
+                        .filter((d) => tiene(PARTE_DOC[d.clave]))
+                        .map((d) => (
+                            <div key={d.clave} className="flex items-center justify-between gap-3">
+                                <div className="min-w-0">
+                                    <div className="truncate" title={d.titulo}>
+                                        {d.titulo}
+                                    </div>
+                                    <div className="text-muted-foreground text-xs">
+                                        {d.codigo ? (
+                                            <Link href={`/control-documental/${d.id}`} className="underline underline-offset-2">
+                                                {d.codigo} · {d.estado?.replace('_', ' ')}
+                                            </Link>
+                                        ) : (
+                                            'Aún no está en el control documental'
+                                        )}
+                                    </div>
                                 </div>
-                                <div className="text-muted-foreground text-xs">
-                                    {d.codigo ? (
-                                        <Link href={`/control-documental/${d.id}`} className="underline underline-offset-2">
-                                            {d.codigo} · {d.estado?.replace('_', ' ')}
-                                        </Link>
-                                    ) : (
-                                        'Aún no está en el control documental'
-                                    )}
-                                </div>
+                                {canManage && (
+                                    <Button
+                                        size="icon"
+                                        variant="outline"
+                                        className="shrink-0"
+                                        title="Enviar como borrador al control documental"
+                                        aria-label={`Enviar ${d.titulo}`}
+                                        onClick={() => router.post('/calidad/enviar', { documento: d.clave }, { preserveScroll: true })}
+                                    >
+                                        <FileOutput className="size-4" />
+                                    </Button>
+                                )}
                             </div>
-                            {canManage && (
-                                <Button
-                                    size="icon"
-                                    variant="outline"
-                                    className="shrink-0"
-                                    title="Enviar como borrador al control documental"
-                                    aria-label={`Enviar ${d.titulo}`}
-                                    onClick={() => router.post('/calidad/enviar', { documento: d.clave }, { preserveScroll: true })}
-                                >
-                                    <FileOutput className="size-4" />
-                                </Button>
-                            )}
-                        </div>
-                    ))}
+                        ))}
                     {errores.documento && <p className="text-destructive text-xs">{errores.documento}</p>}
                 </CardContent>
             </Card>

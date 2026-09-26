@@ -1,5 +1,6 @@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem } from '@/components/ui/sidebar';
+import { usePartes } from '@/hooks/use-partes';
 import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { ChevronRight, TrafficCone } from 'lucide-react';
@@ -18,20 +19,21 @@ type PesvPaso = {
  * Van aparte de los pasos porque no son pasos: son los datos que el Paso 5
  * exige y que el resto de la fase 2 reutiliza (vehículos, rutas, contratistas).
  */
-const CARACTERIZACION = [
+const CARACTERIZACION: { title: string; url: string; parte?: string }[] = [
+    // Sin `parte`: son la base del PESV y van con el módulo.
     { title: 'Sedes', url: '/pesv/sedes' },
     { title: 'Colaboradores', url: '/pesv/colaboradores' },
     { title: 'Contratistas', url: '/pesv/contratistas' },
-    { title: 'Vehículos', url: '/pesv/vehiculos' },
-    { title: 'Rutas', url: '/pesv/rutas' },
-    { title: 'Siniestros viales', url: '/pesv/siniestros' },
-    { title: 'Análisis estadístico', url: '/pesv/estadistica' },
-    { title: 'Vías internas', url: '/pesv/vias-internas' },
-    { title: 'Encuesta de movilidad', url: '/pesv/encuesta' },
-    { title: 'Matriz de riesgos viales', url: '/pesv/riesgos-viales' },
-    { title: 'Semáforo de documentos', url: '/pesv/documentos' },
-    { title: 'Infracciones de tránsito', url: '/pesv/infracciones' },
-    { title: 'Reporte de autogestión', url: '/pesv/autogestion' },
+    { title: 'Vehículos', url: '/pesv/vehiculos', parte: 'vehiculos' },
+    { title: 'Rutas', url: '/pesv/rutas', parte: 'rutas' },
+    { title: 'Siniestros viales', url: '/pesv/siniestros', parte: 'siniestros' },
+    { title: 'Análisis estadístico', url: '/pesv/estadistica', parte: 'siniestros' },
+    { title: 'Vías internas', url: '/pesv/vias-internas', parte: 'vias' },
+    { title: 'Encuesta de movilidad', url: '/pesv/encuesta', parte: 'encuesta' },
+    { title: 'Matriz de riesgos viales', url: '/pesv/riesgos-viales', parte: 'riesgos' },
+    { title: 'Semáforo de documentos', url: '/pesv/documentos', parte: 'documentos' },
+    { title: 'Infracciones de tránsito', url: '/pesv/infracciones', parte: 'infracciones' },
+    { title: 'Reporte de autogestión', url: '/pesv/autogestion', parte: 'autogestion' },
 ];
 
 /**
@@ -43,6 +45,8 @@ const CARACTERIZACION = [
 export function PesvNav() {
     const { url, props } = usePage<SharedData>();
     const pasos = (props.pesv_pasos ?? []) as PesvPaso[];
+    const { tiene } = usePartes('pesv');
+    const herramientas = CARACTERIZACION.filter((c) => !c.parte || tiene(c.parte));
 
     const enPesv = url.startsWith('/pesv');
 
@@ -127,7 +131,7 @@ export function PesvNav() {
 
                                 <CollapsibleContent>
                                     <ul className="border-sidebar-border ml-3 flex flex-col gap-0.5 border-l pl-2">
-                                        {CARACTERIZACION.map((item) => (
+                                        {herramientas.map((item) => (
                                             <li key={item.url}>
                                                 <SidebarMenuSubButton asChild isActive={url.startsWith(item.url)} size="sm">
                                                     <Link href={item.url} prefetch>

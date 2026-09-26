@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { usePartes } from '@/hooks/use-partes';
 import { usePermissions } from '@/hooks/use-permissions';
 import { cn } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
@@ -267,7 +268,8 @@ function porcentaje(num: number, den: number): string {
 export default function EmergenciasIndex({ anio, brigada, simulacros, equipos, directorio, empleados, stats, catalogos, needsClient }: Props) {
     const { can } = usePermissions();
     const canManage = can('sst.manage');
-    const [pestana, setPestana] = useState<Pestana>('brigada');
+    const { tiene, primera } = usePartes('emergencias');
+    const [pestana, setPestana] = useState<Pestana>(() => primera(['brigada', 'simulacros', 'equipos', 'directorio'] as const));
 
     const [dlgBrig, setDlgBrig] = useState(false);
     const [editBrig, setEditBrig] = useState<Brigadista | null>(null);
@@ -455,12 +457,14 @@ export default function EmergenciasIndex({ anio, brigada, simulacros, equipos, d
 
     const cambiarAnio = (a: number) => router.get(route('emergencias.index'), { anio: a }, { preserveState: true, preserveScroll: true });
 
-    const PESTANAS: { key: Pestana; label: string; n: number }[] = [
-        { key: 'brigada', label: 'Brigada', n: brigada.length },
-        { key: 'simulacros', label: 'Simulacros', n: simulacros.length },
-        { key: 'equipos', label: 'Equipos', n: equipos.length },
-        { key: 'directorio', label: 'Directorio MEDEVAC', n: directorio.length },
-    ];
+    const PESTANAS = (
+        [
+            { key: 'brigada', label: 'Brigada', n: brigada.length },
+            { key: 'simulacros', label: 'Simulacros', n: simulacros.length },
+            { key: 'equipos', label: 'Equipos', n: equipos.length },
+            { key: 'directorio', label: 'Directorio MEDEVAC', n: directorio.length },
+        ] as { key: Pestana; label: string; n: number }[]
+    ).filter((p) => tiene(p.key));
 
     const ACCION: Record<Pestana, [string, () => void]> = {
         brigada: ['Inscribir brigadista', () => abrirBrig()],

@@ -128,4 +128,66 @@ return [
         'calidad' => 'Calidad ISO 9001 (PQRS, salidas no conformes y satisfacción del cliente)',
         'ambiental' => 'Gestión ambiental ISO 14001 (residuos y RESPEL, consumos, productos químicos)',
     ],
+
+    /*
+    | Partes de un módulo que se contratan por separado. Cada parte lista los
+    | nombres de ruta que la componen (comodines de Str::is): el middleware
+    | `module` bloquea la ruta si la empresa tiene el módulo pero no esa parte.
+    | tenants.submodulos guarda {modulo: [partes]}; un módulo ausente = todas
+    | sus partes. Lo que no está en ninguna parte (el índice, lo común del
+    | módulo) va con el módulo. Una parte sin rutas se controla en su
+    | controlador (comités: las dos van por las mismas rutas).
+    */
+    'submodulos' => [
+        'contexto' => [
+            'alcance' => ['nombre' => 'Alcance y perfil de la organización', 'rutas' => ['contexto.perfil', 'contexto.revisado']],
+            'dofa' => ['nombre' => 'DOFA y PESTEL', 'rutas' => ['contexto.cuestiones.*']],
+            'partes' => ['nombre' => 'Partes interesadas', 'rutas' => ['contexto.partes.*']],
+            'procesos' => ['nombre' => 'Mapa y caracterización de procesos', 'rutas' => ['contexto.procesos.*']],
+        ],
+        'pesv' => [
+            'conductores' => ['nombre' => 'Conductores: requisitos y pruebas', 'rutas' => ['pesv.conductores.*', 'pesv.pruebas.*']],
+            'vehiculos' => ['nombre' => 'Vehículos y su hoja de vida', 'rutas' => ['pesv.vehiculos.*']],
+            'rutas' => ['nombre' => 'Rutas y planes de viaje', 'rutas' => ['pesv.rutas.*']],
+            'siniestros' => ['nombre' => 'Siniestros viales y análisis estadístico', 'rutas' => ['pesv.siniestros.*', 'pesv.estadistica.*']],
+            'vias' => ['nombre' => 'Vías internas', 'rutas' => ['pesv.vias.*']],
+            'encuesta' => ['nombre' => 'Encuesta de movilidad', 'rutas' => ['pesv.encuesta.*']],
+            'riesgos' => ['nombre' => 'Matriz de riesgos viales', 'rutas' => ['pesv.riesgos.*']],
+            'documentos' => ['nombre' => 'Semáforo de documentos', 'rutas' => ['pesv.documentos.*']],
+            'infracciones' => ['nombre' => 'Infracciones de tránsito', 'rutas' => ['pesv.infracciones.*']],
+            'autogestion' => ['nombre' => 'Reporte de autogestión', 'rutas' => ['pesv.autogestion.*']],
+        ],
+        'comites' => [
+            'copasst' => ['nombre' => 'COPASST (o vigía)', 'rutas' => []],
+            'cocolab' => ['nombre' => 'Comité de convivencia laboral', 'rutas' => []],
+        ],
+        'epp' => [
+            'matriz' => ['nombre' => 'Matriz de EPP por cargo', 'rutas' => ['epp.matriz.*']],
+            'entregas' => ['nombre' => 'Entregas y reposiciones', 'rutas' => ['epp.entregas.*']],
+        ],
+        'emergencias' => [
+            'brigada' => ['nombre' => 'Brigada de emergencias', 'rutas' => ['emergencias.brigada.*']],
+            'simulacros' => ['nombre' => 'Simulacros', 'rutas' => ['emergencias.simulacros.*']],
+            'equipos' => ['nombre' => 'Equipos de emergencia', 'rutas' => ['emergencias.equipos.*']],
+            'directorio' => ['nombre' => 'Directorio de emergencias', 'rutas' => ['emergencias.directorio.*']],
+        ],
+        'salud-ocupacional' => [
+            'examenes' => ['nombre' => 'Exámenes médicos ocupacionales', 'rutas' => ['salud-ocupacional.examenes.*']],
+            'profesiograma' => ['nombre' => 'Profesiograma', 'rutas' => ['salud-ocupacional.perfiles.*']],
+        ],
+        'comunicaciones' => [
+            'matriz' => ['nombre' => 'Matriz de comunicaciones', 'rutas' => ['comunicaciones.matriz.*', 'comunicaciones.base']],
+            'registro' => ['nombre' => 'Registro de comunicaciones', 'rutas' => ['comunicaciones.registro.*']],
+        ],
+        'calidad' => [
+            'pqrs' => ['nombre' => 'PQRS', 'rutas' => ['calidad.pqrs.*']],
+            'salidas' => ['nombre' => 'Salidas no conformes', 'rutas' => ['calidad.salidas.*']],
+            'satisfaccion' => ['nombre' => 'Satisfacción del cliente', 'rutas' => ['calidad.encuestas.*']],
+        ],
+        'ambiental' => [
+            'residuos' => ['nombre' => 'Residuos y RESPEL', 'rutas' => ['ambiental.residuos.*']],
+            'consumos' => ['nombre' => 'Consumos de agua y energía', 'rutas' => ['ambiental.lecturas.*']],
+            'quimicos' => ['nombre' => 'Productos químicos', 'rutas' => ['ambiental.quimicos.*']],
+        ],
+    ],
 ];

@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { usePartes } from '@/hooks/use-partes';
 import { usePermissions } from '@/hooks/use-permissions';
 import { cn } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
@@ -122,6 +123,7 @@ const entregaVacia = {
 export default function EppIndex({ items, matriz, entregas, empleados, cargos, stats, catalogos, needsClient }: Props) {
     const { can } = usePermissions();
     const canManage = can('sst.manage');
+    const { tiene } = usePartes('epp');
     const [pestana, setPestana] = useState<Pestana>('catalogo');
 
     const [dlgItem, setDlgItem] = useState(false);
@@ -208,11 +210,13 @@ export default function EppIndex({ items, matriz, entregas, empleados, cargos, s
         return matriz.filter((m) => m.cargo === emp.cargo);
     })();
 
-    const PESTANAS: { key: Pestana; label: string; n: number }[] = [
-        { key: 'catalogo', label: 'Catálogo', n: items.length },
-        { key: 'matriz', label: 'Matriz por cargo', n: matriz.length },
-        { key: 'entregas', label: 'Entregas', n: entregas.length },
-    ];
+    const PESTANAS = (
+        [
+            { key: 'catalogo', label: 'Catálogo', n: items.length },
+            { key: 'matriz', label: 'Matriz por cargo', n: matriz.length },
+            { key: 'entregas', label: 'Entregas', n: entregas.length },
+        ] as { key: Pestana; label: string; n: number }[]
+    ).filter((p) => p.key === 'catalogo' || tiene(p.key));
 
     return (
         <ModuloPage
@@ -313,9 +317,7 @@ export default function EppIndex({ items, matriz, entregas, empleados, cargos, s
                     {/* -------------------------------------------------- matriz */}
                     {pestana === 'matriz' &&
                         (matriz.length === 0 ? (
-                            <p className="text-muted-foreground p-8 text-center text-sm">
-                                Ningún cargo tiene EPP asignado todavía.
-                            </p>
+                            <p className="text-muted-foreground p-8 text-center text-sm">Ningún cargo tiene EPP asignado todavía.</p>
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="w-full text-sm">
@@ -390,7 +392,7 @@ export default function EppIndex({ items, matriz, entregas, empleados, cargos, s
                                     <tbody>
                                         {entregas.map((en) => (
                                             <tr key={en.id} className="border-t">
-                                                <td className="px-4 py-2.5 tabular-nums whitespace-nowrap">{en.fecha_entrega}</td>
+                                                <td className="px-4 py-2.5 whitespace-nowrap tabular-nums">{en.fecha_entrega}</td>
                                                 <td className="px-4 py-2.5">
                                                     {en.employee ? `${en.employee.apellidos} ${en.employee.nombres}` : '—'}
                                                 </td>
@@ -619,7 +621,12 @@ export default function EppIndex({ items, matriz, entregas, empleados, cargos, s
                             <InputError message={fEntrega.errors.employee_id} />
                             {sugeridos.length > 0 && (
                                 <p className="text-muted-foreground text-xs">
-                                    La matriz le asigna a este cargo: {sugeridos.map((s) => s.item?.nombre).filter(Boolean).join(', ')}.
+                                    La matriz le asigna a este cargo:{' '}
+                                    {sugeridos
+                                        .map((s) => s.item?.nombre)
+                                        .filter(Boolean)
+                                        .join(', ')}
+                                    .
                                 </p>
                             )}
                         </div>
@@ -701,9 +708,7 @@ export default function EppIndex({ items, matriz, entregas, empleados, cargos, s
                                     value={fEntrega.data.recibido_por}
                                     onChange={(e) => fEntrega.setData('recibido_por', e.target.value)}
                                 />
-                                <p className="text-muted-foreground text-xs">
-                                    Si lo dejas vacío, la entrega queda marcada como sin firma.
-                                </p>
+                                <p className="text-muted-foreground text-xs">Si lo dejas vacío, la entrega queda marcada como sin firma.</p>
                             </div>
                         </div>
 

@@ -132,10 +132,13 @@ export default function ComitesIndex({ comites, empleados, stats, catalogos, nee
     function openCreate() {
         setEditing(null);
         clearErrors();
+        // El primer comité que la empresa tiene contratado.
+        const tipo = catalogos.tipos[0] ?? 'copasst';
         setData({
             ...emptyForm,
+            tipo,
             // Nace con su plan de trabajo propuesto, no en blanco.
-            activities: ACTIVIDADES_BASE.copasst.map((d) => ({
+            activities: ACTIVIDADES_BASE[tipo].map((d) => ({
                 descripcion: d,
                 programada: true,
                 ejecutada: false,
