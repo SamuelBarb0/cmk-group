@@ -96,11 +96,12 @@ class ConstructorPptx
     private function seccion(Slide $s, array $d): void
     {
         $this->fondo($s, $this->marca['navy']);
-        $t = $this->caja($s->createRichTextShape(), self::MARGEN, 190, self::W - 2 * self::MARGEN, 160);
+        $puntos = array_slice($d['puntos'] ?? [], 0, 4);
+        $t = $this->caja($s->createRichTextShape(), self::MARGEN, count($puntos) > 2 ? 150 : 190, self::W - 2 * self::MARGEN, 260);
         $this->run($t, $d['titulo'] ?? '', 32, 'FFFFFFFF', true);
-        foreach (array_slice($d['puntos'] ?? [], 0, 2) as $p) {
+        foreach ($puntos as $p) {
             $t->createParagraph();
-            $this->run($t, $p, 16, 'FFD9DEE7');
+            $this->run($t, $p, count($puntos) > 2 ? 15 : 16, 'FFD9DEE7');
         }
         $this->numerar($s, true);
     }

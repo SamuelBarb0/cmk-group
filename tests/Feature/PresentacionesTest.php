@@ -53,7 +53,7 @@ class PresentacionesTest extends TestCase
     private function pedir(array $extra = [])
     {
         return $this->comoConsultor()->post('/presentaciones', array_merge([
-            'modulo' => 'M15', 'proposito' => 'gerencia', 'diapositivas' => 5,
+            'seleccion' => ['M15'], 'proposito' => 'gerencia', 'diapositivas' => 5,
             'desde' => now()->subYear()->toDateString(), 'hasta' => now()->toDateString(),
         ], $extra));
     }
@@ -83,7 +83,7 @@ class PresentacionesTest extends TestCase
     public function test_la_pantalla_carga_con_los_20_modulos_y_el_modulo_pedido(): void
     {
         $this->comoConsultor()->get('/presentaciones?modulo=M09')->assertOk()
-            ->assertInertia(fn ($p) => $p->component('presentaciones/index')->has('modulos', 20)->where('moduloInicial', 'M09'));
+            ->assertInertia(fn ($p) => $p->component('presentaciones/index')->has('modulos', 20)->where('seleccionInicial', ['M09']));
     }
 
     public function test_pedirla_la_encola_en_estado_generando(): void
@@ -102,7 +102,6 @@ class PresentacionesTest extends TestCase
         $this->pedir(['proposito' => 'otro'])->assertSessionHasErrors('instrucciones');
         $this->pedir(['hasta' => now()->addDay()->toDateString()])->assertSessionHasErrors('hasta');
         $this->pedir(['diapositivas' => 40])->assertSessionHasErrors('diapositivas');
-        $this->pedir(['modulo' => 'M99'])->assertSessionHasErrors('modulo');
     }
 
     public function test_genera_el_pptx_con_el_contexto_real_del_cliente(): void
@@ -179,27 +178,54 @@ class PresentacionesTest extends TestCase
         $this->assertArrayHasKey('pesv.siniestros', ContextoCliente::submodulosDe('M13'));
     }
 
-    public function test_la_parte_tiene_que_ser_del_modulo(): void
+    public function test_las_piezas_tienen_que_existir_en_el_mapa(): void
     {
         Queue::fake();
-        $this->pedir(['modulo' => 'M09', 'submodulo' => 'calidad.pqrs'])->assertSessionHasErrors('submodulo');
-        $this->pedir(['modulo' => null, 'submodulo' => 'epp'])->assertSessionHasErrors('submodulo');
-        $this->pedir(['modulo' => 'M09', 'submodulo' => 'epp.matriz'])->assertSessionHasNoErrors();
-        $this->assertSame('epp.matriz', Presentation::withoutTenantScope()->value('submodulo'));
+        $this->pedir(['seleccion' => ['M09:calidad.pqrs']])->assertSessionHasErrors('seleccion.0');
+        $this->pedir(['seleccion' => ['M99']])->assertSessionHasErrors('seleccion.0');
+        $this->pedir(['seleccion' => ['M09:epp', 'M09:epp']])->assertSessionHasErrors('seleccion.0');
 
-        $this->comoConsultor()->get('/presentaciones?modulo=M09&submodulo=epp.entregas')
-            ->assertInertia(fn ($p) => $p->where('submoduloInicial', 'epp.entregas')->has('submodulos.M09'));
+        // Piezas de un mismo módulo: queda como ese módulo.
+        $this->pedir(['seleccion' => ['M09:epp.matriz', 'M09:salud-ocupacional']])->assertSessionHasNoErrors();
+        $p = Presentation::withoutTenantScope()->latest('id')->firstOrFail();
+        $this->assertSame(['M09', ['M09:epp.matriz', 'M09:salud-ocupacional']], [$p->modulo, $p->seleccion]);
+
+        // De varios módulos: sin módulo único.
+        $this->pedir(['seleccion' => ['M09:epp.matriz', 'M11:emergencias.brigada', 'M13']])->assertSessionHasNoErrors();
+        $this->assertNull(Presentation::withoutTenantScope()->latest('id')->firstOrFail()->modulo);
+
+        $this->comoConsultor()->get('/presentaciones?modulo=M09&submodulo=epp')
+            ->assertInertia(fn ($p) => $p->where('seleccionInicial', ['M09:epp'])->has('submodulos.M09'));
+        // Una pantalla que no es de ese módulo se ignora y queda el módulo.
+        $this->comoConsultor()->get('/presentaciones?modulo=M09&submodulo=calidad')
+            ->assertInertia(fn ($p) => $p->where('seleccionInicial', ['M09']));
     }
 
     public function test_una_parte_acota_el_contexto(): void
     {
         $prompt = null;
         $this->iaSimulada($prompt);
-        $this->pedir(['modulo' => 'M09', 'submodulo' => 'epp.matriz'])->assertSessionHasNoErrors();
+        $this->pedir(['seleccion' => ['M09:epp.matriz']])->assertSessionHasNoErrors();
 
-        $this->assertStringContainsString('SOLO de esta parte del módulo: EPP · Matriz de EPP por cargo', $prompt);
-        $this->assertStringContainsString('la parte «EPP · Matriz de EPP por cargo»', $prompt);
+        $this->assertStringContainsString('- M09 · Operación SST › EPP · Matriz de EPP por cargo', $prompt);
         $this->assertStringContainsString('### Elementos de protección personal', $prompt);
+        $this->assertStringNotContainsString('### Salud ocupacional', $prompt);
+    }
+
+    public function test_piezas_de_varios_modulos_se_juntan_en_una_presentacion(): void
+    {
+        $prompt = null;
+        $this->iaSimulada($prompt);
+        $this->pedir(['seleccion' => ['M09:epp.matriz', 'M11:emergencias.brigada', 'M15']])->assertSessionHasNoErrors();
+
+        $this->assertStringContainsString('conectándolas entre sí', $prompt);
+        foreach (['M09 · Operación SST › EPP · Matriz de EPP por cargo', 'M11 · Emergencias › Plan de emergencias y brigada · Brigada de emergencias', 'M15 · Acciones correctivas y mejora (ACPM)'] as $pieza) {
+            $this->assertStringContainsString($pieza, $prompt);
+        }
+        // Cifras de las tres pantallas y de ninguna más.
+        $this->assertStringContainsString('### Elementos de protección personal', $prompt);
+        $this->assertMatchesRegularExpression('/### .*[Ee]mergencias/', $prompt);
+        $this->assertMatchesRegularExpression('/### .*(ACPM|[Aa]cciones)/', $prompt);
         $this->assertStringNotContainsString('### Salud ocupacional', $prompt);
     }
 
