@@ -65,6 +65,12 @@ class ManagementReview extends Model
             'referencias' => 'ISO 9001 9.3.2 c · Dec. 1072 2.2.4.6.31 · Res. 0312 6.1.3',
             'secciones' => ['diagnostico', 'plan-trabajo', 'indicadores'],
         ],
+        'clientes' => [
+            'titulo' => 'Satisfacción del cliente, retroalimentación y conformidad de los productos y servicios',
+            'referencias' => 'ISO 9001 9.3.2 c 1 y c 3',
+            'secciones' => ['calidad'],
+            'sistemas' => ['iso9001'],
+        ],
         'riesgos' => [
             'titulo' => 'Desempeño en seguridad y salud: incidentes, ausentismo, riesgos y controles',
             'referencias' => 'ISO 45001 9.3 · ISO 9001 9.3.2 e · Dec. 1072 2.2.4.6.31',

@@ -6,6 +6,7 @@ use App\Http\Controllers\AiDocumentController;
 use App\Http\Controllers\AspectoAmbientalController;
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AuditController;
+use App\Http\Controllers\CalidadController;
 use App\Http\Controllers\CargoController;
 use App\Http\Controllers\ChangeRequestController;
 use App\Http\Controllers\ClienteController;
@@ -622,6 +623,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('{equipo}/calibraciones', [EquipoMedicionController::class, 'storeCalibracion'])->name('calibraciones.store');
             Route::delete('{equipo}/calibraciones/{calibracion}', [EquipoMedicionController::class, 'destroyCalibracion'])->name('calibraciones.destroy');
             Route::post('{equipo}/calibraciones/{calibracion}/accion', [EquipoMedicionController::class, 'crearAccion'])->name('calibraciones.accion');
+        });
+    });
+
+    /*
+    | M17 — Calidad (ISO 9001): PQRS (8.2.1), salidas no conformes (8.7) y
+    | satisfacción del cliente (9.1.2).
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::middleware('module:calidad')->prefix('calidad')->name('calidad.')->group(function () {
+        Route::get('/', [CalidadController::class, 'index'])->middleware('permission:sst.view')->name('index');
+        Route::middleware('permission:sst.manage')->group(function () {
+            Route::post('enviar', [CalidadController::class, 'enviar'])->name('enviar');
+            Route::post('pqrs', [CalidadController::class, 'storePqrs'])->name('pqrs.store');
+            Route::put('pqrs/{pqrs}', [CalidadController::class, 'updatePqrs'])->name('pqrs.update');
+            Route::delete('pqrs/{pqrs}', [CalidadController::class, 'destroyPqrs'])->name('pqrs.destroy');
+            Route::post('pqrs/{pqrs}/accion', [CalidadController::class, 'accionPqrs'])->name('pqrs.accion');
+            Route::post('salidas', [CalidadController::class, 'storeSalida'])->name('salidas.store');
+            Route::put('salidas/{salida}', [CalidadController::class, 'updateSalida'])->name('salidas.update');
+            Route::delete('salidas/{salida}', [CalidadController::class, 'destroySalida'])->name('salidas.destroy');
+            Route::post('salidas/{salida}/accion', [CalidadController::class, 'accionSalida'])->name('salidas.accion');
+            Route::post('encuestas', [CalidadController::class, 'storeEncuesta'])->name('encuestas.store');
+            Route::put('encuestas/{encuesta}', [CalidadController::class, 'updateEncuesta'])->name('encuestas.update');
+            Route::delete('encuestas/{encuesta}', [CalidadController::class, 'destroyEncuesta'])->name('encuestas.destroy');
         });
     });
 
