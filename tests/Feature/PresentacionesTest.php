@@ -165,6 +165,44 @@ class PresentacionesTest extends TestCase
         $this->comoConsultor()->get("/presentaciones/{$p->id}/descargar")->assertNotFound();
     }
 
+    public function test_cada_modulo_ofrece_sus_pantallas_y_partes(): void
+    {
+        $m09 = ContextoCliente::submodulosDe('M09');
+        $this->assertSame('EPP', $m09['epp']);
+        $this->assertSame('EPP · Matriz de EPP por cargo', $m09['epp.matriz']);
+        $this->assertArrayHasKey('salud-ocupacional.examenes', $m09);
+
+        // Solo partes cuyos documentos son de ese módulo: los siniestros del
+        // PESV son del M13, no del M10.
+        $this->assertArrayHasKey('pesv.vehiculos', ContextoCliente::submodulosDe('M10'));
+        $this->assertArrayNotHasKey('pesv.siniestros', ContextoCliente::submodulosDe('M10'));
+        $this->assertArrayHasKey('pesv.siniestros', ContextoCliente::submodulosDe('M13'));
+    }
+
+    public function test_la_parte_tiene_que_ser_del_modulo(): void
+    {
+        Queue::fake();
+        $this->pedir(['modulo' => 'M09', 'submodulo' => 'calidad.pqrs'])->assertSessionHasErrors('submodulo');
+        $this->pedir(['modulo' => null, 'submodulo' => 'epp'])->assertSessionHasErrors('submodulo');
+        $this->pedir(['modulo' => 'M09', 'submodulo' => 'epp.matriz'])->assertSessionHasNoErrors();
+        $this->assertSame('epp.matriz', Presentation::withoutTenantScope()->value('submodulo'));
+
+        $this->comoConsultor()->get('/presentaciones?modulo=M09&submodulo=epp.entregas')
+            ->assertInertia(fn ($p) => $p->where('submoduloInicial', 'epp.entregas')->has('submodulos.M09'));
+    }
+
+    public function test_una_parte_acota_el_contexto(): void
+    {
+        $prompt = null;
+        $this->iaSimulada($prompt);
+        $this->pedir(['modulo' => 'M09', 'submodulo' => 'epp.matriz'])->assertSessionHasNoErrors();
+
+        $this->assertStringContainsString('SOLO de esta parte del módulo: EPP · Matriz de EPP por cargo', $prompt);
+        $this->assertStringContainsString('la parte «EPP · Matriz de EPP por cargo»', $prompt);
+        $this->assertStringContainsString('### Elementos de protección personal', $prompt);
+        $this->assertStringNotContainsString('### Salud ocupacional', $prompt);
+    }
+
     public function test_cada_modulo_del_mapa_sabe_sus_pantallas(): void
     {
         $this->assertEqualsCanonicalizing(

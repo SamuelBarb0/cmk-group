@@ -14,6 +14,7 @@ interface Presentacion {
     id: number;
     titulo: string | null;
     modulo: string | null;
+    submodulo: string | null;
     proposito: string;
     diapositivas: number;
     desde: string;
@@ -29,15 +30,28 @@ interface Props {
     presentaciones: Presentacion[];
     modulos: { codigo: string; nombre: string; contratado: boolean }[];
     propositos: Record<string, string>;
+    /** Partes de cada módulo del mapa: pantalla («epp») o parte de pantalla («epp.matriz») => nombre. */
+    submodulos: Record<string, Record<string, string>>;
     moduloInicial: string | null;
+    submoduloInicial: string | null;
     periodo: { desde: string; hasta: string };
 }
 
-export default function Presentaciones({ needsClient, presentaciones, modulos, propositos, moduloInicial, periodo }: Props) {
+export default function Presentaciones({
+    needsClient,
+    presentaciones,
+    modulos,
+    propositos,
+    submodulos,
+    moduloInicial,
+    submoduloInicial,
+    periodo,
+}: Props) {
     const { can } = usePermissions();
     const canManage = can('documents.manage');
     const { data, setData, post, processing, errors } = useForm({
         modulo: moduloInicial ?? '',
+        submodulo: submoduloInicial ?? '',
         proposito: 'gerencia',
         diapositivas: 10,
         desde: periodo.desde,
@@ -58,7 +72,8 @@ export default function Presentaciones({ needsClient, presentaciones, modulos, p
         post('/presentaciones', { preserveScroll: true, onSuccess: () => setData('instrucciones', '') });
     };
 
-    const nombreModulo = (m: string | null) => (m ? `${m} · ${modulos.find((x) => x.codigo === m)?.nombre ?? ''}` : 'Sistema completo');
+    const nombreModulo = (m: string | null, sub: string | null) =>
+        m ? `${m} · ${modulos.find((x) => x.codigo === m)?.nombre ?? ''}${sub ? ` › ${submodulos[m]?.[sub] ?? sub}` : ''}` : 'Sistema completo';
 
     return (
         <ModuloPage
@@ -78,7 +93,12 @@ export default function Presentaciones({ needsClient, presentaciones, modulos, p
                             <div className="grid gap-3 md:grid-cols-[2fr_1.4fr_7rem]">
                                 <div className="grid gap-2">
                                     <Label htmlFor="modulo">Módulo</Label>
-                                    <select id="modulo" value={data.modulo} onChange={(e) => setData('modulo', e.target.value)} className={selectCls}>
+                                    <select
+                                        id="modulo"
+                                        value={data.modulo}
+                                        onChange={(e) => setData((d) => ({ ...d, modulo: e.target.value, submodulo: '' }))}
+                                        className={selectCls}
+                                    >
                                         <option value="">Sistema completo (todos los módulos)</option>
                                         {modulos.map((m) => (
                                             <option key={m.codigo} value={m.codigo}>
@@ -88,6 +108,27 @@ export default function Presentaciones({ needsClient, presentaciones, modulos, p
                                         ))}
                                     </select>
                                     <InputError message={errors.modulo} />
+                                    {data.modulo && Object.keys(submodulos[data.modulo] ?? {}).length > 0 && (
+                                        <>
+                                            <Label htmlFor="submodulo" className="mt-1">
+                                                Parte del módulo
+                                            </Label>
+                                            <select
+                                                id="submodulo"
+                                                value={data.submodulo}
+                                                onChange={(e) => setData('submodulo', e.target.value)}
+                                                className={selectCls}
+                                            >
+                                                <option value="">Todo el módulo {data.modulo}</option>
+                                                {Object.entries(submodulos[data.modulo]).map(([clave, nombre]) => (
+                                                    <option key={clave} value={clave}>
+                                                        {clave.includes('.') ? `   ↳ ${nombre.split(' · ').slice(1).join(' · ')}` : nombre}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <InputError message={errors.submodulo} />
+                                        </>
+                                    )}
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="proposito">Para qué es</Label>
@@ -189,7 +230,7 @@ export default function Presentaciones({ needsClient, presentaciones, modulos, p
                                                     {propositos[p.proposito]} · {p.diapositivas} diapositivas
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-2.5 text-xs">{nombreModulo(p.modulo)}</td>
+                                            <td className="px-4 py-2.5 text-xs">{nombreModulo(p.modulo, p.submodulo)}</td>
                                             <td className="px-4 py-2.5 text-xs whitespace-nowrap tabular-nums">
                                                 {p.desde} a {p.hasta}
                                             </td>

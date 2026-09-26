@@ -6,6 +6,7 @@ use App\Jobs\GenerarPresentacionJob;
 use App\Models\DocumentCatalogEntry;
 use App\Models\Presentation;
 use App\Models\TenantDocument;
+use App\Services\Ai\ContextoCliente;
 use App\Support\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -33,6 +34,9 @@ class PresentacionController extends Controller
         $contratados = $tenant?->documentos_sig === null ? null
             : DocumentCatalogEntry::query()->whereIn('id', $tenant->documentos_sig)->distinct()->pluck('modulo')->all();
 
+        // Si viene de la pantalla de un módulo, el formulario arranca con ese módulo y esa parte.
+        $inicial = array_key_exists((string) $request->query('modulo'), DocumentCatalogEntry::MODULOS) ? (string) $request->query('modulo') : null;
+
         return Inertia::render('presentaciones/index', [
             'needsClient' => ! $tenant,
             'presentaciones' => $tenant ? Presentation::query()->with('user:id,name')->latest()->limit(50)->get() : [],
@@ -40,7 +44,11 @@ class PresentacionController extends Controller
                 ->map(fn (string $nombre, string $m) => ['codigo' => $m, 'nombre' => $nombre, 'contratado' => $contratados === null || in_array($m, $contratados, true)])
                 ->values(),
             'propositos' => collect(Presentation::PROPOSITOS)->map(fn (array $p) => $p[0]),
-            'moduloInicial' => array_key_exists((string) $request->query('modulo'), DocumentCatalogEntry::MODULOS) ? $request->query('modulo') : null,
+            // Partes de cada módulo del mapa: pantallas y partes de pantalla.
+            'submodulos' => collect(DocumentCatalogEntry::MODULOS)->map(fn ($n, string $m) => ContextoCliente::submodulosDe($m)),
+            'moduloInicial' => $inicial,
+            'submoduloInicial' => $inicial && array_key_exists((string) $request->query('submodulo'), ContextoCliente::submodulosDe($inicial))
+                ? $request->query('submodulo') : null,
             'periodo' => ['desde' => Carbon::today()->subYear()->addDay()->toDateString(), 'hasta' => Carbon::today()->toDateString()],
         ]);
     }
@@ -53,6 +61,7 @@ class PresentacionController extends Controller
 
         $datos = $request->validate([
             'modulo' => ['nullable', Rule::in(array_keys(DocumentCatalogEntry::MODULOS))],
+            'submodulo' => ['nullable', 'prohibited_if:modulo,null', Rule::in(array_keys(ContextoCliente::submodulosDe((string) $request->input('modulo'))))],
             'proposito' => ['required', Rule::in(array_keys(Presentation::PROPOSITOS))],
             'instrucciones' => ['nullable', 'required_if:proposito,otro', 'string', 'max:2000'],
             'diapositivas' => ['required', 'integer', 'between:4,20'],
@@ -60,6 +69,8 @@ class PresentacionController extends Controller
             'hasta' => ['required', 'date', 'after_or_equal:desde', 'before_or_equal:today'],
         ], [
             'instrucciones.required_if' => 'Cuenta qué presentación necesitas.',
+            'submodulo.in' => 'Esa parte no pertenece al módulo elegido.',
+            'submodulo.prohibited_if' => 'Elige primero el módulo.',
         ]);
 
         $p = new Presentation($datos);

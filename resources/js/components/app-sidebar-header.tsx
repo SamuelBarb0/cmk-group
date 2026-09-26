@@ -1,5 +1,5 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
-import { useCodigosSig } from '@/components/codigo-sig';
+import { useCodigosSig, usePantallaActual } from '@/components/codigo-sig';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { usePermissions } from '@/hooks/use-permissions';
@@ -12,6 +12,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
     const { props } = usePage<SharedData>();
     // En la pantalla de un módulo, la presentación sale de ese módulo del mapa.
     const codigo = useCodigosSig()[0];
+    const pantalla = usePantallaActual();
     const puedePresentar = can('documents.manage') && props.tenant !== null;
 
     return (
@@ -22,7 +23,10 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
             </div>
             {puedePresentar && codigo && (
                 <Button asChild variant="outline" size="sm" className="ml-auto gap-1.5">
-                    <Link href={`/presentaciones?modulo=${codigo}`} title={`Generar una presentación de ${codigo} con los datos del cliente`}>
+                    <Link
+                        href={`/presentaciones?modulo=${codigo}&submodulo=${pantalla}`}
+                        title={`Generar una presentación de ${codigo} con los datos del cliente`}
+                    >
                         <Presentation className="size-4" /> Presentación
                     </Link>
                 </Button>

@@ -15,7 +15,7 @@ class Presentation extends Model
     use BelongsToTenant;
 
     // `estado`, `contenido`, `archivo`, `titulo` y `error` los pone el job.
-    protected $fillable = ['modulo', 'proposito', 'instrucciones', 'diapositivas', 'desde', 'hasta'];
+    protected $fillable = ['modulo', 'submodulo', 'proposito', 'instrucciones', 'diapositivas', 'desde', 'hasta'];
 
     protected $hidden = ['archivo', 'contenido'];
 

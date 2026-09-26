@@ -46,7 +46,7 @@ class GenerarPresentacionJob implements ShouldQueue
         $user = User::find($p->user_id) ?? throw new \RuntimeException('El usuario que pidió la presentación ya no existe.');
 
         $periodo = Periodo::desde($p->desde->toDateString(), $p->hasta->toDateString());
-        $texto = $contexto->texto($tenant, $user, $p->modulo, $periodo);
+        $texto = $contexto->texto($tenant, $user, $p->modulo, $periodo, $p->submodulo);
 
         // Una presentación larga puede tardar más que el timeout general de la API.
         config(['ai.anthropic.timeout' => max((int) config('ai.anthropic.timeout'), 300)]);
@@ -97,6 +97,9 @@ class GenerarPresentacionJob implements ShouldQueue
     {
         [$proposito, $guia] = Presentation::PROPOSITOS[$p->proposito];
         $tema = $p->modulo ? "el módulo {$p->modulo} · ".(DocumentCatalogEntry::MODULOS[$p->modulo] ?? $p->modulo) : 'el sistema de gestión completo';
+        if ($p->modulo && $p->submodulo) {
+            $tema = 'la parte «'.(ContextoCliente::submodulosDe($p->modulo)[$p->submodulo] ?? $p->submodulo)."» de {$tema}; no hables de las demás partes del módulo";
+        }
 
         return "Prepara una presentación sobre {$tema} para la empresa del contexto.\n\n"
             ."Propósito: {$proposito}. {$guia}\n"
