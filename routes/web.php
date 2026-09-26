@@ -3,6 +3,7 @@
 use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AcpmActionController;
 use App\Http\Controllers\AiDocumentController;
+use App\Http\Controllers\AmbientalController;
 use App\Http\Controllers\AspectoAmbientalController;
 use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AuditController;
@@ -646,6 +647,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('encuestas', [CalidadController::class, 'storeEncuesta'])->name('encuestas.store');
             Route::put('encuestas/{encuesta}', [CalidadController::class, 'updateEncuesta'])->name('encuestas.update');
             Route::delete('encuestas/{encuesta}', [CalidadController::class, 'destroyEncuesta'])->name('encuestas.destroy');
+        });
+    });
+
+    /*
+    | M18 — Gestión ambiental (ISO 14001): residuos y RESPEL, consumos de agua
+    | y energía, e inventario de productos químicos.
+    | Ver -> sst.view | Gestionar -> sst.manage
+    */
+    Route::middleware('module:ambiental')->prefix('ambiental')->name('ambiental.')->group(function () {
+        Route::middleware('permission:sst.view')->group(function () {
+            Route::get('/', [AmbientalController::class, 'index'])->name('index');
+            Route::get('residuos/{residuo}/certificado', [AmbientalController::class, 'certificado'])->name('residuos.certificado');
+        });
+        Route::middleware('permission:sst.manage')->group(function () {
+            Route::post('enviar', [AmbientalController::class, 'enviar'])->name('enviar');
+            Route::post('residuos', [AmbientalController::class, 'storeResiduo'])->name('residuos.store');
+            Route::post('residuos/{residuo}', [AmbientalController::class, 'updateResiduo'])->name('residuos.update');
+            Route::delete('residuos/{residuo}', [AmbientalController::class, 'destroyResiduo'])->name('residuos.destroy');
+            Route::post('lecturas', [AmbientalController::class, 'storeLectura'])->name('lecturas.store');
+            Route::delete('lecturas/{lectura}', [AmbientalController::class, 'destroyLectura'])->name('lecturas.destroy');
+            Route::post('quimicos', [AmbientalController::class, 'storeQuimico'])->name('quimicos.store');
+            Route::put('quimicos/{quimico}', [AmbientalController::class, 'updateQuimico'])->name('quimicos.update');
+            Route::delete('quimicos/{quimico}', [AmbientalController::class, 'destroyQuimico'])->name('quimicos.destroy');
         });
     });
 
