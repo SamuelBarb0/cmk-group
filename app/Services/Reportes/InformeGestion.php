@@ -39,6 +39,7 @@ class InformeGestion
         S\Iperc::class,
         S\RiesgosOportunidades::class,
         S\AspectosAmbientales::class,
+        S\Ambiental::class,
         S\Emergencias::class,
         S\Comites::class,
         S\Comunicaciones::class,

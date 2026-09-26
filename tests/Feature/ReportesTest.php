@@ -316,7 +316,7 @@ class ReportesTest extends TestCase
         $this->de($e, CommunicationLog::class, ['fecha' => '2026-03-10', 'tipo' => 'externa', 'direccion' => 'entrante', 'parte_interesada' => 'ARL', 'asunto' => 'Solicitud de soportes', 'requiere_respuesta' => true, 'fecha_limite_respuesta' => '2026-03-20']);
 
         $i = $this->informe($this->consultor)['informe'];
-        $this->assertCount(29, $i['secciones']);
+        $this->assertCount(30, $i['secciones']);
         foreach ($i['secciones'] as $s) {
             $this->assertNotEmpty($s['cifras'] ?: $s['notas'], "La sección {$s['clave']} salió vacía");
         }
