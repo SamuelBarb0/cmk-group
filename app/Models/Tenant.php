@@ -32,6 +32,8 @@ class Tenant extends Model
         'modulos',
         // Partes contratadas de cada módulo ({modulo: [partes]}; ausente = todas).
         'submodulos',
+        // Documentos del mapa del SIG contratados (ids del catálogo; null = todos).
+        'documentos_sig',
         // Información de la Organización (contexto SGI)
         'actividad_economica',
         'codigo_ciiu',
@@ -56,6 +58,7 @@ class Tenant extends Model
             'num_trabajadores' => 'integer',
             'modulos' => 'array',
             'submodulos' => 'array',
+            'documentos_sig' => 'array',
             'licencia_sgsst_vence' => 'date:Y-m-d',
             'curso_sst_fecha' => 'date:Y-m-d',
         ];

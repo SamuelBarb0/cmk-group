@@ -190,4 +190,118 @@ return [
             'quimicos' => ['nombre' => 'Productos químicos', 'rutas' => ['ambiental.quimicos.*']],
         ],
     ],
+
+    /*
+    | Módulos de la plataforma que NO salen del mapa documental: herramientas
+    | que CMK vende aparte. En la ficha del cliente se marcan a mano.
+    */
+    'herramientas' => ['documentos', 'documentos-ia', 'reportes', 'importar'],
+
+    /*
+    | Qué documentos del mapa documental del SIG (catálogo M01–M20) encienden
+    | cada pantalla y cada parte de pantalla. Cuando CMK elige para un cliente
+    | los documentos que necesita, las pantallas y partes se deducen de aquí:
+    | una pantalla se ve si el cliente tiene al menos uno de sus documentos.
+    | Cada regla es [módulo del mapa, [fragmentos del nombre]]; '*' = todo el
+    | módulo. Los fragmentos se buscan sin distinguir mayúsculas.
+    */
+    'alcance_documental' => [
+        'pantallas' => [
+            'control-documental' => [['M01', ['*']]],
+            'contexto' => [['M02', ['*']]],
+            'requisitos-legales' => [['M03', ['*']]],
+            'iperc' => [['M04', ['peligros', 'medidas de prevención']]],
+            'reportes-ac' => [['M04', ['actos y condiciones']]],
+            'riesgos-oportunidades' => [['M04', ['riesgos y oportunidades']]],
+            'aspectos-ambientales' => [['M04', ['aspectos e impactos']]],
+            'indicadores' => [['M05', ['indicador', 'objetivos']]],
+            'diagnostico' => [['M05', ['evaluación inicial', 'autoevaluación']]],
+            'ausentismo' => [['M05', ['ausentismo']]],
+            'plan-trabajo' => [['M06', ['*']]],
+            'cargos' => [['M07', ['responsabilidades', 'funciones', 'competencia', 'conocimiento', 'reglamento interno', 'listado de trabajadores']]],
+            'capacitaciones' => [['M07', ['capacitación', 'inducción', 'curso de 50']]],
+            'comites' => [['M08', ['copasst', 'vigía', 'convivencia', 'conflicto', 'compromisos', 'acoso', 'participación', 'responsable del sg-sst', 'buzón']]],
+            'pesv' => [
+                ['M10', ['*']],
+                ['M08', ['seguridad vial', 'líder del pesv']],
+                ['M04', ['riesgos viales']],
+                ['M05', ['autogestión del pesv']],
+                ['M11', ['emergencias viales']],
+                ['M13', ['siniestro']],
+            ],
+            'epp' => [['M09', ['protección personal', 'epp']]],
+            'salud-ocupacional' => [['M09', ['médic', 'profesiograma', 'paraclínicos', 'condiciones de salud', 'sociodemográfico', 'restricciones']]],
+            'inspecciones' => [
+                ['M09', ['inspección', 'inspecciones', 'permiso de trabajo', 'permisos de trabajo', 'análisis de trabajo seguro', 'visitantes', 'tarea segura', 'reglamento de higiene', 'trabajo seguro en alturas']],
+                ['M19', ['acta de reunión', 'registro de asistencia']],
+            ],
+            'programas' => [['M09', ['programa de']], ['M10', ['programa de']], ['M18', ['programa de']]],
+            'mantenimiento' => [['M09', ['mantenimiento']], ['M10', ['mantenimiento']]],
+            'equipos-medicion' => [['M09', ['equipos de seguimiento', 'calibración']]],
+            'emergencias' => [['M11', ['*']]],
+            'contratistas' => [['M12', ['*']]],
+            'accidentes' => [['M13', ['accidente', 'incidentes', 'furat', 'accidentalidad']]],
+            'auditoria' => [['M14', ['*']]],
+            'acpm' => [['M15', ['*']]],
+            'revision-direccion' => [['M16', ['*']]],
+            'calidad' => [['M17', ['*']]],
+            'ambiental' => [['M18', ['*']], ['M13', ['incidente ambiental']]],
+            'comunicaciones' => [['M19', ['*']]],
+            'gestion-cambio' => [['M20', ['*']]],
+        ],
+        // Partes de pantalla (config('cmk.submodulos')). Una pantalla encendida
+        // sin ninguna parte que coincida se queda con todas sus partes.
+        'partes' => [
+            'contexto' => [
+                'alcance' => [['M02', ['alcance']]],
+                'dofa' => [['M02', ['dofa', 'análisis de contexto']]],
+                'partes' => [['M02', ['partes interesadas']]],
+                'procesos' => [['M02', ['mapa de procesos', 'caracterización']]],
+            ],
+            'pesv' => [
+                'conductores' => [['M10', ['conductor', 'licencia', 'alcoholimetría', 'prueba teórica']]],
+                'vehiculos' => [['M10', ['vehículo', 'preoperacional', 'flota', 'mantenimiento vehicular']]],
+                'rutas' => [['M10', ['desplazamientos', 'rutas', 'jornada']]],
+                'siniestros' => [['M13', ['siniestro']]],
+                'vias' => [['M10', ['vías internas']]],
+                'encuesta' => [['M10', ['planificación de desplazamientos']]],
+                'riesgos' => [['M04', ['riesgos viales']]],
+                'documentos' => [['M10', ['hoja de vida']]],
+                'infracciones' => [['M10', ['comparendos']]],
+                'autogestion' => [['M05', ['autogestión del pesv']]],
+            ],
+            'comites' => [
+                'copasst' => [['M08', ['copasst', 'vigía']]],
+                'cocolab' => [['M08', ['convivencia', 'conflicto', 'compromisos', 'acoso']]],
+            ],
+            'epp' => [
+                'matriz' => [['M09', ['matriz de elementos']]],
+                'entregas' => [['M09', ['entrega de epp']]],
+            ],
+            'emergencias' => [
+                'brigada' => [['M11', ['brigad']]],
+                'simulacros' => [['M11', ['simulacro']]],
+                'equipos' => [['M11', ['extintores', 'botiquines', 'contraincendios', 'derrames']]],
+                'directorio' => [['M11', ['plan de preparación', 'información personal']]],
+            ],
+            'salud-ocupacional' => [
+                'examenes' => [['M09', ['exámenes médicos', 'examen médico', 'paraclínicos', 'restricciones']]],
+                'profesiograma' => [['M09', ['profesiograma']]],
+            ],
+            'comunicaciones' => [
+                'matriz' => [['M19', ['matriz de comunicaciones', 'procedimiento de comunicación']]],
+                'registro' => [['M19', ['registro', 'acta de reunión']]],
+            ],
+            'calidad' => [
+                'pqrs' => [['M17', ['pqrs']]],
+                'salidas' => [['M17', ['salidas no conformes']]],
+                'satisfaccion' => [['M17', ['satisfacción']]],
+            ],
+            'ambiental' => [
+                'residuos' => [['M18', ['residuos', 'respel', 'disposición final']]],
+                'consumos' => [['M18', ['agua', 'energía']]],
+                'quimicos' => [['M18', ['químic', 'datos de seguridad']]],
+            ],
+        ],
+    ],
 ];

@@ -81,7 +81,11 @@ class ControlDocumentalController extends Controller
             fn (ControlledDocument $d) => $d->catalogEntry?->modulo
         );
 
-        $catalogo = DocumentCatalogEntry::query()->get(['modulo', 'condicional'])->groupBy('modulo')
+        // El catálogo que le aplica a la empresa: lo que CMK contrató en el mapa (null = todo).
+        $contratados = $this->context->get()?->documentos_sig;
+        $catalogo = DocumentCatalogEntry::query()
+            ->when(is_array($contratados), fn ($q) => $q->whereIn('id', $contratados))
+            ->get(['modulo', 'condicional'])->groupBy('modulo')
             ->map(fn (Collection $g, string $m) => [
                 'modulo' => $m,
                 'nombre' => DocumentCatalogEntry::MODULOS[$m] ?? $m,
