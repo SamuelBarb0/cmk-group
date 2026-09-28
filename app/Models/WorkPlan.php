@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * Plan de Trabajo Anual del SGI de una empresa cliente (segregado por tenant).
+ * Plan de Trabajo Anual de una empresa cliente (segregado por tenant). Cada año
+ * hay uno por `tipo` (ver WorkPlanActivity::PLANES), con sus firmas y su cumplimiento.
  * El % de cumplimiento se recalcula a partir de la ejecución mensual de sus ítems.
  */
 class WorkPlan extends Model
@@ -16,6 +17,7 @@ class WorkPlan extends Model
 
     protected $fillable = [
         'anio',
+        'tipo',
         'responsable',
         'cumplimiento',
         'metas',

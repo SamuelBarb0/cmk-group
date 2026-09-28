@@ -292,15 +292,19 @@ class PesvFeed
     /** @return array<int, array<string, mixed>> */
     private function planAnual(): array
     {
-        $plan = WorkPlan::latest('id')->first();
+        // Las actividades de seguridad vial viven en el plan SST-PESV.
+        $plan = WorkPlan::where('tipo', 'sst')->latest('anio')->first();
+        $programadas = $plan?->items->filter(fn ($i) => ! empty($i->meses_programados))->count() ?? 0;
 
         return [[
-            'etiqueta' => 'Plan de Trabajo Anual',
-            'estado' => $plan ? 'ok' : 'falta',
-            'detalle' => $plan
-                ? 'Existe plan de trabajo; las actividades de seguridad vial se programan ahí.'
-                : 'Sin plan de trabajo anual cargado.',
-            'url' => '/plan-trabajo',
+            'etiqueta' => 'Plan de Trabajo Anual SST-PESV',
+            'estado' => ! $plan ? 'falta' : ($programadas > 0 ? 'ok' : 'parcial'),
+            'detalle' => ! $plan
+                ? 'Sin plan de trabajo SST-PESV cargado.'
+                : ($programadas > 0
+                    ? "Plan {$plan->anio} con {$programadas} actividades programadas; las de seguridad vial se programan ahí."
+                    : "Plan {$plan->anio} creado, pero sin actividades programadas."),
+            'url' => '/plan-trabajo?plan=sst',
             'cantidad' => null,
         ]];
     }

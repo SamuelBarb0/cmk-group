@@ -10,6 +10,7 @@ use App\Models\IpercRow;
 use App\Models\SstDiagnostic;
 use App\Models\Tenant;
 use App\Models\WorkPlan;
+use App\Models\WorkPlanActivity;
 use App\Services\DocumentFiller;
 use App\Support\TenantContext;
 use Illuminate\Support\Facades\Log;
@@ -355,13 +356,15 @@ class AssistantToolbox
     {
         $anio = $anio > 0 ? $anio : (int) now()->year;
 
-        $plan = WorkPlan::where('anio', $anio)->with('items.activity')->first();
+        // Dos planes por año: el SST-PESV (Res. 0312) y el del SGI (ISO).
+        $planes = WorkPlan::where('anio', $anio)->with('items.activity')->get();
 
-        if ($plan === null) {
+        if ($planes->isEmpty()) {
             return "No hay plan de trabajo cargado para el año {$anio}.";
         }
 
-        return $this->json([
+        return $this->json($planes->map(fn (WorkPlan $plan) => [
+            'plan' => WorkPlanActivity::PLANES[$plan->tipo] ?? $plan->tipo,
             'anio' => $plan->anio,
             'responsable' => $plan->responsable,
             'objetivos' => $plan->objetivos,
@@ -378,7 +381,7 @@ class AssistantToolbox
                 'meses_ejecutados' => $i->meses_ejecutados,
                 'responsable' => $i->responsable,
             ])->all(),
-        ]);
+        ])->all());
     }
 
     private function resumenDiagnostico(): string

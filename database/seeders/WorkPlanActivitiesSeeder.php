@@ -6,8 +6,10 @@ use App\Models\WorkPlanActivity;
 use Illuminate\Database\Seeder;
 
 /**
- * Catálogo GLOBAL de actividades del Plan de Trabajo Anual del SGI, por cláusulas
- * ISO 4→10. Fuente: hoja «6.2 PLAN DE TRABAJO SGI» de la herramienta modelo de CMK.
+ * Catálogo GLOBAL de actividades de los dos planes de trabajo: el del SGI por
+ * cláusulas ISO 4→10 y el SST-PESV por ciclo PHVA (ver sembrarSst).
+ *
+ * SGI: cláusulas ISO 4→10. Fuente: hoja «6.2 PLAN DE TRABAJO SGI» de la herramienta modelo de CMK.
  * Se omiten cláusulas de manufactura (diseño 8.3, producción 8.5.x, liberación 8.6)
  * que no aplican al alcance SST/HSEQ/PESV.
  */
@@ -64,6 +66,7 @@ class WorkPlanActivitiesSeeder extends Seeder
             WorkPlanActivity::updateOrCreate(
                 ['codigo' => $codigo],
                 [
+                    'plan' => 'sgi',
                     'fase' => $fase,
                     'nombre' => $nombre,
                     'normas' => $normas,
@@ -73,6 +76,38 @@ class WorkPlanActivitiesSeeder extends Seeder
             );
         }
 
-        $this->command?->info('Actividades del Plan de Trabajo: '.count($acts).' cargadas.');
+        $sst = $this->sembrarSst();
+
+        $this->command?->info('Actividades del Plan de Trabajo: '.count($acts).' del SGI y '.$sst.' del SST-PESV cargadas.');
+    }
+
+    /**
+     * Plan de Trabajo Anual SST-PESV (estándar 2.4.1 de la Res. 0312), de la
+     * hoja «2.4.1 Plan de trabajo» de la herramienta SG-SST-PESV de CMK, por
+     * ciclo PHVA. Los datos viven en `data/plan-trabajo-sst.json` (extraídos de
+     * la hoja, con los errores de tipeo corregidos). Código SST-01…SST-88 por
+     * orden de la hoja.
+     */
+    private function sembrarSst(): int
+    {
+        $acts = json_decode((string) file_get_contents(__DIR__.'/data/plan-trabajo-sst.json'), true, flags: JSON_THROW_ON_ERROR);
+
+        foreach ($acts as $i => $a) {
+            WorkPlanActivity::updateOrCreate(
+                ['codigo' => sprintf('SST-%02d', $i + 1)],
+                [
+                    'plan' => 'sst',
+                    'fase' => $a['fase'],
+                    'nombre' => mb_substr($a['nombre'], 0, 255),
+                    'normas' => [],
+                    'soporte' => $a['detalle'],
+                    'frecuencia' => $a['frecuencia'],
+                    'responsable_sugerido' => $a['responsable'],
+                    'orden' => $i + 1,
+                ],
+            );
+        }
+
+        return count($acts);
     }
 }

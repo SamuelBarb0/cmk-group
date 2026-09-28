@@ -1,0 +1,618 @@
+[
+  {
+    "fase": "I. Planear",
+    "nombre": "Designación del Responsable del SG SST y el PESV de la entidad",
+    "detalle": "* Carta de designación de responsabilidades",
+    "frecuencia": "Mensual",
+    "responsable": "Alta Dirección"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Asignar y socializar las responsabilidades a todos los niveles de la organización para el SG SST y el PESV",
+    "detalle": "* Responsabilidades en la carta descriptiva o perfil del encargado del SGSST - PESV y en losperfiles de los trabajadores de la organización",
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Elaboración, Revisión y Aprobación del Presupuesto, y revisión al finalizar el periodo",
+    "detalle": null,
+    "frecuencia": "Anual",
+    "responsable": "Alta Dirección -Responsable del SG SST - PESV"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Seguimiento a la Afiliación de los trabajadores al Sistema de seguridad social en salud, pension y riesgos.",
+    "detalle": "* Subir cada tres meses el pago de aportes sociales de todos los trabajadores de la organización",
+    "frecuencia": "Trimestral",
+    "responsable": "Responsable del SG SST"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Identificar trabajos de alto riesgo según el decreto 2090 del 2003",
+    "detalle": null,
+    "frecuencia": "Anual",
+    "responsable": "Responsable del SG SST"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Conformación del COPASST y Capacitar al Comité Paritario de SST según lo establece la normatividad colombiana.",
+    "detalle": "* Conformación del COPASST cada dos años y realizar actas mensuales.\n*Conformación del Comité de Convivencia Laboral y Capacitar en temas, según la normatividad legal vigente, cada dos años y realizar actas Trimestrales\n* Conformación del Comite para el PESV y Capacitar al Comité según lo establece la normatividad colombiana, cada dos años y realizar actas Trimestrales",
+    "frecuencia": "Anual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Reuniones COPASST y capacitaciones",
+    "detalle": "* Realizar las actividades escritas en el archivo seguimiento COPASST",
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST de la Empresa"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Reuniones Comité de seguridad vial y capacitaciones",
+    "detalle": "* Realizar las actividades escritas en las actas de seguimiento del comité",
+    "frecuencia": "Anual",
+    "responsable": "Responsable del PESV de la Empresa"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Reuniones del Comité de Convivencia Laboral.",
+    "detalle": "* Capacitacion de funciones y responsabilidades, acoso laboral, ley 1010 y sistema de gestion.",
+    "frecuencia": "Anual",
+    "responsable": "Responsable del SG SST de la Empresa"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Diseño Programa de Capacitación SG SST - PESV",
+    "detalle": "* Realizar seguimiento trimestral\n* Procedimiento de plan anual de formación\n* Matriz de competencias para cada Roll",
+    "frecuencia": "Trimestral",
+    "responsable": "Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Inducción del SGSST y PESV",
+    "detalle": "* Realizar inducción y reinduccion al personal de forma anual y cada ve que ingrese un trabajador a la empresa.",
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Capacitación 50 Horas SG SST con la ARL o SENA",
+    "detalle": "* El curso lo debe tener el encargado del SG SST, el COPASST, el COCOLAB y los brigadistas.",
+    "frecuencia": "Semestral",
+    "responsable": "Profesional de apoyo de SST , COPASST, ARL"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Revisión de las Políticas SST - PESV",
+    "detalle": "*Actualizar cada año",
+    "frecuencia": "Cada 2 años",
+    "responsable": "Responsable del SG SST - PESV de la Empresa , Alta direccion, COPASST"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Firma de las políticas.",
+    "detalle": "* Firmar las políticas y divulgarlas a los trabajadores cada año.",
+    "frecuencia": "Anual",
+    "responsable": "Alta Dirección:Gerencia"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Publicación y Socialización de las Políticas.",
+    "detalle": null,
+    "frecuencia": "Anual",
+    "responsable": "Alta Dirección:Gerencia"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Revisar y Actualizar los Objetivos del SG SST - PESV.",
+    "detalle": "* Firmar por el representante legal cada año y revisar que se cumpla con las metas y objetivos planteados",
+    "frecuencia": "Anual",
+    "responsable": "Alta dirección:Gerencia,Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Liderazgo, compromiso y corresponsabilidad del nivel directivo",
+    "detalle": null,
+    "frecuencia": "Anual",
+    "responsable": "Alta dirección:Gerencia,Responsable del PESV de la Empresa"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Actualización de la Visión y alcance del PESV",
+    "detalle": null,
+    "frecuencia": "Anual",
+    "responsable": "Alta dirección:Gerencia,Responsable del PESV de la Empresa"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Evaluación inicial",
+    "detalle": "* Diagnóstico se realiza una vez al año para identificar el estado actual del SG SST.\nPESV\n* Realizar Caracterización para la identificación de los riesgos viales\n* Tabulación y análisis de la Caracterización\n* Identificar el Listado de rutas frecuentes\n* Lista de personal de la orgainzación",
+    "frecuencia": "Anual",
+    "responsable": "Profesional SST"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Plan de Trabajo anual SG SST - PESV",
+    "detalle": "* Se establece de forma anual teniendo en cuenta los hallazgos o pendientes del año anterior",
+    "frecuencia": "Anual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa , Alta direccion, COPASST"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Revisión, actualización de la Documentación, Procedimientos, Instructivos, formatos del SGSST - PESV.",
+    "detalle": "Revisión general de todos los documentos, actualizar y revisar la matriz de docuemtnos.",
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST de la Empresa"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Conservación de la documentación del Sistema de Gestión de Seguridad y Salud en el Trabajo, como lo exije la normatividad.",
+    "detalle": "* Verificar que se de cumplimiento en el control de documentos y la retención documental correspondiente a SG SST y PESV",
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Rendición de cuentas, Responsabilidades asignadas.",
+    "detalle": "* Verificar el procedimiento del rendición de cuentas y el informe del año anterior.\n* Reporte de autogestión para el PESV",
+    "frecuencia": "Anual",
+    "responsable": "Alta dirección:Gerencia,Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Responsabilidades del SG SST. - PESV en los perfiles de cargo",
+    "detalle": null,
+    "frecuencia": "Anual",
+    "responsable": "Todos los trabajadores"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Actualización de la Matriz Legal.",
+    "detalle": "* Verificar el cumplimiento de los requisitos legales y realizar una revisión trimestral de nuevos requisitos en SST, seguridad vial,",
+    "frecuencia": "Trimestral",
+    "responsable": "Responsable del SG SST de la Empresa"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Seguimiento y cierre a las comunicaciones (Reportes de actos y condiciones inseguras) que se realizan por parte de los trabajadores de la entidad.",
+    "detalle": "* Revisar el procedimiento de comunicación, participación y consulta, realizar el reporte de actos y condiciones inseguras por todos los trabajadores de forma periodicia.",
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Procedimiento de Compras y contratistas - actualización y seguimiento.",
+    "detalle": "* Realizar compras de productos quimicos con fichas de seguridad y fichas tecnicas, demas equipos, vehículos y maquinaria con certificaciones de calidad y especificaciones tecnicas.",
+    "frecuencia": "Anual",
+    "responsable": "Alta dirección:Gerencia,Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Evaluación de proveedores y contratistas.",
+    "detalle": "Validar el cumplimiento del SG SST PESV de los contratistas\n* Gestión de contratación de vehículos propios y terceros\n* Formato de Hoja de vida de vehículos propios y terceros\n* Gestión de contratación de conductores propios y terceros\n* Procedimiento de pruebas de idoneidad propios y terceros\n* Prueba de conocimiento teorico propios y terceros\n* Prueba practica de conducción propios y terceros\n* Perfil del conductor\n* Lista de verificación de los requisitos del vehiculo propios y terceros\n* Lista de chequeo, requisitos del operador propios y terceros\n* Seguimiento a la documentación de los vehículos y conductores propios y terceros.\n* Lista de chequeo contratación de vehículos terceros que no requieren PESV\n11 18",
+    "frecuencia": "Mensual",
+    "responsable": "Alta dirección:Gerencia,Responsable del SG SST - PESV, Contratistas y proveedores"
+  },
+  {
+    "fase": "I. Planear",
+    "nombre": "Diseñar y documentar el procedimiento de gestión del cambio y documentar los cambios.",
+    "detalle": "* Diligenciar el formato de gestión del cambio según lo establecido en el procedimiento.",
+    "frecuencia": "Semestral",
+    "responsable": "Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Actualización del Perfil sociodemográfico para el año 20XX.",
+    "detalle": "* Aplicar la encueta del perfil sociodemografico y realizar análisis para posteriormente ingresar en el programa de bienestar",
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Solicitar Diagnóstico de Condiciones de Salud suministrados por la IPS de los ultimos examenes ejecutados",
+    "detalle": null,
+    "frecuencia": "Anual",
+    "responsable": "Responsable del SG SST de la Empresa IPS"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Establecer Programa de promoción y prevención o PVE - Según como lo recomiende el medico ocupacional en el diagnostico de condiciones de salud.",
+    "detalle": null,
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST de la Empresa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Solicitar a IPS, el Profesiograma de acuerdo a los cargos de la entidad",
+    "detalle": "* Profesiograma firmado por el medico especialista en SST",
+    "frecuencia": "Actualización, Cuando se generan nuevos cargos y riesgos.",
+    "responsable": "Responsable del SG SST de la Empresa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Exámenes médicos periódicos ocupacionales para el personal de planta de la entidad y si es contratista Exigirlo al contratista.",
+    "detalle": "* Realizar examenes medicos de ingreso, periódicos y de retiro a todos los trabajadores de la empresa",
+    "frecuencia": "Anual",
+    "responsable": "Responsable del SG SST de la Empresa IPS"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Solicitud carta de Guarda y custodia de las Historias clínicas a la IPS donde se realizaron los examenes medicos ocupacionales e informe sociodemografico.",
+    "detalle": null,
+    "frecuencia": "Anual",
+    "responsable": "Responsable del SG SST de la Empresa IPS"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Entrega al Trabajador de las recomendaciones y restricciones resultantes de las evaluaciones medicas ocupacionales.",
+    "detalle": "* Realizar carta por parte de la empresa con las recomendaciones generadas en el examen medico de la IPS",
+    "frecuencia": "Cada vez que se generen las respectivas recomendaciónes",
+    "responsable": "Responsable del SG SST de la Empresa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Programas de PyP, estilos de vida y trabajo saludable.",
+    "detalle": "* Solicitar acompañamiento por parte de ARL para la ejecucion de los PVE.",
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST de la Empresa,ARL,IPS"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Campañas de Orden y Aseo, Suministro de agua potable.",
+    "detalle": "* Brochure de orden y aseo las 5´S, Programa de orden y aseo y uso de los recursos.",
+    "frecuencia": "Trimestral",
+    "responsable": "Responsable del SG SST de la Empresa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Verificar la Disposición de Residuos en todos los centros de trabajo de la entidad",
+    "detalle": null,
+    "frecuencia": "Trimestral",
+    "responsable": "Responsable del SG SST de la Empresa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Revisar y Actualizar (de ser necesario) el Mecanismos para el Reporte de incidentes y Accidentes de Trabajo, Siniestros viales y enfermedades laborales.",
+    "detalle": null,
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa COPASST - Comité PESV"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Verificar que se Reporte e Investiguen todos los Incidentes, Accidentes de Trabajo, Siniestros viales, enfermedades laborales,",
+    "detalle": "* Reportar a la ARL y EPS de forma inmediata y realizar investigacion de los accidentes.",
+    "frecuencia": "Cada vez que se presenten",
+    "responsable": "Responsable del SG SST de la Empresa COPASST"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Reportes de Mortalidad y Ausentismo, Incidencia y Prevalencia,",
+    "detalle": null,
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST de la Empresa COPASST"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Medición de la frecuencia de los accidentes de trabajo.",
+    "detalle": null,
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST de la Empresa COPASST"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Medición de la severidad de los accidentes de trabajo.",
+    "detalle": null,
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST de la Empresa COPASST"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Proporción de accidentes mortales",
+    "detalle": null,
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST de la Empresa COPASST"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Medición de la prevalencia de enfermedad laboral.",
+    "detalle": null,
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST de la Empresa COPASST"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Medición de la incidencia de enfermedad laboral.",
+    "detalle": null,
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST de la Empresa COPASST"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Medición del ausentismo por causa médica.",
+    "detalle": null,
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST de la Empresa COPASST"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Tasa de siniestros viales por nivel de pérdida",
+    "detalle": "TSV(n)",
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa, Comité PESV"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Costo siniestros viales por nivel de pérdida",
+    "detalle": "$SV(n)",
+    "frecuencia": "Anual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa, Comité PESV"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Riesgos de seguridad vial identificados",
+    "detalle": "RSVI",
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa, Comité PESV"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Gestión de riesgos viales",
+    "detalle": "GRV",
+    "frecuencia": "Trimestral",
+    "responsable": "Responsable del SG SST - PESV de la Empresa, Comité PESV"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Cumplimiento de metas PESV",
+    "detalle": null,
+    "frecuencia": "Anual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa, Comité PESV"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Cumplimiento de actividades plan anual",
+    "detalle": null,
+    "frecuencia": "Semestral",
+    "responsable": "Responsable del SG SST - PESV de la Empresa, Comité PESV"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Exceso de jornadas laborales",
+    "detalle": null,
+    "frecuencia": "Anual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa, Comité PESV"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Cobertura del programa de gestión de velocidad Empresarial",
+    "detalle": null,
+    "frecuencia": "Anual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa, Comité PESV"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Exceso limites de velocidad Laboral",
+    "detalle": null,
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa, Comité PESV"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Inspecciones diarias preoperacionales",
+    "detalle": null,
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa, Comité PESV"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Cumplimiento del plan de mantenimiento preventivo de vehículos",
+    "detalle": null,
+    "frecuencia": "Bimestral",
+    "responsable": "Responsable del SG SST - PESV de la Empresa, Comité PESV"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Cumplimiento plan de formación en seguridad vial",
+    "detalle": null,
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa, Comité PESV"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Cobertura del plan de formación en seguridad vial",
+    "detalle": null,
+    "frecuencia": "Trimestral",
+    "responsable": "Responsable del SG SST - PESV de la Empresa, Comité PESV"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "No conformidades auditorias Cerradas",
+    "detalle": null,
+    "frecuencia": "Bimestral",
+    "responsable": "Responsable del SG SST - PESV de la Empresa, Comité PESV"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Registro y análisis estadístico de siniestros viales",
+    "detalle": null,
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST - PESV de la Empresa, Comité PESV"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Actualización de la Matriz de Identificación de Peligros, Evaluación y Valoración de Riesgos en la organización, anual o cuando se presente un accidente laboral. (tener en cuenta la participación de los trabajadores y la identificación de los riegos viales en todos los actores que interactuan)",
+    "detalle": null,
+    "frecuencia": "Cuatrimestral",
+    "responsable": "Responsable del SG SST - PESV de la Empresa, COPASST"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Identificación de sustancias catalogadas como carcinógenas o toxicidad aguda",
+    "detalle": null,
+    "frecuencia": "Anual",
+    "responsable": "Responsable del SG SST de la Empresa,ARL"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Mediciones ambientales según los riesgos identificados",
+    "detalle": null,
+    "frecuencia": "Anual",
+    "responsable": "Responsable del SG SST de la Empresa,ARL"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Matriz de Jerarquización de los Riesgos, seguimiento de programas de gestión y análisis de indicadores",
+    "detalle": "PESV\n* Identificación de riegos criticos en las vias internas administradas por la organización en los diferentes centros de trabajo\n* Inspecciones anuales de las vias de circulación",
+    "frecuencia": null,
+    "responsable": "Responsable del SG SST - PESV de la Empresa."
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Aplicación de Baterías para el Riesgo psicosocial.",
+    "detalle": "* (psicologo especialista es SST)",
+    "frecuencia": null,
+    "responsable": "IPS, Psicólogo especialista en SST"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Plan de acción Propuestas Riesgo Psicosocial.",
+    "detalle": "* según Recomendaciones o sugerencias realizadas por el psicologo",
+    "frecuencia": null,
+    "responsable": "Responsable del SG SST de la Empresa, Psicologa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Inspección a Puestos de Trabajo",
+    "detalle": "Consultor externo o ARL (Inspeccion de puestos de trabajo)",
+    "frecuencia": null,
+    "responsable": "Responsable del SG SST de la Empresa , ARL"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Verificación de aplicación de medidas de prevención y control por parte de los trabajadores.",
+    "detalle": "* Se verifica el cumplimiento de los programas de gestión su ejecución y su aplicación.\n* Planificación de desplazamientos laborales\n* Listado de puntos criticos en la via https://www.datos.gov.co/Transporte/Sectores-cr-ticos-mortalidad-2022/ybqk-8s42",
+    "frecuencia": null,
+    "responsable": "Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Actualización y ejecución de los Programas de Gestión de Riesgo Prioritarios establecidos en SST *(instructivos tareas criticas),",
+    "detalle": "PESV\n* Programa de cansancio y fatiga\n* Programa de inspecciones\n* Programa de mantenimiento\n* Programa para la gestión de la velocidad\n- Seguimiento a comparendos\n- Cuadro de sanciones\n- Seguimiento diario a vehículos\n* Programa Protección de actores viales",
+    "frecuencia": null,
+    "responsable": "Responsable del SG SST de la Empresa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Verificar la lista de chequeo resolución 40595 de 2022 para el Plan Estratégico de Seguridad Vial.",
+    "detalle": null,
+    "frecuencia": null,
+    "responsable": "Alta Dirección-Gerencia"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "programa de inspecciones, realizar seguimiento a indicadores del programa",
+    "detalle": "* Realizar inspecciones periodicas y pre- operacionales\n* Realizar observaciones de comportamiento a trabajadores y operadores de vehiculo",
+    "frecuencia": null,
+    "responsable": "Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Inspecciones Maquinaria, vehículos y equipos en la entidad,",
+    "detalle": null,
+    "frecuencia": null,
+    "responsable": "Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Inspecciones Locativa en los centros de trabajo de la entidad,",
+    "detalle": null,
+    "frecuencia": null,
+    "responsable": "Responsable del SG SST de la Empresa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Seguimiento al Programa de Mantenimiento preventivo y correctivo (Locativo, vehículos, maquinaria, equipos, herramientas, etc.,)",
+    "detalle": "* Plan de mtto preventivode las vias internas",
+    "frecuencia": null,
+    "responsable": "Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Elementos de Protección Personal - matriz de EPP por riesgo y cargo y capacitación.",
+    "detalle": null,
+    "frecuencia": null,
+    "responsable": "Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Verificar la entrega de los EPP - Ver Matriz de EPP por Cargo",
+    "detalle": null,
+    "frecuencia": null,
+    "responsable": "Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Diseño y verificación del Plan Operativo de Emergencias (vulnerabilidad, amenazas) en todos los centros de trabajo de la entidad con alcance a los desplazamientos realizados en la organización",
+    "detalle": null,
+    "frecuencia": null,
+    "responsable": "Responsable del SG SST - PESV de la Empresa"
+  },
+  {
+    "fase": "II. Hacer",
+    "nombre": "Capacitación entrenamiento a las Brigadas, conformación. (Resolución 0256 de 2014) en todos los centros de trabajo de la entidad",
+    "detalle": "Capacitar, la brigada de atención a emergencias viales",
+    "frecuencia": null,
+    "responsable": "Responsable del SG SST de la Empresa, ARL"
+  },
+  {
+    "fase": "III. Verificar",
+    "nombre": "Seguimiento a indicadores de acuerdo a la estructura, proceso y resultados del SG SST.",
+    "detalle": null,
+    "frecuencia": "Trimestral",
+    "responsable": "Responsable del SG SST de la Empresa"
+  },
+  {
+    "fase": "III. Verificar",
+    "nombre": "Auditoria Interna SG SST - PESV",
+    "detalle": null,
+    "frecuencia": "Anual",
+    "responsable": "Alta Dirección"
+  },
+  {
+    "fase": "III. Verificar",
+    "nombre": "Revisión por la Dirección - Reporte de auto gestión PESV",
+    "detalle": null,
+    "frecuencia": "Anual",
+    "responsable": "Alta Dirección"
+  },
+  {
+    "fase": "IV. Actuar",
+    "nombre": "Seguimiento Planes de acción: Acciones Preventivas, Correctivas, de Mejora",
+    "detalle": null,
+    "frecuencia": "Mensual",
+    "responsable": "Responsable del SG SST de la Empresa"
+  },
+  {
+    "fase": "IV. Actuar",
+    "nombre": "Investigación de Incidentes, Accidentes de Trabajo, enfermedades laborales",
+    "detalle": null,
+    "frecuencia": "Cada vez que se presenten",
+    "responsable": "Responsable del SG SST de la Empresa,ARL"
+  },
+  {
+    "fase": "IV. Actuar",
+    "nombre": "Plan de mejora Investigación de Incidentes, Accidentes de Trabajo, Siniestros viales, enfermedades laborales, incluyendo recomendaciones de la ARL",
+    "detalle": null,
+    "frecuencia": "Cada vez que se presenten",
+    "responsable": "Responsable del SG SST de la Empresa,ARL"
+  },
+  {
+    "fase": "IV. Actuar",
+    "nombre": "Reporte de Evaluación de estandares minimos y planes de acción",
+    "detalle": null,
+    "frecuencia": "Anual",
+    "responsable": "Responsable del SG SST de la Empresa"
+  }
+]

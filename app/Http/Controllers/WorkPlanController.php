@@ -13,8 +13,9 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Plan de Trabajo Anual del SGI (cronograma por cláusulas ISO 4→10) de la
- * empresa cliente activa. Cada actividad se programa/ejecuta por mes.
+ * Planes de Trabajo Anual de la empresa cliente activa: el SST-PESV (Res. 0312,
+ * estándar 2.4.1, por ciclo PHVA) y el del SGI (por cláusulas ISO 4→10). Cada
+ * actividad se programa/ejecuta por mes.
  * Incluye metas/objetivos/recursos, selección de actividades aplicables y
  * firma digital del representante legal y del responsable del SG-SST.
  *
@@ -24,21 +25,26 @@ class WorkPlanController extends Controller
 {
     public function __construct(private readonly TenantContext $context) {}
 
-    public function show(): Response
+    public function show(Request $request): Response
     {
+        $tipo = $this->tipo($request);
+
         if (! $this->context->has()) {
             return Inertia::render('plan-trabajo/index', [
                 'needsClient' => true,
+                'tipo' => $tipo,
+                'planes' => WorkPlanActivity::PLANES,
+                'resumen' => [],
                 'activities' => [],
                 'plan' => null,
                 'firmantes' => null,
             ]);
         }
 
-        $plan = WorkPlan::firstOrCreate(['anio' => (int) now()->year]);
+        $plan = $this->planDelAnio($tipo);
         $items = $plan->items()->get()->keyBy('work_plan_activity_id');
 
-        $activities = WorkPlanActivity::orderBy('orden')->get()->map(function (WorkPlanActivity $a) use ($items, $plan) {
+        $activities = WorkPlanActivity::where('plan', $tipo)->orderBy('orden')->get()->map(function (WorkPlanActivity $a) use ($items, $plan) {
             $item = $items->get($a->id);
 
             return [
@@ -48,6 +54,8 @@ class WorkPlanController extends Controller
                 'nombre' => $a->nombre,
                 'normas' => $a->normas,
                 'soporte' => $a->soporte,
+                'frecuencia' => $a->frecuencia,
+                'responsable_sugerido' => $a->responsable_sugerido,
                 'aplica' => $plan->actividadAplica($a->id),
                 'programados' => $item?->meses_programados ?? [],
                 'ejecutados' => $item?->meses_ejecutados ?? [],
@@ -58,8 +66,14 @@ class WorkPlanController extends Controller
 
         $tenant = $this->context->get();
 
+        // Cumplimiento de los dos planes, para las pestañas.
+        $resumen = WorkPlan::where('anio', $plan->anio)->pluck('cumplimiento', 'tipo')->map(fn ($c) => (float) $c);
+
         return Inertia::render('plan-trabajo/index', [
             'needsClient' => false,
+            'tipo' => $tipo,
+            'planes' => WorkPlanActivity::PLANES,
+            'resumen' => $resumen,
             'activities' => $activities,
             'plan' => [
                 'id' => $plan->id,
@@ -94,6 +108,9 @@ class WorkPlanController extends Controller
             return back()->withErrors(['tenant' => 'Selecciona un cliente antes de diligenciar el plan de trabajo.']);
         }
 
+        $tipo = $this->tipo($request);
+        $delPlan = Rule::exists('work_plan_activities', 'id')->where('plan', $tipo);
+
         $data = $request->validate([
             'responsable' => ['nullable', 'string', 'max:255'],
             'metas' => ['nullable', 'string', 'max:5000'],
@@ -101,9 +118,9 @@ class WorkPlanController extends Controller
             'recursos' => ['nullable', 'string', 'max:5000'],
             // Actividades del catálogo que APLICAN a este plan.
             'seleccionadas' => ['required', 'array'],
-            'seleccionadas.*' => ['integer', 'exists:work_plan_activities,id'],
+            'seleccionadas.*' => ['integer', $delPlan],
             'items' => ['array'],
-            'items.*.activity_id' => ['required', 'integer', 'exists:work_plan_activities,id'],
+            'items.*.activity_id' => ['required', 'integer', $delPlan],
             'items.*.programados' => ['array'],
             'items.*.programados.*' => ['integer', 'between:1,12'],
             'items.*.ejecutados' => ['array'],
@@ -112,12 +129,12 @@ class WorkPlanController extends Controller
             'items.*.observaciones' => ['nullable', 'string', 'max:1000'],
         ]);
 
-        $plan = WorkPlan::firstOrCreate(['anio' => (int) now()->year]);
+        $plan = $this->planDelAnio($tipo);
 
         $seleccionadas = array_values(array_unique($data['seleccionadas']));
 
-        // Si el plan incluye TODAS las actividades del catálogo, guarda null (= todas).
-        $plan->actividades_seleccionadas = count($seleccionadas) === WorkPlanActivity::count()
+        // Si el plan incluye TODAS las actividades de su catálogo, guarda null (= todas).
+        $plan->actividades_seleccionadas = count($seleccionadas) === WorkPlanActivity::where('plan', $tipo)->count()
             ? null
             : $seleccionadas;
 
@@ -166,7 +183,7 @@ class WorkPlanController extends Controller
             'cc' => ['nullable', 'string', 'max:30'],
         ]);
 
-        $plan = WorkPlan::firstOrCreate(['anio' => (int) now()->year]);
+        $plan = $this->planDelAnio($this->tipo($request));
         $campo = $data['rol'] === 'representante' ? 'firma_rep' : 'firma_resp';
 
         $plan->update([
@@ -177,7 +194,9 @@ class WorkPlanController extends Controller
 
         $rolLabel = $data['rol'] === 'representante' ? 'representante legal' : 'responsable del SG-SST';
 
-        return back()->with('success', "Plan {$plan->anio} firmado por el {$rolLabel}.");
+        $nombrePlan = WorkPlanActivity::PLANES[$plan->tipo];
+
+        return back()->with('success', "Plan {$nombrePlan} {$plan->anio} firmado por el {$rolLabel}.");
     }
 
     /** Retira una firma del plan (solo gestión). */
@@ -191,7 +210,7 @@ class WorkPlanController extends Controller
             'rol' => ['required', Rule::in(['representante', 'responsable'])],
         ]);
 
-        $plan = WorkPlan::firstOrCreate(['anio' => (int) now()->year]);
+        $plan = $this->planDelAnio($this->tipo($request));
         $campo = $data['rol'] === 'representante' ? 'firma_rep' : 'firma_resp';
 
         $plan->update([
@@ -201,5 +220,21 @@ class WorkPlanController extends Controller
         ]);
 
         return back()->with('success', 'Firma retirada del plan.');
+    }
+
+    /**
+     * Qué plan se trabaja: `?plan=` en la URL o `plan` en el formulario. Por
+     * defecto el SST-PESV, que es el que exige la Res. 0312 a toda empresa.
+     */
+    private function tipo(Request $request): string
+    {
+        $tipo = (string) $request->input('plan', 'sst');
+
+        return array_key_exists($tipo, WorkPlanActivity::PLANES) ? $tipo : 'sst';
+    }
+
+    private function planDelAnio(string $tipo): WorkPlan
+    {
+        return WorkPlan::firstOrCreate(['anio' => (int) now()->year, 'tipo' => $tipo]);
     }
 }
