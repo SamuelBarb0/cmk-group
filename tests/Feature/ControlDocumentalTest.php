@@ -95,14 +95,31 @@ class ControlDocumentalTest extends TestCase
     {
         $this->assertSame(5, Norm::count());
         $this->assertSame(62, NormRequirement::distinct('clave_comun')->count('clave_comun'));
-        $this->assertSame(180, NormRequirement::count());
+        // El informe traía 180; se quitó la ISO 14001 6.3, que no existe.
+        $this->assertSame(179, NormRequirement::count());
         $this->assertSame(227, DocumentCatalogEntry::count());
         $this->assertSame(124, DocumentCatalogEntry::where('tipo', 'FT')->count());
 
         // Idempotente: correrlo dos veces no duplica nada.
         $this->seed(SigCatalogSeeder::class);
-        $this->assertSame(180, NormRequirement::count());
+        $this->assertSame(179, NormRequirement::count());
         $this->assertSame(227, DocumentCatalogEntry::count());
+    }
+
+    public function test_una_referencia_que_el_catalogo_ya_no_trae_se_quita(): void
+    {
+        // La que se sembró antes: «Planificación de los cambios» → ISO 14001 6.3.
+        $iso14001 = Norm::where('clave', 'iso14001')->firstOrFail();
+        $vieja = NormRequirement::create([
+            'norm_id' => $iso14001->id, 'clave_comun' => 'SIG-27', 'etapa' => '6', 'referencia' => '6.3',
+            'titulo' => 'Planificación de los cambios del sistema', 'evidencia' => 'documento', 'modulo' => 'M20', 'orden' => 27,
+        ]);
+
+        $this->seed(SigCatalogSeeder::class);
+
+        $this->assertModelMissing($vieja);
+        $this->assertSame(179, NormRequirement::count());
+        $this->assertFalse(NormRequirement::where('norm_id', $iso14001->id)->where('referencia', '6.3')->exists());
     }
 
     public function test_la_pantalla_carga_y_siembra_el_mapa_de_procesos(): void
