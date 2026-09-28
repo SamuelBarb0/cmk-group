@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
 import AppLayout from '@/layouts/app-layout';
+import { hoy as hoyLocal } from '@/lib/fechas';
 import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
@@ -71,7 +72,7 @@ export default function PesvConductor({
     const canManage = can('pesv.manage');
     const notice = useNotice(usePage<SharedData>().props.flash?.success);
     const nombre = `${conductor.nombres} ${conductor.apellidos}`.trim();
-    const hoy = new Date().toISOString().slice(0, 10);
+    const hoy = hoyLocal();
 
     const prueba = useForm({ tipo: 'teorica', fecha: hoy, puntaje: '', resultado: '', vigente_hasta: '', evaluador: '', observaciones: '' });
     const conPuntaje = prueba.data.tipo !== 'psicosensometrica';

@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
+import { hoy } from '@/lib/fechas';
 import { cn } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
 import { ArrowLeftRight, CalendarClock, CheckCircle2, Clock, PenLine, Plus, Trash2 } from 'lucide-react';
@@ -108,8 +109,6 @@ const ESTADO: Record<Estado, { label: string; clase: string }> = {
 
 const SELECT = 'border-input bg-background h-9 w-full rounded-md border px-3 text-sm';
 const AREA = 'border-input bg-background w-full rounded-md border px-3 py-2 text-sm';
-
-const hoy = () => new Date().toISOString().slice(0, 10);
 
 const vacio = {
     fecha_solicitud: hoy(),

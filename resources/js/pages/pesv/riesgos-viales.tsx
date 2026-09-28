@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
 import AppLayout from '@/layouts/app-layout';
+import { hoy as hoyLocal } from '@/lib/fechas';
 import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
@@ -80,7 +81,7 @@ export default function PesvRiesgosViales(props: Props) {
     const notice = useNotice(usePage<SharedData>().props.flash?.success);
     const [abierto, setAbierto] = useState(false);
     const [editando, setEditando] = useState<Riesgo | null>(null);
-    const hoy = new Date().toISOString().slice(0, 10);
+    const hoy = hoyLocal();
     const form = useForm<{
         desempeno: string;
         factor: string;

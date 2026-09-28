@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
+import { hoy } from '@/lib/fechas';
 import { cn } from '@/lib/utils';
 import { Link, router, useForm } from '@inertiajs/react';
 import { CircleAlert, ClipboardCheck, ListChecks, Pencil, Plus, ShieldCheck, Trash2, TriangleAlert, X } from 'lucide-react';
@@ -95,8 +96,6 @@ const ETIQUETA_HALLAZGO: Record<TipoHallazgo, string> = {
 
 /** Las que son incumplimiento y exigen acción correctiva. */
 const NO_CONFORMIDADES: TipoHallazgo[] = ['no_conformidad_mayor', 'no_conformidad_menor'];
-
-const hoy = () => new Date().toISOString().slice(0, 10);
 
 const hallazgoVacio: Hallazgo = {
     tipo: 'no_conformidad_menor',

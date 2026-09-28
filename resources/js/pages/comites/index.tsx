@@ -10,6 +10,7 @@ import { usePermissions } from '@/hooks/use-permissions';
 import { router, useForm } from '@inertiajs/react';
 import { CalendarX, Percent, Pencil, Plus, Scale, Trash2, UsersRound } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
+import { hoy } from '@/lib/fechas';
 
 type Tipo = 'copasst' | 'cocolab';
 type Rol = 'presidente' | 'secretario' | 'principal' | 'suplente';
@@ -106,8 +107,6 @@ const ACTIVIDADES_BASE: Record<Tipo, string[]> = {
         'Consolidado de los planes de acción',
     ],
 };
-
-const hoy = () => new Date().toISOString().slice(0, 10);
 
 const emptyForm = {
     tipo: 'copasst' as Tipo,

@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
+import { hoy } from '@/lib/fechas';
 import { cn } from '@/lib/utils';
 import { Link, useForm } from '@inertiajs/react';
 import { CalendarClock, ListTodo, Plus, Presentation } from 'lucide-react';
@@ -30,9 +31,6 @@ interface Props {
     stats: { total: number; pendientes: number; vencidas: number };
 }
 
-// Fecha LOCAL: toISOString() da la de UTC, que en Colombia pasa al día
-// siguiente desde las 7 p. m.
-const hoy = () => new Date().toLocaleDateString('en-CA');
 const inicioDeAnio = () => `${new Date().getFullYear()}-01-01`;
 
 export default function RevisionDireccionIndex({ needsClient, revisiones, stats }: Props) {

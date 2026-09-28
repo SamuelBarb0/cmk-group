@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
 import AppLayout from '@/layouts/app-layout';
+import { hoy as hoyLocal } from '@/lib/fechas';
 import { type SharedData } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { CircleAlert, Pencil, Plus, ReceiptText, Trash2, Users } from 'lucide-react';
@@ -53,7 +54,7 @@ export default function PesvInfracciones(props: Props) {
     const notice = useNotice(usePage<SharedData>().props.flash?.success);
     const [abierto, setAbierto] = useState(false);
     const [editando, setEditando] = useState<Infraccion | null>(null);
-    const hoy = new Date().toISOString().slice(0, 10);
+    const hoy = hoyLocal();
     const form = useForm({
         employee_id: '',
         pesv_vehicle_id: '',

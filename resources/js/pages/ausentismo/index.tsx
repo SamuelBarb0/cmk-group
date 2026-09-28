@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
 import { Activity, CalendarX, HeartPulse, Pencil, Plus, Stethoscope, Trash2 } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
+import { hoy } from '@/lib/fechas';
 
 interface Ausencia {
     id: number;
@@ -59,8 +60,6 @@ const ETIQUETA_TIPO: Record<string, string> = {
 
 /** Las que entran en el indicador de ausentismo por causa médica. */
 const CAUSA_MEDICA = ['enfermedad_general', 'accidente_trabajo', 'enfermedad_laboral', 'accidente_comun'];
-
-const hoy = () => new Date().toISOString().slice(0, 10);
 
 const emptyForm = {
     employee_id: '' as number | string,

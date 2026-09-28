@@ -7,8 +7,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePartes } from '@/hooks/use-partes';
-import { usePestana } from '@/hooks/use-pestana';
 import { usePermissions } from '@/hooks/use-permissions';
+import { usePestana } from '@/hooks/use-pestana';
+import { hoy } from '@/lib/fechas';
 import { cn } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
 import { Flame, PenLine, Phone, Plus, ShieldAlert, Siren, Trash2, Users } from 'lucide-react';
@@ -185,8 +186,6 @@ const ETIQUETA_DETALLE: Record<string, string> = {
     entidad_apoyo: 'Llamar en caso de',
     prestador_salud: 'Servicio',
 };
-
-const hoy = () => new Date().toISOString().slice(0, 10);
 
 const SELECT = 'border-input bg-background h-9 w-full rounded-md border px-3 text-sm';
 

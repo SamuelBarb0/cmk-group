@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
+import { hoy } from '@/lib/fechas';
 import { cn } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
 import { CircleAlert, ClipboardList, ListChecks, Pencil, Plus, ShieldQuestion, Trash2 } from 'lucide-react';
@@ -72,8 +73,6 @@ const ETIQUETA_ORIGEN: Record<string, string> = {
     pqrs: 'PQRS de un cliente',
     salida_no_conforme: 'Salida no conforme',
 };
-
-const hoy = () => new Date().toISOString().slice(0, 10);
 
 const emptyForm = {
     tipo: 'correctiva' as Tipo,

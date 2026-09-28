@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
+import { hoy } from '@/lib/fechas';
 import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
@@ -69,7 +70,6 @@ interface Props {
 }
 
 const selectCls = 'border-input bg-background h-9 w-full rounded-md border px-2 text-sm';
-const hoy = () => new Date().toISOString().slice(0, 10);
 const ALERTA: Record<string, [string, string]> = {
     vencido: ['Vencido', 'text-red-700 dark:text-red-400'],
     por_vencer: ['Por vencer', 'text-amber-700 dark:text-amber-400'],

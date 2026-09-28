@@ -2,6 +2,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { hoy as hoyLocal } from '@/lib/fechas';
 import { cn } from '@/lib/utils';
 import { useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
@@ -50,7 +51,7 @@ export function ListaRequisitos({
     /** Texto de la marca de los ítems (p. ej. «Hasta un mes después del ingreso»). */
     marca: string;
 }) {
-    const hoy = new Date().toISOString().slice(0, 10);
+    const hoy = hoyLocal();
     const form = useForm<{
         fecha: string;
         placa_asignada: string;
