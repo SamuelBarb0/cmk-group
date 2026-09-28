@@ -10,8 +10,11 @@ use Illuminate\Database\Seeder;
  * cláusulas ISO 4→10 y el SST-PESV por ciclo PHVA (ver sembrarSst).
  *
  * SGI: cláusulas ISO 4→10. Fuente: hoja «6.2 PLAN DE TRABAJO SGI» de la herramienta modelo de CMK.
- * Se omiten cláusulas de manufactura (diseño 8.3, producción 8.5.x, liberación 8.6)
- * que no aplican al alcance SST/HSEQ/PESV.
+ * Van las 34 filas de la hoja, también 8.3, 8.5.x y 8.6: la ISO 9001 habla de
+ * productos Y servicios, así que una empresa de servicios también las tiene.
+ * Excluirlas es decisión de cada empresa (casilla «Aplica»), no del catálogo.
+ * Los soportes son los de la hoja; donde la hoja no trae (8.2 en adelante)
+ * se redactaron a partir de la norma.
  */
 class WorkPlanActivitiesSeeder extends Seeder
 {
@@ -26,31 +29,37 @@ class WorkPlanActivitiesSeeder extends Seeder
         $M = '10. Mejora';
 
         $acts = [
-            ['4.1', $C, 'Comprensión de la organización y su contexto', ['9001', '14001', '45001'], 'Contexto estratégico; Matriz de oportunidades; Matriz DOFA / PESTEL'],
-            ['4.2', $C, 'Comprensión de las necesidades y expectativas de las partes interesadas', ['9001', '14001', '45001'], 'Análisis de necesidades y expectativas de las partes interesadas'],
-            ['4.3', $C, 'Determinación del alcance del sistema de gestión integral', ['9001', '14001', '45001'], 'Alcance del sistema de gestión integral'],
-            ['4.4', $C, 'Sistema de gestión integral y sus procesos', ['9001', '14001', '45001'], 'Mapa de procesos; Caracterización de los procesos'],
+            ['4.1', $C, 'Comprensión de la organización y su contexto', ['9001', '14001', '45001'], 'Contexto estratégico; Matriz de Oportunidades; Matriz DOFA / PESTEL'],
+            ['4.2', $C, 'Comprensión de las necesidades y expectativas de las partes interesadas', ['9001', '14001', '45001'], 'Análisis de las necesidades y expectativas de las partes interesadas'],
+            ['4.3', $C, 'Determinación del alcance del sistema de gestión integral', ['9001', '14001', '45001'], 'Alcance del Sistema de gestión Integral'],
+            ['4.4', $C, 'Sistema de gestión integral y sus procesos', ['9001', '14001', '45001'], 'Los procesos necesarios para el Sistema de Gestión Integral; Mapa de procesos; Caracterización de los procesos'],
 
-            ['5.1', $L, 'Liderazgo y compromiso', ['9001', '14001', '45001'], 'Política SGI; Plan de comunicación y responsabilidades; Manual del SGI; Matriz de responsabilidades; Informes de desempeño'],
-            ['5.1.2', $L, 'Enfoque al cliente', ['9001'], 'Procedimiento de atención a PQRS; Encuestas de satisfacción del cliente; Registro de quejas y reclamaciones'],
-            ['5.2', $L, 'Política del SGI', ['9001', '14001', '45001'], 'Documento de política de gestión integral; Divulgación de la política'],
-            ['5.3', $L, 'Roles, responsabilidades y autoridades', ['9001'], 'Matriz de roles y responsabilidades; Participación y consulta; Informe de rendición de cuentas; Organigrama'],
+            ['5.1', $L, 'Liderazgo y compromiso', ['9001', '14001', '45001'], 'Política SGI; Plan de Comunicación y responsabilidades; Manual del SGI; Matriz de responsabilidades; Informes de desempeño'],
+            ['5.1.2', $L, 'Enfoque al cliente', ['9001'], 'Procedimiento de atención a PQRS; Encuestas de Satisfacción del Cliente; Registro de Quejas y Reclamaciones; Comunicaciones con el Cliente'],
+            ['5.2', $L, 'Política del SGI', ['9001', '14001', '45001'], 'Documento de Política de Gestión Integral; Divulgación de la política'],
+            ['5.3', $L, 'Roles, responsabilidades y autoridades', ['9001'], 'Matriz de Roles y responsabilidades; Participación y consulta; Modelo de Informe de Rendición de cuentas sobre el desempeño; Organigrama'],
 
-            ['6.1', $P, 'Acciones para tratar riesgos y oportunidades', ['9001', '14001', '45001'], 'Procedimiento y matriz de riesgos y oportunidades; Matriz de aspectos e impactos ambientales; Matriz de identificación de peligros (IPERC)'],
-            ['6.2', $P, 'Objetivos del SGI y planificación para lograrlos', ['9001', '14001', '45001'], 'Objetivos del SGI; Despliegue de objetivos; Indicadores de gestión SST; Ficha técnica de los indicadores'],
+            ['6.1', $P, 'Acciones para tratar riesgos y oportunidades', ['9001', '14001', '45001'], 'Procedimiento de Identificación y evaluación de riesgos y Oportunidades del sistema de gestión; Matriz de Identificación y evaluación de riesgos y Oportunidades del sistema de gestión; Matriz de aspectos e impactos ambientales; Matriz de identificación de peligros'],
+            ['6.2', $P, 'Objetivos del SGI y planificación para lograrlos', ['9001', '14001', '45001'], 'Objetivos del Sistema de Gestión Integral; Despliegue de objetivos; Indicadores de gestión SST; Ficha técnica de los indicadores'],
             ['6.3', $P, 'Planificación de los cambios', ['9001', '45001'], 'Procedimiento de gestión del cambio; Matriz de gestión del cambio'],
 
-            ['7.1', $A, 'Recursos', ['9001', '14001', '45001'], 'Presupuesto proyectado para la implementación del SGI'],
-            ['7.1.2', $A, 'Personas, infraestructura y recursos de seguimiento', ['9001'], 'Plan de mantenimiento preventivo y correctivo; Procedimiento de calibración de equipos; Manual de funciones y responsabilidades'],
-            ['7.2', $A, 'Competencia', ['9001', '14001', '45001'], 'Procedimiento de administración de personal; Procedimiento de capacitación/formación e inducción; Plan de capacitaciones y su seguimiento'],
+            ['7.1', $A, 'Recursos', ['9001', '14001', '45001'], 'Establecer presupuesto proyectado para la implementación del SGI'],
+            ['7.1.2', $A, 'Personas, infraestructura y recursos de seguimiento', ['9001'], 'Plan de mantenimiento preventivo y correctivo de las instalaciones, equipo y maquinaria; Procedimiento de calibración de equipos; Manual de funciones y responsabilidades'],
+            ['7.2', $A, 'Competencia', ['9001', '14001', '45001'], 'Procedimiento para la administración de personal; Competencia de responsable del SGI; Procedimiento de Capacitación/formación – Inducción; Definir el plan de capacitaciones y el seguimiento a realizar; Ejecución de capacitaciones del SGI; Determinar las necesidades de capacitación Manual de funciones y responsabilidades'],
             ['7.3', $A, 'Toma de conciencia', ['9001', '14001', '45001'], 'Matriz de competencias; Toma de conciencia; Conocimientos de la organización'],
-            ['7.4', $A, 'Comunicación', ['9001', '14001', '45001'], 'Procedimiento de comunicación, participación y consulta; Matriz de comunicaciones'],
-            ['7.5', $A, 'Información documentada', ['9001', '14001', '45001'], 'Manual y matriz de control de documentos y registros; Matriz de control de documentos externos'],
+            ['7.4', $A, 'Comunicación', ['9001', '14001', '45001'], 'Procedimiento de comunicación participación y Consulta; Matriz de comunicaciones'],
+            ['7.5', $A, 'Información documentada', ['9001', '14001', '45001'], 'Manual de Control de Documentos y registros; Matriz de control de documentos y registros; Matriz de control de documentos externos'],
 
-            ['8.1', $O, 'Planificación y control operacional', ['9001', '14001', '45001'], 'Manual de contratistas (incluye requisitos ambientales)'],
+            ['8.1', $O, 'Planificación y control operacional', ['9001', '14001', '45001'], 'Manual de contratistas, incluir requisitos ambientales a contratistas'],
             ['8.2', $O, 'Requisitos para los productos y servicios', ['9001'], 'Comunicación con el cliente; Determinación y revisión de requisitos'],
             ['8.2E', $O, 'Preparación y respuesta ante emergencias', ['14001', '45001'], 'Plan de preparación y respuesta ante emergencias'],
+            ['8.3', $O, 'Diseño y desarrollo de los productos y servicios', ['9001'], 'Procedimiento de diseño y desarrollo, o justificación de su exclusión en el alcance'],
             ['8.4', $O, 'Control de procesos, productos y servicios externos', ['9001', '45001'], 'Procedimiento de selección, evaluación y reevaluación de proveedores; Requisitos para proveedores externos'],
+            ['8.5', $O, 'Producción y provisión del servicio', ['9001'], 'Procedimiento de prestación del servicio; Control de los cambios en la prestación del servicio'],
+            ['8.5.2', $O, 'Identificación y trazabilidad', ['9001'], 'Registros de identificación y trazabilidad del servicio'],
+            ['8.5.3', $O, 'Propiedad del cliente', ['9001'], 'Registro y control de la propiedad del cliente (información, documentos, equipos)'],
+            ['8.5.4', $O, 'Preservación', ['9001'], 'Condiciones de preservación de las salidas (almacenamiento, protección de la información)'],
+            ['8.6', $O, 'Liberación de los productos y servicios', ['9001'], 'Registros de liberación y aprobación del servicio antes de entregarlo'],
             ['8.7', $O, 'Control de las salidas no conformes', ['9001'], 'Procedimiento de control de salidas no conformes'],
 
             ['9.1', $E, 'Seguimiento, medición, análisis y evaluación', ['9001', '14001', '45001'], 'Indicadores de gestión; Análisis y evaluación del desempeño; Satisfacción del cliente'],
