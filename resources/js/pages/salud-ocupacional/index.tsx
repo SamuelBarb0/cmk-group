@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePartes } from '@/hooks/use-partes';
+import { usePestana } from '@/hooks/use-pestana';
 import { usePermissions } from '@/hooks/use-permissions';
 import { cn } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
@@ -176,7 +177,7 @@ export default function SaludOcupacionalIndex({
     const { can } = usePermissions();
     const canManage = can('sst.manage');
     const { tiene } = usePartes('salud-ocupacional');
-    const [pestana, setPestana] = useState<Pestana>('trabajadores');
+    const [pestana, setPestana] = usePestana<Pestana>('salud-ocupacional', ['trabajadores', 'examenes', 'profesiograma'], ['trabajadores']);
     const [filtro, setFiltro] = useState<'todos' | Trabajador['estado']>('todos');
 
     const [dlgEx, setDlgEx] = useState(false);

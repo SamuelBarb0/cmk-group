@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePartes } from '@/hooks/use-partes';
+import { usePestana } from '@/hooks/use-pestana';
 import { usePermissions } from '@/hooks/use-permissions';
 import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
@@ -112,8 +113,8 @@ export default function Calidad(props: Props) {
     const { can } = usePermissions();
     const canManage = can('sst.manage');
     const errores = usePage<SharedData>().props.errors as Record<string, string | undefined>;
-    const { tiene, primera } = usePartes('calidad');
-    const [pestana, setPestana] = useState<Pestana>(() => primera(['pqrs', 'salidas', 'satisfaccion'] as const));
+    const { tiene } = usePartes('calidad');
+    const [pestana, setPestana] = usePestana<Pestana>('calidad', ['pqrs', 'salidas', 'satisfaccion']);
     const [pqrsDlg, setPqrsDlg] = useState<Pqrs | 'nuevo' | null>(null);
     const [salidaDlg, setSalidaDlg] = useState<Salida | 'nuevo' | null>(null);
     const [encuestaDlg, setEncuestaDlg] = useState<Encuesta | 'nuevo' | null>(null);

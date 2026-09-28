@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePartes } from '@/hooks/use-partes';
+import { usePestana } from '@/hooks/use-pestana';
 import { usePermissions } from '@/hooks/use-permissions';
 import { cn } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
@@ -124,7 +125,7 @@ export default function EppIndex({ items, matriz, entregas, empleados, cargos, s
     const { can } = usePermissions();
     const canManage = can('sst.manage');
     const { tiene } = usePartes('epp');
-    const [pestana, setPestana] = useState<Pestana>('catalogo');
+    const [pestana, setPestana] = usePestana<Pestana>('epp', ['catalogo', 'matriz', 'entregas'], ['catalogo']);
 
     const [dlgItem, setDlgItem] = useState(false);
     const [editItem, setEditItem] = useState<Item | null>(null);
