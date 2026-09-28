@@ -1,3 +1,4 @@
+import { ModuloNav, SUBMODULOS } from '@/components/modulo-nav';
 import { NavUser } from '@/components/nav-user';
 import { PesvNav } from '@/components/pesv-nav';
 import {
@@ -58,7 +59,8 @@ import AppLogo from './app-logo';
 
 /**
  * Ítem del sidebar. `tree` marca los que no son un enlace suelto sino un árbol
- * propio (hoy solo el PESV, que despliega sus 4 fases y 24 pasos).
+ * propio (el PESV, que despliega sus 4 fases y 24 pasos). Los módulos con
+ * submódulos (ver `SUBMODULOS`) se despliegan solos por su `module`.
  */
 type NavEntry = NavItem & { tree?: 'pesv' };
 
@@ -188,6 +190,8 @@ export function AppSidebar() {
                                 {visible.map((item) =>
                                     item.tree === 'pesv' ? (
                                         <PesvNav key={item.title} />
+                                    ) : item.module && SUBMODULOS[item.module] ? (
+                                        <ModuloNav key={item.title} item={item} modulo={item.module} codigo={codigo(item)} />
                                     ) : (
                                         <SidebarMenuItem key={item.title}>
                                             <SidebarMenuButton asChild isActive={url.startsWith(item.url)} tooltip={{ children: item.title }}>

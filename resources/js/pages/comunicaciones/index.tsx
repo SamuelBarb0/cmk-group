@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePartes } from '@/hooks/use-partes';
+import { usePestana } from '@/hooks/use-pestana';
 import { usePermissions } from '@/hooks/use-permissions';
 import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
@@ -63,8 +64,8 @@ export default function ComunicacionesIndex({ needsClient, matriz, registro, sta
     const { can } = usePermissions();
     const canManage = can('sst.manage');
     const errores = usePage<SharedData>().props.errors as Record<string, string | undefined>;
-    const { tiene, primera } = usePartes('comunicaciones');
-    const [pestana, setPestana] = useState<'matriz' | 'registro'>(() => primera(['matriz', 'registro'] as const));
+    const { tiene } = usePartes('comunicaciones');
+    const [pestana, setPestana] = usePestana<'matriz' | 'registro'>('comunicaciones', ['matriz', 'registro']);
     const [item, setItem] = useState<Item | 'nuevo' | null>(null);
     const [log, setLog] = useState<Registro | 'nuevo' | null>(null);
 

@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePartes } from '@/hooks/use-partes';
+import { usePestana } from '@/hooks/use-pestana';
 import { usePermissions } from '@/hooks/use-permissions';
 import { cn } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
@@ -268,8 +269,8 @@ function porcentaje(num: number, den: number): string {
 export default function EmergenciasIndex({ anio, brigada, simulacros, equipos, directorio, empleados, stats, catalogos, needsClient }: Props) {
     const { can } = usePermissions();
     const canManage = can('sst.manage');
-    const { tiene, primera } = usePartes('emergencias');
-    const [pestana, setPestana] = useState<Pestana>(() => primera(['brigada', 'simulacros', 'equipos', 'directorio'] as const));
+    const { tiene } = usePartes('emergencias');
+    const [pestana, setPestana] = usePestana<Pestana>('emergencias', ['brigada', 'simulacros', 'equipos', 'directorio']);
 
     const [dlgBrig, setDlgBrig] = useState(false);
     const [editBrig, setEditBrig] = useState<Brigadista | null>(null);
