@@ -46,7 +46,11 @@ class PlanTrabajoTest extends TestCase
     public function test_el_catalogo_trae_los_dos_planes(): void
     {
         $this->assertSame(88, WorkPlanActivity::where('plan', 'sst')->count());
-        $this->assertSame(28, WorkPlanActivity::where('plan', 'sgi')->count());
+        // Las 34 filas de la hoja 6.2: también 8.3, 8.5.x y 8.6, que aplican a servicios.
+        $this->assertSame(34, WorkPlanActivity::where('plan', 'sgi')->count());
+        $this->assertTrue(WorkPlanActivity::where('codigo', '8.5')->exists());
+        // Soportes completos de la hoja (7.2 Competencia trae 6).
+        $this->assertCount(6, explode('; ', WorkPlanActivity::where('codigo', '7.2')->value('soporte')));
 
         // Emergencias (ISO 14001/45001 8.2) no puede perderse bajo el 8.2 de la 9001.
         $this->assertTrue(WorkPlanActivity::where('codigo', '8.2E')->where('plan', 'sgi')->exists());
@@ -67,7 +71,7 @@ class PlanTrabajoTest extends TestCase
                 ->where('activities.0.codigo', 'SST-01'));
 
         $this->comoConsultor()->get('/plan-trabajo?plan=sgi')->assertOk()
-            ->assertInertia(fn ($p) => $p->where('tipo', 'sgi')->has('activities', 28));
+            ->assertInertia(fn ($p) => $p->where('tipo', 'sgi')->has('activities', 34));
 
         // Un plan que no existe cae al SST.
         $this->comoConsultor()->get('/plan-trabajo?plan=otro')->assertOk()
