@@ -12,9 +12,10 @@ use Illuminate\Database\Seeder;
  * Normas, requisitos y catálogo documental del SIG.
  *
  * Los datos salen del «Mapa Documental SIG» (Cristian Contreras, 23-sep-2026),
- * exportados a `data/sig-catalogo.json`: 62 requisitos con 180 referencias
- * exactas repartidas en 5 normas, y 227 documentos en 20 módulos. Son los
- * mismos números del informe; si cambian, cambió el JSON.
+ * exportados a `data/sig-catalogo.json`: 62 requisitos con 179 referencias
+ * exactas repartidas en 5 normas, y 227 documentos en 20 módulos. El informe
+ * traía 180: el 28-sep-2026 se quitó «Planificación de los cambios» → ISO 14001
+ * 6.3, que no existe en esa norma (los cambios van por su 8.1).
  *
  * Idempotente: se puede volver a correr para actualizar textos sin duplicar
  * ni romper los vínculos que ya hicieron las empresas.
@@ -82,6 +83,7 @@ class SigCatalogSeeder extends Seeder
             );
         }
 
+        $vigentes = [];
         foreach ($data['requisitos'] as $i => $r) {
             $claveComun = sprintf('SIG-%02d', $i + 1);
 
@@ -98,8 +100,15 @@ class SigCatalogSeeder extends Seeder
                         'orden' => $i + 1,
                     ],
                 );
+                $vigentes[] = $normas[self::CLAVES[$corta]]->id.'|'.$claveComun;
             }
         }
+
+        // Una referencia que el JSON ya no trae era un error del catálogo: se
+        // quita. Sus vínculos con documentos y auditorías se van en cascada.
+        NormRequirement::whereIn('norm_id', collect($normas)->pluck('id'))->get()
+            ->reject(fn (NormRequirement $r) => in_array($r->norm_id.'|'.$r->clave_comun, $vigentes, true))
+            ->each->delete();
 
         foreach ($data['documentos'] as $i => $d) {
             DocumentCatalogEntry::updateOrCreate(

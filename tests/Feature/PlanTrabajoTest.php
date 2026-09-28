@@ -46,8 +46,11 @@ class PlanTrabajoTest extends TestCase
     public function test_el_catalogo_trae_los_dos_planes(): void
     {
         $this->assertSame(88, WorkPlanActivity::where('plan', 'sst')->count());
-        // Las 34 filas de la hoja 6.2: también 8.3, 8.5.x y 8.6, que aplican a servicios.
-        $this->assertSame(34, WorkPlanActivity::where('plan', 'sgi')->count());
+        // Las 34 filas de la hoja 6.2 (también 8.3, 8.5.x y 8.6, que aplican a
+        // servicios) más la 45001 5.4, que la hoja había mezclado en el 5.1.
+        $this->assertSame(35, WorkPlanActivity::where('plan', 'sgi')->count());
+        $this->assertSame(['45001'], WorkPlanActivity::where('codigo', '5.4')->value('normas'));
+        $this->assertSame(['9001', '14001', '45001'], WorkPlanActivity::where('codigo', '5.3')->value('normas'));
         $this->assertTrue(WorkPlanActivity::where('codigo', '8.5')->exists());
         // Soportes completos de la hoja (7.2 Competencia trae 6).
         $this->assertCount(6, explode('; ', WorkPlanActivity::where('codigo', '7.2')->value('soporte')));
@@ -71,7 +74,7 @@ class PlanTrabajoTest extends TestCase
                 ->where('activities.0.codigo', 'SST-01'));
 
         $this->comoConsultor()->get('/plan-trabajo?plan=sgi')->assertOk()
-            ->assertInertia(fn ($p) => $p->where('tipo', 'sgi')->has('activities', 34));
+            ->assertInertia(fn ($p) => $p->where('tipo', 'sgi')->has('activities', 35));
 
         // Un plan que no existe cae al SST.
         $this->comoConsultor()->get('/plan-trabajo?plan=otro')->assertOk()
