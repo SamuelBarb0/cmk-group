@@ -44,32 +44,35 @@ class PlanTrabajo extends Seccion
         $sinPlan = [];
 
         foreach ($periodo->meses() as $anio => $meses) {
-            $plan = WorkPlan::with('items.activity')->where('anio', $anio)->first();
-            if (! $plan) {
+            // Los dos planes del año (SST-PESV y SGI) cuentan juntos.
+            $planes = WorkPlan::with('items.activity')->where('anio', $anio)->get();
+            if ($planes->isEmpty()) {
                 $sinPlan[] = $anio;
 
                 continue;
             }
-            foreach ($plan->items as $item) {
-                if (! $plan->actividadAplica($item->work_plan_activity_id)) {
-                    continue;
-                }
-                $prog = array_values(array_intersect($item->meses_programados ?? [], $meses));
-                $hechos = array_intersect($prog, $item->meses_ejecutados ?? []);
-                $programados += count($prog);
-                $ejecutados += count($hechos);
+            foreach ($planes as $plan) {
+                foreach ($plan->items as $item) {
+                    if (! $plan->actividadAplica($item->work_plan_activity_id)) {
+                        continue;
+                    }
+                    $prog = array_values(array_intersect($item->meses_programados ?? [], $meses));
+                    $hechos = array_intersect($prog, $item->meses_ejecutados ?? []);
+                    $programados += count($prog);
+                    $ejecutados += count($hechos);
 
-                // Solo meses ya terminados: lo programado para este mes o
-                // para después todavía no está atrasado.
-                $vencidos = array_filter(array_diff($prog, $hechos),
-                    fn ($m) => CarbonImmutable::create($anio, $m, 1)->endOfMonth()->isPast());
-                if ($vencidos) {
-                    $atrasadas[] = [
-                        $item->activity?->codigo,
-                        self::corto($item->activity?->nombre, 100),
-                        implode(', ', array_map(fn ($m) => self::MESES[$m].' '.$anio, $vencidos)),
-                        $item->responsable ?: $plan->responsable,
-                    ];
+                    // Solo meses ya terminados: lo programado para este mes o
+                    // para después todavía no está atrasado.
+                    $vencidos = array_filter(array_diff($prog, $hechos),
+                        fn ($m) => CarbonImmutable::create($anio, $m, 1)->endOfMonth()->isPast());
+                    if ($vencidos) {
+                        $atrasadas[] = [
+                            $item->activity?->codigo,
+                            self::corto($item->activity?->nombre, 100),
+                            implode(', ', array_map(fn ($m) => self::MESES[$m].' '.$anio, $vencidos)),
+                            $item->responsable ?: $plan->responsable,
+                        ];
+                    }
                 }
             }
         }

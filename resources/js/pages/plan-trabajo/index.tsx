@@ -16,6 +16,9 @@ interface Activity {
     nombre: string;
     normas: string[];
     soporte: string | null;
+    /** Solo en el plan SST-PESV: frecuencia y responsable que sugiere la hoja 2.4.1. */
+    frecuencia: string | null;
+    responsable_sugerido: string | null;
     /** ¿La actividad aplica (fue seleccionada) para este plan? */
     aplica: boolean;
     programados: number[];
@@ -30,7 +33,14 @@ interface Firma {
     fecha: string;
 }
 
+type Tipo = 'sst' | 'sgi';
+
 interface Props {
+    /** Plan que se está viendo: SST-PESV (Res. 0312) o SGI (cláusulas ISO). */
+    tipo: Tipo;
+    planes: Record<Tipo, string>;
+    /** Cumplimiento guardado de cada plan del año, para las pestañas. */
+    resumen: Partial<Record<Tipo, number>>;
     activities: Activity[];
     plan: {
         id: number;
@@ -67,7 +77,20 @@ function estadosIniciales(a: Activity): Record<number, 0 | 1 | 2> {
     return e;
 }
 
-export default function PlanTrabajoIndex({ activities, plan, firmantes, needsClient }: Props) {
+const DESCRIPCION: Record<Tipo, string> = {
+    sst: 'Plan de trabajo anual del SG-SST y el PESV por ciclo PHVA (Res. 0312 de 2019, estándar 2.4.1).',
+    sgi: 'Cronograma de implementación del SGI por cláusulas ISO 4→10.',
+};
+
+/**
+ * Cada plan monta su propia copia de la pantalla: el cronograma se arma una vez
+ * desde las props, y al cambiar de plan no debe arrastrar lo del otro.
+ */
+export default function PlanTrabajoIndex(props: Props) {
+    return <PlanTrabajo key={props.tipo} {...props} />;
+}
+
+function PlanTrabajo({ tipo, planes, resumen, activities, plan, firmantes, needsClient }: Props) {
     const { can } = usePermissions();
     const canManage = can('sst.manage');
     const page = usePage<SharedData>();
@@ -86,6 +109,9 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
     // Datos de la firma en edición (prellenados desde Organización).
     const [firmaRep, setFirmaRep] = useState({ nombre: firmantes?.representante.nombre ?? '', cc: firmantes?.representante.cc ?? '' });
     const [firmaResp, setFirmaResp] = useState({ nombre: firmantes?.responsable.nombre ?? '', cc: firmantes?.responsable.cc ?? '' });
+
+    // Hay cambios sin guardar: se avisa antes de cambiar de plan.
+    const [sucio, setSucio] = useState(false);
 
     const seleccionadasCount = useMemo(() => activities.filter((a) => aplican[a.id]).length, [activities, aplican]);
 
@@ -118,17 +144,20 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
         setFilas((f) => {
             const est = { ...(f[id]?.estados ?? {}) };
             est[mes] = (((est[mes] ?? 0) + 1) % 3) as 0 | 1 | 2;
+            setSucio(true);
             return { ...f, [id]: { ...f[id], estados: est } };
         });
     }
     function setResp(id: number, r: string) {
         setFilas((f) => ({ ...f, [id]: { ...f[id], responsable: r } }));
+        setSucio(true);
     }
 
     function guardar() {
         router.post(
             route('plan-trabajo.save'),
             {
+                plan: tipo,
                 responsable,
                 metas,
                 objetivos,
@@ -153,23 +182,29 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                         };
                     }),
             },
-            { preserveScroll: true, onStart: () => setSaving(true), onFinish: () => setSaving(false) },
+            {
+                preserveScroll: true,
+                onStart: () => setSaving(true),
+                onSuccess: () => setSucio(false),
+                onFinish: () => setSaving(false),
+            },
         );
     }
 
     function toggleAplica(id: number) {
         if (!canManage) return;
         setAplican((s) => ({ ...s, [id]: !s[id] }));
+        setSucio(true);
     }
 
     function firmar(rol: 'representante' | 'responsable') {
         const firma = rol === 'representante' ? firmaRep : firmaResp;
-        router.post(route('plan-trabajo.firmar'), { rol, nombre: firma.nombre, cc: firma.cc || null }, { preserveScroll: true });
+        router.post(route('plan-trabajo.firmar'), { plan: tipo, rol, nombre: firma.nombre, cc: firma.cc || null }, { preserveScroll: true });
     }
 
     function quitarFirma(rol: 'representante' | 'responsable') {
         if (confirm('¿Retirar esta firma del plan?')) {
-            router.post(route('plan-trabajo.quitar-firma'), { rol }, { preserveScroll: true });
+            router.post(route('plan-trabajo.quitar-firma'), { plan: tipo, rol }, { preserveScroll: true });
         }
     }
 
@@ -181,9 +216,9 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                     <div>
                         <h1 className="font-brand text-2xl font-bold tracking-tight">
                             <CodigoSig className="mr-2" />
-                            Plan de Trabajo Anual del SGI
+                            Plan de Trabajo Anual
                         </h1>
-                        <p className="text-muted-foreground text-sm">Cronograma de actividades por cláusulas ISO 4→10.</p>
+                        <p className="text-muted-foreground text-sm">{DESCRIPCION[tipo]}</p>
                     </div>
                     <Card>
                         <CardContent className="flex min-h-60 flex-col items-center justify-center gap-3 text-center">
@@ -214,10 +249,10 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                     <div>
                         <h1 className="font-brand text-2xl font-bold tracking-tight">
                             <CodigoSig className="mr-2" />
-                            Plan de Trabajo Anual del SGI
+                            Plan de Trabajo Anual
                         </h1>
                         <p className="text-muted-foreground text-sm">
-                            Cronograma {plan?.anio}
+                            {DESCRIPCION[tipo]} Cronograma {plan?.anio}
                             {tenant ? (
                                 <>
                                     {' '}
@@ -233,6 +268,31 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                     )}
                 </div>
 
+                {/* Un plan por pestaña: SST-PESV y SGI */}
+                <div className="flex gap-1 border-b">
+                    {(Object.keys(planes) as Tipo[]).map((t) => (
+                        <Link
+                            key={t}
+                            href={`/plan-trabajo?plan=${t}`}
+                            preserveScroll
+                            onClick={(e) => {
+                                if (t !== tipo && sucio && !confirm('Hay cambios sin guardar en este plan. ¿Cambiar de plan y descartarlos?')) {
+                                    e.preventDefault();
+                                }
+                            }}
+                            className={cn(
+                                '-mb-px border-b-2 px-4 py-2 text-sm',
+                                t === tipo ? 'border-primary font-medium' : 'text-muted-foreground hover:text-foreground border-transparent',
+                            )}
+                        >
+                            {planes[t]}
+                            {resumen[t] !== undefined && (
+                                <span className="text-muted-foreground ml-1.5 tabular-nums">{resumen[t]!.toFixed(0)} %</span>
+                            )}
+                        </Link>
+                    ))}
+                </div>
+
                 {/* Tarjeta de cumplimiento */}
                 <Card>
                     <CardContent className="flex flex-wrap items-center gap-6 p-6">
@@ -246,7 +306,7 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                                 <span className="font-semibold tabular-nums">{programados}</span> programadas
                             </span>
                             <span className="text-muted-foreground">
-                                {seleccionadasCount} de {activities.length} actividades del SGI aplican
+                                {seleccionadasCount} de {activities.length} actividades del plan aplican
                             </span>
                         </div>
                         {/* Mini-cronograma por mes: programado (base) vs ejecutado (relleno) */}
@@ -287,7 +347,7 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                                     onChange={(e) => setObjetivos(e.target.value)}
                                     disabled={!canManage}
                                     rows={4}
-                                    placeholder="Objetivos del SGI para el año…"
+                                    placeholder={tipo === 'sst' ? 'Objetivos del SG-SST y el PESV para el año…' : 'Objetivos del SGI para el año…'}
                                     className="border-input bg-background rounded-md border px-3 py-2 text-sm disabled:opacity-60"
                                 />
                             </label>
@@ -392,7 +452,9 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                                                 </td>
                                                 <td className="max-w-md px-3 py-2">
                                                     <div className="flex items-center gap-2">
-                                                        <span className="text-primary font-mono text-xs font-semibold">{a.codigo}</span>
+                                                        <span className="text-primary shrink-0 font-mono text-xs font-semibold whitespace-nowrap">
+                                                            {a.codigo}
+                                                        </span>
                                                         <span className="leading-tight">{a.nombre}</span>
                                                     </div>
                                                     <div className="mt-1 flex flex-wrap items-center gap-1">
@@ -404,9 +466,14 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                                                                 {n}
                                                             </span>
                                                         ))}
+                                                        {a.frecuencia && (
+                                                            <span className="bg-muted text-muted-foreground rounded px-1 py-0.5 text-[10px] font-medium">
+                                                                {a.frecuencia}
+                                                            </span>
+                                                        )}
                                                         {a.soporte && (
                                                             <span className="text-muted-foreground text-[11px]" title={a.soporte}>
-                                                                · soportes
+                                                                · {tipo === 'sst' ? 'detalle' : 'soportes'}
                                                             </span>
                                                         )}
                                                     </div>
@@ -416,7 +483,8 @@ export default function PlanTrabajoIndex({ activities, plan, firmantes, needsCli
                                                         value={filas[a.id]?.responsable ?? ''}
                                                         onChange={(e) => setResp(a.id, e.target.value)}
                                                         disabled={!canManage || !aplican[a.id]}
-                                                        placeholder="—"
+                                                        placeholder={a.responsable_sugerido ?? '—'}
+                                                        title={a.responsable_sugerido ? `Sugerido: ${a.responsable_sugerido}` : undefined}
                                                         className="border-input bg-background w-28 rounded border px-2 py-1 text-xs disabled:opacity-60"
                                                     />
                                                 </td>

@@ -5,17 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Actividad estándar del Plan de Trabajo del SGI (catálogo GLOBAL, transversal
- * a las normas). Fuente: hoja «6.2 PLAN DE TRABAJO SGI» de la herramienta CMK.
+ * Actividad estándar de un plan de trabajo (catálogo GLOBAL). `plan` dice de
+ * cuál: `sgi` (hoja «6.2 PLAN DE TRABAJO SGI», por cláusulas ISO) o `sst`
+ * (hoja «2.4.1 Plan de trabajo», por ciclo PHVA).
  */
 class WorkPlanActivity extends Model
 {
+    /** Plan SST-PESV (Res. 0312, estándar 2.4.1) y plan del SGI (cláusulas ISO). */
+    public const PLANES = ['sst' => 'SG-SST / PESV', 'sgi' => 'SGI (ISO)'];
+
     protected $fillable = [
+        'plan',
         'codigo',
         'fase',
         'nombre',
         'normas',
         'soporte',
+        'frecuencia',
+        'responsable_sugerido',
         'orden',
     ];
 
