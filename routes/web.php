@@ -306,6 +306,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.items.destroy');
     Route::post('epp/matriz', [PpeController::class, 'storeAssignment'])
         ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.matriz.store');
+    Route::put('epp/matriz/{asignacion}', [PpeController::class, 'updateAssignment'])
+        ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.matriz.update');
     Route::delete('epp/matriz/{asignacion}', [PpeController::class, 'destroyAssignment'])
         ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.matriz.destroy');
     Route::post('epp/entregas', [PpeController::class, 'storeDelivery'])

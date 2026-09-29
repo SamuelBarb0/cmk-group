@@ -6,6 +6,8 @@ use App\Models\EquipmentCalibration;
 use App\Models\Indicator;
 use App\Models\IndicatorReading;
 use App\Models\MeasuringEquipment;
+use App\Models\PpeAssignment;
+use App\Models\PpeItem;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Support\TenantContext;
@@ -186,6 +188,31 @@ class CrudCompletoTest extends TestCase
         ]))->assertSessionHasNoErrors();
 
         $this->assertSame('en_uso', $equipo->fresh()->estado);
+    }
+
+    // --- Matriz de EPP por cargo --------------------------------------------------
+
+    public function test_una_asignacion_de_la_matriz_de_epp_se_edita(): void
+    {
+        $this->como()->post('/epp/items', ['nombre' => 'Casco', 'categoria' => 'cabeza', 'activo' => true])->assertSessionHasNoErrors();
+        $this->como()->post('/epp/items', ['nombre' => 'Guantes', 'categoria' => 'manos', 'activo' => true])->assertSessionHasNoErrors();
+        $casco = PpeItem::withoutTenantScope()->where('nombre', 'Casco')->firstOrFail();
+        $guantes = PpeItem::withoutTenantScope()->where('nombre', 'Guantes')->firstOrFail();
+
+        $asignar = fn (PpeItem $i) => ['ppe_item_id' => $i->id, 'cargo' => 'Soldador', 'area' => 'Taller', 'requerimiento' => 'requerido'];
+        $this->como()->post('/epp/matriz', $asignar($casco))->assertSessionHasNoErrors();
+        $this->como()->post('/epp/matriz', $asignar($guantes))->assertSessionHasNoErrors();
+        $asignacion = PpeAssignment::withoutTenantScope()->where('ppe_item_id', $casco->id)->firstOrFail();
+
+        // Guardar sin cambiar cargo ni elemento: la propia fila no es un duplicado.
+        $this->como()->put("/epp/matriz/{$asignacion->id}", ['area' => 'Planta', 'requerimiento' => 'segun_necesidad', 'observaciones' => 'Solo en patio'] + $asignar($casco))
+            ->assertSessionHasNoErrors();
+        $asignacion->refresh();
+        $this->assertSame('Planta', $asignacion->area);
+        $this->assertSame('segun_necesidad', $asignacion->requerimiento);
+
+        // Pero convertirla en otra que ya existe (guantes al soldador) sí se rechaza.
+        $this->como()->put("/epp/matriz/{$asignacion->id}", $asignar($guantes))->assertSessionHasErrors('cargo');
     }
 
     public function test_no_se_corrige_una_calibracion_por_la_ruta_de_otro_equipo(): void

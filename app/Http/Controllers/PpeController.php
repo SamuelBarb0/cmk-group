@@ -102,6 +102,14 @@ class PpeController extends Controller
         return back()->with('success', 'EPP asignado al cargo.');
     }
 
+    public function updateAssignment(Request $request, PpeAssignment $asignacion): RedirectResponse
+    {
+        $this->exigeCliente();
+        $asignacion->update($this->validatedAssignment($request, $asignacion));
+
+        return back()->with('success', 'Asignación actualizada.');
+    }
+
     public function destroyAssignment(PpeAssignment $asignacion): RedirectResponse
     {
         $asignacion->delete();
@@ -160,7 +168,7 @@ class PpeController extends Controller
         ]);
     }
 
-    private function validatedAssignment(Request $request): array
+    private function validatedAssignment(Request $request, ?PpeAssignment $editando = null): array
     {
         return $request->validate([
             'ppe_item_id' => ['required', 'integer', Rule::exists('ppe_items', 'id')
@@ -169,10 +177,12 @@ class PpeController extends Controller
                 'required', 'string', 'max:255',
                 // El mismo elemento no se le asigna dos veces al mismo cargo. La
                 // tabla ya lo impide, pero sin esta regla saldría un error de SQL
-                // en vez de un mensaje entendible.
+                // en vez de un mensaje entendible. Al editar, la propia fila no
+                // cuenta como duplicado.
                 Rule::unique('ppe_assignments', 'cargo')
                     ->where('tenant_id', $this->context->id())
-                    ->where('ppe_item_id', $request->input('ppe_item_id')),
+                    ->where('ppe_item_id', $request->input('ppe_item_id'))
+                    ->ignore($editando?->id),
             ],
             'area' => ['nullable', 'string', 'max:255'],
             'requerimiento' => ['required', Rule::in(PpeAssignment::REQUERIMIENTOS)],
