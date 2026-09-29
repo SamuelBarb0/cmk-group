@@ -220,7 +220,10 @@ export default function PesvVehiculos({ needsClient, vehiculos, stats, tipos, pr
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            onClick={() => router.delete(`/pesv/vehiculos/${v.id}`, { preserveScroll: true })}
+                                                            onClick={() =>
+                                                                confirm(`¿Eliminar el vehículo ${v.placa}?`) &&
+                                                                router.delete(`/pesv/vehiculos/${v.id}`, { preserveScroll: true })
+                                                            }
                                                         >
                                                             <Trash2 className="size-4 text-red-600" />
                                                         </Button>

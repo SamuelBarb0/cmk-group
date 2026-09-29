@@ -105,6 +105,38 @@ class PesvConductorController extends Controller
      */
     public function guardarPrueba(Request $request, Employee $empleado): RedirectResponse
     {
+        $datos = $this->validatedPrueba($request);
+        PesvDriverTest::create([...$datos, 'employee_id' => $empleado->id]);
+
+        if ($datos['tipo'] === 'psicosensometrica' && $datos['resultado'] === 'apto' && ! empty($datos['vigente_hasta'])) {
+            $empleado->update(['examen_psicosensometrico_vence' => $datos['vigente_hasta']]);
+        }
+
+        return back()->with('success', PesvDriverTest::TIPOS[$datos['tipo']].': '.($datos['resultado'] === 'apto' ? 'apto' : 'no apto').'.');
+    }
+
+    /**
+     * Corrige una prueba. Si es la psicosensométrica MÁS RECIENTE del conductor,
+     * su vigencia vuelve a ser la que manda en su ficha; corregir una vieja no
+     * pisa el vencimiento vigente.
+     */
+    public function actualizarPrueba(Request $request, PesvDriverTest $prueba): RedirectResponse
+    {
+        $datos = $this->validatedPrueba($request);
+        $prueba->update($datos);
+
+        $ultima = PesvDriverTest::where('employee_id', $prueba->employee_id)->where('tipo', 'psicosensometrica')
+            ->orderByDesc('fecha')->orderByDesc('id')->first();
+        if ($ultima?->is($prueba) && $prueba->resultado === 'apto' && $prueba->vigente_hasta) {
+            $prueba->employee?->update(['examen_psicosensometrico_vence' => $prueba->vigente_hasta]);
+        }
+
+        return back()->with('success', 'Prueba actualizada.');
+    }
+
+    /** Mismas reglas al registrar y al corregir; el resultado de teórica y práctica lo da el puntaje. */
+    private function validatedPrueba(Request $request): array
+    {
         $datos = $request->validate([
             'tipo' => ['required', Rule::in(array_keys(PesvDriverTest::TIPOS))],
             'fecha' => ['required', 'date', 'before_or_equal:today'],
@@ -118,13 +150,8 @@ class PesvConductorController extends Controller
         if ($datos['tipo'] !== 'psicosensometrica') {
             $datos['resultado'] = (float) $datos['puntaje'] > PesvDriverTest::PUNTAJE_MINIMO ? 'apto' : 'no_apto';
         }
-        PesvDriverTest::create([...$datos, 'employee_id' => $empleado->id]);
 
-        if ($datos['tipo'] === 'psicosensometrica' && $datos['resultado'] === 'apto' && ! empty($datos['vigente_hasta'])) {
-            $empleado->update(['examen_psicosensometrico_vence' => $datos['vigente_hasta']]);
-        }
-
-        return back()->with('success', PesvDriverTest::TIPOS[$datos['tipo']].': '.($datos['resultado'] === 'apto' ? 'apto' : 'no apto').'.');
+        return $datos;
     }
 
     public function borrarPrueba(PesvDriverTest $prueba): RedirectResponse

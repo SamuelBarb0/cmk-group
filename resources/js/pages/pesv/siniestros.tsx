@@ -357,7 +357,10 @@ export default function PesvSiniestros({
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            onClick={() => router.delete(`/pesv/siniestros/${s.id}`, { preserveScroll: true })}
+                                                            onClick={() =>
+                                                                confirm(`¿Eliminar el siniestro del ${s.fecha}?`) &&
+                                                                router.delete(`/pesv/siniestros/${s.id}`, { preserveScroll: true })
+                                                            }
                                                         >
                                                             <Trash2 className="size-4 text-red-600" />
                                                         </Button>

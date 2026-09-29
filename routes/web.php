@@ -199,6 +199,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('pesv/evidencias/{evidencia}', [PesvVerificacionController::class, 'borrar'])->name('pesv.evidencias.borrar');
         Route::put('pesv/conductores/{empleado}/requisitos', [PesvConductorController::class, 'requisitos'])->name('pesv.conductores.requisitos');
         Route::post('pesv/conductores/{empleado}/pruebas', [PesvConductorController::class, 'guardarPrueba'])->name('pesv.conductores.pruebas');
+        Route::put('pesv/pruebas/{prueba}', [PesvConductorController::class, 'actualizarPrueba'])->name('pesv.pruebas.update');
         Route::delete('pesv/pruebas/{prueba}', [PesvConductorController::class, 'borrarPrueba'])->name('pesv.pruebas.destroy');
         Route::put('pesv/vehiculos/{vehiculo}/requisitos', [PesvVehiculoFichaController::class, 'requisitos'])->name('pesv.vehiculos.requisitos');
         Route::post('pesv/infracciones', [PesvInfraccionController::class, 'store'])->name('pesv.infracciones.store');

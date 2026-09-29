@@ -215,7 +215,10 @@ export default function PesvContratistas({ needsClient, contratistas, stats, tip
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            onClick={() => router.delete(`/pesv/contratistas/${c.id}`, { preserveScroll: true })}
+                                                            onClick={() =>
+                                                                confirm(`¿Eliminar el contratista «${c.nombre}» y sus documentos y evaluaciones?`) &&
+                                                                router.delete(`/pesv/contratistas/${c.id}`, { preserveScroll: true })
+                                                            }
                                                         >
                                                             <Trash2 className="size-4 text-red-600" />
                                                         </Button>

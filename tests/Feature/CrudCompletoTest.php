@@ -2,10 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Models\Employee;
 use App\Models\EquipmentCalibration;
 use App\Models\Indicator;
 use App\Models\IndicatorReading;
 use App\Models\MeasuringEquipment;
+use App\Models\PesvDriverTest;
 use App\Models\PpeAssignment;
 use App\Models\PpeItem;
 use App\Models\Tenant;
@@ -213,6 +215,55 @@ class CrudCompletoTest extends TestCase
 
         // Pero convertirla en otra que ya existe (guantes al soldador) sí se rechaza.
         $this->como()->put("/epp/matriz/{$asignacion->id}", $asignar($guantes))->assertSessionHasErrors('cargo');
+    }
+
+    // --- Pruebas del conductor (PESV) ---------------------------------------------
+
+    private function conductor(): Employee
+    {
+        $ctx = app(TenantContext::class);
+        $ctx->set($this->empresa);
+        $e = Employee::create(['nombres' => 'Luis', 'apellidos' => 'Gómez', 'numero_documento' => '7788', 'es_conductor' => true, 'is_active' => true]);
+        $ctx->set(null);
+
+        return $e;
+    }
+
+    private function prueba(array $extra = []): array
+    {
+        return array_merge(['tipo' => 'teorica', 'fecha' => now()->subDays(5)->toDateString(), 'puntaje' => 90, 'evaluador' => 'CEA'], $extra);
+    }
+
+    public function test_corregir_el_puntaje_de_una_prueba_recalcula_si_es_apto(): void
+    {
+        $e = $this->conductor();
+        $this->como()->post("/pesv/conductores/{$e->id}/pruebas", $this->prueba())->assertSessionHasNoErrors();
+        $prueba = PesvDriverTest::withoutTenantScope()->where('employee_id', $e->id)->firstOrFail();
+        $this->assertSame('apto', $prueba->resultado);
+
+        $this->como()->put("/pesv/pruebas/{$prueba->id}", $this->prueba(['puntaje' => 40]))->assertSessionHasNoErrors();
+
+        $this->assertSame('no_apto', $prueba->fresh()->resultado);
+        $this->assertEquals(40, $prueba->fresh()->puntaje);
+    }
+
+    public function test_corregir_la_psicosensometrica_mas_reciente_mueve_el_vencimiento_y_una_vieja_no(): void
+    {
+        $e = $this->conductor();
+        $psico = fn (string $fecha, string $vence) => $this->prueba([
+            'tipo' => 'psicosensometrica', 'puntaje' => null, 'resultado' => 'apto', 'fecha' => $fecha, 'vigente_hasta' => $vence,
+        ]);
+        $this->como()->post("/pesv/conductores/{$e->id}/pruebas", $psico(now()->subYear()->toDateString(), now()->addDays(10)->toDateString()));
+        $this->como()->post("/pesv/conductores/{$e->id}/pruebas", $psico(now()->subDays(3)->toDateString(), now()->addYear()->toDateString()));
+        [$vieja, $nueva] = PesvDriverTest::withoutTenantScope()->where('employee_id', $e->id)->orderBy('fecha')->get()->all();
+
+        // La vieja: su vigencia NO pisa la de la prueba vigente.
+        $this->como()->put("/pesv/pruebas/{$vieja->id}", $psico($vieja->fecha->toDateString(), now()->addDays(20)->toDateString()))->assertSessionHasNoErrors();
+        $this->assertSame(now()->addYear()->toDateString(), $e->fresh()->examen_psicosensometrico_vence->toDateString());
+
+        // La más reciente: su vigencia corregida pasa a la ficha.
+        $this->como()->put("/pesv/pruebas/{$nueva->id}", $psico($nueva->fecha->toDateString(), now()->addMonths(18)->toDateString()))->assertSessionHasNoErrors();
+        $this->assertSame(now()->addMonths(18)->toDateString(), $e->fresh()->examen_psicosensometrico_vence->toDateString());
     }
 
     public function test_no_se_corrige_una_calibracion_por_la_ruta_de_otro_equipo(): void

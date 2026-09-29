@@ -195,7 +195,10 @@ export default function PesvSedes({ needsClient, sedes, sugerencias, empresa }: 
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            onClick={() => router.delete(`/pesv/sedes/${s.id}`, { preserveScroll: true })}
+                                                            onClick={() =>
+                                                                confirm(`¿Eliminar la sede «${s.nombre}»?`) &&
+                                                                router.delete(`/pesv/sedes/${s.id}`, { preserveScroll: true })
+                                                            }
                                                         >
                                                             <Trash2 className="size-4 text-red-600" />
                                                         </Button>
