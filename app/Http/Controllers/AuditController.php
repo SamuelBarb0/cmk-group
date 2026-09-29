@@ -120,7 +120,7 @@ class AuditController extends Controller
 
         $hallazgosPorClave = $auditoria->findings
             ->flatMap(fn (AuditFinding $f) => $f->requirements->pluck('clave_comun')->unique()
-                ->map(fn ($clave) => ['clave' => $clave, 'hallazgo' => $f->only(['id', 'tipo', 'descripcion'])]))
+                ->map(fn ($clave) => ['clave' => $clave, 'hallazgo' => $f->only(['id', 'tipo', 'descripcion', 'evidencia', 'acpm_action_id'])]))
             ->groupBy('clave')
             ->map(fn ($g) => $g->pluck('hallazgo')->values());
 
@@ -201,6 +201,35 @@ class AuditController extends Controller
      * Los 62 requisitos comunes con la referencia de cada norma, para vincular
      * hallazgos desde el formulario.
      */
+    /**
+     * Corrige un hallazgo desde la lista de verificación. Antes solo se podía
+     * editando la auditoría entera, que reemplaza TODOS sus hallazgos en bloque.
+     */
+    public function updateHallazgo(Request $request, Audit $auditoria, AuditFinding $hallazgo): RedirectResponse
+    {
+        abort_unless($hallazgo->audit_id === $auditoria->id, 404);
+
+        $hallazgo->update($request->validate([
+            'tipo' => ['required', Rule::in(AuditFinding::TIPOS)],
+            'descripcion' => ['required', 'string', 'max:2000'],
+            'evidencia' => ['nullable', 'string', 'max:2000'],
+        ]));
+
+        return back()->with('success', 'Hallazgo actualizado.');
+    }
+
+    /** Borra el hallazgo; la acción de ACPM que se abrió por él es un registro aparte y se conserva. */
+    public function destroyHallazgo(Audit $auditoria, AuditFinding $hallazgo): RedirectResponse
+    {
+        abort_unless($hallazgo->audit_id === $auditoria->id, 404);
+        $conAccion = $hallazgo->acpm_action_id !== null;
+        $hallazgo->delete();
+
+        return back()->with('success', $conAccion
+            ? 'Hallazgo eliminado. La acción de ACPM que se abrió por él se conserva.'
+            : 'Hallazgo eliminado.');
+    }
+
     private function requisitosComunes(): Collection
     {
         return NormRequirement::query()

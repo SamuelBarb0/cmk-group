@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Audit;
 use App\Models\Employee;
 use App\Models\EquipmentCalibration;
 use App\Models\Indicator;
@@ -313,6 +314,50 @@ class CrudCompletoTest extends TestCase
         $otra = Tenant::create(['name' => 'Otra', 'nit' => '800000000-1']);
         $this->como($otra)->put("/documentos/{$doc->id}", ['nombre' => 'Hackeado'])->assertNotFound();
         $this->assertSame('Acta COPASST marzo', $doc->fresh()->nombre);
+    }
+
+    // --- Hallazgos de auditoría ----------------------------------------------------
+
+    private function auditoriaConHallazgos(): Audit
+    {
+        $this->como()->post('/auditoria', [
+            'tipo' => 'interna', 'objetivo' => 'Verificar el SG-SST', 'fecha_programada' => now()->toDateString(),
+            'estado' => 'en_curso', 'sistemas' => ['sst'],
+            'findings' => [
+                ['tipo' => 'no_conformidad_menor', 'descripcion' => 'Sin control de versiones'],
+                ['tipo' => 'observacion', 'descripcion' => 'Actas sin firma'],
+            ],
+        ])->assertSessionHasNoErrors()->assertRedirect();
+
+        return Audit::withoutTenantScope()->latest('id')->firstOrFail();
+    }
+
+    public function test_un_hallazgo_se_corrige_y_se_borra_sin_recrear_los_demas(): void
+    {
+        $a = $this->auditoriaConHallazgos();
+        [$uno, $dos] = $a->findings()->orderBy('id')->get()->all();
+
+        $this->como()->put("/auditoria/{$a->id}/hallazgos/{$uno->id}", [
+            'tipo' => 'no_conformidad_mayor', 'descripcion' => 'Sin control de versiones en 12 procedimientos', 'evidencia' => 'Listado maestro',
+        ])->assertSessionHasNoErrors()->assertRedirect();
+        $uno->refresh();
+        $this->assertSame('no_conformidad_mayor', $uno->tipo);
+        $this->assertSame('Listado maestro', $uno->evidencia);
+
+        $this->como()->delete("/auditoria/{$a->id}/hallazgos/{$dos->id}")->assertSessionHasNoErrors()->assertRedirect();
+        // El otro hallazgo conserva su id: no hubo reemplazo en bloque.
+        $this->assertSame([$uno->id], $a->findings()->pluck('id')->all());
+    }
+
+    public function test_un_hallazgo_no_se_toca_por_la_ruta_de_otra_auditoria(): void
+    {
+        $a = $this->auditoriaConHallazgos();
+        $b = $this->auditoriaConHallazgos();
+        $deA = $a->findings()->firstOrFail();
+
+        $this->como()->put("/auditoria/{$b->id}/hallazgos/{$deA->id}", ['tipo' => 'observacion', 'descripcion' => 'x'])->assertNotFound();
+        $this->como()->delete("/auditoria/{$b->id}/hallazgos/{$deA->id}")->assertNotFound();
+        $this->assertNotNull($deA->fresh());
     }
 
     public function test_no_se_corrige_una_calibracion_por_la_ruta_de_otro_equipo(): void
