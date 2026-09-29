@@ -7,8 +7,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePartes } from '@/hooks/use-partes';
-import { usePestana } from '@/hooks/use-pestana';
 import { usePermissions } from '@/hooks/use-permissions';
+import { usePestana } from '@/hooks/use-pestana';
+import { hoy } from '@/lib/fechas';
 import { cn } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
 import { HardHat, PenLine, Plus, ShieldAlert, Trash2, Users } from 'lucide-react';
@@ -87,8 +88,6 @@ const ETIQUETA_REQUERIMIENTO: Record<string, string> = {
     requerido: 'Requerido',
     segun_necesidad: 'Según necesidad',
 };
-
-const hoy = () => new Date().toISOString().slice(0, 10);
 
 const itemVacio = {
     nombre: '',

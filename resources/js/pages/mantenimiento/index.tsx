@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
+import { hoy } from '@/lib/fechas';
 import { cn } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
 import { AlarmClock, CircleAlert, ClipboardList, PenLine, Plus, Trash2, Truck, Wrench, X } from 'lucide-react';
@@ -147,7 +148,6 @@ const activoVacio = {
     plan: [] as PlanForm[],
 };
 
-const hoy = () => new Date().toISOString().slice(0, 10);
 const registroVacio = {
     maintenance_asset_id: '' as number | '',
     maintenance_plan_item_id: '' as number | '',

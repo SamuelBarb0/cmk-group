@@ -11,6 +11,7 @@ import { usePermissions } from '@/hooks/use-permissions';
 import { router, useForm } from '@inertiajs/react';
 import { CalendarClock, Pencil, Plus, Search, Siren, Skull, Trash2 } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
+import { hoy } from '@/lib/fechas';
 
 type Clase = 'incidente' | 'accidente' | 'casi_accidente';
 
@@ -120,8 +121,6 @@ const CAUSAS_BASICAS = [
     'Uso y desgaste normal',
     'Abuso o mal uso',
 ];
-
-const hoy = () => new Date().toISOString().slice(0, 10);
 
 const emptyForm = {
     employee_id: '' as number | string,

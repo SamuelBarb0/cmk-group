@@ -7,8 +7,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePartes } from '@/hooks/use-partes';
-import { usePestana } from '@/hooks/use-pestana';
 import { usePermissions } from '@/hooks/use-permissions';
+import { usePestana } from '@/hooks/use-pestana';
+import { hoy } from '@/lib/fechas';
 import { cn } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
 import { CalendarClock, ClipboardList, FileWarning, PenLine, Plus, Stethoscope, Trash2, UserX } from 'lucide-react';
@@ -129,8 +130,6 @@ const ESTADO: Record<Trabajador['estado'], { label: string; clase: string }> = {
 
 const SELECT = 'border-input bg-background h-9 w-full rounded-md border px-3 text-sm';
 const AREA = 'border-input bg-background w-full rounded-md border px-3 py-2 text-sm';
-
-const hoy = () => new Date().toISOString().slice(0, 10);
 
 const examenVacio = {
     employee_id: '' as number | string,

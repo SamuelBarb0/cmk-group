@@ -39,7 +39,10 @@ return [
             'connection' => env('DB_QUEUE_CONNECTION'),
             'table' => env('DB_QUEUE_TABLE', 'jobs'),
             'queue' => env('DB_QUEUE', 'default'),
-            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 90),
+            // Debe pasar el $timeout del job más largo (GenerarPresentacionJob,
+            // 360 s). Con 90, el cron del minuto siguiente daba por abandonada
+            // una presentación que aún corría y la generaba dos veces.
+            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 420),
             'after_commit' => false,
         ],
 

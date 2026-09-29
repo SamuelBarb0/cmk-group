@@ -9,8 +9,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePartes } from '@/hooks/use-partes';
-import { usePestana } from '@/hooks/use-pestana';
 import { usePermissions } from '@/hooks/use-permissions';
+import { usePestana } from '@/hooks/use-pestana';
+import { hoy } from '@/lib/fechas';
 import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
 import { router, useForm, usePage } from '@inertiajs/react';
@@ -55,10 +56,6 @@ interface Props {
     registro: Registro[];
     stats: { matriz: number; registradas: number; pendientes: number; vencidas: number };
 }
-
-// Fecha LOCAL: toISOString() da la de UTC, que en Colombia pasa al día
-// siguiente desde las 7 p. m.
-const hoy = () => new Date().toLocaleDateString('en-CA');
 
 export default function ComunicacionesIndex({ needsClient, matriz, registro, stats }: Props) {
     const { can } = usePermissions();

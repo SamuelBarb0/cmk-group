@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { router, useForm } from '@inertiajs/react';
 import { CircleAlert, MessageSquareWarning, Pencil, Percent, Plus, Trash2, Wrench } from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
+import { hoy } from '@/lib/fechas';
 
 type Tipo = 'acto' | 'condicion';
 type Severidad = 'bajo' | 'medio' | 'alto' | 'critico';
@@ -78,8 +79,6 @@ const CLS_SEVERIDAD: Record<Severidad, string> = {
     alto: 'bg-orange-500/15 text-orange-700 dark:text-orange-400',
     critico: 'bg-destructive/15 text-destructive',
 };
-
-const hoy = () => new Date().toISOString().slice(0, 10);
 
 const emptyForm = {
     fecha: hoy(),
