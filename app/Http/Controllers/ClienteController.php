@@ -85,6 +85,14 @@ class ClienteController extends Controller
 
         $request->session()->put('active_tenant_id', $cliente->id);
 
+        // Desde la agenda consolidada se selecciona el cliente y se va directo
+        // al registro vencido. Solo rutas internas: `//otro.dominio` o una URL
+        // completa convertirían esto en una redirección abierta.
+        $ir = (string) $request->input('ir', '');
+        if (str_starts_with($ir, '/') && ! str_starts_with($ir, '//') && ! str_contains($ir, '\\')) {
+            return redirect($ir)->with('success', "Trabajando con el cliente: {$cliente->name}.");
+        }
+
         return back()->with('success', "Trabajando con el cliente: {$cliente->name}.");
     }
 
