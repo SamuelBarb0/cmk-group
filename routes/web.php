@@ -688,6 +688,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('residuos/{residuo}', [AmbientalController::class, 'updateResiduo'])->name('residuos.update');
             Route::delete('residuos/{residuo}', [AmbientalController::class, 'destroyResiduo'])->name('residuos.destroy');
             Route::post('lecturas', [AmbientalController::class, 'storeLectura'])->name('lecturas.store');
+            Route::put('lecturas/{lectura}', [AmbientalController::class, 'updateLectura'])->name('lecturas.update');
             Route::delete('lecturas/{lectura}', [AmbientalController::class, 'destroyLectura'])->name('lecturas.destroy');
             Route::post('quimicos', [AmbientalController::class, 'storeQuimico'])->name('quimicos.store');
             Route::put('quimicos/{quimico}', [AmbientalController::class, 'updateQuimico'])->name('quimicos.update');

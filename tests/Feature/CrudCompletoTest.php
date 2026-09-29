@@ -10,6 +10,7 @@ use App\Models\MeasuringEquipment;
 use App\Models\PesvDriverTest;
 use App\Models\PpeAssignment;
 use App\Models\PpeItem;
+use App\Models\ResourceReading;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Support\TenantContext;
@@ -264,6 +265,31 @@ class CrudCompletoTest extends TestCase
         // La más reciente: su vigencia corregida pasa a la ficha.
         $this->como()->put("/pesv/pruebas/{$nueva->id}", $psico($nueva->fecha->toDateString(), now()->addMonths(18)->toDateString()))->assertSessionHasNoErrors();
         $this->assertSame(now()->addMonths(18)->toDateString(), $e->fresh()->examen_psicosensometrico_vence->toDateString());
+    }
+
+    // --- Consumos ambientales -------------------------------------------------------
+
+    public function test_una_lectura_de_consumo_se_corrige_sin_fusionarse_con_otra(): void
+    {
+        $mes = fn (int $atras) => now()->subMonths($atras)->format('Y-m');
+        $lectura = fn (string $m, int $cantidad) => ['mes' => $m, 'recurso' => 'agua', 'cantidad' => $cantidad, 'trabajadores' => 20];
+        $this->como()->post('/ambiental/lecturas', $lectura($mes(2), 30))->assertSessionHasNoErrors();
+        $this->como()->post('/ambiental/lecturas', $lectura($mes(1), 35))->assertSessionHasNoErrors();
+        $leer = fn () => ResourceReading::withoutTenantScope()->orderBy('periodo')->get();
+        [$feb, $mar] = $leer()->all();
+
+        // Corregir la cantidad.
+        $this->como()->put("/ambiental/lecturas/{$feb->id}", $lectura($mes(2), 32))->assertSessionHasNoErrors();
+        $this->assertEquals(32, $feb->fresh()->cantidad);
+
+        // Moverla a un mes que ya tiene OTRA lectura: se rechaza y nada cambia.
+        $this->como()->put("/ambiental/lecturas/{$feb->id}", $lectura($mes(1), 99))->assertSessionHasErrors('mes');
+        $this->assertSame(2, $leer()->count());
+        $this->assertEquals(35, $mar->fresh()->cantidad);
+
+        // Moverla a un mes libre sí.
+        $this->como()->put("/ambiental/lecturas/{$feb->id}", $lectura($mes(3), 32))->assertSessionHasNoErrors();
+        $this->assertSame($mes(3), $feb->fresh()->periodo->format('Y-m'));
     }
 
     public function test_no_se_corrige_una_calibracion_por_la_ruta_de_otro_equipo(): void

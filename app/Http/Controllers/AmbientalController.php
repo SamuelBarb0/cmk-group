@@ -141,6 +141,35 @@ class AmbientalController extends Controller
         if (! $this->context->has()) {
             return back()->withErrors(['tenant' => 'Selecciona un cliente.']);
         }
+        [$periodo, $campos] = $this->validatedLectura($request);
+        $lectura = ResourceReading::query()->whereDate('periodo', $periodo)->where('recurso', $campos['recurso'])->first() ?? new ResourceReading;
+        $nueva = ! $lectura->exists;
+        $lectura->fill(['periodo' => $periodo] + $campos)->save();
+
+        return back()->with('success', $nueva ? 'Consumo registrado.' : 'Ese mes ya tenía lectura: quedó corregida.');
+    }
+
+    /**
+     * Corrige una lectura. Si la corrección la mueve a un mes y recurso que ya
+     * tienen OTRA lectura, se rechaza: fusionarlas en silencio perdería una.
+     */
+    public function updateLectura(Request $request, ResourceReading $lectura): RedirectResponse
+    {
+        [$periodo, $campos] = $this->validatedLectura($request);
+        $choca = ResourceReading::query()->whereDate('periodo', $periodo)->where('recurso', $campos['recurso'])
+            ->whereKeyNot($lectura->id)->exists();
+        if ($choca) {
+            return back()->withErrors(['mes' => 'Ese mes ya tiene otra lectura de este recurso: corrígela a ella o bórrala primero.']);
+        }
+
+        $lectura->update(['periodo' => $periodo] + $campos);
+
+        return back()->with('success', 'Lectura corregida.');
+    }
+
+    /** @return array{0: string, 1: array<string, mixed>} periodo (primer día del mes) y campos */
+    private function validatedLectura(Request $request): array
+    {
         $datos = $request->validate([
             'mes' => ['required', 'date_format:Y-m', 'before_or_equal:'.Carbon::today()->format('Y-m')],
             'recurso' => ['required', Rule::in(array_keys(ResourceReading::RECURSOS))],
@@ -151,11 +180,8 @@ class AmbientalController extends Controller
         ], ['mes.before_or_equal' => 'No se puede registrar el consumo de un mes futuro.']);
 
         $periodo = Carbon::createFromFormat('Y-m-d', $datos['mes'].'-01')->toDateString();
-        $lectura = ResourceReading::query()->whereDate('periodo', $periodo)->where('recurso', $datos['recurso'])->first() ?? new ResourceReading;
-        $nueva = ! $lectura->exists;
-        $lectura->fill(['periodo' => $periodo] + collect($datos)->except('mes')->all())->save();
 
-        return back()->with('success', $nueva ? 'Consumo registrado.' : 'Ese mes ya tenía lectura: quedó corregida.');
+        return [$periodo, collect($datos)->except('mes')->all()];
     }
 
     public function destroyLectura(ResourceReading $lectura): RedirectResponse
