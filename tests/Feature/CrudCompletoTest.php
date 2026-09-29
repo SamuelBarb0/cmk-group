@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\EquipmentCalibration;
 use App\Models\Indicator;
 use App\Models\IndicatorReading;
+use App\Models\MeasuringEquipment;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Support\TenantContext;
@@ -11,6 +13,8 @@ use Database\Seeders\IndicatorsSeeder;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Database\Seeders\SigCatalogSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 /**
@@ -95,5 +99,100 @@ class CrudCompletoTest extends TestCase
         $guardar([['mes' => 1, 'numerador' => null, 'denominador' => null], ['mes' => 2, 'numerador' => 0, 'denominador' => 40]]);
         $this->assertSame([2], $lecturas()->pluck('mes')->all());
         $this->assertEquals(0, $lecturas()->first()->numerador);
+    }
+
+    // --- Calibraciones ----------------------------------------------------------
+
+    private function calibracion(array $extra = []): array
+    {
+        return array_merge([
+            'fecha' => now()->subMonth()->toDateString(), 'tipo' => 'calibracion', 'realizado_por' => 'Metrolab',
+            'acreditado_onac' => true, 'resultado' => 'conforme',
+        ], $extra);
+    }
+
+    private function equipo(string $codigo = 'EQ-001'): MeasuringEquipment
+    {
+        $this->como()->post('/equipos-medicion', [
+            'codigo' => $codigo, 'nombre' => 'Sonómetro', 'magnitud' => 'Nivel sonoro', 'unidad' => 'dB',
+            'control' => 'calibracion', 'frecuencia_meses' => 12, 'estado' => 'en_uso',
+        ])->assertSessionHasNoErrors();
+
+        return MeasuringEquipment::withoutTenantScope()->where('codigo', $codigo)->firstOrFail();
+    }
+
+    /** @return array{0: MeasuringEquipment, 1: EquipmentCalibration} */
+    private function equipoCalibrado(): array
+    {
+        Storage::fake('local');
+        $equipo = $this->equipo();
+        $this->como()->post("/equipos-medicion/{$equipo->id}/calibraciones", $this->calibracion([
+            'archivo' => UploadedFile::fake()->create('cert-viejo.pdf', 20, 'application/pdf'),
+        ]))->assertSessionHasNoErrors();
+
+        return [$equipo, EquipmentCalibration::withoutTenantScope()->where('measuring_equipment_id', $equipo->id)->firstOrFail()];
+    }
+
+    public function test_una_calibracion_se_corrige_y_conserva_su_certificado(): void
+    {
+        [$equipo, $cal] = $this->equipoCalibrado();
+        $archivo = $cal->archivo;
+
+        $this->como()->post("/equipos-medicion/{$equipo->id}/calibraciones/{$cal->id}", $this->calibracion([
+            'realizado_por' => 'Metrolab S.A.S.', 'certificado' => 'CC-2026-114',
+        ]))->assertSessionHasNoErrors();
+
+        $cal->refresh();
+        $this->assertSame('Metrolab S.A.S.', $cal->realizado_por);
+        $this->assertSame('CC-2026-114', $cal->certificado);
+        $this->assertSame($archivo, $cal->archivo, 'Sin archivo nuevo, el certificado se conserva.');
+        Storage::disk('local')->assertExists($archivo);
+    }
+
+    public function test_un_certificado_nuevo_reemplaza_y_borra_el_anterior(): void
+    {
+        [$equipo, $cal] = $this->equipoCalibrado();
+        $viejo = $cal->archivo;
+
+        $this->como()->post("/equipos-medicion/{$equipo->id}/calibraciones/{$cal->id}", $this->calibracion([
+            'archivo' => UploadedFile::fake()->create('cert-nuevo.pdf', 20, 'application/pdf'),
+        ]))->assertSessionHasNoErrors();
+
+        $cal->refresh();
+        $this->assertSame('cert-nuevo.pdf', $cal->archivo_nombre);
+        Storage::disk('local')->assertMissing($viejo);
+        Storage::disk('local')->assertExists($cal->archivo);
+    }
+
+    public function test_corregir_la_ultima_calibracion_a_no_conforme_saca_el_equipo_de_uso(): void
+    {
+        [$equipo, $cal] = $this->equipoCalibrado();
+
+        $this->como()->post("/equipos-medicion/{$equipo->id}/calibraciones/{$cal->id}", $this->calibracion([
+            'resultado' => 'no_conforme', 'impacto_mediciones' => 'Se repiten las mediciones del último mes.',
+        ]))->assertSessionHasNoErrors();
+
+        $this->assertSame('fuera_servicio', $equipo->fresh()->estado);
+    }
+
+    public function test_corregir_una_calibracion_vieja_no_cambia_el_estado(): void
+    {
+        [$equipo, $vieja] = $this->equipoCalibrado();
+        $this->como()->post("/equipos-medicion/{$equipo->id}/calibraciones", $this->calibracion(['fecha' => now()->subDay()->toDateString()]))
+            ->assertSessionHasNoErrors();
+
+        $this->como()->post("/equipos-medicion/{$equipo->id}/calibraciones/{$vieja->id}", $this->calibracion([
+            'resultado' => 'no_conforme', 'impacto_mediciones' => 'Histórico.',
+        ]))->assertSessionHasNoErrors();
+
+        $this->assertSame('en_uso', $equipo->fresh()->estado);
+    }
+
+    public function test_no_se_corrige_una_calibracion_por_la_ruta_de_otro_equipo(): void
+    {
+        [, $cal] = $this->equipoCalibrado();
+        $otro = $this->equipo('EQ-002');
+
+        $this->como()->post("/equipos-medicion/{$otro->id}/calibraciones/{$cal->id}", $this->calibracion())->assertNotFound();
     }
 }

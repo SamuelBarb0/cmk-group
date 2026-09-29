@@ -623,6 +623,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('{equipo}', [EquipoMedicionController::class, 'update'])->name('update');
             Route::delete('{equipo}', [EquipoMedicionController::class, 'destroy'])->name('destroy');
             Route::post('{equipo}/calibraciones', [EquipoMedicionController::class, 'storeCalibracion'])->name('calibraciones.store');
+            // POST y no PUT: puede traer un certificado nuevo (multipart).
+            Route::post('{equipo}/calibraciones/{calibracion}', [EquipoMedicionController::class, 'updateCalibracion'])->name('calibraciones.update');
             Route::delete('{equipo}/calibraciones/{calibracion}', [EquipoMedicionController::class, 'destroyCalibracion'])->name('calibraciones.destroy');
             Route::post('{equipo}/calibraciones/{calibracion}/accion', [EquipoMedicionController::class, 'crearAccion'])->name('calibraciones.accion');
         });
