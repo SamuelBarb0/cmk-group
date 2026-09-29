@@ -121,8 +121,19 @@ class IndicatorController extends Controller
         ]);
 
         foreach ($data['lecturas'] as $l) {
+            $clave = ['indicator_id' => $data['indicator_id'], 'anio' => $data['anio'], 'mes' => $l['mes']];
+
+            // Mes con los dos campos vacíos = sin medir: se borra la lectura.
+            // Antes quedaba un 0/0, que no altera el promedio (calcular()
+            // lo descarta) pero en pantalla parecía un mes medido en cero.
+            if (($l['numerador'] ?? null) === null && ($l['denominador'] ?? null) === null) {
+                IndicatorReading::where($clave)->delete();
+
+                continue;
+            }
+
             IndicatorReading::updateOrCreate(
-                ['indicator_id' => $data['indicator_id'], 'anio' => $data['anio'], 'mes' => $l['mes']],
+                $clave,
                 ['numerador' => $l['numerador'] ?? 0, 'denominador' => $l['denominador'] ?? 0],
             );
         }
@@ -170,17 +181,7 @@ class IndicatorController extends Controller
             return back()->withErrors(['tenant' => 'Selecciona un cliente antes de crear indicadores.']);
         }
 
-        $data = $request->validate([
-            'codigo' => ['required', 'string', 'max:20'],
-            'nombre' => ['required', 'string', 'max:255'],
-            'categoria' => ['required', Rule::in(['SST', 'HSEQ', 'PESV', 'Proceso'])],
-            'numerador_label' => ['required', 'string', 'max:255'],
-            'denominador_label' => ['required', 'string', 'max:255'],
-            'constante' => ['required', 'integer', 'min:1', 'max:1000000'],
-            'unidad' => ['required', Rule::in(['%', 'tasa'])],
-            'sentido' => ['required', Rule::in(['asc', 'desc'])],
-            'meta' => ['required', 'numeric', 'min:0'],
-        ]);
+        $data = $request->validate($this->reglasIndicador());
 
         Indicator::create([
             ...$data,
@@ -193,6 +194,37 @@ class IndicatorController extends Controller
     }
 
     /** Elimina un indicador propio del cliente (nunca los presets legales). */
+    /**
+     * Edita un indicador PROPIO del cliente. Los legales no: su definición
+     * viene de la norma y lo único ajustable es la meta (ver goal()).
+     */
+    public function update(Request $request, Indicator $indicator): RedirectResponse
+    {
+        if (! $this->context->has() || $indicator->tenant_id !== $this->context->id()) {
+            return back()->withErrors(['indicator' => 'Solo se editan los indicadores propios de este cliente.']);
+        }
+
+        $indicator->update($request->validate($this->reglasIndicador()));
+
+        return back()->with('success', "Indicador «{$indicator->nombre}» actualizado.");
+    }
+
+    /** Las mismas reglas al crear y al editar: si divergen, uno acepta lo que el otro rechaza. */
+    private function reglasIndicador(): array
+    {
+        return [
+            'codigo' => ['required', 'string', 'max:20'],
+            'nombre' => ['required', 'string', 'max:255'],
+            'categoria' => ['required', Rule::in(['SST', 'HSEQ', 'PESV', 'Proceso'])],
+            'numerador_label' => ['required', 'string', 'max:255'],
+            'denominador_label' => ['required', 'string', 'max:255'],
+            'constante' => ['required', 'integer', 'min:1', 'max:1000000'],
+            'unidad' => ['required', Rule::in(['%', 'tasa'])],
+            'sentido' => ['required', Rule::in(['asc', 'desc'])],
+            'meta' => ['required', 'numeric', 'min:0'],
+        ];
+    }
+
     public function destroy(Indicator $indicator): RedirectResponse
     {
         if ($indicator->tenant_id !== $this->context->id()) {
