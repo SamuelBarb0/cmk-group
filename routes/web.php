@@ -836,6 +836,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:documents.manage', 'module:documentos'])->name('documentos.store');
     Route::get('documentos/{documento}/descargar', [DocumentoEmpresaController::class, 'download'])
         ->middleware(['permission:documents.view', 'module:documentos'])->name('documentos.download');
+    Route::put('documentos/{documento}', [DocumentoEmpresaController::class, 'update'])
+        ->middleware(['permission:documents.manage', 'module:documentos'])->name('documentos.update');
     Route::delete('documentos/{documento}', [DocumentoEmpresaController::class, 'destroy'])
         ->middleware(['permission:documents.manage', 'module:documentos'])->name('documentos.destroy');
 

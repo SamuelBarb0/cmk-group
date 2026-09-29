@@ -10,7 +10,7 @@ import { usePermissions } from '@/hooks/use-permissions';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import { Building2, CheckCircle2, Download, FileText, FolderOpen, Sparkles, Trash2, Upload } from 'lucide-react';
+import { Building2, CheckCircle2, Download, FileText, FolderOpen, Pencil, Sparkles, Trash2, Upload } from 'lucide-react';
 import { FormEventHandler, useEffect, useState } from 'react';
 
 interface Documento {
@@ -50,6 +50,7 @@ export default function DocumentosIndex({ documents, categorias, needsClient }: 
     const tenant = page.props.tenant;
 
     const [open, setOpen] = useState(false);
+    const [editando, setEditando] = useState<Documento | null>(null);
     const [notice, setNotice] = useState<string | null>(null);
 
     const { data, setData, post, processing, errors, reset, clearErrors } = useForm<{
@@ -225,6 +226,11 @@ export default function DocumentosIndex({ documents, categorias, needsClient }: 
                                                         </a>
                                                     </Button>
                                                     {canManage && (
+                                                        <Button variant="ghost" size="icon" onClick={() => setEditando(d)} aria-label="Renombrar">
+                                                            <Pencil className="size-4" />
+                                                        </Button>
+                                                    )}
+                                                    {canManage && (
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
@@ -309,6 +315,62 @@ export default function DocumentosIndex({ documents, categorias, needsClient }: 
                     </form>
                 </DialogContent>
             </Dialog>
+
+            {editando && <EditarDocumentoDialog documento={editando} categorias={categorias} onClose={() => setEditando(null)} />}
         </AppLayout>
+    );
+}
+
+/** Renombra o recategoriza un documento del repositorio; el archivo no cambia. */
+function EditarDocumentoDialog({ documento, categorias, onClose }: { documento: Documento; categorias: string[]; onClose: () => void }) {
+    const { data, setData, put, processing, errors } = useForm({ nombre: documento.nombre, categoria: documento.categoria ?? '' });
+    const opciones = documento.categoria && !categorias.includes(documento.categoria) ? [documento.categoria, ...categorias] : categorias;
+
+    const submit: FormEventHandler = (e) => {
+        e.preventDefault();
+        put(route('documentos.update', documento.id), { preserveScroll: true, onSuccess: onClose });
+    };
+
+    return (
+        <Dialog open onOpenChange={(v) => !v && onClose()}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle className="font-brand">Editar documento</DialogTitle>
+                    <DialogDescription>Cambia el nombre o la categoría. El archivo se conserva tal cual.</DialogDescription>
+                </DialogHeader>
+                <form onSubmit={submit} className="space-y-4">
+                    <div className="grid gap-2">
+                        <Label htmlFor="editar-nombre">Nombre</Label>
+                        <Input id="editar-nombre" value={data.nombre} onChange={(e) => setData('nombre', e.target.value)} autoFocus />
+                        <InputError message={errors.nombre} />
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="editar-categoria">Categoría</Label>
+                        <select
+                            id="editar-categoria"
+                            value={data.categoria}
+                            onChange={(e) => setData('categoria', e.target.value)}
+                            className="border-input bg-background h-9 rounded-md border px-3 text-sm"
+                        >
+                            <option value="">—</option>
+                            {opciones.map((c) => (
+                                <option key={c} value={c}>
+                                    {c}
+                                </option>
+                            ))}
+                        </select>
+                        <InputError message={errors.categoria} />
+                    </div>
+                    <DialogFooter className="gap-2 pt-2">
+                        <Button type="button" variant="outline" onClick={onClose}>
+                            Cancelar
+                        </Button>
+                        <Button type="submit" disabled={processing || data.nombre.trim() === ''}>
+                            Guardar cambios
+                        </Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
     );
 }

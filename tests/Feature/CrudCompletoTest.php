@@ -12,6 +12,7 @@ use App\Models\PpeAssignment;
 use App\Models\PpeItem;
 use App\Models\ResourceReading;
 use App\Models\Tenant;
+use App\Models\TenantDocument;
 use App\Models\User;
 use App\Support\TenantContext;
 use Database\Seeders\IndicatorsSeeder;
@@ -63,11 +64,11 @@ class CrudCompletoTest extends TestCase
 
     public function test_un_indicador_propio_se_edita(): void
     {
-        $this->como()->post('/indicadores', $this->indicadorPropio())->assertSessionHasNoErrors();
+        $this->como()->post('/indicadores', $this->indicadorPropio())->assertSessionHasNoErrors()->assertRedirect();
         $ind = Indicator::where('codigo', 'IND-01')->firstOrFail();
 
         $this->como()->put("/indicadores/{$ind->id}", $this->indicadorPropio(['nombre' => 'Rotación voluntaria', 'meta' => 3]))
-            ->assertSessionHasNoErrors();
+            ->assertSessionHasNoErrors()->assertRedirect();
 
         $ind->refresh();
         $this->assertSame('Rotación voluntaria', $ind->nombre);
@@ -81,7 +82,7 @@ class CrudCompletoTest extends TestCase
         $this->assertNotSame('Cambiado', $legal->fresh()->nombre);
 
         $otra = Tenant::create(['name' => 'Otra', 'nit' => '800000000-1']);
-        $this->como($otra)->post('/indicadores', $this->indicadorPropio(['codigo' => 'OTRA-1']))->assertSessionHasNoErrors();
+        $this->como($otra)->post('/indicadores', $this->indicadorPropio(['codigo' => 'OTRA-1']))->assertSessionHasNoErrors()->assertRedirect();
         $ajeno = Indicator::where('codigo', 'OTRA-1')->firstOrFail();
 
         $this->como()->put("/indicadores/{$ajeno->id}", $this->indicadorPropio(['nombre' => 'Cambiado']))->assertSessionHasErrors('indicator');
@@ -90,11 +91,11 @@ class CrudCompletoTest extends TestCase
 
     public function test_un_mes_vaciado_borra_la_lectura_y_un_cero_escrito_se_conserva(): void
     {
-        $this->como()->post('/indicadores', $this->indicadorPropio())->assertSessionHasNoErrors();
+        $this->como()->post('/indicadores', $this->indicadorPropio())->assertSessionHasNoErrors()->assertRedirect();
         $ind = Indicator::where('codigo', 'IND-01')->firstOrFail();
         $guardar = fn (array $lecturas) => $this->como()->post('/indicadores/lecturas', [
             'indicator_id' => $ind->id, 'anio' => 2026, 'lecturas' => $lecturas,
-        ])->assertSessionHasNoErrors();
+        ])->assertSessionHasNoErrors()->assertRedirect();
 
         $guardar([['mes' => 1, 'numerador' => 2, 'denominador' => 40], ['mes' => 2, 'numerador' => 0, 'denominador' => 40]]);
         $lecturas = fn () => IndicatorReading::withoutTenantScope()->where('indicator_id', $ind->id)->orderBy('mes')->get();
@@ -121,7 +122,7 @@ class CrudCompletoTest extends TestCase
         $this->como()->post('/equipos-medicion', [
             'codigo' => $codigo, 'nombre' => 'Sonómetro', 'magnitud' => 'Nivel sonoro', 'unidad' => 'dB',
             'control' => 'calibracion', 'frecuencia_meses' => 12, 'estado' => 'en_uso',
-        ])->assertSessionHasNoErrors();
+        ])->assertSessionHasNoErrors()->assertRedirect();
 
         return MeasuringEquipment::withoutTenantScope()->where('codigo', $codigo)->firstOrFail();
     }
@@ -133,7 +134,7 @@ class CrudCompletoTest extends TestCase
         $equipo = $this->equipo();
         $this->como()->post("/equipos-medicion/{$equipo->id}/calibraciones", $this->calibracion([
             'archivo' => UploadedFile::fake()->create('cert-viejo.pdf', 20, 'application/pdf'),
-        ]))->assertSessionHasNoErrors();
+        ]))->assertSessionHasNoErrors()->assertRedirect();
 
         return [$equipo, EquipmentCalibration::withoutTenantScope()->where('measuring_equipment_id', $equipo->id)->firstOrFail()];
     }
@@ -145,7 +146,7 @@ class CrudCompletoTest extends TestCase
 
         $this->como()->post("/equipos-medicion/{$equipo->id}/calibraciones/{$cal->id}", $this->calibracion([
             'realizado_por' => 'Metrolab S.A.S.', 'certificado' => 'CC-2026-114',
-        ]))->assertSessionHasNoErrors();
+        ]))->assertSessionHasNoErrors()->assertRedirect();
 
         $cal->refresh();
         $this->assertSame('Metrolab S.A.S.', $cal->realizado_por);
@@ -161,7 +162,7 @@ class CrudCompletoTest extends TestCase
 
         $this->como()->post("/equipos-medicion/{$equipo->id}/calibraciones/{$cal->id}", $this->calibracion([
             'archivo' => UploadedFile::fake()->create('cert-nuevo.pdf', 20, 'application/pdf'),
-        ]))->assertSessionHasNoErrors();
+        ]))->assertSessionHasNoErrors()->assertRedirect();
 
         $cal->refresh();
         $this->assertSame('cert-nuevo.pdf', $cal->archivo_nombre);
@@ -175,7 +176,7 @@ class CrudCompletoTest extends TestCase
 
         $this->como()->post("/equipos-medicion/{$equipo->id}/calibraciones/{$cal->id}", $this->calibracion([
             'resultado' => 'no_conforme', 'impacto_mediciones' => 'Se repiten las mediciones del último mes.',
-        ]))->assertSessionHasNoErrors();
+        ]))->assertSessionHasNoErrors()->assertRedirect();
 
         $this->assertSame('fuera_servicio', $equipo->fresh()->estado);
     }
@@ -184,11 +185,11 @@ class CrudCompletoTest extends TestCase
     {
         [$equipo, $vieja] = $this->equipoCalibrado();
         $this->como()->post("/equipos-medicion/{$equipo->id}/calibraciones", $this->calibracion(['fecha' => now()->subDay()->toDateString()]))
-            ->assertSessionHasNoErrors();
+            ->assertSessionHasNoErrors()->assertRedirect();
 
         $this->como()->post("/equipos-medicion/{$equipo->id}/calibraciones/{$vieja->id}", $this->calibracion([
             'resultado' => 'no_conforme', 'impacto_mediciones' => 'Histórico.',
-        ]))->assertSessionHasNoErrors();
+        ]))->assertSessionHasNoErrors()->assertRedirect();
 
         $this->assertSame('en_uso', $equipo->fresh()->estado);
     }
@@ -197,19 +198,19 @@ class CrudCompletoTest extends TestCase
 
     public function test_una_asignacion_de_la_matriz_de_epp_se_edita(): void
     {
-        $this->como()->post('/epp/items', ['nombre' => 'Casco', 'categoria' => 'cabeza', 'activo' => true])->assertSessionHasNoErrors();
-        $this->como()->post('/epp/items', ['nombre' => 'Guantes', 'categoria' => 'manos', 'activo' => true])->assertSessionHasNoErrors();
+        $this->como()->post('/epp/items', ['nombre' => 'Casco', 'categoria' => 'cabeza', 'activo' => true])->assertSessionHasNoErrors()->assertRedirect();
+        $this->como()->post('/epp/items', ['nombre' => 'Guantes', 'categoria' => 'manos', 'activo' => true])->assertSessionHasNoErrors()->assertRedirect();
         $casco = PpeItem::withoutTenantScope()->where('nombre', 'Casco')->firstOrFail();
         $guantes = PpeItem::withoutTenantScope()->where('nombre', 'Guantes')->firstOrFail();
 
         $asignar = fn (PpeItem $i) => ['ppe_item_id' => $i->id, 'cargo' => 'Soldador', 'area' => 'Taller', 'requerimiento' => 'requerido'];
-        $this->como()->post('/epp/matriz', $asignar($casco))->assertSessionHasNoErrors();
-        $this->como()->post('/epp/matriz', $asignar($guantes))->assertSessionHasNoErrors();
+        $this->como()->post('/epp/matriz', $asignar($casco))->assertSessionHasNoErrors()->assertRedirect();
+        $this->como()->post('/epp/matriz', $asignar($guantes))->assertSessionHasNoErrors()->assertRedirect();
         $asignacion = PpeAssignment::withoutTenantScope()->where('ppe_item_id', $casco->id)->firstOrFail();
 
         // Guardar sin cambiar cargo ni elemento: la propia fila no es un duplicado.
         $this->como()->put("/epp/matriz/{$asignacion->id}", ['area' => 'Planta', 'requerimiento' => 'segun_necesidad', 'observaciones' => 'Solo en patio'] + $asignar($casco))
-            ->assertSessionHasNoErrors();
+            ->assertSessionHasNoErrors()->assertRedirect();
         $asignacion->refresh();
         $this->assertSame('Planta', $asignacion->area);
         $this->assertSame('segun_necesidad', $asignacion->requerimiento);
@@ -238,11 +239,11 @@ class CrudCompletoTest extends TestCase
     public function test_corregir_el_puntaje_de_una_prueba_recalcula_si_es_apto(): void
     {
         $e = $this->conductor();
-        $this->como()->post("/pesv/conductores/{$e->id}/pruebas", $this->prueba())->assertSessionHasNoErrors();
+        $this->como()->post("/pesv/conductores/{$e->id}/pruebas", $this->prueba())->assertSessionHasNoErrors()->assertRedirect();
         $prueba = PesvDriverTest::withoutTenantScope()->where('employee_id', $e->id)->firstOrFail();
         $this->assertSame('apto', $prueba->resultado);
 
-        $this->como()->put("/pesv/pruebas/{$prueba->id}", $this->prueba(['puntaje' => 40]))->assertSessionHasNoErrors();
+        $this->como()->put("/pesv/pruebas/{$prueba->id}", $this->prueba(['puntaje' => 40]))->assertSessionHasNoErrors()->assertRedirect();
 
         $this->assertSame('no_apto', $prueba->fresh()->resultado);
         $this->assertEquals(40, $prueba->fresh()->puntaje);
@@ -259,11 +260,11 @@ class CrudCompletoTest extends TestCase
         [$vieja, $nueva] = PesvDriverTest::withoutTenantScope()->where('employee_id', $e->id)->orderBy('fecha')->get()->all();
 
         // La vieja: su vigencia NO pisa la de la prueba vigente.
-        $this->como()->put("/pesv/pruebas/{$vieja->id}", $psico($vieja->fecha->toDateString(), now()->addDays(20)->toDateString()))->assertSessionHasNoErrors();
+        $this->como()->put("/pesv/pruebas/{$vieja->id}", $psico($vieja->fecha->toDateString(), now()->addDays(20)->toDateString()))->assertSessionHasNoErrors()->assertRedirect();
         $this->assertSame(now()->addYear()->toDateString(), $e->fresh()->examen_psicosensometrico_vence->toDateString());
 
         // La más reciente: su vigencia corregida pasa a la ficha.
-        $this->como()->put("/pesv/pruebas/{$nueva->id}", $psico($nueva->fecha->toDateString(), now()->addMonths(18)->toDateString()))->assertSessionHasNoErrors();
+        $this->como()->put("/pesv/pruebas/{$nueva->id}", $psico($nueva->fecha->toDateString(), now()->addMonths(18)->toDateString()))->assertSessionHasNoErrors()->assertRedirect();
         $this->assertSame(now()->addMonths(18)->toDateString(), $e->fresh()->examen_psicosensometrico_vence->toDateString());
     }
 
@@ -273,13 +274,13 @@ class CrudCompletoTest extends TestCase
     {
         $mes = fn (int $atras) => now()->subMonths($atras)->format('Y-m');
         $lectura = fn (string $m, int $cantidad) => ['mes' => $m, 'recurso' => 'agua', 'cantidad' => $cantidad, 'trabajadores' => 20];
-        $this->como()->post('/ambiental/lecturas', $lectura($mes(2), 30))->assertSessionHasNoErrors();
-        $this->como()->post('/ambiental/lecturas', $lectura($mes(1), 35))->assertSessionHasNoErrors();
+        $this->como()->post('/ambiental/lecturas', $lectura($mes(2), 30))->assertSessionHasNoErrors()->assertRedirect();
+        $this->como()->post('/ambiental/lecturas', $lectura($mes(1), 35))->assertSessionHasNoErrors()->assertRedirect();
         $leer = fn () => ResourceReading::withoutTenantScope()->orderBy('periodo')->get();
         [$feb, $mar] = $leer()->all();
 
         // Corregir la cantidad.
-        $this->como()->put("/ambiental/lecturas/{$feb->id}", $lectura($mes(2), 32))->assertSessionHasNoErrors();
+        $this->como()->put("/ambiental/lecturas/{$feb->id}", $lectura($mes(2), 32))->assertSessionHasNoErrors()->assertRedirect();
         $this->assertEquals(32, $feb->fresh()->cantidad);
 
         // Moverla a un mes que ya tiene OTRA lectura: se rechaza y nada cambia.
@@ -288,8 +289,30 @@ class CrudCompletoTest extends TestCase
         $this->assertEquals(35, $mar->fresh()->cantidad);
 
         // Moverla a un mes libre sí.
-        $this->como()->put("/ambiental/lecturas/{$feb->id}", $lectura($mes(3), 32))->assertSessionHasNoErrors();
+        $this->como()->put("/ambiental/lecturas/{$feb->id}", $lectura($mes(3), 32))->assertSessionHasNoErrors()->assertRedirect();
         $this->assertSame($mes(3), $feb->fresh()->periodo->format('Y-m'));
+    }
+
+    // --- Documentos de la empresa ---------------------------------------------------
+
+    public function test_un_documento_se_renombra_sin_tocar_el_archivo_y_no_se_toca_el_de_otra_empresa(): void
+    {
+        Storage::fake('local');
+        $this->como()->post('/documentos', ['archivo' => UploadedFile::fake()->create('scan_0042.pdf', 30, 'application/pdf')])
+            ->assertSessionHasNoErrors()->assertRedirect();
+        $doc = TenantDocument::withoutTenantScope()->firstOrFail();
+        $path = $doc->path;
+
+        $this->como()->put("/documentos/{$doc->id}", ['nombre' => 'Acta COPASST marzo', 'categoria' => 'Actas'])->assertSessionHasNoErrors()->assertRedirect();
+        $doc->refresh();
+        $this->assertSame('Acta COPASST marzo', $doc->nombre);
+        $this->assertSame('Actas', $doc->categoria);
+        $this->assertSame($path, $doc->path);
+        Storage::disk('local')->assertExists($path);
+
+        $otra = Tenant::create(['name' => 'Otra', 'nit' => '800000000-1']);
+        $this->como($otra)->put("/documentos/{$doc->id}", ['nombre' => 'Hackeado'])->assertNotFound();
+        $this->assertSame('Acta COPASST marzo', $doc->fresh()->nombre);
     }
 
     public function test_no_se_corrige_una_calibracion_por_la_ruta_de_otro_equipo(): void
