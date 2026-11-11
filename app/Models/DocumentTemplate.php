@@ -33,6 +33,11 @@ class DocumentTemplate extends Model
         'orden',
         'subido_por',
         'subida_at',
+        // Plantilla de CMK a la que reemplaza esta plantilla propia de una empresa.
+        'reemplaza_id',
+        // Un PDF se pasa a texto en segundo plano: «procesando» o «error».
+        'estado_proceso',
+        'error_proceso',
     ];
 
     /** ¿Tiene documento modelo base para rellenar (vs. generar desde cero)? */
@@ -52,17 +57,46 @@ class DocumentTemplate extends Model
      * suyas propias. Sin empresa activa (consultor de CMK trabajando fuera de
      * un cliente) solo se ve el catálogo global.
      *
+     * Si la empresa subió su propia versión de una plantilla de CMK
+     * (`reemplaza_id`), la de CMK deja de verse PARA ESA EMPRESA: una sola
+     * plantilla por documento, sin adivinar cuál usar.
+     *
      * @param  Builder<DocumentTemplate>  $query
      */
     public function scopeVisibles(Builder $query, ?int $tenantId): void
     {
         $query->where(function (Builder $q) use ($tenantId) {
-            $q->whereNull('tenant_id');
+            $q->where(function (Builder $globales) use ($tenantId) {
+                $globales->whereNull('tenant_id');
+
+                if ($tenantId !== null) {
+                    $globales->whereNotIn('id', DocumentTemplate::query()
+                        ->select('reemplaza_id')
+                        ->where('tenant_id', $tenantId)
+                        ->whereNotNull('reemplaza_id'));
+                }
+            });
 
             if ($tenantId !== null) {
                 $q->orWhere('tenant_id', $tenantId);
             }
         });
+    }
+
+    /** ¿La plantilla está lista para generar? Un PDF recién subido se está pasando a texto. */
+    public function estaLista(): bool
+    {
+        return $this->estado_proceso === null;
+    }
+
+    /**
+     * Plantilla de CMK que esta reemplaza para su empresa (si es una propia).
+     *
+     * @return BelongsTo<DocumentTemplate, $this>
+     */
+    public function reemplaza(): BelongsTo
+    {
+        return $this->belongsTo(DocumentTemplate::class, 'reemplaza_id');
     }
 
     /**

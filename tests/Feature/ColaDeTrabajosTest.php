@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\ActualizarDocumentoConIaJob;
 use App\Jobs\GenerarPresentacionJob;
 use App\Jobs\GenerateAiDocumentJob;
 use App\Jobs\MapearImportacionJob;
+use App\Jobs\TranscribirPlantillaPdfJob;
 use ReflectionClass;
 use Tests\TestCase;
 
@@ -19,7 +21,7 @@ class ColaDeTrabajosTest extends TestCase
     {
         $retryAfter = (int) config('queue.connections.database.retry_after');
 
-        foreach ([GenerarPresentacionJob::class, GenerateAiDocumentJob::class, MapearImportacionJob::class] as $job) {
+        foreach ([GenerarPresentacionJob::class, GenerateAiDocumentJob::class, MapearImportacionJob::class, ActualizarDocumentoConIaJob::class, TranscribirPlantillaPdfJob::class] as $job) {
             $timeout = (new ReflectionClass($job))->getProperty('timeout')->getDefaultValue();
 
             $this->assertLessThan($retryAfter, $timeout, "{$job} ({$timeout} s) no cabe en retry_after ({$retryAfter} s).");

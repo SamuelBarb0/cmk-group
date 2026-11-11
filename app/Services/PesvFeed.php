@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\ControlledDocument;
+use App\Models\DocumentTemplate;
 use App\Models\Employee;
 use App\Models\FormRecord;
 use App\Models\GeneratedDocument;
@@ -67,6 +69,26 @@ class PesvFeed
     ];
 
     public function __construct(private readonly Tenant $tenant) {}
+
+    /**
+     * Los documentos que respaldan pasos del PESV, con sus pasos: para el
+     * campo «Respalda en el PESV» del control documental. Sale de la MISMA
+     * tabla que usa el paso, así que no pueden desincronizarse.
+     *
+     * @return array<string, list<int>> código => pasos
+     */
+    public static function documentosDelPesv(): array
+    {
+        $codigos = [];
+        foreach (self::DOCUMENTOS_POR_PASO as $paso => $lista) {
+            foreach ($lista as $codigo) {
+                $codigos[$codigo][] = $paso;
+            }
+        }
+        ksort($codigos);
+
+        return $codigos;
+    }
 
     /**
      * Insumos del paso indicado.
@@ -672,8 +694,29 @@ class PesvFeed
      *
      * @return array<string, mixed>
      */
+    /**
+     * Un documento que respalda el paso. Primero se busca en el CONTROL
+     * DOCUMENTAL, que es el listado maestro oficial: si la empresa ya tiene el
+     * documento (subido, creado ahí o traído de Documentos IA) cuenta, sin
+     * tener que generarlo otra vez. Solo si no está ahí se mira Documentos IA.
+     */
     private function documento(string $codigo): array
     {
+        $controlado = $this->tenant->moduloHabilitado('control-documental') ? $this->documentoControlado($codigo) : null;
+
+        if ($controlado !== null) {
+            $vigente = $controlado->estado === 'vigente';
+
+            return [
+                'etiqueta' => "Documento {$codigo}",
+                'estado' => $vigente ? 'ok' : 'parcial',
+                'detalle' => "«{$controlado->titulo}» ({$controlado->codigo}) en Control documental: "
+                    .($vigente ? "vigente, v{$controlado->version_vigente}." : str_replace('_', ' ', $controlado->estado).'.'),
+                'url' => route('control-documental.show', $controlado),
+                'cantidad' => null,
+            ];
+        }
+
         $doc = GeneratedDocument::whereHas('template', fn ($q) => $q->where('codigo', $codigo))
             ->latest('id')
             ->first();
@@ -684,10 +727,39 @@ class PesvFeed
             'etiqueta' => "Documento {$codigo}",
             'estado' => $doc === null ? 'falta' : ($doc->estado === 'aprobado' ? 'ok' : 'parcial'),
             'detalle' => $doc === null
-                ? 'No se ha generado. Está disponible como plantilla en Documentos IA.'
+                ? 'No está en Control documental ni en Documentos IA. Si la empresa ya lo tiene, súbelo en Control documental y márcalo como respaldo del PESV; si no, genéralo desde su plantilla.'
                 : "«{$titulo}» en estado {$doc->estado} (v{$doc->version}).",
             'url' => '/documentos-ia',
             'cantidad' => null,
         ];
+    }
+
+    /**
+     * El documento del listado maestro que corresponde a un código del PESV,
+     * el vigente primero. Se reconoce por cualquiera de estos caminos:
+     * marcado a mano («Respalda en el PESV»), por el documento del catálogo
+     * que redacta la plantilla, por el código de la plantilla que le dio
+     * origen, o porque su texto vino de un documento IA de esa plantilla.
+     */
+    private function documentoControlado(string $codigo): ?ControlledDocument
+    {
+        $catalogos = DocumentTemplate::visibles($this->tenant->id)
+            ->where('codigo', $codigo)
+            ->whereNotNull('document_catalog_id')
+            ->pluck('document_catalog_id');
+
+        return ControlledDocument::query()
+            ->where('estado', '!=', 'obsoleto')
+            ->where(function ($q) use ($codigo, $catalogos) {
+                $q->where('codigo_pesv', $codigo)
+                    ->orWhere('codigo_historico', $codigo)
+                    ->orWhereHas('versions.generatedDocument.template', fn ($t) => $t->where('codigo', $codigo));
+                if ($catalogos->isNotEmpty()) {
+                    $q->orWhereIn('document_catalog_id', $catalogos);
+                }
+            })
+            ->orderByRaw("estado = 'vigente' desc")
+            ->latest('id')
+            ->first();
     }
 }

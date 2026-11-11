@@ -11,6 +11,7 @@ import {
     type EstadoVersion,
     type Sistema,
 } from '@/components/control-documental/etiquetas';
+import { RespaldaPesv, type OpcionPesv } from '@/components/control-documental/respalda-pesv';
 import InputError from '@/components/input-error';
 import { ModuloPage, StatCard } from '@/components/modulo-page';
 import { Badge } from '@/components/ui/badge';
@@ -73,7 +74,7 @@ interface Props {
     procesos: Proceso[];
     stats: { total: number; vigentes: number; en_flujo: number; revision_vencida: number; obsoletos: number };
     catalogo: ModuloCatalogo[];
-    catalogos: { tipos: Tipo[]; niveles: Record<number, string> };
+    catalogos: { tipos: Tipo[]; niveles: Record<number, string>; pesv?: OpcionPesv[] };
 }
 
 const TIPO_PROCESO: Record<Proceso['tipo'], string> = {
@@ -275,7 +276,13 @@ export default function ControlDocumentalIndex({ needsClient, documentos, proces
 
             {!needsClient && (
                 <>
-                    <NuevoDocumento open={nuevo} onClose={() => setNuevo(false)} procesos={procesos} tipos={catalogos.tipos} />
+                    <NuevoDocumento
+                        open={nuevo}
+                        onClose={() => setNuevo(false)}
+                        procesos={procesos}
+                        tipos={catalogos.tipos}
+                        opcionesPesv={catalogos.pesv ?? []}
+                    />
                     <DesdeCatalogo open={verCatalogo} onClose={() => setVerCatalogo(false)} catalogo={catalogo} />
                     <Procesos open={verProcesos} onClose={() => setVerProcesos(false)} procesos={procesos} />
                 </>
@@ -284,7 +291,19 @@ export default function ControlDocumentalIndex({ needsClient, documentos, proces
     );
 }
 
-function NuevoDocumento({ open, onClose, procesos, tipos }: { open: boolean; onClose: () => void; procesos: Proceso[]; tipos: Tipo[] }) {
+function NuevoDocumento({
+    open,
+    onClose,
+    procesos,
+    tipos,
+    opcionesPesv,
+}: {
+    open: boolean;
+    onClose: () => void;
+    procesos: Proceso[];
+    tipos: Tipo[];
+    opcionesPesv: OpcionPesv[];
+}) {
     const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
         tipo: 'PRC',
         process_id: procesos.find((p) => p.sigla === 'SST')?.id ?? procesos[0]?.id ?? '',
@@ -292,6 +311,7 @@ function NuevoDocumento({ open, onClose, procesos, tipos }: { open: boolean; onC
         sistemas: ['sst'] as Sistema[],
         condicional: false as boolean,
         codigo_historico: '',
+        codigo_pesv: '',
         confirmar_duplicado: false,
     });
 
@@ -384,6 +404,13 @@ function NuevoDocumento({ open, onClose, procesos, tipos }: { open: boolean; onC
                             Solo aplica según la actividad
                         </label>
                     </div>
+                    <RespaldaPesv
+                        id="nuevo-pesv"
+                        value={data.codigo_pesv}
+                        onChange={(v) => setData('codigo_pesv', v)}
+                        opciones={opcionesPesv}
+                        error={errs.codigo_pesv}
+                    />
 
                     {errs.duplicado && (
                         <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm">

@@ -534,11 +534,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 ->middleware('permission:documents.view')->name('leido');
             Route::get('{documento}/versiones/{version}/archivo', [ControlDocumentalVersionController::class, 'archivo'])
                 ->middleware('permission:documents.view')->scopeBindings()->name('versiones.archivo');
+            Route::get('{documento}/versiones/{version}/word', [ControlDocumentalController::class, 'descargarWord'])
+                ->middleware('permission:documents.view')->scopeBindings()->name('versiones.word');
 
             Route::middleware('permission:documents.manage')->group(function () {
                 Route::put('{documento}', [ControlDocumentalController::class, 'update'])->name('update');
                 Route::delete('{documento}', [ControlDocumentalController::class, 'destroy'])->name('destroy');
                 Route::post('{documento}/retirar', [ControlDocumentalController::class, 'retirar'])->name('retirar');
+                Route::post('{documento}/actualizar-ia', [ControlDocumentalController::class, 'actualizarConIa'])->name('actualizar-ia');
                 Route::put('{documento}/requisitos', [ControlDocumentalController::class, 'requisitos'])->name('vincular');
                 Route::post('{documento}/versiones', [ControlDocumentalVersionController::class, 'store'])->name('versiones.store');
                 Route::scopeBindings()->group(function () {
@@ -932,6 +935,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:documents.manage', 'module:documentos-ia'])->name('plantillas.update');
     Route::delete('documentos-ia/plantillas/{plantilla}', [DocumentTemplateController::class, 'destroy'])
         ->middleware(['permission:documents.manage', 'module:documentos-ia'])->name('plantillas.destroy');
+    // La empresa usa su propia versión (Word o PDF) de una plantilla de CMK.
+    Route::post('documentos-ia/plantillas/{plantilla}/sustituir', [DocumentTemplateController::class, 'sustituir'])
+        ->middleware(['permission:documents.manage', 'module:documentos-ia'])->name('plantillas.sustituir');
 
     Route::get('documentos-ia', [AiDocumentController::class, 'index'])
         ->middleware(['permission:documents.view', 'module:documentos-ia'])->name('documentos-ia.index');

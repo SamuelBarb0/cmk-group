@@ -426,6 +426,10 @@ class AssistantToolbox
             return "ERROR: no existe la plantilla «{$codigo}». Consulta listar_plantillas para ver los códigos válidos.";
         }
 
+        if (! $plantilla->estaLista()) {
+            return 'ERROR: la plantilla de la empresa para «'.$plantilla->nombre.'» todavía se está procesando (un PDF que se pasa a texto) o falló. Dile al usuario que espere o que la vuelva a subir.';
+        }
+
         if (! $plantilla->tieneBase()) {
             // Sin modelo base la IA redacta: se le devuelve la instrucción de
             // la plantilla para que escriba y cierre con crear_documento.

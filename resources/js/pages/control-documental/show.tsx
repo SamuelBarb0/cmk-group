@@ -12,6 +12,7 @@ import {
     type EstadoVersion,
     type Sistema,
 } from '@/components/control-documental/etiquetas';
+import { RespaldaPesv, type OpcionPesv } from '@/components/control-documental/respalda-pesv';
 import InputError from '@/components/input-error';
 import { ModuloPage } from '@/components/modulo-page';
 import { Button } from '@/components/ui/button';
@@ -22,8 +23,21 @@ import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
 import { type SharedData } from '@/types';
 import { Link, router, useForm, usePage } from '@inertiajs/react';
-import { Archive, ArrowLeft, BookOpenCheck, CheckCheck, Download, FilePlus2, Send, Trash2, Undo2 } from 'lucide-react';
-import { FormEventHandler, useMemo, useState } from 'react';
+import {
+    Archive,
+    ArrowLeft,
+    BookOpenCheck,
+    CheckCheck,
+    Download,
+    FileDown,
+    FilePlus2,
+    LoaderCircle,
+    Send,
+    Sparkles,
+    Trash2,
+    Undo2,
+} from 'lucide-react';
+import { FormEventHandler, useEffect, useMemo, useState } from 'react';
 
 interface Documento {
     id: number;
@@ -41,6 +55,7 @@ interface Documento {
     disposicion_final: string | null;
     ubicacion: string | null;
     codigo_historico: string | null;
+    codigo_pesv: string | null;
     revision_vencida: boolean;
     dias_para_revision: number | null;
     process: { sigla: string; nombre: string } | null;
@@ -66,6 +81,9 @@ interface Version {
     motivo_obsoleto: string | null;
     reads_count: number;
     updated_at: string;
+    /** La IA está actualizando este borrador («generando») o falló («error»). */
+    ia_estado: 'generando' | 'error' | null;
+    ia_error: string | null;
 }
 
 interface Requisito {
@@ -85,7 +103,16 @@ interface Props {
     requisitos: Requisito[];
     vinculados: string[];
     documentosIa: { id: number; titulo: string; version: number }[];
-    catalogos: { tipos: { clave: string; nombre: string }[]; niveles: Record<number, string>; disposiciones: string[] };
+    catalogos: { tipos: { clave: string; nombre: string }[]; niveles: Record<number, string>; disposiciones: string[]; pesv: OpcionPesv[] };
+}
+
+/** Archivos que la IA sabe leer para actualizar un documento. */
+const LEIBLES_IA = ['pdf', 'docx', 'txt', 'md'];
+
+function legibleParaIa(v: Version | undefined) {
+    if (!v) return false;
+    const ext = v.archivo?.split('.').pop()?.toLowerCase() ?? '';
+    return LEIBLES_IA.includes(ext) || !!v.contenido;
 }
 
 const EN_CURSO: EstadoVersion[] = ['borrador', 'en_revision', 'en_aprobacion'];
@@ -186,6 +213,10 @@ export default function ControlDocumentalShow(props: Props) {
                     {/* La key remonta el formulario tras cada guardado: así toma lo que
                         quedó en el servidor (p. ej. el texto traído de Documentos IA) y deja
                         de contar como «sin guardar». */}
+                    {canManage && (enCurso?.estado === 'borrador' || (vigente && !enCurso)) && (
+                        <ActualizarConIa documentoId={documento.id} enCurso={enCurso} vigente={vigente} />
+                    )}
+
                     {enCurso && (
                         <VersionEnCurso
                             key={`${enCurso.id}-${enCurso.updated_at}`}
@@ -200,7 +231,10 @@ export default function ControlDocumentalShow(props: Props) {
                         <Card>
                             <CardHeader className="flex-row items-center justify-between space-y-0">
                                 <CardTitle className="text-base">Versión vigente · v{vigente.version}</CardTitle>
-                                {vigente.archivo && <ArchivoLink documentoId={documento.id} version={vigente} />}
+                                <span className="flex flex-wrap gap-3">
+                                    {vigente.contenido && <WordLink documentoId={documento.id} version={vigente} />}
+                                    {vigente.archivo && <ArchivoLink documentoId={documento.id} version={vigente} />}
+                                </span>
                             </CardHeader>
                             <CardContent>
                                 {vigente.contenido ? (
@@ -218,7 +252,13 @@ export default function ControlDocumentalShow(props: Props) {
                 </div>
 
                 <div className="space-y-6">
-                    <Ficha key={documento.updated_at} documento={documento} canManage={canManage} disposiciones={props.catalogos.disposiciones} />
+                    <Ficha
+                        key={documento.updated_at}
+                        documento={documento}
+                        canManage={canManage}
+                        disposiciones={props.catalogos.disposiciones}
+                        opcionesPesv={props.catalogos.pesv ?? []}
+                    />
                     <Requisitos documentoId={documento.id} requisitos={props.requisitos} vinculados={props.vinculados} canManage={canManage} />
                     {vigente && (
                         <Card>
@@ -247,6 +287,107 @@ export default function ControlDocumentalShow(props: Props) {
     );
 }
 
+/** El texto de la versión como Word, con el membrete y las firmas del cliente. */
+function WordLink({ documentoId, version }: { documentoId: number; version: Version }) {
+    return (
+        <a
+            href={`/control-documental/${documentoId}/versiones/${version.id}/word`}
+            className="text-primary inline-flex items-center gap-1 text-sm hover:underline"
+            title="Descargar el texto en Word con el logo y las firmas de la empresa"
+        >
+            <FileDown className="size-4" /> Word
+        </a>
+    );
+}
+
+/**
+ * «Actualizar con IA»: la IA lee el documento que la empresa ya tiene (su
+ * Word o PDF adjunto, o el texto del borrador) y lo reescribe con los datos
+ * reales de la plataforma. El resultado cae en el borrador y sigue el ciclo
+ * normal de revisión y aprobación.
+ */
+function ActualizarConIa({ documentoId, enCurso, vigente }: { documentoId: number; enCurso?: Version; vigente?: Version }) {
+    const errores = usePage<SharedData>().props.errors as Record<string, string | undefined>;
+    const [indicaciones, setIndicaciones] = useState('');
+    const [conIndicaciones, setConIndicaciones] = useState(false);
+    const [enviando, setEnviando] = useState(false);
+
+    const generando = enCurso?.ia_estado === 'generando';
+    const fallo = enCurso?.ia_estado === 'error';
+    // Sobre un vigente se abre la versión siguiente, que hereda su archivo.
+    const fuente = enCurso ?? vigente;
+    const puede = legibleParaIa(fuente);
+
+    // Mientras la IA trabaja, se consulta cada pocos segundos hasta que termine.
+    useEffect(() => {
+        if (!generando) return;
+        const id = setInterval(() => router.reload({ only: ['versiones'] }), 8000);
+        return () => clearInterval(id);
+    }, [generando]);
+
+    function actualizar() {
+        router.post(
+            `/control-documental/${documentoId}/actualizar-ia`,
+            { instrucciones: conIndicaciones ? indicaciones : '' },
+            { preserveScroll: true, onStart: () => setEnviando(true), onFinish: () => setEnviando(false) },
+        );
+    }
+
+    if (generando) {
+        return (
+            <div className="border-primary/30 bg-primary/5 flex items-center gap-3 rounded-xl border px-4 py-3 text-sm" role="status">
+                <LoaderCircle className="text-primary size-5 shrink-0 motion-safe:animate-spin" />
+                <span>
+                    <span className="font-medium">La IA está actualizando el borrador v{enCurso?.version}</span> con los datos de la empresa. Tarda
+                    unos minutos; esta página se actualiza sola.
+                </span>
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-3 rounded-xl border px-4 py-3">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="flex min-w-0 gap-3">
+                    <Sparkles className="text-primary mt-0.5 size-5 shrink-0" />
+                    <div className="text-sm">
+                        <p className="font-medium">Actualizar con IA</p>
+                        <p className="text-muted-foreground">
+                            {puede
+                                ? 'La IA lee el documento de la empresa y lo pone al día con sus datos reales (organización, responsables, cifras). El resultado queda en el borrador para revisar.'
+                                : 'Sube al borrador el documento que la empresa ya tiene, en Word (.docx) o PDF, y la IA lo pondrá al día con sus datos.'}
+                        </p>
+                    </div>
+                </div>
+                <Button size="sm" className="gap-2" disabled={!puede || enviando} onClick={actualizar}>
+                    <Sparkles className="size-4" /> {enviando ? 'Enviando…' : fallo ? 'Reintentar' : 'Actualizar con IA'}
+                </Button>
+            </div>
+            {fallo && enCurso?.ia_error && (
+                <p className="text-destructive text-sm">
+                    <span className="font-medium">La última actualización falló:</span> {enCurso.ia_error}
+                </p>
+            )}
+            {puede &&
+                (conIndicaciones ? (
+                    <textarea
+                        rows={2}
+                        value={indicaciones}
+                        onChange={(e) => setIndicaciones(e.target.value)}
+                        className={textareaCls}
+                        placeholder="Opcional: qué debe cambiar, p. ej. «actualiza los responsables de la sección 5»."
+                        aria-label="Indicaciones para la IA"
+                    />
+                ) : (
+                    <button type="button" className="text-primary text-xs hover:underline" onClick={() => setConIndicaciones(true)}>
+                        + Agregar indicaciones
+                    </button>
+                ))}
+            <InputError message={errores.ia} />
+        </div>
+    );
+}
+
 function ArchivoLink({ documentoId, version }: { documentoId: number; version: Version }) {
     return (
         <a
@@ -271,7 +412,8 @@ function VersionEnCurso({
     documentosIa: Props['documentosIa'];
 }) {
     const base = `/control-documental/${documentoId}/versiones/${version.id}`;
-    const editable = version.estado === 'borrador' && canManage;
+    // Mientras la IA reescribe el borrador, editarlo sería trabajo perdido.
+    const editable = version.estado === 'borrador' && canManage && version.ia_estado !== 'generando';
     const { data, setData, post, processing, errors, isDirty } = useForm<{
         contenido: string;
         descripcion_cambio: string;
@@ -373,6 +515,9 @@ function VersionEnCurso({
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="archivo">Archivo (opcional)</Label>
+                            <p className="text-muted-foreground text-xs">
+                                El documento que la empresa ya tiene. Si es Word o PDF, «Actualizar con IA» lo pone al día con sus datos.
+                            </p>
                             {version.archivo && (
                                 <p className="text-muted-foreground text-xs">
                                     Actual: <ArchivoLink documentoId={documentoId} version={version} />
@@ -381,6 +526,11 @@ function VersionEnCurso({
                             <Input id="archivo" type="file" onChange={(e) => setData('archivo', e.target.files?.[0] ?? null)} />
                             <InputError message={errors.archivo} />
                         </div>
+                        {version.contenido && (
+                            <p className="text-xs">
+                                <WordLink documentoId={documentoId} version={version} />
+                            </p>
+                        )}
                         <div className="flex flex-wrap justify-between gap-2">
                             <div className="flex gap-2">
                                 <Button type="submit" variant="outline" disabled={processing}>
@@ -420,7 +570,10 @@ function VersionEnCurso({
                                 <Markdown>{version.contenido}</Markdown>
                             </div>
                         )}
-                        {version.archivo && <ArchivoLink documentoId={documentoId} version={version} />}
+                        <span className="flex flex-wrap gap-3">
+                            {version.contenido && <WordLink documentoId={documentoId} version={version} />}
+                            {version.archivo && <ArchivoLink documentoId={documentoId} version={version} />}
+                        </span>
                         <p className="text-muted-foreground text-xs">
                             Elaboró {version.elaboro_nombre ?? '—'}
                             {version.reviso_nombre && ` · revisó ${version.reviso_nombre} el ${fechaHora(version.revisado_at)}`}
@@ -486,9 +639,10 @@ function Historial({ documentoId, versiones }: { documentoId: number; versiones:
                                     <td className="px-4 py-2.5 font-medium tabular-nums">v{v.version}</td>
                                     <td className="max-w-xs px-4 py-2.5">
                                         {v.descripcion_cambio ?? <span className="text-muted-foreground">—</span>}
-                                        {v.archivo && (
-                                            <div className="mt-1">
-                                                <ArchivoLink documentoId={documentoId} version={v} />
+                                        {(v.archivo || v.contenido) && (
+                                            <div className="mt-1 flex flex-wrap gap-3">
+                                                {v.contenido && <WordLink documentoId={documentoId} version={v} />}
+                                                {v.archivo && <ArchivoLink documentoId={documentoId} version={v} />}
                                             </div>
                                         )}
                                         {v.motivo_obsoleto && <div className="text-muted-foreground mt-1 text-xs">{v.motivo_obsoleto}</div>}
@@ -582,8 +736,19 @@ function Retirar({ documentoId, onClose }: { documentoId: number; onClose: () =>
     );
 }
 
-function Ficha({ documento, canManage, disposiciones }: { documento: Documento; canManage: boolean; disposiciones: string[] }) {
+function Ficha({
+    documento,
+    canManage,
+    disposiciones,
+    opcionesPesv,
+}: {
+    documento: Documento;
+    canManage: boolean;
+    disposiciones: string[];
+    opcionesPesv: OpcionPesv[];
+}) {
     const { data, setData, put, processing, errors, isDirty } = useForm({
+        codigo_pesv: documento.codigo_pesv ?? '',
         titulo: documento.titulo,
         sistemas: documento.sistemas,
         condicional: documento.condicional,
@@ -684,6 +849,14 @@ function Ficha({ documento, canManage, disposiciones }: { documento: Documento; 
                             placeholder="Plataforma CMK, archivo físico de gestión humana…"
                         />
                     </div>
+                    <RespaldaPesv
+                        id="ficha-pesv"
+                        value={data.codigo_pesv}
+                        onChange={(v) => setData('codigo_pesv', v)}
+                        opciones={opcionesPesv}
+                        disabled={!canManage}
+                        error={errors.codigo_pesv}
+                    />
                     <label className="flex items-center gap-2 text-sm">
                         <Checkbox disabled={!canManage} checked={data.condicional} onCheckedChange={(v) => setData('condicional', v === true)} />
                         Solo aplica según la actividad

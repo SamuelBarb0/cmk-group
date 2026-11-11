@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\TranscribirPlantillaPdfJob;
 use App\Models\DocumentTemplate;
 use App\Services\PlantillaImporter;
 use App\Support\TenantContext;
@@ -165,10 +166,108 @@ class DocumentTemplateController extends Controller
         $this->autorizar($request, $plantilla);
 
         $this->borrarOriginal($plantilla);
+        $this->borrarPdf($plantilla);
         $nombre = $plantilla->nombre;
+        $eraReemplazo = $plantilla->reemplaza_id !== null;
         $plantilla->delete();
 
-        return back()->with('success', "Plantilla «{$nombre}» eliminada.");
+        return back()->with('success', $eraReemplazo
+            ? "La empresa vuelve a usar la plantilla de CMK para «{$nombre}»."
+            : "Plantilla «{$nombre}» eliminada.");
+    }
+
+    /**
+     * La empresa usa SU propia versión de una plantilla de CMK (Word o PDF).
+     * Hereda el código, el nombre, el tipo, la instrucción y el vínculo al
+     * catálogo del SIG, así que sigue contando en el control documental y en
+     * el PESV; y la de CMK deja de verse para esta empresa (ver visibles()).
+     * Si ya tenía una propia, se reemplaza.
+     */
+    public function sustituir(Request $request, DocumentTemplate $plantilla): RedirectResponse
+    {
+        abort_unless($plantilla->esGlobal(), 404);
+        if (! $this->context->has()) {
+            return back()->withErrors(['archivo' => 'Selecciona una empresa cliente antes de subir su plantilla.']);
+        }
+
+        // `extensions` y no `mimes`, por lo mismo que en validar().
+        $request->validate([
+            'archivo' => ['required', 'file', 'max:20480', 'extensions:pdf,'.implode(',', PlantillaImporter::EXTENSIONES)],
+        ]);
+        $archivo = $request->file('archivo');
+        $tenantId = $this->context->id();
+
+        $anterior = DocumentTemplate::where('tenant_id', $tenantId)->where('reemplaza_id', $plantilla->id)->first();
+        $this->exigirCodigoLibre($plantilla->codigo, $tenantId, $anterior?->id);
+
+        $esPdf = strtolower($archivo->getClientOriginalExtension()) === 'pdf';
+        $contenido = null;
+        if (! $esPdf) {
+            try {
+                $contenido = $this->importer->extraer($archivo);
+            } catch (RuntimeException $e) {
+                throw ValidationException::withMessages(['archivo' => $e->getMessage()]);
+            }
+        }
+
+        if ($anterior) {
+            $this->borrarOriginal($anterior);
+            $this->borrarPdf($anterior);
+        }
+
+        $propia = $anterior ?? new DocumentTemplate;
+        $propia->fill([
+            'tenant_id' => $tenantId,
+            'reemplaza_id' => $plantilla->id,
+            'codigo' => $plantilla->codigo,
+            'nombre' => $plantilla->nombre,
+            'tipo' => $plantilla->tipo,
+            'categoria' => $plantilla->categoria,
+            'normas' => $plantilla->normas,
+            'descripcion' => $plantilla->descripcion,
+            'prompt' => $plantilla->prompt,
+            // Mismo orden: aparece donde estaba la de CMK.
+            'orden' => $plantilla->orden,
+            'contenido_base' => $contenido,
+            'subido_por' => $request->user()?->name,
+            'subida_at' => now(),
+            'estado_proceso' => $esPdf ? 'procesando' : null,
+            'error_proceso' => null,
+        ]);
+        $propia->document_catalog_id = $plantilla->document_catalog_id;
+        // Solo un Word sirve de modelo para exportar con su formato; un PDF se
+        // exporta con el membrete del cliente desde su texto.
+        $propia->archivo = $esPdf ? null : $this->guardarOriginal($archivo, $plantilla->codigo, $tenantId);
+        $propia->save();
+
+        if ($esPdf) {
+            $ruta = $this->rutaPdf($propia);
+            Storage::disk('local')->put($ruta, file_get_contents($archivo->getRealPath()));
+            TranscribirPlantillaPdfJob::dispatch($propia->id, $ruta);
+
+            return back()->with('success', "Plantilla de la empresa para «{$plantilla->nombre}» subida. La IA está pasando el PDF a texto; estará lista en unos minutos.");
+        }
+
+        return back()->with('success', "Desde ahora «{$plantilla->nombre}» se genera con la plantilla de la empresa.");
+    }
+
+    /** Dónde se guarda el PDF de una plantilla propia (uno por plantilla). */
+    private function rutaPdf(DocumentTemplate $plantilla): string
+    {
+        return "plantillas-base/tenant-{$plantilla->tenant_id}/".Str::slug($plantilla->codigo).'.pdf';
+    }
+
+    private function borrarPdf(DocumentTemplate $plantilla): void
+    {
+        if ($plantilla->tenant_id === null) {
+            return;
+        }
+
+        try {
+            Storage::disk('local')->delete($this->rutaPdf($plantilla));
+        } catch (Throwable) {
+            // Igual que borrarOriginal(): un archivo que ya no está no impide nada.
+        }
     }
 
     /**

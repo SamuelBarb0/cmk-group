@@ -39,6 +39,10 @@ class ControlDocumentalVersionController extends Controller
         if (! $version->esEditable()) {
             throw ValidationException::withMessages(['estado' => 'Solo se edita un borrador. Esta versión está '.str_replace('_', ' ', $version->estado).'.']);
         }
+        // Lo que se guardara ahora lo pisaría la IA al terminar.
+        if ($version->ia_estado === 'generando') {
+            throw ValidationException::withMessages(['estado' => 'La IA está actualizando este borrador. Espera a que termine para editarlo.']);
+        }
 
         $datos = $request->validate([
             'contenido' => ['nullable', 'string'],
@@ -82,6 +86,10 @@ class ControlDocumentalVersionController extends Controller
             'accion' => ['required', Rule::in(['enviar', 'revisar', 'devolver', 'aprobar'])],
             'observaciones' => ['nullable', 'string', 'max:2000'],
         ]);
+
+        if ($version->ia_estado === 'generando') {
+            throw ValidationException::withMessages(['estado' => 'La IA está actualizando este borrador. Espera a que termine antes de moverlo en el flujo.']);
+        }
 
         $user = auth()->user();
 
