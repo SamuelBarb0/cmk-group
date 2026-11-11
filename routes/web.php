@@ -65,6 +65,7 @@ use App\Http\Controllers\TrainingTopicController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\WorkAccidentController;
 use App\Http\Controllers\WorkPlanController;
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -138,6 +139,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('permission:sst.view')->name('organizacion.show');
     Route::put('organizacion', [OrganizacionController::class, 'update'])
         ->middleware('permission:sst.manage')->name('organizacion.update');
+    // Logo y firmas del cliente activo: imágenes privadas, solo por esta ruta.
+    Route::get('organizacion/marca/{tipo}', [OrganizacionController::class, 'verMarca'])
+        ->whereIn('tipo', array_keys(Tenant::MARCA))
+        ->middleware('permission:sst.view')->name('organizacion.marca.ver');
+    Route::post('organizacion/marca/{tipo}', [OrganizacionController::class, 'subirMarca'])
+        ->whereIn('tipo', array_keys(Tenant::MARCA))
+        ->middleware('permission:sst.manage')->name('organizacion.marca.subir');
+    Route::delete('organizacion/marca/{tipo}', [OrganizacionController::class, 'quitarMarca'])
+        ->whereIn('tipo', array_keys(Tenant::MARCA))
+        ->middleware('permission:sst.manage')->name('organizacion.marca.quitar');
 
     /*
     | Diagnóstico Estándares Mínimos SG-SST (Res. 0312) del cliente activo.

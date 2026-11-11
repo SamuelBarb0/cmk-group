@@ -109,7 +109,8 @@ class AiDocumentController extends Controller
             .'Redactas documentos formales del Sistema de Gestión conforme a la normativa colombiana '
             .'(Decreto 1072, Resolución 0312, Resolución 1401, Resolución 40595, ISO 9001/14001/45001). '
             .'Escribe en español formal, en formato Markdown con encabezados, listo para revisión. '
-            .'No inventes datos que no se te proporcionen: usa [PENDIENTE] cuando falte información.';
+            .'No inventes datos que no se te proporcionen: usa [PENDIENTE] cuando falte información. '
+            .DocxExporter::AVISO_FIRMAS;
 
         $prompt = $template->prompt."\n\n".$this->contextoCliente($tenant)
             ."\n\nEntrega el documento completo en Markdown.";
@@ -140,7 +141,8 @@ class AiDocumentController extends Controller
             .'- N.° de trabajadores: '.($tenant->num_trabajadores ?: '[PENDIENTE]')."\n"
             .'- Nivel de riesgo ARL: '.($tenant->nivel_riesgo ?: '[PENDIENTE]')."\n"
             .'- ARL: '.($tenant->arl ?: '[PENDIENTE]')."\n"
-            .'- Representante legal: '.($tenant->representante_legal ?: '[PENDIENTE]')."\n"
+            .'- Representante legal: '.($tenant->representante_legal ?: '[PENDIENTE]')
+            .' (C.C. '.($tenant->representante_cc ?: '[PENDIENTE]').")\n"
             .'- Responsable SG-SST: '.($tenant->responsable_sgsst ?: '[PENDIENTE]').' (Licencia: '.($tenant->licencia_sgsst ?: '[PENDIENTE]').")\n"
             .'- Ciudad: '.($tenant->city ?: '[PENDIENTE]');
     }

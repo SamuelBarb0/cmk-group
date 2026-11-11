@@ -7,9 +7,9 @@ import { Label } from '@/components/ui/label';
 import { usePermissions } from '@/hooks/use-permissions';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { Building2, CheckCircle2, ShieldAlert, Users } from 'lucide-react';
-import { FormEventHandler, useEffect, useState } from 'react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
+import { Building2, CheckCircle2, ImageOff, PenLine, ShieldAlert, Trash2, Upload, Users } from 'lucide-react';
+import { FormEventHandler, useEffect, useRef, useState } from 'react';
 
 interface Organizacion {
     id: number;
@@ -36,10 +36,104 @@ interface Organizacion {
     curso_sst_fecha: string | null;
 }
 
+type TipoMarca = 'logo' | 'firma_rep' | 'firma_resp';
+
 interface Props {
     organizacion: Organizacion | null;
     needsClient: boolean;
     empleadosCount: number;
+    /** URL de cada imagen subida (null = falta). */
+    marca: Record<TipoMarca, string | null> | null;
+}
+
+const MARCA: { tipo: TipoMarca; titulo: string; ayuda: string }[] = [
+    { tipo: 'logo', titulo: 'Logo de la empresa', ayuda: 'Va en el encabezado de los documentos.' },
+    { tipo: 'firma_rep', titulo: 'Firma del representante legal', ayuda: 'Se estampa donde el documento pide su firma.' },
+    { tipo: 'firma_resp', titulo: 'Firma del responsable del SG-SST', ayuda: 'Se estampa junto a la del representante.' },
+];
+
+/**
+ * Una imagen de identidad: vista previa y botones para subirla, cambiarla o
+ * quitarla. Se guarda al elegir el archivo, aparte del formulario de datos.
+ */
+function ImagenMarca({
+    tipo,
+    titulo,
+    ayuda,
+    url,
+    canManage,
+}: {
+    tipo: TipoMarca;
+    titulo: string;
+    ayuda: string;
+    url: string | null;
+    canManage: boolean;
+}) {
+    const input = useRef<HTMLInputElement>(null);
+    const [subiendo, setSubiendo] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const subir = (archivo: File) => {
+        setError(null);
+        router.post(
+            route('organizacion.marca.subir', tipo),
+            { archivo },
+            {
+                forceFormData: true,
+                preserveScroll: true,
+                onStart: () => setSubiendo(true),
+                onFinish: () => setSubiendo(false),
+                onError: (e) => setError(e.archivo ?? null),
+            },
+        );
+    };
+
+    const quitar = () => {
+        if (!confirm(`¿Quitar ${titulo.toLowerCase()}? Los documentos que se exporten desde ahora saldrán sin ella.`)) return;
+        router.delete(route('organizacion.marca.quitar', tipo), { preserveScroll: true });
+    };
+
+    return (
+        <div className="flex flex-col gap-3 rounded-lg border p-4">
+            <div>
+                <div className="text-sm font-medium">{titulo}</div>
+                <div className="text-muted-foreground text-xs">{ayuda}</div>
+            </div>
+            <div className="bg-muted/40 flex h-28 items-center justify-center rounded-md border border-dashed">
+                {url ? (
+                    <img src={url} alt={titulo} className="max-h-24 max-w-[90%] object-contain" />
+                ) : (
+                    <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                        <ImageOff className="size-4" /> Sin subir
+                    </span>
+                )}
+            </div>
+            {canManage && (
+                <div className="flex gap-2">
+                    <input
+                        ref={input}
+                        type="file"
+                        accept="image/png,image/jpeg"
+                        className="hidden"
+                        onChange={(e) => {
+                            const archivo = e.target.files?.[0];
+                            if (archivo) subir(archivo);
+                            e.target.value = '';
+                        }}
+                    />
+                    <Button type="button" size="sm" variant="outline" className="gap-1.5" disabled={subiendo} onClick={() => input.current?.click()}>
+                        <Upload className="size-3.5" /> {subiendo ? 'Subiendo…' : url ? 'Cambiar' : 'Subir'}
+                    </Button>
+                    {url && (
+                        <Button type="button" size="sm" variant="ghost" className="text-destructive gap-1.5" onClick={quitar}>
+                            <Trash2 className="size-3.5" /> Quitar
+                        </Button>
+                    )}
+                </div>
+            )}
+            <InputError message={error ?? undefined} />
+        </div>
+    );
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -47,7 +141,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Organización', href: '/organizacion' },
 ];
 
-export default function OrganizacionIndex({ organizacion, needsClient, empleadosCount }: Props) {
+export default function OrganizacionIndex({ organizacion, needsClient, empleadosCount, marca }: Props) {
     const { can } = usePermissions();
     const canManage = can('sst.manage');
     const flash = usePage<SharedData>().props.flash;
@@ -163,6 +257,25 @@ export default function OrganizacionIndex({ organizacion, needsClient, empleados
                         <div>
                             <div className="text-muted-foreground text-xs">Ciudad</div>
                             <div className="font-medium">{organizacion.city ?? '—'}</div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Identidad y firmas: lo que se estampa en los documentos exportados */}
+                <Card>
+                    <CardContent className="space-y-5 p-5">
+                        <div>
+                            <div className="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wide uppercase">
+                                <PenLine className="size-4" /> Identidad y firmas
+                            </div>
+                            <p className="text-muted-foreground mt-1 text-xs">
+                                PNG o JPG de hasta 2 MB. Para las firmas, mejor una imagen con fondo blanco o transparente.
+                            </p>
+                        </div>
+                        <div className="grid gap-4 md:grid-cols-3">
+                            {MARCA.map((m) => (
+                                <ImagenMarca key={m.tipo} {...m} url={marca?.[m.tipo] ?? null} canManage={canManage} />
+                            ))}
                         </div>
                     </CardContent>
                 </Card>

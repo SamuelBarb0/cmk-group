@@ -12,6 +12,7 @@ use App\Models\Tenant;
 use App\Models\WorkPlan;
 use App\Models\WorkPlanActivity;
 use App\Services\DocumentFiller;
+use App\Services\DocxExporter;
 use App\Support\TenantContext;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -129,7 +130,7 @@ class AssistantToolbox
                 'Crea un documento nuevo para la empresa activa, en estado borrador, con el contenido que hayas redactado. Úsala después de generar_desde_plantilla cuando la plantilla no tenga modelo base, o para documentos a medida.',
                 [
                     'titulo' => ['type' => 'string', 'description' => 'Título del documento.'],
-                    'contenido_markdown' => ['type' => 'string', 'description' => 'Documento completo en Markdown, listo para revisión.'],
+                    'contenido_markdown' => ['type' => 'string', 'description' => 'Documento completo en Markdown, listo para revisión. '.DocxExporter::AVISO_FIRMAS],
                     'plantilla_codigo' => ['type' => 'string', 'description' => 'Código de la plantilla de origen. Omítelo si el documento es a medida.'],
                 ],
                 ['titulo', 'contenido_markdown'],
