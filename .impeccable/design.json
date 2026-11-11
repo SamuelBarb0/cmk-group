@@ -1,0 +1,600 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-11T21:28:54.139287+00:00",
+  "title": "Design System: CMK GROUP",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "CMK Navy",
+        "canonical": "hsl(220, 48%, 17%)",
+        "tonalRamp": [
+          "#142039",
+          "#223862",
+          "#314f8c",
+          "#4067b5",
+          "#6486c9",
+          "#8ea6d7",
+          "#bbcae7",
+          "#ecf0f8"
+        ]
+      },
+      "primary-foreground": {
+        "role": "neutral",
+        "displayName": "Paper White",
+        "canonical": "hsl(40, 30%, 98%)",
+        "tonalRamp": [
+          "#322a1b",
+          "#56492e",
+          "#7b6842",
+          "#9f8756",
+          "#b6a177",
+          "#c9ba9c",
+          "#dfd6c3",
+          "#f6f4ee"
+        ]
+      },
+      "brand-navy": {
+        "role": "primary",
+        "displayName": "Logo Navy",
+        "canonical": "#16243f",
+        "tonalRamp": [
+          "#142039",
+          "#223862",
+          "#31508c",
+          "#3f68b5",
+          "#6486c9",
+          "#8ea7d7",
+          "#bbcae7",
+          "#ecf0f8"
+        ]
+      },
+      "hero-navy-dark": {
+        "role": "primary",
+        "displayName": "Hero Navy, Dark",
+        "canonical": "hsl(220, 42%, 13%)",
+        "tonalRamp": [
+          "#162136",
+          "#26395e",
+          "#375186",
+          "#4769ae",
+          "#6b88c2",
+          "#92a8d3",
+          "#becbe4",
+          "#edf0f8"
+        ]
+      },
+      "ring": {
+        "role": "primary",
+        "displayName": "Focus Navy",
+        "canonical": "hsl(220, 48%, 30%)",
+        "tonalRamp": [
+          "#142039",
+          "#223862",
+          "#314f8c",
+          "#4067b5",
+          "#6486c9",
+          "#8ea6d7",
+          "#bbcae7",
+          "#ecf0f8"
+        ]
+      },
+      "background": {
+        "role": "neutral",
+        "displayName": "Warm Paper",
+        "canonical": "hsl(40, 20%, 98.5%)",
+        "tonalRamp": [
+          "#2e291f",
+          "#504735",
+          "#71654b",
+          "#938362",
+          "#ab9d82",
+          "#c2b8a3",
+          "#dad4c8",
+          "#f5f3f0"
+        ]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Ink Navy",
+        "canonical": "hsl(220, 40%, 12%)",
+        "tonalRamp": [
+          "#172136",
+          "#28395d",
+          "#395284",
+          "#496aab",
+          "#6d89c0",
+          "#94a8d1",
+          "#bfcbe3",
+          "#edf1f7"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "White Card",
+        "canonical": "hsl(0, 0%, 100%)",
+        "tonalRamp": [
+          "#262626",
+          "#424242",
+          "#5e5e5e",
+          "#7a7a7a",
+          "#969696",
+          "#b2b2b2",
+          "#d1d1d1",
+          "#f2f2f2"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Fog",
+        "canonical": "hsl(220, 16%, 95%)",
+        "tonalRamp": [
+          "#20242c",
+          "#383f4d",
+          "#4f596d",
+          "#67748e",
+          "#8691a7",
+          "#a6aebf",
+          "#cacfd8",
+          "#f0f2f4"
+        ]
+      },
+      "muted-foreground": {
+        "role": "neutral",
+        "displayName": "Slate Muted",
+        "canonical": "hsl(215, 12%, 42%)",
+        "tonalRamp": [
+          "#22252b",
+          "#3a414a",
+          "#535c6a",
+          "#6c7889",
+          "#8a94a3",
+          "#a9b1bc",
+          "#ccd0d7",
+          "#f1f2f4"
+        ]
+      },
+      "secondary": {
+        "role": "neutral",
+        "displayName": "Fog, Secondary",
+        "canonical": "hsl(220, 16%, 94%)",
+        "tonalRamp": [
+          "#20242c",
+          "#383f4d",
+          "#4f596d",
+          "#67748e",
+          "#8691a7",
+          "#a6aebf",
+          "#cacfd8",
+          "#f0f2f4"
+        ]
+      },
+      "accent": {
+        "role": "neutral",
+        "displayName": "Fog, Accent",
+        "canonical": "hsl(220, 32%, 92%)",
+        "tonalRamp": [
+          "#1a2232",
+          "#2d3b58",
+          "#40547d",
+          "#536da2",
+          "#758bb8",
+          "#9aaacb",
+          "#c2cce0",
+          "#eef1f6"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "hsl(220, 16%, 88%)",
+        "tonalRamp": [
+          "#20242c",
+          "#383f4d",
+          "#4f596d",
+          "#67748e",
+          "#8691a7",
+          "#a6aebf",
+          "#cacfd8",
+          "#f0f2f4"
+        ]
+      },
+      "input": {
+        "role": "neutral",
+        "displayName": "Hairline, Input",
+        "canonical": "hsl(220, 16%, 85%)",
+        "tonalRamp": [
+          "#20242c",
+          "#383f4d",
+          "#4f596d",
+          "#67748e",
+          "#8691a7",
+          "#a6aebf",
+          "#cacfd8",
+          "#f0f2f4"
+        ]
+      },
+      "destructive": {
+        "role": "error",
+        "displayName": "Alarm Red",
+        "canonical": "hsl(0, 72%, 46%)",
+        "tonalRamp": [
+          "#420b0b",
+          "#721313",
+          "#a21a1a",
+          "#d32222",
+          "#e24b4b",
+          "#ea7b7b",
+          "#f2b0b0",
+          "#fbe9e9"
+        ]
+      },
+      "sidebar": {
+        "role": "primary",
+        "displayName": "Sidebar Navy",
+        "canonical": "hsl(220, 45%, 13%)",
+        "tonalRamp": [
+          "#152137",
+          "#243860",
+          "#345089",
+          "#4368b1",
+          "#6787c5",
+          "#90a7d5",
+          "#bccae6",
+          "#edf0f8"
+        ]
+      },
+      "sidebar-foreground": {
+        "role": "neutral",
+        "displayName": "Sidebar Slate",
+        "canonical": "hsl(215, 20%, 78%)",
+        "tonalRamp": [
+          "#1f252e",
+          "#354050",
+          "#4b5b71",
+          "#627693",
+          "#8293ab",
+          "#a3b0c2",
+          "#c8d0da",
+          "#f0f2f5"
+        ]
+      },
+      "sidebar-accent": {
+        "role": "primary",
+        "displayName": "Sidebar Navy, Active",
+        "canonical": "hsl(220, 38%, 20%)",
+        "tonalRamp": [
+          "#182135",
+          "#293a5b",
+          "#3a5282",
+          "#4c6ba9",
+          "#6f89be",
+          "#95a9d0",
+          "#c0cbe3",
+          "#edf1f7"
+        ]
+      },
+      "status-rojo": {
+        "role": "status",
+        "displayName": "Rojo (dot)",
+        "canonical": "#dc2626",
+        "tonalRamp": [
+          "#7f1d1d",
+          "#991b1b",
+          "#b91c1c",
+          "#dc2626",
+          "#ef4444",
+          "#f87171",
+          "#fca5a5",
+          "#fef2f2"
+        ]
+      },
+      "status-rojo-text": {
+        "role": "status",
+        "displayName": "Rojo (word)",
+        "canonical": "#b91c1c",
+        "tonalRamp": [
+          "#7f1d1d",
+          "#991b1b",
+          "#b91c1c",
+          "#dc2626",
+          "#ef4444",
+          "#f87171",
+          "#fca5a5",
+          "#fef2f2"
+        ]
+      },
+      "status-ambar": {
+        "role": "status",
+        "displayName": "Ámbar (dot)",
+        "canonical": "#f59e0b",
+        "tonalRamp": [
+          "#78350f",
+          "#92400e",
+          "#b45309",
+          "#d97706",
+          "#f59e0b",
+          "#fbbf24",
+          "#fcd34d",
+          "#fffbeb"
+        ]
+      },
+      "status-ambar-text": {
+        "role": "status",
+        "displayName": "Ámbar (word)",
+        "canonical": "#b45309",
+        "tonalRamp": [
+          "#78350f",
+          "#92400e",
+          "#b45309",
+          "#d97706",
+          "#f59e0b",
+          "#fbbf24",
+          "#fcd34d",
+          "#fffbeb"
+        ]
+      },
+      "status-verde": {
+        "role": "status",
+        "displayName": "Verde (dot)",
+        "canonical": "#059669",
+        "tonalRamp": [
+          "#064e3b",
+          "#065f46",
+          "#047857",
+          "#059669",
+          "#10b981",
+          "#34d399",
+          "#6ee7b7",
+          "#ecfdf5"
+        ]
+      },
+      "status-verde-text": {
+        "role": "status",
+        "displayName": "Verde (word)",
+        "canonical": "#047857",
+        "tonalRamp": [
+          "#064e3b",
+          "#065f46",
+          "#047857",
+          "#059669",
+          "#10b981",
+          "#34d399",
+          "#6ee7b7",
+          "#ecfdf5"
+        ]
+      },
+      "status-azul": {
+        "role": "status",
+        "displayName": "Azul (dot)",
+        "canonical": "#0284c7",
+        "tonalRamp": [
+          "#0c4a6e",
+          "#075985",
+          "#0369a1",
+          "#0284c7",
+          "#0ea5e9",
+          "#38bdf8",
+          "#7dd3fc",
+          "#f0f9ff"
+        ]
+      },
+      "status-azul-text": {
+        "role": "status",
+        "displayName": "Azul (word)",
+        "canonical": "#0369a1",
+        "tonalRamp": [
+          "#0c4a6e",
+          "#075985",
+          "#0369a1",
+          "#0284c7",
+          "#0ea5e9",
+          "#38bdf8",
+          "#7dd3fc",
+          "#f0f9ff"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Company or portfolio name in the hero band; the ring's center figure. 24px, 30px from sm."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Panel titles: Qué hacer hoy, Salud del sistema, Por área, Clientes."
+      },
+      "figure": {
+        "displayName": "Figure",
+        "purpose": "Values in compliance and indicator rows; always tabular, Colombian decimal comma."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Row titles in lists, descriptions, hero sub-lines."
+      },
+      "row-title": {
+        "displayName": "Row Title",
+        "purpose": "The task line in Qué hacer hoy, up to two lines."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Status words, deadline tags, context lines, in-panel group headings (sentence case)."
+      },
+      "code": {
+        "displayName": "Code",
+        "purpose": "SIG map codes (M05) and 0312 indicator codes (IF-AT) only."
+      }
+    },
+    "shadows": [
+      {
+        "name": "none",
+        "value": "none",
+        "purpose": "Dashboard panels, rows and the hero band are flat; depth comes from tone."
+      },
+      {
+        "name": "card-xs",
+        "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "purpose": "Inherited on the incumbent shadcn Card only; not part of the summary-surface vocabulary."
+      }
+    ],
+    "motion": [
+      {
+        "name": "row-hover",
+        "value": "background-color 150ms",
+        "purpose": "Hover fill on list rows, pills and the hero ring link."
+      },
+      {
+        "name": "ring-fill",
+        "value": "stroke-dashoffset 1000ms ease-out",
+        "purpose": "The 0312 ring fills once on arrival; only under prefers-reduced-motion: no-preference."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Incumbent shadcn default button: navy fill, 6px radius, 40px high.",
+      "html": "<button class=\"ds-btn-primary\">Ir a Clientes</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 8px 16px; border: none; border-radius: calc(var(--radius, 0.5rem) - 2px); background: var(--primary, hsl(220, 48%, 17%)); color: var(--primary-foreground, hsl(40, 30%, 98%)); font: 500 14px/20px Inter, ui-sans-serif, system-ui, sans-serif; cursor: pointer; transition: background-color 150ms; } .ds-btn-primary:hover { background: color-mix(in srgb, var(--primary, hsl(220, 48%, 17%)) 90%, transparent); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--background, hsl(40, 20%, 98.5%)), 0 0 0 4px var(--ring, hsl(220, 48%, 30%)); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Incumbent shadcn outline button: hairline input stroke on the page fill.",
+      "html": "<button class=\"ds-btn-outline\">Cancelar</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; height: 40px; padding: 8px 16px; border: 1px solid var(--input, hsl(220, 16%, 85%)); border-radius: calc(var(--radius, 0.5rem) - 2px); background: var(--background, hsl(40, 20%, 98.5%)); color: var(--foreground, hsl(220, 40%, 12%)); font: 500 14px/20px Inter, ui-sans-serif, system-ui, sans-serif; cursor: pointer; transition: background-color 150ms; } .ds-btn-outline:hover { background: var(--accent, hsl(220, 32%, 92%)); color: var(--accent-foreground, hsl(220, 45%, 18%)); } .ds-btn-outline:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--background, #fff), 0 0 0 4px var(--ring, hsl(220, 48%, 30%)); }"
+    },
+    {
+      "name": "Status",
+      "kind": "chip",
+      "refersTo": "status-rojo",
+      "description": "The status code: 8px dot plus a word, never color alone.",
+      "html": "<span class=\"ds-status ds-rojo\"><span class=\"ds-dot\"></span>No cumple</span> <span class=\"ds-status ds-ambar\"><span class=\"ds-dot\"></span>3 por vencer</span> <span class=\"ds-status ds-verde\"><span class=\"ds-dot\"></span>En meta</span> <span class=\"ds-status ds-azul\"><span class=\"ds-dot\"></span>Próximo</span> <span class=\"ds-status ds-gris\"><span class=\"ds-dot\"></span>Sin medir</span>",
+      "css": ".ds-status { display: inline-flex; align-items: center; gap: 6px; margin-right: 12px; font: 500 12px/16px Inter, ui-sans-serif, system-ui, sans-serif; white-space: nowrap; } .ds-dot { width: 8px; height: 8px; border-radius: 9999px; } .ds-rojo { color: #b91c1c; } .ds-rojo .ds-dot { background: #dc2626; } .ds-ambar { color: #b45309; } .ds-ambar .ds-dot { background: #f59e0b; } .ds-verde { color: #047857; } .ds-verde .ds-dot { background: #059669; } .ds-azul { color: #0369a1; } .ds-azul .ds-dot { background: #0284c7; } .ds-gris { color: var(--muted-foreground, hsl(215, 12%, 42%)); } .ds-gris .ds-dot { background: color-mix(in srgb, var(--muted-foreground, hsl(215, 12%, 42%)) 40%, transparent); }"
+    },
+    {
+      "name": "SIG Code",
+      "kind": "chip",
+      "refersTo": "sig-code",
+      "description": "Code from CMK's M01–M20 document map; the only monospace in the system.",
+      "html": "<span class=\"ds-sig\">M05</span>",
+      "css": ".ds-sig { display: inline-block; padding: 2px 6px; border-radius: calc(var(--radius, 0.5rem) - 4px); background: color-mix(in srgb, var(--primary, hsl(220, 48%, 17%)) 10%, transparent); color: var(--primary, hsl(220, 48%, 17%)); font: 600 12px/16px ui-monospace, SFMono-Regular, Menlo, monospace; }"
+    },
+    {
+      "name": "Area Pill",
+      "kind": "chip",
+      "refersTo": "area-pill",
+      "description": "Module in the Por área strip: dot, title, and the status word when not green.",
+      "html": "<a href=\"#\" class=\"ds-pill\"><span class=\"ds-pill-dot\" style=\"background:#dc2626\"></span>Matriz de peligros<span class=\"ds-pill-meta\">· 2 vencidos</span></a> <a href=\"#\" class=\"ds-pill\"><span class=\"ds-pill-dot\" style=\"background:#059669\"></span>Capacitaciones</a>",
+      "css": ".ds-pill { display: inline-flex; align-items: center; gap: 6px; margin: 0 6px 6px 0; padding: 4px 12px; border: 1px solid var(--border, hsl(220, 16%, 88%)); border-radius: 9999px; background: var(--background, hsl(40, 20%, 98.5%)); color: var(--foreground, hsl(220, 40%, 12%)); font: 500 12px/16px Inter, ui-sans-serif, system-ui, sans-serif; text-decoration: none; transition: background-color 150ms, border-color 150ms; } .ds-pill-dot { width: 8px; height: 8px; border-radius: 9999px; flex-shrink: 0; } .ds-pill-meta { color: var(--muted-foreground, hsl(215, 12%, 42%)); font-variant-numeric: tabular-nums; } .ds-pill:hover { border-color: color-mix(in srgb, var(--primary, hsl(220, 48%, 17%)) 40%, transparent); background: color-mix(in srgb, var(--muted, hsl(220, 16%, 95%)) 60%, transparent); } .ds-pill:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring, hsl(220, 48%, 30%)); }"
+    },
+    {
+      "name": "Panel with Action Rows",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "White 16px bordered panel holding list rows: dot, two-line title, SIG-led context, deadline tag.",
+      "html": "<section class=\"ds-panel\"><div class=\"ds-panel-head\"><h2>Qué hacer hoy</h2><span>14 en total</span></div><a href=\"#\" class=\"ds-row\"><span class=\"ds-row-dot\" style=\"background:#dc2626\"></span><span class=\"ds-row-body\"><span class=\"ds-row-title\">Actualizar la matriz de requisitos legales</span><span class=\"ds-row-ctx\"><b>M03</b> Requisitos legales · Revisión anual</span></span><span class=\"ds-tag\" style=\"background:#fef2f2;color:#991b1b\">Vencido hace 3 d</span></a><a href=\"#\" class=\"ds-row\"><span class=\"ds-row-dot\" style=\"background:#f59e0b\"></span><span class=\"ds-row-body\"><span class=\"ds-row-title\">Inspección de extintores</span><span class=\"ds-row-ctx\"><b>M11</b> Inspecciones · Formato</span></span><span class=\"ds-tag\" style=\"background:#fffbeb;color:#92400e\">En 4 días</span></a></section>",
+      "css": ".ds-panel { max-width: 640px; padding: 20px; border: 1px solid var(--border, hsl(220, 16%, 88%)); border-radius: 16px; background: var(--card, #fff); color: var(--card-foreground, hsl(220, 40%, 12%)); font-family: Inter, ui-sans-serif, system-ui, sans-serif; } .ds-panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; padding: 0 4px; } .ds-panel-head h2 { margin: 0; font: 600 18px/28px Poppins, Inter, sans-serif; letter-spacing: -0.025em; } .ds-panel-head span { color: var(--muted-foreground, hsl(215, 12%, 42%)); font-size: 14px; font-variant-numeric: tabular-nums; } .ds-row { display: flex; align-items: flex-start; gap: 12px; margin-top: 2px; padding: 10px 12px; border-radius: 8px; color: inherit; text-decoration: none; transition: background-color 150ms; } .ds-row:hover { background: color-mix(in srgb, var(--muted, hsl(220, 16%, 95%)) 60%, transparent); } .ds-row:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring, hsl(220, 48%, 30%)); } .ds-row-dot { width: 10px; height: 10px; margin-top: 6px; border-radius: 9999px; flex-shrink: 0; } .ds-row-body { flex: 1; min-width: 0; } .ds-row-title { display: block; font-size: 15px; line-height: 1.375; font-weight: 500; } .ds-row-ctx { display: block; margin-top: 2px; color: var(--muted-foreground, hsl(215, 12%, 42%)); font-size: 12px; } .ds-row-ctx b { margin-right: 4px; color: color-mix(in srgb, var(--primary, hsl(220, 48%, 17%)) 80%, transparent); font: 600 11px ui-monospace, monospace; } .ds-tag { flex-shrink: 0; margin-top: 2px; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 500; white-space: nowrap; }"
+    },
+    {
+      "name": "Hero Band with 0312 Ring",
+      "kind": "custom",
+      "refersTo": "hero-band",
+      "description": "Fixed navy band: company, summary counts, and the Res. 0312 ring with its legal band.",
+      "html": "<section class=\"ds-hero\"><div><h1>Empresa Demo S.A.S.</h1><p class=\"ds-hero-sub\">NIT 900.123.456 · Bogotá</p><div class=\"ds-hero-counts\"><span><i style=\"background:#dc2626\"></i><b style=\"color:#fca5a5\">3</b> vencidos</span><span><i style=\"background:#f59e0b\"></i><b style=\"color:#fcd34d\">2</b> vencen esta semana</span><span><b>0</b> indicadores fuera de meta</span></div></div><a href=\"#\" class=\"ds-hero-ring\"><svg width=\"132\" height=\"132\" viewBox=\"0 0 132 132\" style=\"transform:rotate(-90deg)\"><circle cx=\"66\" cy=\"66\" r=\"61\" fill=\"none\" stroke=\"rgba(255,255,255,0.12)\" stroke-width=\"10\"/><circle cx=\"66\" cy=\"66\" r=\"61\" fill=\"none\" stroke=\"#fcd34d\" stroke-width=\"10\" stroke-linecap=\"round\" stroke-dasharray=\"383.3\" stroke-dashoffset=\"122.7\"/></svg><span class=\"ds-ring-fig\">68<small>%</small><em>Res. 0312</em></span><span class=\"ds-ring-text\"><b>Estándares mínimos</b><span><i style=\"background:#f59e0b\"></i>Moderadamente aceptable</span><small>Ver la autoevaluación →</small></span></a></section>",
+      "css": ".ds-hero { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; padding: 28px 32px; border-radius: 16px; background: #16243f; color: #fff; font-family: Inter, ui-sans-serif, system-ui, sans-serif; } .ds-hero h1 { margin: 0; font: 600 30px/36px Poppins, Inter, sans-serif; letter-spacing: -0.025em; } .ds-hero-sub { margin: 4px 0 0; font-size: 14px; color: rgba(255,255,255,0.65); } .ds-hero-counts { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 20px; } .ds-hero-counts span { display: inline-flex; align-items: baseline; gap: 6px; font-size: 14px; color: rgba(255,255,255,0.75); } .ds-hero-counts i, .ds-ring-text i { display: inline-block; width: 8px; height: 8px; border-radius: 9999px; align-self: center; } .ds-hero-counts b { font: 600 24px Poppins, Inter, sans-serif; font-variant-numeric: tabular-nums; color: #fff; } .ds-hero-ring { position: relative; display: flex; align-items: center; gap: 16px; padding: 8px 16px 8px 8px; border-radius: 12px; color: #fff; text-decoration: none; transition: background-color 150ms; } .ds-hero-ring:hover { background: rgba(255,255,255,0.05); } .ds-hero-ring:focus-visible { outline: none; box-shadow: 0 0 0 2px rgba(255,255,255,0.6); } .ds-ring-fig { position: absolute; left: 8px; top: 8px; width: 132px; height: 132px; display: flex; flex-direction: column; align-items: center; justify-content: center; font: 600 30px/1 Poppins, Inter, sans-serif; font-variant-numeric: tabular-nums; } .ds-ring-fig small { font-size: 16px; opacity: 0.7; } .ds-ring-fig em { margin-top: 4px; font: 500 11px Inter, sans-serif; font-style: normal; opacity: 0.75; } .ds-ring-text { display: flex; flex-direction: column; gap: 4px; max-width: 176px; font-size: 14px; } .ds-ring-text span { display: inline-flex; align-items: center; gap: 6px; color: rgba(255,255,255,0.85); } .ds-ring-text small { margin-top: 4px; font-size: 12px; color: rgba(255,255,255,0.6); }"
+    },
+    {
+      "name": "Indicator Row with Sparkline",
+      "kind": "custom",
+      "refersTo": "list-row",
+      "description": "0312 indicator: code and name, real 12-month line with dashed target, value, target and status.",
+      "html": "<a href=\"#\" class=\"ds-kpi\"><span class=\"ds-kpi-top\"><b>IF-AT</b><span>Frecuencia de accidentalidad</span></span><span class=\"ds-kpi-bottom\"><svg width=\"104\" height=\"32\" viewBox=\"0 0 104 32\"><line x1=\"3\" x2=\"101\" y1=\"18\" y2=\"18\" stroke=\"rgba(100,110,125,0.45)\" stroke-dasharray=\"2 3\"/><polyline points=\"3,22 11.9,20 20.8,24 29.7,14 38.6,10 47.5,16\" fill=\"none\" stroke=\"#dc2626\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><polyline points=\"65.4,8 74.3,6 83.2,9\" fill=\"none\" stroke=\"#dc2626\" stroke-width=\"2\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/></svg><span class=\"ds-kpi-val\"><b>7,25</b><small>meta ≤ 5</small></span><span class=\"ds-kpi-st\"><i></i>No cumple</span></span></a>",
+      "css": ".ds-kpi { display: flex; flex-direction: column; gap: 6px; max-width: 420px; padding: 10px 12px; border-radius: 8px; color: var(--foreground, hsl(220, 40%, 12%)); font-family: Inter, ui-sans-serif, system-ui, sans-serif; text-decoration: none; transition: background-color 150ms; } .ds-kpi:hover { background: color-mix(in srgb, var(--muted, hsl(220, 16%, 95%)) 60%, transparent); } .ds-kpi:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--ring, hsl(220, 48%, 30%)); } .ds-kpi-top { display: flex; align-items: baseline; gap: 8px; min-width: 0; } .ds-kpi-top b { font: 600 11px ui-monospace, SFMono-Regular, Menlo, monospace; } .ds-kpi-top span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 12px; color: var(--muted-foreground, hsl(215, 12%, 42%)); } .ds-kpi-bottom { display: flex; align-items: center; gap: 12px; } .ds-kpi-val { flex: 1; text-align: right; font-variant-numeric: tabular-nums; } .ds-kpi-val b { display: block; font-size: 16px; line-height: 1.25; font-weight: 600; } .ds-kpi-val small { font-size: 11px; color: var(--muted-foreground, hsl(215, 12%, 42%)); } .ds-kpi-st { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: #b91c1c; white-space: nowrap; } .ds-kpi-st i { width: 8px; height: 8px; border-radius: 9999px; background: #dc2626; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Consultant's Ledger",
+    "overview": "CMK's world is a navy-and-paper office tool: a deep navy anchor (the sidebar and, on the dashboard, a full-width hero band) set against a warm off-white page and white working surfaces. It reads like a well-kept compliance ledger: every line is a fact with a status, a code from CMK's M01–M20 map, and a link to the record where it is acted on. Density is moderate and desktop-first; panels hold lists of rows rather than grids of equal cards.\n\nColor is mostly quiet. Navy carries identity; the only loud color is the status code (red, amber, green, sky, gray), and it always travels with a word. The Colombian legal minimums are visual first-class citizens: the Res. 0312 score is drawn as a ring with its legal bands, and the 0312 indicators as real 12-month sparklines against their target.\n\nThe rest of the app (module screens built on shadcn/ui) keeps the incumbent, tighter look: 6–8px radii, bordered tables, standard buttons. The dashboard vocabulary below (hero band, 16px panels, row lists, ring, sparklines, area pills) is the system's newest layer and the reference for summary surfaces.",
+    "keyCharacteristics": [
+      "Navy anchor, warm paper page, white panels with hairline borders.",
+      "Status is dot + word, never color alone.",
+      "Row lists inside one bordered panel; no nested cards.",
+      "Poppins for headings, Inter tabular for every figure, monospace only for codes.",
+      "Flat surfaces; depth from tone (navy vs paper vs white), not shadow."
+    ],
+    "rules": [
+      {
+        "name": "The Never-Color-Alone Rule",
+        "body": "A status is a 8px dot plus a word (\"Vencido\", \"En meta\", \"Sin medir\"), or a tinted tag carrying the word. A colored number or a colored dot without its word is not a status.",
+        "section": "colors"
+      },
+      {
+        "name": "The Fixed Navy Rule",
+        "body": "Anything that must stay navy in both themes (the hero band) uses `brand-navy` / `hero-navy-dark` directly, never `primary`.",
+        "section": "colors"
+      },
+      {
+        "name": "The Zero Is White Rule",
+        "body": "On the hero, a count of zero stays white with no dot: nothing to attend means no alarm color.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Figures Rule",
+        "body": "Every count, score, percentage and target is set with tabular numerals. Decimals use the Colombian comma (\"7,25\", \"68,0 %\").",
+        "section": "typography"
+      },
+      {
+        "name": "The Mono Is For Codes Rule",
+        "body": "Monospace appears only on codes from CMK's map or the 0312 indicator list; never for labels, headings or numbers.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sentence Case Rule",
+        "body": "Panel and group headings are sentence case; no uppercase tracked kickers above titles.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Panel Rule",
+        "body": "Panels and rows have no shadow at rest or on hover; hover is a muted fill (60%) and, for pills, a navy-tinted border.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do pair every status color with its word: dot + word, or tinted tag + word.",
+      "Do use the five-word code consistently: rojo = acción, ámbar = pronto, verde = en meta, azul = próximo, gris = sin dato.",
+      "Do use `brand-navy` (light) and `hero-navy-dark` with a white/10 ring (dark) for the hero band, never `primary`.",
+      "Do set every figure in Inter with tabular numerals and the Colombian decimal comma.",
+      "Do build summary panels as one white 16px-radius bordered section holding rows with 8px radius and a muted hover fill.",
+      "Do draw 0312 scores with the ring and its legal bands (<60, ≤85, >85), and indicator trends as the real 12 months with a dashed target line.",
+      "Do order areas exactly as the sidebar does.",
+      "Do put what needs action first and collapse what has no data into a single line."
+    ],
+    "donts": [
+      "Don't signal status with color alone, including a colored number without a dot or word.",
+      "Don't nest cards inside panels; use rows and dividers.",
+      "Don't add colored side stripes or accent borders to rows or panels.",
+      "Don't put uppercase tracked kickers or eyebrows above headings.",
+      "Don't use monospace for anything but SIG and indicator codes.",
+      "Don't plot a missing month as zero, or invent a trend where there are no readings.",
+      "Don't add shadows to panels or rows."
+    ]
+  }
+}

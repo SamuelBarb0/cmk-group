@@ -2,16 +2,6 @@
   "detector": {
     "ignoreRules": [],
     "ignoreFiles": [],
-    "ignoreValues": [
-      {
-        "rule": "side-tab",
-        "value": "*",
-        "files": [
-          "resources/js/pages/dashboard.tsx"
-        ],
-        "createdAt": "2026-11-11T20:30:18.887Z",
-        "reason": "Navi: list-row status stripe is the app's existing agenda-row pattern (FilaAgenda, commit 1da911c); alert rows reuse it and pair it with an Alta/Media label + icon. Card side-stripes were removed instead."
-      }
-    ]
+    "ignoreValues": []
   }
 }
