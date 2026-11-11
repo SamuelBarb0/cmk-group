@@ -66,16 +66,16 @@ import AppLogo from './app-logo';
  * propio (el PESV, que despliega sus 4 fases y 24 pasos). Los módulos con
  * submódulos (ver `SUBMODULOS`) se despliegan solos por su `module`.
  */
-type NavEntry = NavItem & { tree?: 'pesv' };
+export type NavEntry = NavItem & { tree?: 'pesv' };
 
 /**
  * Grupo del sidebar. `area`: es un área de módulos y se pliega; los grupos
  * fijos (General, Consultoría, Administración) son cortos y van siempre abiertos.
  */
-type NavGroup = { label: string; area?: boolean; items: NavEntry[] };
+export type NavGroup = { label: string; area?: boolean; items: NavEntry[] };
 
 /** Grupos de navegación con el permiso requerido por cada ítem. */
-const navGroups: NavGroup[] = [
+export const navGroups: NavGroup[] = [
     {
         label: 'General',
         items: [{ title: 'Dashboard', url: '/dashboard', icon: LayoutGrid }],
@@ -179,6 +179,20 @@ const navGroups: NavGroup[] = [
         items: [{ title: 'Configuración', url: '/configuracion', icon: Settings, permission: 'settings.manage' }],
     },
 ];
+
+/** Grupos que no son áreas de módulos: navegación general y administración. */
+const SIN_AREA = ['General', 'Consultoría', 'Administración'];
+
+/**
+ * Las áreas de módulos del menú con la clave de cada módulo (la de
+ * `modulos_contratados`, o la ruta cuando el módulo es base). El dashboard
+ * agrupa con ESTO para que el mapa del panel sea el mismo del menú.
+ */
+export function areasDeModulos(): { area: string; claves: string[] }[] {
+    return navGroups
+        .filter((g) => !SIN_AREA.includes(g.label))
+        .map((g) => ({ area: g.label, claves: g.items.map((i) => i.module ?? i.url.replace(/^\//, '')) }));
+}
 
 /** Entradas base del grupo Organización: alimentan al resto y van primero. */
 const BASE = ['/organizacion', '/empleados'];
