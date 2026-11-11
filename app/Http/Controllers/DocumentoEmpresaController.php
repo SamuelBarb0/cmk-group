@@ -7,6 +7,7 @@ use App\Support\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -80,7 +81,7 @@ class DocumentoEmpresaController extends Controller
         );
 
         TenantDocument::create([
-            'nombre' => $data['nombre'] ?: $archivo->getClientOriginalName(),
+            'nombre' => ($data['nombre'] ?? null) ?: $archivo->getClientOriginalName(),
             'categoria' => $data['categoria'] ?? null,
             'origen' => 'upload',
             'path' => $path,
@@ -98,9 +99,22 @@ class DocumentoEmpresaController extends Controller
         abort_unless(Storage::disk('local')->exists($documento->path), 404, 'El archivo ya no existe en el servidor.');
 
         $extension = pathinfo($documento->path, PATHINFO_EXTENSION);
-        $nombre = \Illuminate\Support\Str::slug($documento->nombre).($extension ? ".{$extension}" : '');
+        $nombre = Str::slug($documento->nombre).($extension ? ".{$extension}" : '');
 
         return Storage::disk('local')->download($documento->path, $nombre);
+    }
+
+    /** Renombra o recategoriza un documento; el archivo no se toca. */
+    public function update(Request $request, TenantDocument $documento): RedirectResponse
+    {
+        $data = $request->validate([
+            'nombre' => ['required', 'string', 'max:255'],
+            'categoria' => ['nullable', 'string', 'max:100'],
+        ]);
+
+        $documento->update(['nombre' => $data['nombre'], 'categoria' => $data['categoria'] ?? null]);
+
+        return back()->with('success', 'Documento actualizado.');
     }
 
     public function destroy(TenantDocument $documento): RedirectResponse

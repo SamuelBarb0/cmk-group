@@ -115,7 +115,7 @@ export default function Ambiental(props: Props) {
     const { tiene } = usePartes('ambiental');
     const [pestana, setPestana] = usePestana<Pestana>('ambiental', ['residuos', 'consumos', 'quimicos']);
     const [residuoDlg, setResiduoDlg] = useState<Residuo | 'nuevo' | null>(null);
-    const [lecturaDlg, setLecturaDlg] = useState<boolean>(false);
+    const [lecturaDlg, setLecturaDlg] = useState<Lectura | 'nuevo' | null>(null);
     const [quimicoDlg, setQuimicoDlg] = useState<Quimico | 'nuevo' | null>(null);
 
     const hace12 = (() => {
@@ -143,7 +143,7 @@ export default function Ambiental(props: Props) {
                     <Button
                         className="gap-2"
                         onClick={() =>
-                            pestana === 'residuos' ? setResiduoDlg('nuevo') : pestana === 'consumos' ? setLecturaDlg(true) : setQuimicoDlg('nuevo')
+                            pestana === 'residuos' ? setResiduoDlg('nuevo') : pestana === 'consumos' ? setLecturaDlg('nuevo') : setQuimicoDlg('nuevo')
                         }
                     >
                         <Plus className="size-4" /> {nuevo}
@@ -282,7 +282,9 @@ export default function Ambiental(props: Props) {
                 </Card>
             )}
 
-            {pestana === 'consumos' && <Consumos lecturas={lecturas} recursos={props.recursos} canManage={canManage} borrar={borrar} />}
+            {pestana === 'consumos' && (
+                <Consumos lecturas={lecturas} recursos={props.recursos} canManage={canManage} borrar={borrar} editar={setLecturaDlg} />
+            )}
 
             {pestana === 'quimicos' && (
                 <>
@@ -396,7 +398,13 @@ export default function Ambiental(props: Props) {
             </Card>
 
             {residuoDlg && <ResiduoDialog residuo={residuoDlg === 'nuevo' ? null : residuoDlg} props={props} onClose={() => setResiduoDlg(null)} />}
-            {lecturaDlg && <LecturaDialog recursos={props.recursos} onClose={() => setLecturaDlg(false)} />}
+            {lecturaDlg && (
+                <LecturaDialog
+                    recursos={props.recursos}
+                    lectura={lecturaDlg === 'nuevo' ? null : lecturaDlg}
+                    onClose={() => setLecturaDlg(null)}
+                />
+            )}
             {quimicoDlg && <QuimicoDialog quimico={quimicoDlg === 'nuevo' ? null : quimicoDlg} props={props} onClose={() => setQuimicoDlg(null)} />}
         </ModuloPage>
     );
@@ -407,11 +415,13 @@ function Consumos({
     recursos,
     canManage,
     borrar,
+    editar,
 }: {
     lecturas: Lectura[];
     recursos: Props['recursos'];
     canManage: boolean;
     borrar: (url: string, que: string) => void;
+    editar: (l: Lectura) => void;
 }) {
     const porClave = new Map(lecturas.map((l) => [`${l.recurso}|${l.mes}`, l]));
     const usados = Object.keys(recursos).filter((r) => lecturas.some((l) => l.recurso === r));
@@ -470,7 +480,10 @@ function Consumos({
                                                 {v === null ? '—' : `${v > 0 ? '+' : ''}${num(v)} %`}
                                             </td>
                                             {canManage && (
-                                                <td className="px-2 py-1 text-right">
+                                                <td className="px-2 py-1 text-right whitespace-nowrap">
+                                                    <Button size="icon" variant="ghost" className="size-7" aria-label="Corregir lectura" onClick={() => editar(l)}>
+                                                        <Pencil className="size-3.5" />
+                                                    </Button>
                                                     <Button
                                                         size="icon"
                                                         variant="ghost"
@@ -735,31 +748,33 @@ function ResiduoDialog({ residuo, props, onClose }: { residuo: Residuo | null; p
     );
 }
 
-function LecturaDialog({ recursos, onClose }: { recursos: Props['recursos']; onClose: () => void }) {
+/** Registra el consumo de un mes o, con `lectura`, corrige uno ya registrado. */
+function LecturaDialog({ recursos, lectura, onClose }: { recursos: Props['recursos']; lectura: Lectura | null; onClose: () => void }) {
     const mesPasado = (() => {
         const d = new Date();
         d.setMonth(d.getMonth() - 1, 1);
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     })();
-    const { data, setData, post, processing, errors } = useForm({
-        mes: mesPasado,
-        recurso: 'agua',
-        cantidad: '',
-        costo: '',
-        trabajadores: '',
-        observaciones: '',
+    const { data, setData, post, put, processing, errors } = useForm({
+        mes: lectura?.mes ?? mesPasado,
+        recurso: lectura?.recurso ?? 'agua',
+        cantidad: lectura ? String(lectura.cantidad) : '',
+        costo: lectura?.costo != null ? String(lectura.costo) : '',
+        trabajadores: lectura?.trabajadores != null ? String(lectura.trabajadores) : '',
+        observaciones: lectura?.observaciones ?? '',
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post('/ambiental/lecturas', { preserveScroll: true, onSuccess: onClose });
+        if (lectura) put(`/ambiental/lecturas/${lectura.id}`, { preserveScroll: true, onSuccess: onClose });
+        else post('/ambiental/lecturas', { preserveScroll: true, onSuccess: onClose });
     };
 
     return (
         <Dialog open onOpenChange={(v) => !v && onClose()}>
             <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
-                    <DialogTitle>Consumo del mes</DialogTitle>
+                    <DialogTitle>{lectura ? 'Corregir consumo' : 'Consumo del mes'}</DialogTitle>
                     <DialogDescription>Una lectura por mes y recurso: si el mes ya tiene lectura, se corrige.</DialogDescription>
                 </DialogHeader>
                 <form onSubmit={submit} className="space-y-3">

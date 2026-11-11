@@ -129,6 +129,7 @@ export default function EppIndex({ items, matriz, entregas, empleados, cargos, s
     const [dlgItem, setDlgItem] = useState(false);
     const [editItem, setEditItem] = useState<Item | null>(null);
     const [dlgAsig, setDlgAsig] = useState(false);
+    const [editAsig, setEditAsig] = useState<Asignacion | null>(null);
     const [dlgEntrega, setDlgEntrega] = useState(false);
     const [editEntrega, setEditEntrega] = useState<Entrega | null>(null);
 
@@ -164,9 +165,22 @@ export default function EppIndex({ items, matriz, entregas, empleados, cargos, s
     };
 
     // --------------------------------------------------------------- matriz
+    function abrirAsig(m?: Asignacion) {
+        setEditAsig(m ?? null);
+        fAsig.clearErrors();
+        fAsig.setData(
+            m
+                ? { ppe_item_id: m.ppe_item_id, cargo: m.cargo, area: m.area ?? '', requerimiento: m.requerimiento, observaciones: m.observaciones ?? '' }
+                : { ...asignacionVacia },
+        );
+        setDlgAsig(true);
+    }
+
     const guardarAsig: FormEventHandler = (e) => {
         e.preventDefault();
-        fAsig.post(route('epp.matriz.store'), { preserveScroll: true, onSuccess: () => setDlgAsig(false) });
+        const opts = { preserveScroll: true, onSuccess: () => setDlgAsig(false) };
+        if (editAsig) fAsig.put(route('epp.matriz.update', editAsig.id), opts);
+        else fAsig.post(route('epp.matriz.store'), opts);
     };
 
     // ------------------------------------------------------------- entregas
@@ -226,7 +240,7 @@ export default function EppIndex({ items, matriz, entregas, empleados, cargos, s
             accion={
                 canManage ? (
                     <Button
-                        onClick={() => (pestana === 'catalogo' ? abrirItem() : pestana === 'matriz' ? setDlgAsig(true) : abrirEntrega())}
+                        onClick={() => (pestana === 'catalogo' ? abrirItem() : pestana === 'matriz' ? abrirAsig() : abrirEntrega())}
                         className="gap-2"
                     >
                         <Plus className="size-4" />
@@ -351,6 +365,9 @@ export default function EppIndex({ items, matriz, entregas, empleados, cargos, s
                                                 {canManage && (
                                                     <td className="px-4 py-2.5">
                                                         <div className="flex justify-end">
+                                                            <Button size="icon" variant="ghost" aria-label="Editar" onClick={() => abrirAsig(m)}>
+                                                                <PenLine className="size-4" />
+                                                            </Button>
                                                             <Button
                                                                 size="icon"
                                                                 variant="ghost"
@@ -526,7 +543,7 @@ export default function EppIndex({ items, matriz, entregas, empleados, cargos, s
             <Dialog open={dlgAsig} onOpenChange={setDlgAsig}>
                 <DialogContent className="sm:max-w-xl">
                     <DialogHeader>
-                        <DialogTitle>Asignar un EPP a un cargo</DialogTitle>
+                        <DialogTitle>{editAsig ? 'Editar asignación' : 'Asignar un EPP a un cargo'}</DialogTitle>
                         <DialogDescription>La matriz se define por cargo, no por persona.</DialogDescription>
                     </DialogHeader>
                     <form onSubmit={guardarAsig} className="space-y-4">
@@ -587,7 +604,7 @@ export default function EppIndex({ items, matriz, entregas, empleados, cargos, s
                                 Cancelar
                             </Button>
                             <Button type="submit" disabled={fAsig.processing}>
-                                Asignar
+                                {editAsig ? 'Guardar cambios' : 'Asignar'}
                             </Button>
                         </DialogFooter>
                     </form>

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\Tenant;
 use App\Support\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**
  * Información de la Organización (contexto SGI) del cliente activo.
@@ -19,6 +22,13 @@ use Inertia\Response;
  */
 class OrganizacionController extends Controller
 {
+    /** Nombre de cada imagen de identidad en los mensajes al usuario. */
+    private const NOMBRES_MARCA = [
+        'logo' => 'Logo de la empresa',
+        'firma_rep' => 'Firma del representante legal',
+        'firma_resp' => 'Firma del responsable del SG-SST',
+    ];
+
     public function __construct(private readonly TenantContext $context) {}
 
     public function show(): Response
@@ -28,6 +38,7 @@ class OrganizacionController extends Controller
                 'needsClient' => true,
                 'organizacion' => null,
                 'empleadosCount' => 0,
+                'marca' => null,
             ]);
         }
 
@@ -56,7 +67,75 @@ class OrganizacionController extends Controller
             ),
             // Conteo real de empleados registrados (referencia vs. el declarado).
             'empleadosCount' => Employee::count(),
+            'marca' => $tenant === null ? null : $this->marca($tenant),
         ]);
+    }
+
+    /**
+     * URL de cada imagen de identidad subida (null si falta). Lleva la fecha de
+     * modificación del archivo para que el navegador no muestre la anterior
+     * después de reemplazarla.
+     *
+     * @return array<string, string|null>
+     */
+    private function marca(Tenant $tenant): array
+    {
+        return collect(Tenant::MARCA)->map(function (string $columna, string $tipo) use ($tenant) {
+            $archivo = $tenant->archivoMarca($tipo);
+
+            return $archivo === null ? null : route('organizacion.marca.ver', ['tipo' => $tipo, 'v' => filemtime($archivo)]);
+        })->all();
+    }
+
+    public function verMarca(string $tipo): BinaryFileResponse
+    {
+        $archivo = $this->context->get()?->archivoMarca($tipo);
+        abort_if($archivo === null, 404);
+
+        return response()->file($archivo, ['Cache-Control' => 'private, max-age=86400']);
+    }
+
+    /** Sube o reemplaza el logo o una firma del cliente activo. */
+    public function subirMarca(Request $request, string $tipo): RedirectResponse
+    {
+        $tenant = $this->context->get();
+        if ($tenant === null) {
+            return back()->withErrors(['tenant' => 'Selecciona un cliente antes de subir su logo o sus firmas.']);
+        }
+
+        // Solo PNG o JPG: es lo que PhpWord sabe incrustar en el .docx. Un SVG
+        // o un WebP pasaría la subida y luego tumbaría la exportación.
+        $request->validate([
+            'archivo' => ['required', 'file', 'mimes:png,jpg,jpeg', 'max:2048'],
+        ], [], ['archivo' => self::NOMBRES_MARCA[$tipo]]);
+
+        $columna = Tenant::MARCA[$tipo];
+        $anterior = $tenant->{$columna};
+
+        $ruta = $request->file('archivo')->store("tenants/{$tenant->id}/marca", 'local');
+        $tenant->update([$columna => $ruta]);
+
+        if (filled($anterior) && $anterior !== $ruta) {
+            Storage::disk('local')->delete($anterior);
+        }
+
+        return back()->with('success', 'Se guardó: '.self::NOMBRES_MARCA[$tipo].'.');
+    }
+
+    public function quitarMarca(string $tipo): RedirectResponse
+    {
+        $tenant = $this->context->get();
+        if ($tenant === null) {
+            return back()->withErrors(['tenant' => 'Selecciona un cliente antes de quitar su logo o sus firmas.']);
+        }
+
+        $columna = Tenant::MARCA[$tipo];
+        if (filled($tenant->{$columna})) {
+            Storage::disk('local')->delete($tenant->{$columna});
+            $tenant->update([$columna => null]);
+        }
+
+        return back()->with('success', 'Se quitó: '.self::NOMBRES_MARCA[$tipo].'.');
     }
 
     public function update(Request $request): RedirectResponse

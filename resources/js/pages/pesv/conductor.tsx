@@ -12,8 +12,8 @@ import { hoy as hoyLocal } from '@/lib/fechas';
 import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
-import { ArrowLeft, Trash2 } from 'lucide-react';
-import { FormEventHandler } from 'react';
+import { ArrowLeft, Pencil, Trash2 } from 'lucide-react';
+import { FormEventHandler, useState } from 'react';
 
 interface Props {
     conductor: {
@@ -76,8 +76,32 @@ export default function PesvConductor({
 
     const prueba = useForm({ tipo: 'teorica', fecha: hoy, puntaje: '', resultado: '', vigente_hasta: '', evaluador: '', observaciones: '' });
     const conPuntaje = prueba.data.tipo !== 'psicosensometrica';
+    // Con `editando`, el mismo formulario corrige esa prueba en vez de registrar una nueva.
+    const [editando, setEditando] = useState<number | null>(null);
+    const editarPrueba = (p: Props['pruebas'][number]) => {
+        setEditando(p.id);
+        prueba.clearErrors();
+        prueba.setData({
+            tipo: p.tipo,
+            fecha: p.fecha,
+            puntaje: p.puntaje !== null ? String(p.puntaje) : '',
+            resultado: p.resultado ?? '',
+            vigente_hasta: p.vigente_hasta ?? '',
+            evaluador: p.evaluador ?? '',
+            observaciones: p.observaciones ?? '',
+        });
+    };
+    const cancelarEdicion = () => {
+        setEditando(null);
+        prueba.reset();
+        prueba.clearErrors();
+    };
     const registrarPrueba: FormEventHandler = (e) => {
         e.preventDefault();
+        if (editando) {
+            prueba.put(`/pesv/pruebas/${editando}`, { preserveScroll: true, onSuccess: cancelarEdicion });
+            return;
+        }
         prueba.post(`/pesv/conductores/${conductor.id}/pruebas`, {
             preserveScroll: true,
             onSuccess: () => prueba.reset('puntaje', 'resultado', 'vigente_hasta', 'observaciones'),
@@ -196,6 +220,11 @@ export default function PesvConductor({
                                                 <td className="px-3 py-1.5">{p.evaluador ?? '—'}</td>
                                                 <td className="px-3 py-1.5 text-right">
                                                     {canManage && (
+                                                        <Button variant="ghost" size="icon" aria-label="Editar prueba" onClick={() => editarPrueba(p)}>
+                                                            <Pencil className="size-4" />
+                                                        </Button>
+                                                    )}
+                                                    {canManage && (
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
@@ -216,7 +245,11 @@ export default function PesvConductor({
                             </div>
                         )}
                         {canManage && (
-                            <form onSubmit={registrarPrueba} className="grid gap-3 rounded-lg border p-3 md:grid-cols-6">
+                            <form
+                                onSubmit={registrarPrueba}
+                                className={cn('grid gap-3 rounded-lg border p-3 md:grid-cols-6', editando && 'border-primary/50 bg-primary/5')}
+                            >
+                                {editando && <p className="text-primary text-sm font-medium md:col-span-6">Corrigiendo una prueba registrada</p>}
                                 <div className="grid gap-1.5 md:col-span-2">
                                     <Label htmlFor="p_tipo">Prueba</Label>
                                     <select
@@ -293,9 +326,16 @@ export default function PesvConductor({
                                             prueba.errors.puntaje ?? prueba.errors.resultado ?? prueba.errors.fecha ?? prueba.errors.vigente_hasta
                                         }
                                     />
-                                    <Button type="submit" size="sm" className="self-end" disabled={prueba.processing}>
-                                        Registrar prueba
-                                    </Button>
+                                    <div className="flex gap-2 self-end">
+                                        {editando && (
+                                            <Button type="button" size="sm" variant="outline" onClick={cancelarEdicion}>
+                                                Cancelar
+                                            </Button>
+                                        )}
+                                        <Button type="submit" size="sm" disabled={prueba.processing}>
+                                            {editando ? 'Guardar cambios' : 'Registrar prueba'}
+                                        </Button>
+                                    </div>
                                 </div>
                             </form>
                         )}

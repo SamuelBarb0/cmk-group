@@ -209,7 +209,10 @@ export default function PesvRutas({ needsClient, rutas, stats, nivelesRiesgo, ti
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            onClick={() => router.delete(`/pesv/rutas/${r.id}`, { preserveScroll: true })}
+                                                            onClick={() =>
+                                                                confirm(`¿Eliminar la ruta «${r.nombre}»?`) &&
+                                                                router.delete(`/pesv/rutas/${r.id}`, { preserveScroll: true })
+                                                            }
                                                         >
                                                             <Trash2 className="size-4 text-red-600" />
                                                         </Button>

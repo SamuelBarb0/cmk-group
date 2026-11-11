@@ -65,6 +65,7 @@ use App\Http\Controllers\TrainingTopicController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\WorkAccidentController;
 use App\Http\Controllers\WorkPlanController;
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -138,6 +139,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('permission:sst.view')->name('organizacion.show');
     Route::put('organizacion', [OrganizacionController::class, 'update'])
         ->middleware('permission:sst.manage')->name('organizacion.update');
+    // Logo y firmas del cliente activo: imágenes privadas, solo por esta ruta.
+    Route::get('organizacion/marca/{tipo}', [OrganizacionController::class, 'verMarca'])
+        ->whereIn('tipo', array_keys(Tenant::MARCA))
+        ->middleware('permission:sst.view')->name('organizacion.marca.ver');
+    Route::post('organizacion/marca/{tipo}', [OrganizacionController::class, 'subirMarca'])
+        ->whereIn('tipo', array_keys(Tenant::MARCA))
+        ->middleware('permission:sst.manage')->name('organizacion.marca.subir');
+    Route::delete('organizacion/marca/{tipo}', [OrganizacionController::class, 'quitarMarca'])
+        ->whereIn('tipo', array_keys(Tenant::MARCA))
+        ->middleware('permission:sst.manage')->name('organizacion.marca.quitar');
 
     /*
     | Diagnóstico Estándares Mínimos SG-SST (Res. 0312) del cliente activo.
@@ -199,6 +210,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('pesv/evidencias/{evidencia}', [PesvVerificacionController::class, 'borrar'])->name('pesv.evidencias.borrar');
         Route::put('pesv/conductores/{empleado}/requisitos', [PesvConductorController::class, 'requisitos'])->name('pesv.conductores.requisitos');
         Route::post('pesv/conductores/{empleado}/pruebas', [PesvConductorController::class, 'guardarPrueba'])->name('pesv.conductores.pruebas');
+        Route::put('pesv/pruebas/{prueba}', [PesvConductorController::class, 'actualizarPrueba'])->name('pesv.pruebas.update');
         Route::delete('pesv/pruebas/{prueba}', [PesvConductorController::class, 'borrarPrueba'])->name('pesv.pruebas.destroy');
         Route::put('pesv/vehiculos/{vehiculo}/requisitos', [PesvVehiculoFichaController::class, 'requisitos'])->name('pesv.vehiculos.requisitos');
         Route::post('pesv/infracciones', [PesvInfraccionController::class, 'store'])->name('pesv.infracciones.store');
@@ -286,6 +298,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.manage', 'module:auditoria'])->name('auditoria.verificacion');
     Route::post('auditoria/{auditoria}/hallazgos', [AuditController::class, 'hallazgo'])
         ->middleware(['permission:sst.manage', 'module:auditoria'])->name('auditoria.hallazgo');
+    Route::put('auditoria/{auditoria}/hallazgos/{hallazgo}', [AuditController::class, 'updateHallazgo'])
+        ->middleware(['permission:sst.manage', 'module:auditoria'])->name('auditoria.hallazgos.update');
+    Route::delete('auditoria/{auditoria}/hallazgos/{hallazgo}', [AuditController::class, 'destroyHallazgo'])
+        ->middleware(['permission:sst.manage', 'module:auditoria'])->name('auditoria.hallazgos.destroy');
     Route::put('auditoria/{auditoria}', [AuditController::class, 'update'])
         ->middleware(['permission:sst.manage', 'module:auditoria'])->name('auditoria.update');
     Route::delete('auditoria/{auditoria}', [AuditController::class, 'destroy'])
@@ -306,6 +322,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.items.destroy');
     Route::post('epp/matriz', [PpeController::class, 'storeAssignment'])
         ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.matriz.store');
+    Route::put('epp/matriz/{asignacion}', [PpeController::class, 'updateAssignment'])
+        ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.matriz.update');
     Route::delete('epp/matriz/{asignacion}', [PpeController::class, 'destroyAssignment'])
         ->middleware(['permission:sst.manage', 'module:epp'])->name('epp.matriz.destroy');
     Route::post('epp/entregas', [PpeController::class, 'storeDelivery'])
@@ -623,6 +641,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('{equipo}', [EquipoMedicionController::class, 'update'])->name('update');
             Route::delete('{equipo}', [EquipoMedicionController::class, 'destroy'])->name('destroy');
             Route::post('{equipo}/calibraciones', [EquipoMedicionController::class, 'storeCalibracion'])->name('calibraciones.store');
+            // POST y no PUT: puede traer un certificado nuevo (multipart).
+            Route::post('{equipo}/calibraciones/{calibracion}', [EquipoMedicionController::class, 'updateCalibracion'])->name('calibraciones.update');
             Route::delete('{equipo}/calibraciones/{calibracion}', [EquipoMedicionController::class, 'destroyCalibracion'])->name('calibraciones.destroy');
             Route::post('{equipo}/calibraciones/{calibracion}/accion', [EquipoMedicionController::class, 'crearAccion'])->name('calibraciones.accion');
         });
@@ -683,6 +703,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('residuos/{residuo}', [AmbientalController::class, 'updateResiduo'])->name('residuos.update');
             Route::delete('residuos/{residuo}', [AmbientalController::class, 'destroyResiduo'])->name('residuos.destroy');
             Route::post('lecturas', [AmbientalController::class, 'storeLectura'])->name('lecturas.store');
+            Route::put('lecturas/{lectura}', [AmbientalController::class, 'updateLectura'])->name('lecturas.update');
             Route::delete('lecturas/{lectura}', [AmbientalController::class, 'destroyLectura'])->name('lecturas.destroy');
             Route::post('quimicos', [AmbientalController::class, 'storeQuimico'])->name('quimicos.store');
             Route::put('quimicos/{quimico}', [AmbientalController::class, 'updateQuimico'])->name('quimicos.update');
@@ -814,6 +835,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:sst.manage', 'module:indicadores'])->name('indicadores.meta');
     Route::post('indicadores', [IndicatorController::class, 'store'])
         ->middleware(['permission:sst.manage', 'module:indicadores'])->name('indicadores.store');
+    Route::put('indicadores/{indicator}', [IndicatorController::class, 'update'])
+        ->middleware(['permission:sst.manage', 'module:indicadores'])->name('indicadores.update');
     Route::delete('indicadores/{indicator}', [IndicatorController::class, 'destroy'])
         ->middleware(['permission:sst.manage', 'module:indicadores'])->name('indicadores.destroy');
 
@@ -828,6 +851,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['permission:documents.manage', 'module:documentos'])->name('documentos.store');
     Route::get('documentos/{documento}/descargar', [DocumentoEmpresaController::class, 'download'])
         ->middleware(['permission:documents.view', 'module:documentos'])->name('documentos.download');
+    Route::put('documentos/{documento}', [DocumentoEmpresaController::class, 'update'])
+        ->middleware(['permission:documents.manage', 'module:documentos'])->name('documentos.update');
     Route::delete('documentos/{documento}', [DocumentoEmpresaController::class, 'destroy'])
         ->middleware(['permission:documents.manage', 'module:documentos'])->name('documentos.destroy');
 

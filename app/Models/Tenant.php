@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -27,6 +28,9 @@ class Tenant extends Model
         'city',
         'address',
         'logo_path',
+        // Firmas digitalizadas (imagen) para los documentos exportados.
+        'firma_rep_path',
+        'firma_resp_path',
         'is_active',
         // Módulos contratados por la empresa (null = todos).
         'modulos',
@@ -49,6 +53,16 @@ class Tenant extends Model
         'licencia_sgsst_vence',
         'curso_sst_horas',
         'curso_sst_fecha',
+    ];
+
+    /**
+     * Imágenes de identidad del cliente que se estampan en los documentos:
+     * tipo => columna. Los archivos van en el disco privado («local»).
+     */
+    public const MARCA = [
+        'logo' => 'logo_path',
+        'firma_rep' => 'firma_rep_path',
+        'firma_resp' => 'firma_resp_path',
     ];
 
     protected function casts(): array
@@ -117,6 +131,22 @@ class Tenant extends Model
         }
 
         return null;
+    }
+
+    /**
+     * Ruta absoluta de una imagen de identidad (logo o firma), o null si no se
+     * ha subido o el archivo ya no está en disco: quien la use debe poder
+     * seguir sin ella, igual que con cualquier otro dato que falte.
+     */
+    public function archivoMarca(string $tipo): ?string
+    {
+        $ruta = $this->{self::MARCA[$tipo]} ?? null;
+
+        if (blank($ruta) || ! Storage::disk('local')->exists($ruta)) {
+            return null;
+        }
+
+        return Storage::disk('local')->path($ruta);
     }
 
     /**

@@ -11,6 +11,7 @@ use App\Services\ControlDocumental\CicloDocumental;
 use App\Support\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -88,6 +89,41 @@ class EquipoMedicionController extends Controller
      */
     public function storeCalibracion(Request $request, MeasuringEquipment $equipo): RedirectResponse
     {
+        [$datos, $archivo] = $this->validatedCalibracion($request);
+        $calibracion = $equipo->calibrations()->make($datos);
+        $this->guardarCertificado($calibracion, $equipo, $archivo);
+        $calibracion->save();
+        $this->aplicarResultado($equipo, $calibracion);
+
+        return back()->with('success', $calibracion->resultado === 'no_conforme'
+            ? "Registrado. {$equipo->codigo} quedó fuera de servicio hasta una calibración conforme."
+            : 'Registrado.');
+    }
+
+    /**
+     * Corrige un registro de calibración. Un certificado nuevo reemplaza al
+     * anterior; sin archivo, el que había se conserva.
+     */
+    public function updateCalibracion(Request $request, MeasuringEquipment $equipo, EquipmentCalibration $calibracion): RedirectResponse
+    {
+        abort_unless($calibracion->measuring_equipment_id === $equipo->id, 404);
+
+        [$datos, $archivo] = $this->validatedCalibracion($request);
+        $anterior = $archivo ? $calibracion->archivo : null;
+        $calibracion->fill($datos);
+        $this->guardarCertificado($calibracion, $equipo, $archivo);
+        $calibracion->save();
+        if ($anterior) {
+            Storage::disk('local')->delete($anterior);
+        }
+        $this->aplicarResultado($equipo, $calibracion);
+
+        return back()->with('success', 'Calibración actualizada.');
+    }
+
+    /** @return array{0: array<string, mixed>, 1: ?UploadedFile} */
+    private function validatedCalibracion(Request $request): array
+    {
         $datos = $request->validate([
             'fecha' => ['required', 'date', 'before_or_equal:today'],
             'tipo' => ['required', Rule::in(array_keys(MeasuringEquipment::CONTROLES))],
@@ -107,28 +143,35 @@ class EquipoMedicionController extends Controller
 
         $archivo = $datos['archivo'] ?? null;
         unset($datos['archivo']);
-        $calibracion = $equipo->calibrations()->make($datos);
-        if ($archivo) {
-            $calibracion->archivo = $archivo->storeAs("tenants/{$equipo->tenant_id}/calibraciones",
-                uniqid().'-'.$archivo->getClientOriginalName(), 'local');
-            $calibracion->archivo_nombre = $archivo->getClientOriginalName();
-        }
-        $calibracion->save();
 
-        // Solo cuenta si es la más reciente: registrar hoy una calibración vieja
-        // no debe cambiar el estado que dejó la última.
-        $ultima = $equipo->calibrations()->first();
-        if ($ultima?->is($calibracion)) {
-            if ($calibracion->resultado === 'no_conforme' && $equipo->estado === 'en_uso') {
-                $equipo->update(['estado' => 'fuera_servicio']);
-            } elseif ($calibracion->resultado === 'conforme' && $equipo->estado === 'fuera_servicio') {
-                $equipo->update(['estado' => 'en_uso']);
-            }
-        }
+        return [$datos, $archivo];
+    }
 
-        return back()->with('success', $calibracion->resultado === 'no_conforme'
-            ? "Registrado. {$equipo->codigo} quedó fuera de servicio hasta una calibración conforme."
-            : 'Registrado.');
+    private function guardarCertificado(EquipmentCalibration $calibracion, MeasuringEquipment $equipo, ?UploadedFile $archivo): void
+    {
+        if (! $archivo) {
+            return;
+        }
+        $calibracion->archivo = $archivo->storeAs("tenants/{$equipo->tenant_id}/calibraciones",
+            uniqid().'-'.$archivo->getClientOriginalName(), 'local');
+        $calibracion->archivo_nombre = $archivo->getClientOriginalName();
+    }
+
+    /**
+     * El resultado mueve el estado del equipo, pero solo si es la calibración
+     * MÁS RECIENTE: registrar o corregir hoy una vieja no debe cambiar el
+     * estado que dejó la última.
+     */
+    private function aplicarResultado(MeasuringEquipment $equipo, EquipmentCalibration $calibracion): void
+    {
+        if (! $equipo->calibrations()->first()?->is($calibracion)) {
+            return;
+        }
+        if ($calibracion->resultado === 'no_conforme' && $equipo->estado === 'en_uso') {
+            $equipo->update(['estado' => 'fuera_servicio']);
+        } elseif ($calibracion->resultado === 'conforme' && $equipo->estado === 'fuera_servicio') {
+            $equipo->update(['estado' => 'en_uso']);
+        }
     }
 
     public function destroyCalibracion(MeasuringEquipment $equipo, EquipmentCalibration $calibracion): RedirectResponse

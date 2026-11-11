@@ -83,6 +83,7 @@ export default function EquiposMedicion({ needsClient, equipos, documentos, cont
     const errores = usePage<SharedData>().props.errors as Record<string, string | undefined>;
     const [editar, setEditar] = useState<Equipo | 'nuevo' | null>(null);
     const [calibrar, setCalibrar] = useState<Equipo | null>(null);
+    const [editarCal, setEditarCal] = useState<{ equipo: Equipo; cal: Calibracion } | null>(null);
     const [accion, setAccion] = useState<{ equipo: Equipo; cal: Calibracion } | null>(null);
     const [abiertos, setAbiertos] = useState<number[]>([]);
 
@@ -227,6 +228,7 @@ export default function EquiposMedicion({ needsClient, equipos, documentos, cont
                                                                 controles={controles}
                                                                 canManage={canManage}
                                                                 onAccion={(cal) => setAccion({ equipo: e, cal })}
+                                                                onEditar={(cal) => setEditarCal({ equipo: e, cal })}
                                                             />
                                                         </td>
                                                     </tr>
@@ -286,6 +288,9 @@ export default function EquiposMedicion({ needsClient, equipos, documentos, cont
                 <EquipoDialog equipo={editar === 'nuevo' ? null : editar} controles={controles} estados={estados} onClose={() => setEditar(null)} />
             )}
             {calibrar && <CalibracionDialog equipo={calibrar} controles={controles} onClose={() => setCalibrar(null)} />}
+            {editarCal && (
+                <CalibracionDialog equipo={editarCal.equipo} calibracion={editarCal.cal} controles={controles} onClose={() => setEditarCal(null)} />
+            )}
             {accion && <AccionDialog equipo={accion.equipo} cal={accion.cal} onClose={() => setAccion(null)} />}
         </ModuloPage>
     );
@@ -296,11 +301,13 @@ function Historial({
     controles,
     canManage,
     onAccion,
+    onEditar,
 }: {
     equipo: Equipo;
     controles: Props['controles'];
     canManage: boolean;
     onAccion: (c: Calibracion) => void;
+    onEditar: (c: Calibracion) => void;
 }) {
     if (equipo.calibrations.length === 0) {
         return <p className="text-muted-foreground py-2 text-xs">Sin calibraciones ni verificaciones registradas.</p>;
@@ -374,7 +381,10 @@ function Historial({
                             )}
                         </td>
                         {canManage && (
-                            <td className="py-1.5 text-right">
+                            <td className="py-1.5 text-right whitespace-nowrap">
+                                <Button size="icon" variant="ghost" className="size-7" aria-label="Editar registro" onClick={() => onEditar(c)}>
+                                    <Pencil className="size-3.5" />
+                                </Button>
                                 <Button
                                     size="icon"
                                     variant="ghost"
@@ -560,7 +570,18 @@ function EquipoDialog({
     );
 }
 
-function CalibracionDialog({ equipo, controles, onClose }: { equipo: Equipo; controles: Props['controles']; onClose: () => void }) {
+/** Registra una calibración nueva o, con `calibracion`, corrige una existente. */
+function CalibracionDialog({
+    equipo,
+    calibracion,
+    controles,
+    onClose,
+}: {
+    equipo: Equipo;
+    calibracion?: Calibracion;
+    controles: Props['controles'];
+    onClose: () => void;
+}) {
     const { data, setData, post, processing, errors, progress } = useForm<{
         fecha: string;
         tipo: Control;
@@ -574,22 +595,23 @@ function CalibracionDialog({ equipo, controles, onClose }: { equipo: Equipo; con
         observaciones: string;
         archivo: File | null;
     }>({
-        fecha: '',
-        tipo: equipo.control,
-        realizado_por: '',
-        acreditado_onac: equipo.control === 'calibracion',
-        certificado: '',
-        error_encontrado: '',
-        incertidumbre: '',
-        resultado: 'conforme',
-        impacto_mediciones: '',
-        observaciones: '',
+        fecha: calibracion?.fecha ?? '',
+        tipo: calibracion?.tipo ?? equipo.control,
+        realizado_por: calibracion?.realizado_por ?? '',
+        acreditado_onac: calibracion ? calibracion.acreditado_onac : equipo.control === 'calibracion',
+        certificado: calibracion?.certificado ?? '',
+        error_encontrado: calibracion?.error_encontrado ?? '',
+        incertidumbre: calibracion?.incertidumbre ?? '',
+        resultado: calibracion?.resultado ?? 'conforme',
+        impacto_mediciones: calibracion?.impacto_mediciones ?? '',
+        observaciones: calibracion?.observaciones ?? '',
         archivo: null,
     });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(`/equipos-medicion/${equipo.id}/calibraciones`, { preserveScroll: true, forceFormData: true, onSuccess: onClose });
+        const url = calibracion ? `/equipos-medicion/${equipo.id}/calibraciones/${calibracion.id}` : `/equipos-medicion/${equipo.id}/calibraciones`;
+        post(url, { preserveScroll: true, forceFormData: true, onSuccess: onClose });
     };
 
     return (
@@ -597,6 +619,7 @@ function CalibracionDialog({ equipo, controles, onClose }: { equipo: Equipo; con
             <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl">
                 <DialogHeader>
                     <DialogTitle>
+                        {calibracion ? 'Corregir registro · ' : ''}
                         {equipo.codigo} · {equipo.nombre}
                     </DialogTitle>
                     <DialogDescription>
@@ -695,6 +718,11 @@ function CalibracionDialog({ equipo, controles, onClose }: { equipo: Equipo; con
                             accept=".pdf,.png,.jpg,.jpeg"
                             onChange={(e) => setData('archivo', e.target.files?.[0] ?? null)}
                         />
+                        {calibracion?.tiene_archivo && (
+                            <p className="text-muted-foreground text-xs">
+                                Ya tiene certificado ({calibracion.archivo_nombre}). Déjalo vacío para conservarlo o sube otro para reemplazarlo.
+                            </p>
+                        )}
                         {progress && <progress value={progress.percentage} max="100" className="w-full" />}
                         <InputError message={errors.archivo} />
                     </div>
@@ -703,7 +731,7 @@ function CalibracionDialog({ equipo, controles, onClose }: { equipo: Equipo; con
                             Cancelar
                         </Button>
                         <Button type="submit" disabled={processing}>
-                            Registrar
+                            {calibracion ? 'Guardar cambios' : 'Registrar'}
                         </Button>
                     </DialogFooter>
                 </form>

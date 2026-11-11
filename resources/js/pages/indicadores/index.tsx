@@ -57,6 +57,12 @@ function cumpleMes(valor: number | null, sentido: Sentido, meta: number): boolea
     if (valor === null) return null;
     return sentido === 'asc' ? valor >= meta : valor <= meta;
 }
+function numeroONull(v: string | undefined): number | null {
+    if (v === undefined || v.trim() === '') return null;
+    const n = parseFloat(v);
+    return Number.isFinite(n) ? n : null;
+}
+
 function fmt(v: number | null, unidad: string): string {
     if (v === null) return '—';
     return unidad === '%' ? `${v.toFixed(1)}%` : v.toFixed(1);
@@ -72,6 +78,7 @@ export default function IndicadoresIndex({ indicators, anio, needsClient }: Prop
     const [entry, setEntry] = useState<Record<number, { numerador: string; denominador: string }>>({});
     const [savingEntry, setSavingEntry] = useState(false);
     const [newOpen, setNewOpen] = useState(false);
+    const [editFor, setEditFor] = useState<Indicator | null>(null);
     const [metaFor, setMetaFor] = useState<Indicator | null>(null);
     const [metaVal, setMetaVal] = useState('');
     const [savingMeta, setSavingMeta] = useState(false);
@@ -113,10 +120,12 @@ export default function IndicadoresIndex({ indicators, anio, needsClient }: Prop
             {
                 indicator_id: entryFor.id,
                 anio,
+                // Casilla vacía = null (no 0): con las dos vacías el mes queda sin
+                // medir y el servidor borra la lectura; un 0 escrito sigue siendo 0.
                 lecturas: Array.from({ length: 12 }, (_, i) => ({
                     mes: i + 1,
-                    numerador: parseFloat(entry[i + 1]?.numerador || '0') || 0,
-                    denominador: parseFloat(entry[i + 1]?.denominador || '0') || 0,
+                    numerador: numeroONull(entry[i + 1]?.numerador),
+                    denominador: numeroONull(entry[i + 1]?.denominador),
                 })),
             },
             { preserveScroll: true, onStart: () => setSavingEntry(true), onFinish: () => setSavingEntry(false), onSuccess: () => setEntryFor(null) },
@@ -220,13 +229,22 @@ export default function IndicadoresIndex({ indicators, anio, needsClient }: Prop
                                             <p className="mt-0.5 text-sm leading-tight font-semibold">{ind.nombre}</p>
                                         </div>
                                         {ind.propio && canManage && (
-                                            <button
-                                                onClick={() => eliminar(ind)}
-                                                className="text-muted-foreground hover:text-red-600"
-                                                title="Eliminar indicador"
-                                            >
-                                                <Trash2 className="size-4" />
-                                            </button>
+                                            <div className="flex shrink-0 items-center gap-2">
+                                                <button
+                                                    onClick={() => setEditFor(ind)}
+                                                    className="text-muted-foreground hover:text-foreground"
+                                                    title="Editar indicador"
+                                                >
+                                                    <Pencil className="size-4" />
+                                                </button>
+                                                <button
+                                                    onClick={() => eliminar(ind)}
+                                                    className="text-muted-foreground hover:text-red-600"
+                                                    title="Eliminar indicador"
+                                                >
+                                                    <Trash2 className="size-4" />
+                                                </button>
+                                            </div>
                                         )}
                                     </div>
 
@@ -389,33 +407,50 @@ export default function IndicadoresIndex({ indicators, anio, needsClient }: Prop
             </Dialog>
 
             {/* Diálogo nuevo indicador */}
-            <NuevoIndicadorDialog open={newOpen} onClose={() => setNewOpen(false)} />
+            <IndicadorDialog
+                key={editFor?.id ?? 'nuevo'}
+                open={newOpen || editFor !== null}
+                editando={editFor}
+                onClose={() => {
+                    setNewOpen(false);
+                    setEditFor(null);
+                }}
+            />
         </AppLayout>
     );
 }
 
-function NuevoIndicadorDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        codigo: '',
-        nombre: '',
-        categoria: 'SST',
-        numerador_label: '',
-        denominador_label: '',
-        constante: 100,
-        unidad: '%',
-        sentido: 'asc',
-        meta: 90,
+/**
+ * Crea un indicador propio o edita uno existente (con `editando`). El padre
+ * lo monta con `key` por indicador, así el formulario arranca con sus valores.
+ */
+function IndicadorDialog({ open, onClose, editando }: { open: boolean; onClose: () => void; editando?: Indicator | null }) {
+    const { data, setData, post, put, processing, errors, reset } = useForm({
+        codigo: editando?.codigo ?? '',
+        nombre: editando?.nombre ?? '',
+        categoria: editando?.categoria ?? 'SST',
+        numerador_label: editando?.numerador_label ?? '',
+        denominador_label: editando?.denominador_label ?? '',
+        constante: editando?.constante ?? 100,
+        unidad: editando?.unidad ?? '%',
+        sentido: (editando?.sentido ?? 'asc') as string,
+        meta: editando?.meta_legal ?? 90,
     });
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
-        post(route('indicadores.store'), {
+        const opciones = {
             preserveScroll: true,
             onSuccess: () => {
                 reset();
                 onClose();
             },
-        });
+        };
+        if (editando) {
+            put(route('indicadores.update', editando.id), opciones);
+        } else {
+            post(route('indicadores.store'), opciones);
+        }
     }
 
     return (
@@ -423,7 +458,7 @@ function NuevoIndicadorDialog({ open, onClose }: { open: boolean; onClose: () =>
             <DialogContent className="sm:max-w-lg">
                 <form onSubmit={submit}>
                     <DialogHeader>
-                        <DialogTitle>Nuevo indicador</DialogTitle>
+                        <DialogTitle>{editando ? `Editar ${editando.codigo}` : 'Nuevo indicador'}</DialogTitle>
                         <DialogDescription>Define un indicador propio del cliente: valor = (numerador / denominador) × constante.</DialogDescription>
                     </DialogHeader>
                     <div className="grid grid-cols-2 gap-3 py-2">
@@ -527,7 +562,15 @@ function NuevoIndicadorDialog({ open, onClose }: { open: boolean; onClose: () =>
                             Cancelar
                         </Button>
                         <Button type="submit" disabled={processing} className="gap-2">
-                            <Plus className="size-4" /> Crear indicador
+                            {editando ? (
+                                <>
+                                    <Save className="size-4" /> Guardar cambios
+                                </>
+                            ) : (
+                                <>
+                                    <Plus className="size-4" /> Crear indicador
+                                </>
+                            )}
                         </Button>
                     </DialogFooter>
                 </form>

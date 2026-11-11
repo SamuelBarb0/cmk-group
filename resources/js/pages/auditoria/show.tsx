@@ -7,11 +7,19 @@ import { usePermissions } from '@/hooks/use-permissions';
 import { cn } from '@/lib/utils';
 import { type SharedData } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
-import { ArrowLeft, Plus, Save } from 'lucide-react';
+import { ArrowLeft, Pencil, Plus, Save, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 type Resultado = 'conforme' | 'no_conforme' | 'observacion' | 'no_aplica';
 type TipoHallazgo = 'no_conformidad_mayor' | 'no_conformidad_menor' | 'observacion' | 'oportunidad' | 'fortaleza';
+
+interface Hallazgo {
+    id: number;
+    tipo: TipoHallazgo;
+    descripcion: string;
+    evidencia: string | null;
+    acpm_action_id: number | null;
+}
 
 interface Fila {
     clave_comun: string;
@@ -21,7 +29,7 @@ interface Fila {
     referencias: { norma: Sistema; referencia: string }[];
     resultado: Resultado | null;
     evidencia: string | null;
-    hallazgos: { id: number; tipo: TipoHallazgo; descripcion: string }[];
+    hallazgos: Hallazgo[];
 }
 
 interface Norma {
@@ -86,6 +94,8 @@ export default function AuditoriaShow({ auditoria, lista, cumplimiento, etapas }
     const [respuestas, setRespuestas] = useState<Respuestas>(inicial);
     const [soloPendientes, setSoloPendientes] = useState(false);
     const [nuevoHallazgo, setNuevoHallazgo] = useState<string | null>(null);
+    // Hallazgo abierto para corregir: clave del requisito + id (un hallazgo puede colgar de varios requisitos).
+    const [editandoHallazgo, setEditandoHallazgo] = useState<{ clave: string; id: number } | null>(null);
     const [guardando, setGuardando] = useState(false);
 
     const cambiadas = lista.filter(
@@ -234,15 +244,35 @@ export default function AuditoriaShow({ auditoria, lista, cumplimiento, etapas }
                                                         />
                                                     )}
                                                     <div className="flex flex-wrap items-center gap-2">
-                                                        {f.hallazgos.map((h) => (
-                                                            <span
-                                                                key={h.id}
-                                                                className="bg-muted rounded px-2 py-0.5 text-[11px]"
-                                                                title={h.descripcion}
-                                                            >
-                                                                {ETIQUETA_HALLAZGO[h.tipo]}: {h.descripcion.slice(0, 60)}
-                                                            </span>
-                                                        ))}
+                                                        {f.hallazgos.map((h) =>
+                                                            canManage ? (
+                                                                <button
+                                                                    key={h.id}
+                                                                    type="button"
+                                                                    className="bg-muted hover:bg-muted/70 inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px]"
+                                                                    title={`Corregir o eliminar: ${h.descripcion}`}
+                                                                    onClick={() => {
+                                                                        setNuevoHallazgo(null);
+                                                                        setEditandoHallazgo(
+                                                                            editandoHallazgo?.id === h.id && editandoHallazgo.clave === f.clave_comun
+                                                                                ? null
+                                                                                : { clave: f.clave_comun, id: h.id },
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    {ETIQUETA_HALLAZGO[h.tipo]}: {h.descripcion.slice(0, 60)}
+                                                                    <Pencil className="size-3 opacity-60" />
+                                                                </button>
+                                                            ) : (
+                                                                <span
+                                                                    key={h.id}
+                                                                    className="bg-muted rounded px-2 py-0.5 text-[11px]"
+                                                                    title={h.descripcion}
+                                                                >
+                                                                    {ETIQUETA_HALLAZGO[h.tipo]}: {h.descripcion.slice(0, 60)}
+                                                                </span>
+                                                            ),
+                                                        )}
                                                         {canManage && (r.resultado === 'no_conforme' || r.resultado === 'observacion') && (
                                                             <button
                                                                 type="button"
@@ -264,6 +294,21 @@ export default function AuditoriaShow({ auditoria, lista, cumplimiento, etapas }
                                                             onClose={() => setNuevoHallazgo(null)}
                                                         />
                                                     )}
+                                                    {editandoHallazgo?.clave === f.clave_comun &&
+                                                        (() => {
+                                                            const h = f.hallazgos.find((x) => x.id === editandoHallazgo.id);
+                                                            return h ? (
+                                                                <NuevoHallazgo
+                                                                    key={h.id}
+                                                                    auditoriaId={auditoria.id}
+                                                                    clave={f.clave_comun}
+                                                                    tipoInicial={h.tipo}
+                                                                    evidencia={h.evidencia ?? ''}
+                                                                    hallazgo={h}
+                                                                    onClose={() => setEditandoHallazgo(null)}
+                                                                />
+                                                            ) : null;
+                                                        })()}
                                                 </div>
                                             );
                                         })}
@@ -282,24 +327,43 @@ function NuevoHallazgo({
     clave,
     tipoInicial,
     evidencia,
+    hallazgo,
     onClose,
 }: {
     auditoriaId: number;
     clave: string;
     tipoInicial: TipoHallazgo;
     evidencia: string;
+    /** Con `hallazgo`, el formulario corrige ese hallazgo en vez de registrar uno nuevo. */
+    hallazgo?: Hallazgo;
     onClose: () => void;
 }) {
     const [tipo, setTipo] = useState<TipoHallazgo>(tipoInicial);
-    const [descripcion, setDescripcion] = useState('');
+    const [descripcion, setDescripcion] = useState(hallazgo?.descripcion ?? '');
     const errores = usePage<SharedData>().props.errors as Record<string, string | undefined>;
 
     function registrar() {
+        if (hallazgo) {
+            router.put(
+                `/auditoria/${auditoriaId}/hallazgos/${hallazgo.id}`,
+                { tipo, descripcion, evidencia },
+                { preserveScroll: true, onSuccess: onClose },
+            );
+            return;
+        }
         router.post(
             `/auditoria/${auditoriaId}/hallazgos`,
             { clave_comun: clave, tipo, descripcion, evidencia },
             { preserveScroll: true, onSuccess: onClose },
         );
+    }
+
+    function eliminar() {
+        if (!hallazgo) return;
+        const aviso = hallazgo.acpm_action_id ? ' La acción de ACPM que se abrió por él se conserva.' : '';
+        if (confirm(`¿Eliminar este hallazgo?${aviso}`)) {
+            router.delete(`/auditoria/${auditoriaId}/hallazgos/${hallazgo.id}`, { preserveScroll: true, onSuccess: onClose });
+        }
     }
 
     return (
@@ -326,11 +390,16 @@ function NuevoHallazgo({
             />
             {errores.descripcion && <p className="text-destructive text-xs">{errores.descripcion}</p>}
             <div className="flex justify-end gap-2">
+                {hallazgo && (
+                    <Button size="sm" variant="ghost" className="text-destructive mr-auto" onClick={eliminar}>
+                        <Trash2 className="size-3.5" /> Eliminar
+                    </Button>
+                )}
                 <Button size="sm" variant="ghost" onClick={onClose}>
                     Cancelar
                 </Button>
                 <Button size="sm" onClick={registrar}>
-                    Registrar
+                    {hallazgo ? 'Guardar cambios' : 'Registrar'}
                 </Button>
             </div>
         </div>

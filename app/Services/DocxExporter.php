@@ -6,23 +6,35 @@ use App\Models\GeneratedDocument;
 use DOMDocument;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use PhpOffice\PhpWord\Element\Section;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Shared\Html;
-use PhpOffice\PhpWord\TemplateProcessor;
 
 /**
  * Exporta un documento generado a .docx.
  *
  * - Si la plantilla tiene un .docx MODELO: rellena sus tokens con los datos del
  *   cliente sobre el Word original → LAYOUT EXACTO preservado (tablas, membrete,
- *   logo), no se recrea nada.
+ *   logo), no se recrea nada. Si el cliente subió logo y firmas, se estampan
+ *   donde el modelo dice «LOGO» y «Firma del representante legal».
  * - Si no hay modelo (redacción IA), o el consultor ya editó el documento:
- *   construye el .docx desde el Markdown con membrete de CMK.
+ *   construye el .docx desde el Markdown con membrete (logo del cliente si lo
+ *   hay) y, en lo que redactó la IA, un bloque de firmas al final.
  */
 class DocxExporter
 {
     private const NAVY = '16243F';
+
+    /** Caja de una firma en el .docx (px); la imagen conserva su proporción. */
+    private const TAMANO_FIRMA = ['width' => 160, 'height' => 60, 'ratio' => true];
+
+    /**
+     * Instrucción para la IA que redacta desde cero: las firmas las pone el
+     * exportador (con las imágenes del cliente), así que si la IA también las
+     * escribe el documento sale con dos bloques de firmas.
+     */
+    public const AVISO_FIRMAS = 'No redactes bloque de firmas ni membrete: el sistema los agrega al exportar con el logo y las firmas del cliente.';
 
     public function __construct(
         private readonly DocumentFiller $filler,
@@ -71,10 +83,26 @@ class DocxExporter
      */
     private function desdeModelo(GeneratedDocument $doc, string $archivo): string
     {
-        $tp = new TemplateProcessor(Storage::disk('local')->path($archivo));
+        $tp = new PlantillaWord(Storage::disk('local')->path($archivo));
+        $tenant = $doc->tenant;
+
+        // Imágenes primero: el bucle de texto de abajo pondría [PENDIENTE] en
+        // ${LOGO} y ${FIRMA_*}. Sin imagen subida, el literal «LOGO» y los
+        // rótulos de firma quedan tal cual, como hasta ahora.
+        if ($logo = $tenant?->archivoMarca('logo')) {
+            $tp->marcarLogo();
+            $tp->setImageValue('LOGO', ['path' => $logo, 'width' => 110, 'height' => 55, 'ratio' => true]);
+        }
+        if ($firma = $tenant?->archivoMarca('firma_rep')) {
+            $tp->marcarFirmaRepresentante();
+            $tp->setImageValue('FIRMA_REP', ['path' => $firma] + self::TAMANO_FIRMA);
+        }
+        if ($firma = $tenant?->archivoMarca('firma_resp')) {
+            $tp->setImageValue('FIRMA_RESP', ['path' => $firma] + self::TAMANO_FIRMA);
+        }
 
         // Mismo mapa de datos que el relleno en pantalla (fuente única de verdad).
-        $valores = $this->filler->tokens($doc->tenant);
+        $valores = $this->filler->tokens($tenant);
 
         // Reemplaza cada token presente; los sin dato quedan como [PENDIENTE].
         foreach ($tp->getVariables() as $var) {
@@ -103,11 +131,30 @@ class DocxExporter
         $section = $phpWord->addSection(['marginTop' => 1200, 'marginBottom' => 1000]);
 
         $header = $section->addHeader();
-        $header->addText(
-            strtoupper($company['legal_name'] ?? 'CMK GROUP S.A.S.').'  ·  NIT '.($company['nit'] ?? ''),
-            ['bold' => true, 'size' => 9, 'color' => self::NAVY],
-        );
-        $header->addText('SST · HSEQ · PESV', ['size' => 8, 'color' => '9AA4B8']);
+        $logo = $doc->tenant?->archivoMarca('logo');
+        if ($logo !== null) {
+            // El documento es DEL cliente: su logo y su nombre mandan, y CMK
+            // queda como quien lo acompaña.
+            $fila = $header->addTable()->addRow();
+            $fila->addCell(2400, ['valign' => 'center'])->addImage($logo, ['height' => 40]);
+            $datos = $fila->addCell(6800, ['valign' => 'center']);
+            $datos->addText(
+                strtoupper($doc->tenant->name).(filled($doc->tenant->nit) ? '  ·  NIT '.$doc->tenant->nit : ''),
+                ['bold' => true, 'size' => 9, 'color' => self::NAVY],
+                ['alignment' => 'right'],
+            );
+            $datos->addText(
+                'Acompañamiento: '.($company['legal_name'] ?? 'CMK GROUP S.A.S.').'  ·  SST · HSEQ · PESV',
+                ['size' => 8, 'color' => '9AA4B8'],
+                ['alignment' => 'right'],
+            );
+        } else {
+            $header->addText(
+                strtoupper($company['legal_name'] ?? 'CMK GROUP S.A.S.').'  ·  NIT '.($company['nit'] ?? ''),
+                ['bold' => true, 'size' => 9, 'color' => self::NAVY],
+            );
+            $header->addText('SST · HSEQ · PESV', ['size' => 8, 'color' => '9AA4B8']);
+        }
 
         $footer = $section->addFooter();
         $footer->addPreserveText(
@@ -127,10 +174,64 @@ class DocxExporter
 
         Html::addHtml($section, $this->htmlParaWord($doc->contenido), false, false);
 
+        if ($this->llevaBloqueFirmas($doc)) {
+            $this->bloqueFirmas($section, $doc);
+        }
+
         $path = $this->rutaSalida($doc);
         IOFactory::createWriter($phpWord, 'Word2007')->save($path);
 
         return $path;
+    }
+
+    /**
+     * ¿Se le añade al final el bloque de firmas?
+     *
+     * Solo a lo que la IA redactó desde cero (sin documento modelo): un modelo
+     * de CMK ya trae sus propias firmas en el texto, y repetirlas al final
+     * daría dos. Tampoco si el contenido ya tiene una sección «Firmas» (los
+     * documentos redactados antes de que la IA dejara de escribirla).
+     */
+    private function llevaBloqueFirmas(GeneratedDocument $doc): bool
+    {
+        if ($doc->template?->tieneBase()) {
+            return false;
+        }
+
+        return ! preg_match('/^#{1,6}\s*\**\s*firmas?\b/imu', (string) $doc->contenido);
+    }
+
+    /**
+     * Firmas del representante legal y del responsable del SG-SST, lado a
+     * lado: la imagen si se subió (si no, el espacio para firmar a mano), la
+     * línea, el nombre y su identificación.
+     */
+    private function bloqueFirmas(Section $section, GeneratedDocument $doc): void
+    {
+        $tenant = $doc->tenant;
+        $v = fn ($x) => filled($x) ? $x : '[PENDIENTE]';
+
+        $firmantes = [
+            ['firma_rep', $tenant?->representante_legal, 'C.C. '.$v($tenant?->representante_cc), 'Representante legal'],
+            ['firma_resp', $tenant?->responsable_sgsst, 'Licencia SST N.° '.$v($tenant?->licencia_sgsst), 'Responsable del SG-SST'],
+        ];
+
+        $section->addText('Firmas', ['bold' => true, 'size' => 13, 'color' => self::NAVY], ['spaceBefore' => 360, 'spaceAfter' => 120, 'keepNext' => true]);
+
+        $fila = $section->addTable()->addRow(null, ['cantSplit' => true]);
+        foreach ($firmantes as [$tipo, $nombre, $identificacion, $rol]) {
+            $celda = $fila->addCell(4600);
+            $imagen = $tenant?->archivoMarca($tipo);
+            if ($imagen !== null) {
+                $celda->addImage($imagen, ['height' => 45]);
+            } else {
+                $celda->addTextBreak(2);
+            }
+            $celda->addText('______________________________', ['color' => '444444'], ['spaceAfter' => 0]);
+            $celda->addText($v($nombre), ['bold' => true, 'size' => 10], ['spaceAfter' => 0]);
+            $celda->addText($identificacion, ['size' => 9, 'color' => '444444'], ['spaceAfter' => 0]);
+            $celda->addText($rol, ['size' => 9, 'color' => '666666']);
+        }
     }
 
     /**
