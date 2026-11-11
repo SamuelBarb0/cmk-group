@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\GeneratedDocument;
+use App\Models\Tenant;
 use DOMDocument;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -110,7 +111,7 @@ class DocxExporter
             $tp->setValue($var, filled($val) ? $val : '[PENDIENTE]');
         }
 
-        $path = $this->rutaSalida($doc);
+        $path = $this->rutaSalida($doc->titulo, $doc->version);
         $tp->saveAs($path);
 
         return $path;
@@ -118,6 +119,25 @@ class DocxExporter
 
     /** Construye el .docx desde el Markdown con membrete CMK (documentos sin modelo). */
     private function desdeMarkdown(GeneratedDocument $doc): string
+    {
+        return $this->desdeTexto(
+            $doc->tenant,
+            $doc->titulo,
+            (string) $doc->contenido,
+            ucfirst($doc->estado),
+            $doc->version,
+            $this->llevaBloqueFirmas($doc->template?->tieneBase() ?? false, (string) $doc->contenido),
+        );
+    }
+
+    /**
+     * Construye un .docx desde un texto en Markdown con el membrete del
+     * cliente (su logo si lo subió) y, si se pide, el bloque de firmas. Lo usan
+     * Documentos IA y el control documental («Descargar en Word»).
+     *
+     * @return string ruta del archivo temporal generado
+     */
+    public function desdeTexto(?Tenant $tenant, string $titulo, string $contenido, string $estado, int $version, bool $conFirmas): string
     {
         $company = config('cmk.company');
 
@@ -131,7 +151,7 @@ class DocxExporter
         $section = $phpWord->addSection(['marginTop' => 1200, 'marginBottom' => 1000]);
 
         $header = $section->addHeader();
-        $logo = $doc->tenant?->archivoMarca('logo');
+        $logo = $tenant?->archivoMarca('logo');
         if ($logo !== null) {
             // El documento es DEL cliente: su logo y su nombre mandan, y CMK
             // queda como quien lo acompaña.
@@ -139,7 +159,7 @@ class DocxExporter
             $fila->addCell(2400, ['valign' => 'center'])->addImage($logo, ['height' => 40]);
             $datos = $fila->addCell(6800, ['valign' => 'center']);
             $datos->addText(
-                strtoupper($doc->tenant->name).(filled($doc->tenant->nit) ? '  ·  NIT '.$doc->tenant->nit : ''),
+                strtoupper($tenant->name).(filled($tenant->nit) ? '  ·  NIT '.$tenant->nit : ''),
                 ['bold' => true, 'size' => 9, 'color' => self::NAVY],
                 ['alignment' => 'right'],
             );
@@ -163,22 +183,22 @@ class DocxExporter
             ['alignment' => 'center'],
         );
 
-        $section->addText($doc->titulo, ['bold' => true, 'size' => 16, 'color' => self::NAVY], ['spaceAfter' => 60]);
+        $section->addText($titulo, ['bold' => true, 'size' => 16, 'color' => self::NAVY], ['spaceAfter' => 60]);
         $section->addText(
-            'Empresa: '.($doc->tenant->name ?? '—')
-                .'   |   Estado: '.ucfirst($doc->estado)
-                .'   |   Versión: '.$doc->version,
+            'Empresa: '.($tenant->name ?? '—')
+                .'   |   Estado: '.$estado
+                .'   |   Versión: '.$version,
             ['size' => 9, 'color' => '666666'],
             ['spaceAfter' => 240],
         );
 
-        Html::addHtml($section, $this->htmlParaWord($doc->contenido), false, false);
+        Html::addHtml($section, $this->htmlParaWord($contenido), false, false);
 
-        if ($this->llevaBloqueFirmas($doc)) {
-            $this->bloqueFirmas($section, $doc);
+        if ($conFirmas) {
+            $this->bloqueFirmas($section, $tenant);
         }
 
-        $path = $this->rutaSalida($doc);
+        $path = $this->rutaSalida($titulo, $version);
         IOFactory::createWriter($phpWord, 'Word2007')->save($path);
 
         return $path;
@@ -192,13 +212,13 @@ class DocxExporter
      * daría dos. Tampoco si el contenido ya tiene una sección «Firmas» (los
      * documentos redactados antes de que la IA dejara de escribirla).
      */
-    private function llevaBloqueFirmas(GeneratedDocument $doc): bool
+    public function llevaBloqueFirmas(bool $desdeModelo, string $contenido): bool
     {
-        if ($doc->template?->tieneBase()) {
+        if ($desdeModelo) {
             return false;
         }
 
-        return ! preg_match('/^#{1,6}\s*\**\s*firmas?\b/imu', (string) $doc->contenido);
+        return ! preg_match('/^#{1,6}\s*\**\s*firmas?\b/imu', $contenido);
     }
 
     /**
@@ -206,9 +226,8 @@ class DocxExporter
      * lado: la imagen si se subió (si no, el espacio para firmar a mano), la
      * línea, el nombre y su identificación.
      */
-    private function bloqueFirmas(Section $section, GeneratedDocument $doc): void
+    private function bloqueFirmas(Section $section, ?Tenant $tenant): void
     {
-        $tenant = $doc->tenant;
         $v = fn ($x) => filled($x) ? $x : '[PENDIENTE]';
 
         $firmantes = [
@@ -311,13 +330,13 @@ class DocxExporter
         }
     }
 
-    private function rutaSalida(GeneratedDocument $doc): string
+    private function rutaSalida(string $titulo, int $version): string
     {
         $dir = storage_path('app/temp');
         if (! is_dir($dir)) {
             mkdir($dir, 0775, true);
         }
 
-        return $dir.'/'.Str::slug($doc->titulo).'-v'.$doc->version.'.docx';
+        return $dir.'/'.Str::slug($titulo).'-v'.$version.'.docx';
     }
 }

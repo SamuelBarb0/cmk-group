@@ -29,6 +29,9 @@ class ControlledDocument extends Model
     protected $fillable = [
         'tipo', 'nivel', 'process_id', 'titulo', 'sistemas', 'condicional', 'document_catalog_id',
         'frecuencia_revision_meses', 'retencion_anios', 'disposicion_final', 'ubicacion', 'codigo_historico',
+        // Documento del PESV que respalda (POL-PESV, PR-FATIGA…): así el paso
+        // lo encuentra aunque no venga del catálogo ni de Documentos IA.
+        'codigo_pesv',
         // `codigo`, `estado`, `version_vigente` y `proxima_revision` no son
         // asignables: el código lo genera el sistema (el usuario nunca lo
         // escribe) y los otros tres salen de las versiones.

@@ -56,6 +56,11 @@ class AiDocumentController extends Controller
                 'normas' => $t->normas,
                 'descripcion' => $t->descripcion,
                 'tiene_base' => $t->tieneBase(),
+                // De CMK (se puede cambiar por la de la empresa) o propia de la empresa.
+                'es_global' => $t->esGlobal(),
+                'reemplaza_id' => $t->reemplaza_id,
+                'estado_proceso' => $t->estado_proceso,
+                'error_proceso' => $t->error_proceso,
             ]),
             'documents' => GeneratedDocument::latest()->get(['id', 'document_template_id', 'titulo', 'estado', 'version', 'generado_por', 'updated_at', 'contenido'])
                 ->map(fn (GeneratedDocument $d) => $d->toArray() + [
@@ -85,6 +90,14 @@ class AiDocumentController extends Controller
         $template = DocumentTemplate::visibles($this->context->id())
             ->findOrFail($data['document_template_id']);
         $tenant = $this->context->get();
+
+        // Un PDF propio recién subido todavía no tiene texto: sin esto se
+        // redactaría desde cero en vez de usar el documento de la empresa.
+        if (! $template->estaLista()) {
+            return back()->withErrors(['plantilla' => $template->estado_proceso === 'error'
+                ? "La plantilla de la empresa para «{$template->nombre}» no se pudo leer: {$template->error_proceso} Vuelve a subirla."
+                : "La plantilla de la empresa para «{$template->nombre}» todavía se está procesando. Espera unos minutos."]);
+        }
 
         if ($template->tieneBase()) {
             // DOCUMENTO MODELO real de CMK: se rellena de forma DETERMINISTA con

@@ -22,11 +22,13 @@ class AiService
     /**
      * Completa un mensaje con Claude y devuelve el texto generado.
      *
-     * @param  string  $userPrompt  Instrucción/contenido del usuario.
+     * @param  string|list<array<string,mixed>>  $userPrompt  Instrucción del usuario: texto, o bloques de contenido
+     *                                                        (p. ej. un PDF con `bloquePdf()` seguido de un bloque de texto).
      * @param  string|null  $systemPrompt  Rol/contexto del sistema (opcional).
      * @param  int|null  $maxTokens  Límite de salida (opcional).
+     * @param  int|null  $timeout  Segundos de espera HTTP (opcional; por defecto el de config).
      */
-    public function complete(string $userPrompt, ?string $systemPrompt = null, ?int $maxTokens = null): string
+    public function complete(string|array $userPrompt, ?string $systemPrompt = null, ?int $maxTokens = null, ?int $timeout = null): string
     {
         $cfg = config('ai.anthropic');
 
@@ -42,7 +44,7 @@ class AiService
             $payload['system'] = $systemPrompt;
         }
 
-        $response = $this->request()->post($this->endpoint(), $payload);
+        $response = $this->request($timeout)->post($this->endpoint(), $payload);
 
         if ($response->failed()) {
             throw new RuntimeException($this->mensajeDeError(
@@ -69,6 +71,28 @@ class AiService
         }
 
         return $text;
+    }
+
+    /**
+     * Bloque de documento con un PDF, para ponerlo ANTES del texto de la
+     * instrucción en `complete()`. Claude lee el PDF entero (texto y páginas
+     * escaneadas), así que no hace falta extraerle el texto aquí. Límites de
+     * la API: 32 MB por petición y 600 páginas.
+     *
+     * @return array<string,mixed>
+     */
+    public static function bloquePdf(string $ruta): array
+    {
+        $bytes = @file_get_contents($ruta);
+        if ($bytes === false || $bytes === '') {
+            throw new RuntimeException('No se pudo leer el PDF para enviárselo a la IA.');
+        }
+
+        return [
+            'type' => 'document',
+            // base64 sin saltos de línea, como lo exige la API.
+            'source' => ['type' => 'base64', 'media_type' => 'application/pdf', 'data' => base64_encode($bytes)],
+        ];
     }
 
     /**

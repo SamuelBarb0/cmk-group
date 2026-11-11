@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { Building2, CheckCircle2, Download, FileText, Library, Loader2, Pencil, Sparkles, Trash2, Upload } from 'lucide-react';
-import { FormEventHandler, useEffect, useState } from 'react';
+import { FormEventHandler, useEffect, useRef, useState } from 'react';
 
 interface Template {
     id: number;
@@ -23,6 +23,13 @@ interface Template {
     normas: string[];
     descripcion: string | null;
     tiene_base: boolean;
+    /** De CMK: la empresa puede cambiarla por la suya. */
+    es_global: boolean;
+    /** Plantilla propia de la empresa que reemplaza a esta de CMK. */
+    reemplaza_id: number | null;
+    /** Un PDF propio se está pasando a texto («procesando») o falló («error»). */
+    estado_proceso: 'procesando' | 'error' | null;
+    error_proceso: string | null;
 }
 
 interface GenDoc {
@@ -89,6 +96,14 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
         const t = setInterval(() => router.reload({ only: ['documents'] }), 5000);
         return () => clearInterval(t);
     }, [generandoEnCola]);
+
+    // Mientras un PDF propio se pasa a texto, la tarjeta se refresca sola.
+    const procesandoPlantilla = templates.some((t) => t.estado_proceso === 'procesando');
+    useEffect(() => {
+        if (!procesandoPlantilla) return;
+        const t = setInterval(() => router.reload({ only: ['templates'] }), 8000);
+        return () => clearInterval(t);
+    }, [procesandoPlantilla]);
 
     function generar(t: Template) {
         router.post(
@@ -198,7 +213,11 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
                                     </div>
                                     {t.descripcion && <p className="text-muted-foreground text-sm">{t.descripcion}</p>}
                                     <div>
-                                        {t.tiene_base ? (
+                                        {t.reemplaza_id ? (
+                                            <span className="inline-flex items-center gap-1 rounded bg-sky-600/10 px-1.5 py-0.5 text-[10px] font-medium text-sky-700 dark:text-sky-400">
+                                                <Building2 className="size-3" /> Plantilla de la empresa
+                                            </span>
+                                        ) : t.tiene_base ? (
                                             <span className="inline-flex items-center gap-1 rounded bg-green-600/10 px-1.5 py-0.5 text-[10px] font-medium text-green-700 dark:text-green-400">
                                                 <FileText className="size-3" /> Modelo base CMK
                                             </span>
@@ -215,8 +234,20 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
                                             </span>
                                         ))}
                                     </div>
+                                    {t.estado_proceso === 'procesando' && (
+                                        <p className="text-muted-foreground flex items-center gap-1.5 text-xs" role="status">
+                                            <Loader2 className="size-3.5 motion-safe:animate-spin" /> La IA está leyendo el PDF de la empresa…
+                                        </p>
+                                    )}
+                                    {t.estado_proceso === 'error' && (
+                                        <p className="text-destructive text-xs">No se pudo leer el PDF: {t.error_proceso} Vuelve a subirlo.</p>
+                                    )}
                                     {canManage && (
-                                        <Button onClick={() => generar(t)} disabled={generatingId !== null} className="mt-auto gap-2">
+                                        <Button
+                                            onClick={() => generar(t)}
+                                            disabled={generatingId !== null || t.estado_proceso !== null}
+                                            className="mt-auto gap-2"
+                                        >
                                             {generatingId === t.id ? (
                                                 <>
                                                     <Loader2 className="size-4 animate-spin" /> Generando…
@@ -232,6 +263,7 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
                                             )}
                                         </Button>
                                     )}
+                                    {canManage && <PlantillaDeLaEmpresa t={t} />}
                                 </CardContent>
                             </Card>
                         ))}
@@ -390,5 +422,73 @@ export default function DocumentosIaIndex({ templates, documents, needsClient }:
                 </DialogContent>
             </Dialog>
         </AppLayout>
+    );
+}
+
+/**
+ * Cambiar una plantilla de CMK por la de la empresa (Word o PDF), o volver a
+ * la de CMK. La de la empresa queda solo para esta empresa y conserva el
+ * código y los vínculos de la de CMK.
+ */
+function PlantillaDeLaEmpresa({ t }: { t: Template }) {
+    const input = useRef<HTMLInputElement>(null);
+    const [subiendo, setSubiendo] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    // Se sube siempre contra la de CMK: si ya hay una propia, se reemplaza.
+    const idCmk = t.reemplaza_id ?? (t.es_global ? t.id : null);
+    if (idCmk === null) return null; // plantilla creada por la empresa, sin equivalente de CMK
+    const destino: number = idCmk;
+
+    function subir(archivo: File) {
+        setError(null);
+        router.post(
+            route('plantillas.sustituir', destino),
+            { archivo },
+            {
+                forceFormData: true,
+                preserveScroll: true,
+                onStart: () => setSubiendo(true),
+                onFinish: () => setSubiendo(false),
+                onError: (e) => setError(e.archivo ?? null),
+            },
+        );
+    }
+
+    function volverACmk() {
+        if (confirm(`¿Volver a la plantilla de CMK para «${t.nombre}»? Se elimina la de la empresa; los documentos ya generados no cambian.`)) {
+            router.delete(route('plantillas.destroy', t.id), { preserveScroll: true });
+        }
+    }
+
+    return (
+        <div className="space-y-1">
+            <input
+                ref={input}
+                type="file"
+                accept=".docx,.pdf,.txt,.md"
+                className="hidden"
+                onChange={(e) => {
+                    const archivo = e.target.files?.[0];
+                    if (archivo) subir(archivo);
+                    e.target.value = '';
+                }}
+            />
+            <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
+                <button
+                    type="button"
+                    disabled={subiendo}
+                    className="text-primary hover:underline disabled:opacity-60"
+                    onClick={() => input.current?.click()}
+                >
+                    {subiendo ? 'Subiendo…' : t.reemplaza_id ? 'Cambiar archivo' : 'Usar la plantilla de la empresa (Word o PDF)'}
+                </button>
+                {t.reemplaza_id && (
+                    <button type="button" className="text-muted-foreground hover:text-foreground hover:underline" onClick={volverACmk}>
+                        Volver a la de CMK
+                    </button>
+                )}
+            </div>
+            <InputError message={error ?? undefined} />
+        </div>
     );
 }

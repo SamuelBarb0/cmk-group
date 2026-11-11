@@ -2,22 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ActualizarDocumentoConIaJob;
 use App\Models\ControlledDocument;
 use App\Models\ControlledDocumentVersion;
 use App\Models\DocumentCatalogEntry;
+use App\Models\DocumentTemplate;
 use App\Models\GeneratedDocument;
 use App\Models\Norm;
 use App\Models\NormRequirement;
 use App\Models\Process;
 use App\Services\ControlDocumental\CicloDocumental;
+use App\Services\DocxExporter;
+use App\Services\PesvFeed;
+use App\Services\PlantillaImporter;
 use App\Support\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 /**
  * M01 — Control documental: listado maestro de la empresa activa, ficha de
@@ -127,6 +134,7 @@ class ControlDocumentalController extends Controller
             'sistemas.*' => [Rule::in(Norm::SISTEMAS)],
             'condicional' => ['boolean'],
             'codigo_historico' => ['nullable', 'string', 'max:30'],
+            'codigo_pesv' => self::reglaCodigoPesv(),
             'confirmar_duplicado' => ['boolean'],
         ]);
 
@@ -189,6 +197,7 @@ class ControlDocumentalController extends Controller
             'disposicion_final' => ['nullable', Rule::in(ControlledDocument::DISPOSICIONES)],
             'ubicacion' => ['nullable', 'string', 'max:255'],
             'codigo_historico' => ['nullable', 'string', 'max:30'],
+            'codigo_pesv' => self::reglaCodigoPesv(),
         ]);
 
         // El Dec. 1072 fija 20 años para el SG-SST; la empresa puede conservar
@@ -267,6 +276,56 @@ class ControlDocumentalController extends Controller
         $documento->requirements()->sync($ids);
 
         return back()->with('success', 'Requisitos vinculados.');
+    }
+
+    /**
+     * La IA actualiza el documento que la empresa ya tiene (su Word o PDF, o
+     * el texto del borrador) con los datos reales de la plataforma. Trabaja
+     * sobre el borrador en curso; si el documento está vigente, abre la
+     * versión siguiente (que hereda el archivo). Corre en cola.
+     */
+    public function actualizarConIa(Request $request, ControlledDocument $documento): RedirectResponse
+    {
+        $datos = $request->validate(['instrucciones' => ['nullable', 'string', 'max:2000']]);
+
+        $abierta = $documento->versions()->whereIn('estado', ControlledDocumentVersion::EN_CURSO)->first();
+        if ($abierta && $abierta->estado !== 'borrador') {
+            return back()->withErrors(['ia' => "La versión {$abierta->version} está ".str_replace('_', ' ', $abierta->estado)
+                .'. Termina ese trámite o devuélvela a borrador antes de actualizarla con IA.']);
+        }
+        if ($abierta?->ia_estado === 'generando') {
+            return back()->withErrors(['ia' => 'La IA ya está actualizando este borrador.']);
+        }
+
+        $version = $abierta ?? $this->ciclo->nuevaVersion($documento, auth()->user(), 'Actualización con IA con los datos de la empresa.');
+
+        $legible = $version->archivo && in_array(strtolower(pathinfo($version->archivo, PATHINFO_EXTENSION)), ['pdf', ...PlantillaImporter::EXTENSIONES], true);
+        if (! $legible && blank($version->contenido)) {
+            return back()->withErrors(['ia' => 'Sube primero el documento de la empresa en Word (.docx) o PDF al borrador, o escribe su texto.']);
+        }
+
+        $version->update(['ia_estado' => 'generando', 'ia_error' => null]);
+        ActualizarDocumentoConIaJob::dispatch($version->id, (int) auth()->id(), $datos['instrucciones'] ?? null);
+
+        return back()->with('success', "La IA está actualizando {$documento->codigo}: el texto quedará en el borrador v{$version->version} en unos minutos.");
+    }
+
+    /** Descarga el texto de una versión como Word con el membrete y las firmas del cliente. */
+    public function descargarWord(ControlledDocument $documento, ControlledDocumentVersion $version, DocxExporter $exporter): BinaryFileResponse
+    {
+        abort_if(blank($version->contenido), 404, 'Esta versión no tiene texto: su contenido está en el archivo adjunto.');
+
+        $ruta = $exporter->desdeTexto(
+            $documento->tenant,
+            "{$documento->codigo} {$documento->titulo}",
+            $version->contenido,
+            ucfirst(str_replace('_', ' ', $version->estado)),
+            $version->version,
+            $exporter->llevaBloqueFirmas(false, $version->contenido),
+        );
+
+        return response()->download($ruta, Str::slug("{$documento->codigo}-{$documento->titulo}").'-v'.$version->version.'.docx')
+            ->deleteFileAfterSend();
     }
 
     /** Envía un documento de Documentos IA al listado maestro, como borrador. */
@@ -410,6 +469,34 @@ class ControlDocumentalController extends Controller
             'sistemas' => Norm::NOMBRES,
             'disposiciones' => ControlledDocument::DISPOSICIONES,
             'modulos' => DocumentCatalogEntry::MODULOS,
+            'pesv' => $this->documentosPesv(),
         ];
+    }
+
+    /**
+     * Opciones de «Respalda en el PESV»: los documentos que piden los pasos,
+     * con su nombre y sus pasos. Vacío si la empresa no tiene el PESV.
+     *
+     * @return list<array{codigo: string, nombre: string, pasos: list<int>}>
+     */
+    private function documentosPesv(): array
+    {
+        $tenant = $this->context->get();
+        if ($tenant === null || ! $tenant->moduloHabilitado('pesv')) {
+            return [];
+        }
+
+        $codigos = PesvFeed::documentosDelPesv();
+        $nombres = DocumentTemplate::visibles($tenant->id)->whereIn('codigo', array_keys($codigos))->pluck('nombre', 'codigo');
+
+        return collect($codigos)
+            ->map(fn (array $pasos, string $codigo) => ['codigo' => $codigo, 'nombre' => $nombres[$codigo] ?? $codigo, 'pasos' => $pasos])
+            ->values()->all();
+    }
+
+    /** Regla del campo «Respalda en el PESV». */
+    private static function reglaCodigoPesv(): array
+    {
+        return ['nullable', Rule::in(array_keys(PesvFeed::documentosDelPesv()))];
     }
 }

@@ -18,6 +18,8 @@ class ControlledDocumentVersion extends Model
 {
     protected $fillable = [
         'version', 'estado', 'contenido', 'archivo', 'archivo_nombre', 'generated_document_id', 'descripcion_cambio', 'observaciones',
+        // La IA está actualizando el borrador («generando») o falló («error», con el motivo).
+        'ia_estado', 'ia_error',
         'elaboro_user_id', 'elaboro_nombre', 'enviado_revision_at',
         'reviso_user_id', 'reviso_nombre', 'revisado_at',
         'aprobo_user_id', 'aprobo_nombre', 'aprobado_at',
