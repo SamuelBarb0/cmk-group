@@ -10,17 +10,21 @@ import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
+    Activity,
     AlertTriangle,
     ArrowRight,
+    Bell,
     Building2,
     CalendarCheck2,
     CalendarClock,
     CalendarX2,
+    CheckCircle2,
     CircleAlert,
-    LayoutGrid,
+    MinusCircle,
     ShieldCheck,
     UserCircle2,
     Users,
+    XCircle,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -64,6 +68,42 @@ interface ClienteFila extends Resumen {
     city: string | null;
     nit: string | null;
     users_count: number;
+    /** null = no aplica (módulo no contratado). */
+    fuera_meta: number | null;
+    /** Puntaje de estándares mínimos 0312 (null = sin autoevaluación). */
+    estandares: number | null;
+}
+
+interface IndicadorKpi {
+    codigo: string;
+    nombre: string;
+    categoria: string;
+    unidad: string;
+    sentido: 'asc' | 'desc';
+    meta: number;
+    valor: number | null;
+    cumple: boolean | null;
+    es_legal: boolean;
+    /** 12 meses, ene→dic; null = mes sin lectura. */
+    serie: (number | null)[];
+}
+
+interface Cumplimiento {
+    clave: string;
+    modulo: string;
+    titulo: string;
+    valor: string | null;
+    estado: 'bien' | 'mal' | 'sin_dato';
+    detalle: string | null;
+    url: string | null;
+}
+
+interface Alerta {
+    nivel: 'alta' | 'media';
+    modulo: string;
+    titulo: string;
+    texto: string;
+    url: string | null;
 }
 
 interface DashboardProps {
@@ -75,7 +115,344 @@ interface DashboardProps {
     agenda_dias?: { por_vencer: number; horizonte: number };
     modulos?: ModuloTarjeta[];
     clientes?: ClienteFila[];
-    alertas?: ItemAgenda[];
+    /** Vista maestra: vencimientos de todos los clientes. Vista cliente: centro de alertas. */
+    alertas?: ItemAgenda[] | Alerta[];
+    kpis?: IndicadorKpi[];
+    indicadores?: { filas: IndicadorKpi[]; sin_medir: number; total: number };
+    cumplimiento?: Cumplimiento[];
+}
+
+/** «7,25»: como lo escribe el informe (coma decimal, sin ceros de más). */
+function num(v: number | null) {
+    return v === null ? '—' : new Intl.NumberFormat('es-CO', { maximumFractionDigits: 2 }).format(v);
+}
+
+function metaTexto(i: Pick<IndicadorKpi, 'sentido' | 'meta' | 'unidad'>) {
+    return `meta ${i.sentido === 'asc' ? '≥' : '≤'} ${num(i.meta)}${i.unidad === '%' ? ' %' : ''}`;
+}
+
+/** Semáforo de un indicador: color + icono + palabra, nunca solo color. */
+function Semaforo({ cumple }: { cumple: boolean | null }) {
+    if (cumple === null) {
+        return (
+            <span className="text-muted-foreground inline-flex items-center gap-1 text-xs font-medium whitespace-nowrap">
+                <MinusCircle className="size-3.5" /> Sin medir
+            </span>
+        );
+    }
+    return cumple ? (
+        <span className="inline-flex items-center gap-1 text-xs font-medium whitespace-nowrap text-emerald-700 dark:text-emerald-400">
+            <CheckCircle2 className="size-3.5" /> Cumple
+        </span>
+    ) : (
+        <span className="inline-flex items-center gap-1 text-xs font-medium whitespace-nowrap text-red-700 dark:text-red-400">
+            <XCircle className="size-3.5" /> No cumple
+        </span>
+    );
+}
+
+/**
+ * Los 12 meses del indicador en una línea, con la meta punteada. Un mes sin
+ * lectura corta la línea en vez de dibujarse como cero. Al pasar el cursor por
+ * cada mes se ve su valor.
+ */
+function Sparkline({ i, ancho = 128, alto = 36 }: { i: IndicadorKpi; ancho?: number; alto?: number }) {
+    const valores = i.serie.filter((v): v is number => v !== null);
+    if (valores.length === 0) {
+        return <div style={{ width: ancho, height: alto }} className="border-muted-foreground/30 border-b border-dashed" aria-hidden />;
+    }
+    const min = Math.min(...valores, i.meta);
+    const max = Math.max(...valores, i.meta);
+    const rango = max - min || 1;
+    const pad = 4;
+    const x = (m: number) => pad + (m * (ancho - pad * 2)) / 11;
+    const y = (v: number) => alto - pad - ((v - min) / rango) * (alto - pad * 2);
+
+    // Tramos continuos de meses con lectura.
+    const tramos: { m: number; v: number }[][] = [];
+    i.serie.forEach((v, m) => {
+        if (v === null) return;
+        const ultimo = tramos[tramos.length - 1];
+        if (ultimo && ultimo[ultimo.length - 1].m === m - 1) ultimo.push({ m, v });
+        else tramos.push([{ m, v }]);
+    });
+    const color = i.cumple === false ? 'stroke-red-600 dark:stroke-red-400' : 'stroke-foreground/70';
+
+    return (
+        <svg
+            width={ancho}
+            height={alto}
+            viewBox={`0 0 ${ancho} ${alto}`}
+            role="img"
+            aria-label={`${i.codigo}: evolución mensual`}
+            className="shrink-0 overflow-visible"
+        >
+            <line
+                x1={pad}
+                x2={ancho - pad}
+                y1={y(i.meta)}
+                y2={y(i.meta)}
+                className="stroke-muted-foreground/50"
+                strokeWidth={1}
+                strokeDasharray="3 3"
+            />
+            {tramos.map((t, n) =>
+                t.length === 1 ? (
+                    <circle
+                        key={n}
+                        cx={x(t[0].m)}
+                        cy={y(t[0].v)}
+                        r={2.5}
+                        className={cn('fill-current', i.cumple === false ? 'text-red-600 dark:text-red-400' : 'text-foreground/70')}
+                    />
+                ) : (
+                    <polyline
+                        key={n}
+                        points={t.map((p) => `${x(p.m)},${y(p.v)}`).join(' ')}
+                        fill="none"
+                        className={color}
+                        strokeWidth={2}
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                    />
+                ),
+            )}
+            {i.serie.map((v, m) => (
+                <rect key={m} x={x(m) - (ancho - pad * 2) / 22} y={0} width={(ancho - pad * 2) / 11} height={alto} fill="transparent">
+                    <title>{`${MESES[m]}: ${v === null ? 'sin lectura' : num(v)}`}</title>
+                </rect>
+            ))}
+        </svg>
+    );
+}
+
+/** Un mínimo de la Res. 0312: resultado del año, meta, semáforo y tendencia. */
+function TarjetaKpi({ i }: { i: IndicadorKpi }) {
+    return (
+        <Link
+            href="/indicadores"
+            className={cn(
+                'bg-card hover:border-primary/40 flex min-w-0 flex-col gap-2 rounded-xl border p-4 transition hover:shadow-sm',
+                // El estado lo dice el semáforo (icono + palabra); el borde solo refuerza lo que está mal.
+                i.cumple === false && 'border-red-500/40',
+            )}
+        >
+            <div className="flex items-start justify-between gap-2">
+                <span className="bg-primary/10 text-primary rounded px-1.5 py-0.5 font-mono text-[11px] font-semibold">{i.codigo}</span>
+                <Semaforo cumple={i.cumple} />
+            </div>
+            <div className="text-muted-foreground line-clamp-2 min-h-8 text-xs leading-4" title={i.nombre}>
+                {i.nombre}
+            </div>
+            <div className="flex items-end justify-between gap-2">
+                <div className="min-w-0">
+                    <div className="text-2xl leading-none font-bold tabular-nums">
+                        {num(i.valor)}
+                        {i.valor !== null && i.unidad === '%' && <span className="text-muted-foreground ml-0.5 text-sm font-medium">%</span>}
+                    </div>
+                    <div className="text-muted-foreground mt-1 text-xs whitespace-nowrap">{metaTexto(i)}</div>
+                </div>
+                <Sparkline i={i} ancho={96} alto={34} />
+            </div>
+        </Link>
+    );
+}
+
+const CUMPLIMIENTO_ESTILO: Record<Cumplimiento['estado'], { borde: string; icono: typeof CheckCircle2; texto: string; color: string }> = {
+    bien: { borde: '', icono: CheckCircle2, texto: 'En meta', color: 'text-emerald-700 dark:text-emerald-400' },
+    mal: { borde: 'border-red-500/40', icono: XCircle, texto: 'Requiere acción', color: 'text-red-700 dark:text-red-400' },
+    sin_dato: { borde: '', icono: MinusCircle, texto: 'Sin datos', color: 'text-muted-foreground' },
+};
+
+function TarjetaCumplimiento({ c }: { c: Cumplimiento }) {
+    const e = CUMPLIMIENTO_ESTILO[c.estado];
+    const cuerpo = (
+        <div
+            className={cn(
+                'bg-card flex h-full min-w-0 flex-col gap-1.5 rounded-xl border p-4 transition',
+                e.borde,
+                c.url && 'hover:border-primary/40 hover:shadow-sm',
+            )}
+        >
+            <div className="flex items-center justify-between gap-2">
+                <span className="text-muted-foreground truncate text-xs font-medium">{c.titulo}</span>
+                <CodigoSig modulo={c.modulo} className="shrink-0" />
+            </div>
+            <div className="text-2xl leading-none font-bold tabular-nums">{c.valor ?? '—'}</div>
+            <div className={cn('flex items-center gap-1 text-xs font-medium', e.color)}>
+                <e.icono className="size-3.5 shrink-0" /> {e.texto}
+            </div>
+            {c.detalle && <p className="text-muted-foreground line-clamp-2 text-xs">{c.detalle}</p>}
+        </div>
+    );
+    return c.url ? (
+        <Link href={c.url} className="block min-w-0">
+            {cuerpo}
+        </Link>
+    ) : (
+        cuerpo
+    );
+}
+
+const VISIBLES_INDICADORES = 8;
+
+/** Todos los indicadores con lecturas este año; los que no cumplen, arriba. */
+function PanelIndicadores({ datos }: { datos: { filas: IndicadorKpi[]; sin_medir: number; total: number } }) {
+    const [todos, setTodos] = useState(false);
+    const fuera = datos.filas.filter((f) => f.cumple === false).length;
+    const filas = todos ? datos.filas : datos.filas.slice(0, VISIBLES_INDICADORES);
+
+    return (
+        <Card className="gap-0 py-0">
+            <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3 border-b py-4">
+                <div>
+                    <CardTitle className="flex items-center gap-2 text-base">
+                        <Activity className="size-4" /> Indicadores del año
+                    </CardTitle>
+                    <p className="text-muted-foreground mt-1 text-sm">
+                        {datos.filas.length} con medición · {fuera} fuera de meta · {datos.sin_medir} sin medir de {datos.total}. Resultado = promedio
+                        de los meses con lectura, igual que en Indicadores.
+                    </p>
+                </div>
+                <Button asChild size="sm" variant="outline">
+                    <Link href="/indicadores">
+                        Registrar lecturas <ArrowRight className="size-3.5" />
+                    </Link>
+                </Button>
+            </CardHeader>
+            <CardContent className="p-0">
+                {datos.filas.length === 0 ? (
+                    <p className="text-muted-foreground px-5 py-6 text-sm">
+                        Todavía no hay lecturas este año. Regístralas en Indicadores para ver aquí su evolución.
+                    </p>
+                ) : (
+                    <>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
+                                <thead className="bg-muted/40 text-muted-foreground text-xs">
+                                    <tr>
+                                        <th className="px-4 py-2 text-left font-medium">Indicador</th>
+                                        <th className="hidden px-4 py-2 text-left font-medium md:table-cell">Ene → Dic</th>
+                                        <th className="px-4 py-2 text-right font-medium">Resultado</th>
+                                        <th className="px-4 py-2 text-right font-medium">Meta</th>
+                                        <th className="px-4 py-2 text-left font-medium">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-border divide-y">
+                                    {filas.map((f) => (
+                                        <tr key={f.codigo} className="hover:bg-muted/40">
+                                            <td className="max-w-80 px-4 py-2.5">
+                                                <div className="font-mono text-[11px] font-semibold">{f.codigo}</div>
+                                                <div className="text-muted-foreground truncate text-xs" title={f.nombre}>
+                                                    {f.nombre}
+                                                </div>
+                                            </td>
+                                            <td className="hidden px-4 py-2.5 md:table-cell">
+                                                <Sparkline i={f} />
+                                            </td>
+                                            <td className="px-4 py-2.5 text-right font-semibold whitespace-nowrap tabular-nums">
+                                                {num(f.valor)}
+                                                {f.unidad === '%' ? ' %' : ''}
+                                            </td>
+                                            <td className="text-muted-foreground px-4 py-2.5 text-right text-xs whitespace-nowrap tabular-nums">
+                                                {f.sentido === 'asc' ? '≥' : '≤'} {num(f.meta)}
+                                                {f.unidad === '%' ? ' %' : ''}
+                                            </td>
+                                            <td className="px-4 py-2.5">
+                                                <Semaforo cumple={f.cumple} />
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        {datos.filas.length > VISIBLES_INDICADORES && (
+                            <button
+                                type="button"
+                                onClick={() => setTodos(!todos)}
+                                className="text-primary w-full border-t px-4 py-2 text-left text-sm font-medium hover:underline"
+                            >
+                                {todos ? 'Ver menos' : `Ver los ${datos.filas.length - VISIBLES_INDICADORES} restantes`}
+                            </button>
+                        )}
+                    </>
+                )}
+            </CardContent>
+        </Card>
+    );
+}
+
+/** Lo que hay que mirar hoy, lo grave primero. Lo vencido por fecha va en la agenda. */
+function CentroAlertas({ alertas }: { alertas: Alerta[] }) {
+    const altas = alertas.filter((a) => a.nivel === 'alta').length;
+
+    return (
+        <Card className="min-w-0 gap-0 py-0">
+            <CardHeader className="border-b py-4">
+                <CardTitle className="flex items-center gap-2 text-base">
+                    <Bell className="size-4" /> Centro de alertas
+                    {alertas.length > 0 && (
+                        <Badge className={cn('ml-auto font-medium', altas > 0 ? ESTADO_CLASE.vencido : ESTADO_CLASE.por_vencer)}>
+                            {alertas.length}
+                        </Badge>
+                    )}
+                </CardTitle>
+                <p className="text-muted-foreground mt-1 text-sm">Indicadores fuera de meta, reportes pendientes y lo que marca cada módulo.</p>
+            </CardHeader>
+            <CardContent className="max-h-[32rem] overflow-y-auto p-0">
+                {alertas.length === 0 ? (
+                    <div className="text-muted-foreground flex items-center gap-3 px-5 py-8 text-sm">
+                        <CheckCircle2 className="size-5 text-emerald-600" /> Nada que atender: todo en meta y al día.
+                    </div>
+                ) : (
+                    <ul className="divide-border divide-y">
+                        {alertas.map((a, n) => {
+                            const contenido = (
+                                <div className={cn('border-l-4 px-4 py-3', a.nivel === 'alta' ? 'border-l-red-500' : 'border-l-amber-500')}>
+                                    <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
+                                        <span
+                                            className={cn(
+                                                'inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-medium',
+                                                a.nivel === 'alta' ? ESTADO_CLASE.vencido : ESTADO_CLASE.por_vencer,
+                                            )}
+                                        >
+                                            {a.nivel === 'alta' ? <AlertTriangle className="size-3" /> : <CircleAlert className="size-3" />}
+                                            {a.nivel === 'alta' ? 'Alta' : 'Media'}
+                                        </span>
+                                        <CodigoSig modulo={a.modulo} />
+                                        <span className="font-medium">{a.titulo}</span>
+                                    </div>
+                                    <div className="mt-1 text-sm">{a.texto}</div>
+                                </div>
+                            );
+                            return (
+                                <li key={n}>
+                                    {a.url ? (
+                                        <Link href={a.url} className="hover:bg-muted/50 block">
+                                            {contenido}
+                                        </Link>
+                                    ) : (
+                                        contenido
+                                    )}
+                                </li>
+                            );
+                        })}
+                    </ul>
+                )}
+            </CardContent>
+        </Card>
+    );
+}
+
+/** Puntaje 0312 con los cortes de la resolución: <60 crítico, ≤85 moderado. */
+function BadgeEstandares({ puntaje }: { puntaje: number }) {
+    const clase =
+        puntaje < 60
+            ? ESTADO_CLASE.vencido
+            : puntaje <= 85
+              ? ESTADO_CLASE.por_vencer
+              : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300';
+    return <Badge className={cn('font-medium tabular-nums', clase)}>0312: {num(puntaje)} %</Badge>;
 }
 
 // Los mismos colores que ya usan los módulos (equipos de medición, PESV…).
@@ -140,7 +517,10 @@ function FilaAgenda({ item, onAbrir }: { item: ItemAgenda; onAbrir?: () => void 
             <div className="min-w-0 flex-1">
                 <div className="text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
                     <CodigoPrincipal modulo={item.modulo} />
-                    <span>{item.tenant ? `${item.tenant.name} · ` : ''}{item.modulo_titulo}</span>
+                    <span>
+                        {item.tenant ? `${item.tenant.name} · ` : ''}
+                        {item.modulo_titulo}
+                    </span>
                     <span aria-hidden>·</span>
                     <span className="font-medium">{item.tipo}</span>
                 </div>
@@ -270,7 +650,11 @@ function TarjetaModulo({ m }: { m: ModuloTarjeta }) {
                 </div>
                 {(m.vencidos > 0 || m.por_vencer > 0) && (
                     <div className="flex flex-wrap gap-1.5">
-                        {m.vencidos > 0 && <Badge className={cn('font-medium', ESTADO_CLASE.vencido)}>{m.vencidos} vencido{m.vencidos === 1 ? '' : 's'}</Badge>}
+                        {m.vencidos > 0 && (
+                            <Badge className={cn('font-medium', ESTADO_CLASE.vencido)}>
+                                {m.vencidos} vencido{m.vencidos === 1 ? '' : 's'}
+                            </Badge>
+                        )}
                         {m.por_vencer > 0 && <Badge className={cn('font-medium', ESTADO_CLASE.por_vencer)}>{m.por_vencer} por vencer</Badge>}
                     </div>
                 )}
@@ -316,7 +700,9 @@ function VistaCliente({ props }: { props: DashboardProps }) {
     const r = props.agenda_resumen ?? { vencido: 0, por_vencer: 0, proximo: 0 };
     const dias = props.agenda_dias ?? { por_vencer: 30, horizonte: 60 };
     const modulos = props.modulos ?? [];
-    const atencion = modulos.flatMap((m) => m.alertas.map((a) => ({ modulo: m, texto: a })));
+    const kpis = props.kpis ?? [];
+    const cumplimiento = props.cumplimiento ?? [];
+    const alertas = (props.alertas ?? []) as Alerta[];
 
     return (
         <>
@@ -324,54 +710,45 @@ function VistaCliente({ props }: { props: DashboardProps }) {
                 <StatCard label="Vencidos" value={r.vencido} icon={CalendarX2} alerta={r.vencido > 0} />
                 <StatCard label={`Por vencer (${dias.por_vencer} días)`} value={r.por_vencer} icon={CalendarClock} />
                 <StatCard label={`Próximos (hasta ${dias.horizonte} días)`} value={r.proximo} icon={CalendarCheck2} />
-                <StatCard label="Módulos activos" value={modulos.length} icon={LayoutGrid} />
+                <StatCard label="Alertas abiertas" value={alertas.length} icon={Bell} alerta={alertas.some((a) => a.nivel === 'alta')} />
             </div>
+
+            {cumplimiento.length > 0 && (
+                <section>
+                    <h2 className="font-brand text-muted-foreground mb-3 text-sm font-semibold tracking-wide uppercase">Cumplimiento del sistema</h2>
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        {cumplimiento.map((c) => (
+                            <TarjetaCumplimiento key={c.clave} c={c} />
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {kpis.length > 0 && (
+                <section>
+                    <h2 className="font-brand text-muted-foreground mb-3 text-sm font-semibold tracking-wide uppercase">
+                        Indicadores mínimos · Res. 0312 · año en curso
+                    </h2>
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
+                        {kpis.map((i) => (
+                            <TarjetaKpi key={i.codigo} i={i} />
+                        ))}
+                    </div>
+                </section>
+            )}
 
             <div className="grid gap-6 xl:grid-cols-3">
                 <div className="min-w-0 xl:col-span-2">
                     <Agenda items={agenda} dias={dias} />
                 </div>
-                <Card className="min-w-0 gap-0 py-0">
-                    <CardHeader className="border-b py-4">
-                        <CardTitle className="flex items-center gap-2 text-base">
-                            <AlertTriangle className="size-4" /> Puntos de atención
-                        </CardTitle>
-                        <p className="text-muted-foreground mt-1 text-sm">Lo que cada módulo marca para revisar.</p>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                        {atencion.length === 0 ? (
-                            <p className="text-muted-foreground px-5 py-6 text-sm">Ningún módulo marca alertas.</p>
-                        ) : (
-                            <ul className="divide-border divide-y">
-                                {atencion.map(({ modulo, texto }, n) => (
-                                    <li key={n}>
-                                        {modulo.url ? (
-                                            <Link href={modulo.url} className="hover:bg-muted/50 block px-4 py-3">
-                                                <div className="text-muted-foreground flex items-center gap-2 text-xs">
-                                                    <CodigoSig modulo={modulo.modulo} />
-                                                    {modulo.titulo}
-                                                </div>
-                                                <div className="mt-0.5 text-sm">{texto}</div>
-                                            </Link>
-                                        ) : (
-                                            <div className="px-4 py-3">
-                                                <div className="text-muted-foreground text-xs">{modulo.titulo}</div>
-                                                <div className="mt-0.5 text-sm">{texto}</div>
-                                            </div>
-                                        )}
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </CardContent>
-                </Card>
+                <CentroAlertas alertas={alertas} />
             </div>
+
+            {props.indicadores && props.indicadores.total > 0 && <PanelIndicadores datos={props.indicadores} />}
 
             {modulos.length > 0 && (
                 <div>
-                    <h2 className="font-brand text-muted-foreground mb-3 text-sm font-semibold tracking-wide uppercase">
-                        Módulos · año en curso
-                    </h2>
+                    <h2 className="font-brand text-muted-foreground mb-3 text-sm font-semibold tracking-wide uppercase">Módulos · año en curso</h2>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
                         {modulos.map((m) => (
                             <TarjetaModulo key={m.clave} m={m} />
@@ -385,7 +762,7 @@ function VistaCliente({ props }: { props: DashboardProps }) {
 
 function VistaMaestra({ props }: { props: DashboardProps }) {
     const clientes = props.clientes ?? [];
-    const alertas = props.alertas ?? [];
+    const alertas = (props.alertas ?? []) as ItemAgenda[];
     const dias = props.agenda_dias ?? { por_vencer: 30, horizonte: 60 };
     const trabajar = (id: number, ir?: string) => router.post(route('clientes.select', id), ir ? { ir } : {});
 
@@ -419,13 +796,25 @@ function VistaMaestra({ props }: { props: DashboardProps }) {
                                                 {[c.city, c.nit ? `NIT ${c.nit}` : null, `${c.users_count} usuarios`].filter(Boolean).join(' · ')}
                                             </div>
                                             <div className="mt-1 flex flex-wrap gap-1.5">
-                                                {c.vencido > 0 && <Badge className={cn('font-medium', ESTADO_CLASE.vencido)}>{c.vencido} vencido{c.vencido === 1 ? '' : 's'}</Badge>}
-                                                {c.por_vencer > 0 && <Badge className={cn('font-medium', ESTADO_CLASE.por_vencer)}>{c.por_vencer} por vencer</Badge>}
+                                                {c.vencido > 0 && (
+                                                    <Badge className={cn('font-medium', ESTADO_CLASE.vencido)}>
+                                                        {c.vencido} vencido{c.vencido === 1 ? '' : 's'}
+                                                    </Badge>
+                                                )}
+                                                {c.por_vencer > 0 && (
+                                                    <Badge className={cn('font-medium', ESTADO_CLASE.por_vencer)}>{c.por_vencer} por vencer</Badge>
+                                                )}
                                                 {c.vencido === 0 && c.por_vencer === 0 && (
                                                     <Badge variant="secondary" className="font-medium">
                                                         Al día
                                                     </Badge>
                                                 )}
+                                                {c.fuera_meta !== null && c.fuera_meta > 0 && (
+                                                    <Badge className={cn('font-medium', ESTADO_CLASE.vencido)}>
+                                                        {c.fuera_meta} indicador{c.fuera_meta === 1 ? '' : 'es'} fuera de meta
+                                                    </Badge>
+                                                )}
+                                                {c.estandares !== null && <BadgeEstandares puntaje={c.estandares} />}
                                             </div>
                                         </div>
                                         <Button size="sm" variant="outline" onClick={() => trabajar(c.id, '/dashboard')}>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Indicator;
 use App\Models\IndicatorGoal;
 use App\Models\IndicatorReading;
+use App\Services\Indicadores\Tablero;
 use App\Support\TenantContext;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -25,7 +26,7 @@ class IndicatorController extends Controller
 {
     public function __construct(private readonly TenantContext $context) {}
 
-    public function index(): Response
+    public function index(Tablero $tablero): Response
     {
         if (! $this->context->has()) {
             return Inertia::render('indicadores/index', [
@@ -36,70 +37,11 @@ class IndicatorController extends Controller
         }
 
         $anio = (int) now()->year;
-        $tenantId = $this->context->id();
-
-        $indicators = Indicator::query()
-            ->where(fn ($q) => $q->whereNull('tenant_id')->orWhere('tenant_id', $tenantId))
-            // Los mínimos del PESV solo le sirven a quien tiene PESV contratado.
-            ->when(! $this->context->get()?->moduloHabilitado('pesv'), fn ($q) => $q->where('categoria', '!=', 'PESV'))
-            ->orderBy('orden')->orderBy('id')->get();
-
-        $readings = IndicatorReading::where('anio', $anio)->get()
-            ->groupBy('indicator_id');
-
-        // Metas propias del cliente para los presets (el scope filtra por tenant).
-        $metasPropias = IndicatorGoal::pluck('meta', 'indicator_id');
-
-        $payload = $indicators->map(function (Indicator $ind) use ($readings, $metasPropias) {
-            $meses = [];
-            $suma = 0;
-            $conteo = 0;
-
-            $porMes = ($readings->get($ind->id) ?? collect())->keyBy('mes');
-            for ($m = 1; $m <= 12; $m++) {
-                $r = $porMes->get($m);
-                $num = $r ? (float) $r->numerador : 0.0;
-                $den = $r ? (float) $r->denominador : 0.0;
-                $valor = $r ? $ind->calcular($num, $den) : null;
-                if ($valor !== null) {
-                    $suma += $valor;
-                    $conteo++;
-                }
-                $meses[$m] = ['numerador' => $num, 'denominador' => $den, 'valor' => $valor];
-            }
-
-            $promedio = $conteo > 0 ? round($suma / $conteo, 2) : null;
-
-            // Meta efectiva: la propia del cliente si existe; si no, la legal.
-            $metaLegal = (float) $ind->meta;
-            $metaPropia = $metasPropias->has($ind->id);
-            $meta = $metaPropia ? (float) $metasPropias->get($ind->id) : $metaLegal;
-            $cumple = $promedio === null ? null : ($ind->sentido === 'asc' ? $promedio >= $meta : $promedio <= $meta);
-
-            return [
-                'id' => $ind->id,
-                'codigo' => $ind->codigo,
-                'nombre' => $ind->nombre,
-                'categoria' => $ind->categoria,
-                'numerador_label' => $ind->numerador_label,
-                'denominador_label' => $ind->denominador_label,
-                'constante' => $ind->constante,
-                'unidad' => $ind->unidad,
-                'sentido' => $ind->sentido,
-                'meta' => $meta,
-                'meta_legal' => $metaLegal,
-                'meta_propia' => $metaPropia,
-                'es_legal' => $ind->es_legal,
-                'propio' => $ind->tenant_id !== null,
-                'meses' => $meses,
-                'promedio' => $promedio,
-                'cumple' => $cumple,
-            ];
-        });
 
         return Inertia::render('indicadores/index', [
             'needsClient' => false,
-            'indicators' => $payload,
+            // El mismo cálculo que usa el dashboard (Tablero): nunca cuentan distinto.
+            'indicators' => $tablero->indicadores($anio),
             'anio' => $anio,
         ]);
     }
